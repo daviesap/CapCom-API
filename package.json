@@ -1,0 +1,16 @@
+{
+  "name": "flair-pdf-generator",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "deploy:pdf-gen": "gcloud functions deploy handler --gen2 --runtime=nodejs20 --region=europe-west2 --entry-point=handler --source=. --trigger-http --allow-unauthenticated"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@google-cloud/functions-framework": "^4.0.0"
+  }
+}
