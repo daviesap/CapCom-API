@@ -2,9 +2,13 @@
   "name": "pdf-generator",
   "type": "module",
   "main": "index.js",
+  "scripts": {
+    "deploy:pdfgen": "gcloud functions deploy generatePdf --runtime nodejs20 --trigger-http --project=flair-pdf-generator --entry-point generatePdf --region=europe-west2 --allow-unauthenticated"
+  },
   "dependencies": {
+    "@google-cloud/logging": "^11.2.0",
     "@google-cloud/storage": "^6.10.0",
-    "pdf-lib": "^1.17.1",
-    "node-fetch": "^3.3.2"
+    "node-fetch": "^3.3.2",
+    "pdf-lib": "^1.17.1"
   }
 }

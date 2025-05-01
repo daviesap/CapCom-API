@@ -5,10 +5,10 @@
     "filename": "GWC24 - Carlsbad Full Schedule - Sample",
     "leftMargin": 20,
     "rightMargin": 20,
-    "topMargin": 20,
+    "topMargin": 30,
     "bottomMargin": 20,
-    "headerPaddingBottom":100,
-    "footerPaddingTop":100,
+    "headerPaddingBottom":10,
+    "footerPaddingTop":10,
     "pageSize": {
       "height": 595,
       "width": 842
@@ -44,12 +44,12 @@
   },
   "styles": {
     "groupTitle": {
-      "fontSize": 12,
+      "fontSize": 10,
       "fontWeight": "bold",
       "colour": "#000000"
     },
     "defaultRow": {
-      "fontSize": 10,
+      "fontSize": 8,
       "fontColour": "#000000",
       "fontWeight": "Normal",
       "backgroundColour": "#FFFFFF"

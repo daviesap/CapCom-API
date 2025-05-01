@@ -4,6 +4,7 @@ import { readFile } from 'fs/promises';
 import path from 'path';
 import fetch from 'node-fetch';
 import { readFileSync } from 'node:fs';
+//import { writeLog } from './utils/logging.mjs';
 
 export const generatePdfBuffer = async () => {
   const jsonPath = path.resolve('./sample.json');
@@ -80,6 +81,13 @@ export const generatePdfBuffer = async () => {
     hour: 'numeric',
     minute: '2-digit',
   }).replace(',', '');
+
+  // await writeLog({
+  //   logName: 'pdf-generator-log',
+  //   severity: 'DEBUG',
+  //   functionName: 'generateFromJson',
+  //   message: `Timestamp generated: ${timestamp}`
+  // });
 
   for (let i = 0; i < totalPages; i++) {
     const page = pages[i];
