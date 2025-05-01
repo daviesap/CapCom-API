@@ -4,6 +4,7 @@ import { readFile } from 'fs/promises';
 import path from 'path';
 import fetch from 'node-fetch';
 import { readFileSync } from 'node:fs';
+import { getFormattedTimestamp } from './utils/timestamp.mjs';
 
 function rgbHex(hex) {
   const bigint = parseInt(hex.replace('#', ''), 16);
@@ -126,12 +127,33 @@ export const generatePdfBuffer = async () => {
   }
 
   const totalPages = pdfDoc.getPageCount();
-  const timestamp = new Date().toLocaleString('en-GB', {
-    day: 'numeric',
-    month: 'long',
-    hour: 'numeric',
-    minute: '2-digit',
-  }).replace(',', '');
+
+  //Get friendly timestamp
+  const timestamp = getFormattedTimestamp();
+  // const now = new Date();
+  // const londonDate = new Date(now.toLocaleString('en-GB', { timeZone: 'Europe/London' }));
+
+  // const weekday = londonDate.toLocaleString('en-GB', { weekday: 'long' });
+  // const day = londonDate.getDate();
+  // const month = londonDate.toLocaleString('en-GB', { month: 'long' });
+  // const year = londonDate.getFullYear();
+  // let hour = londonDate.getHours();
+  // const minutes = londonDate.getMinutes().toString().padStart(2, '0');
+  // const ampm = hour >= 12 ? 'pm' : 'am';
+
+  // hour = hour % 12 || 12;
+
+  // const timestamp = `${weekday} ${day}${getOrdinalSuffix(day)} ${month} ${year} at ${hour}.${minutes}${ampm}`;
+
+
+
+
+  // const timestamp = new Date().toLocaleString('en-GB', {
+  //   day: 'numeric',
+  //   month: 'long',
+  //   hour: 'numeric',
+  //   minute: '2-digit',
+  // }).replace(',', '');
 
   for (let i = 0; i < totalPages; i++) {
     const page = pages[i];
