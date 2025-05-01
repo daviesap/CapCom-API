@@ -7,27 +7,30 @@
     "rightMargin": 20,
     "topMargin": 20,
     "bottomMargin": 20,
+    "headerPaddingBottom":100,
+    "footerPaddingTop":100,
     "pageSize": {
       "height": 595,
       "width": 842
     },
     "header": {
       "logo": {
-        "url": "https://images.webapi.gc.middlesbroughfcservices.co.uk/fit-in/200x200/7af04870-d2d4-11ec-93d3-b732dfcf0a3b.png",
-        "width": 50,
-        "height":50
+        "url": "https://storage.googleapis.com/admin-dashboard-assets/flair-logo.png",
+        "width": 36,
+        "height":36
       },
       "text": [
         "Carlsbad Event 2025",
         "AVS Daily Schedule",
         "21st April 2025",
-        "Sausages and Beer"
+        "Sausages and Beer",
+        "Carlsbad, California",
+        "USA"
       ],
       "style": {
-        "fontSize": 14,
+        "fontSize": 12,
         "fontWeight": "normal",
-        "colour": "#444444",
-        "alignment": "left"
+        "colour": "#FF0000"
       }
     },
     "footer": {
@@ -35,7 +38,7 @@
       "style": {
         "fontSize": 8,
         "fontWeight": "normal",
-        "colour": "#444444"
+        "colour": "#FF0000"
       }
     }
   },
