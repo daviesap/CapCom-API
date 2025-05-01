@@ -1,11 +1,11 @@
-// generateFromJson.mjs - Final fix for correct page numbering without overwrite
-
+// generateFromJson.mjs
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
-import { readFile, writeFile } from 'fs/promises';
+import { readFile } from 'fs/promises';
 import path from 'path';
 import fetch from 'node-fetch';
+import { readFileSync } from 'node:fs';
 
-const createSchedulePDF = async () => {
+export const generatePdfBuffer = async () => {
   const jsonPath = path.resolve('./sample.json');
   const jsonData = JSON.parse(await readFile(jsonPath, 'utf8'));
 
@@ -34,13 +34,12 @@ const createSchedulePDF = async () => {
 
   const pages = [];
 
-  const dummyLines = Array.from({ length: 200 }, () => 'Test line of text to fill the page. This is a placeholder for actual content.');
+  const dummyLines = Array.from({ length: 200 }, () => 'Test line of text to fill the page.');
 
   let currentPage = pdfDoc.addPage([pageWidth, pageHeight]);
   pages.push(currentPage);
   let y = pageHeight - topMargin;
 
-  // Reserve space for header
   if (header?.text?.length) {
     const headerStyle = header.style || {};
     const headerFontSize = headerStyle.fontSize || 10;
@@ -48,7 +47,6 @@ const createSchedulePDF = async () => {
     y -= (header.text.length * headerLineHeight) + headerPaddingBottom;
   }
 
-  // Bottom limit for body content
   const footerYLimit = bottomMargin + footerPaddingTop;
 
   for (const line of dummyLines) {
@@ -75,7 +73,6 @@ const createSchedulePDF = async () => {
     y -= lineHeight;
   }
 
-  // Draw header/footer on all pages
   const totalPages = pdfDoc.getPageCount();
   const timestamp = new Date().toLocaleString('en-GB', {
     day: 'numeric',
@@ -87,7 +84,6 @@ const createSchedulePDF = async () => {
   for (let i = 0; i < totalPages; i++) {
     const page = pages[i];
 
-    // Header text
     if (header?.text?.length) {
       const style = header.style || {};
       const fontSize = style.fontSize || 10;
@@ -108,7 +104,6 @@ const createSchedulePDF = async () => {
       }
     }
 
-    // Header logo (top-right)
     if (header?.logo?.url) {
       try {
         const logoRes = await fetch(header.logo.url);
@@ -130,7 +125,6 @@ const createSchedulePDF = async () => {
       }
     }
 
-    // Footer
     if (footer?.text) {
       const style = footer.style || {};
       const fontSize = style.fontSize || 10;
@@ -138,7 +132,6 @@ const createSchedulePDF = async () => {
       const color = rgbHex(style.colour || '#000000');
       const y = bottomMargin;
 
-      // Left-aligned footer text
       page.drawText(footer.text, {
         x: leftMargin,
         y,
@@ -147,7 +140,6 @@ const createSchedulePDF = async () => {
         color,
       });
 
-      // Centered page number
       const pageText = `Page ${i + 1} of ${totalPages}`;
       const textWidth = font.widthOfTextAtSize(pageText, fontSize);
       page.drawText(pageText, {
@@ -158,7 +150,6 @@ const createSchedulePDF = async () => {
         color,
       });
 
-      // Right-aligned timestamp
       const timestampWidth = font.widthOfTextAtSize(`Document generated ${timestamp}`, fontSize);
       page.drawText(`Document generated ${timestamp}`, {
         x: pageWidth - rightMargin - timestampWidth,
@@ -170,21 +161,24 @@ const createSchedulePDF = async () => {
     }
   }
 
-  // Save and write the PDF
-  const outputName = `${jsonData.document?.filename || 'output'}.pdf`;
-  const outputPath = path.resolve(`./${outputName}`);
-  const pdfBytes = await pdfDoc.save();
-  await writeFile(outputPath, pdfBytes);
-  console.log(`✅ PDF written to: ${outputPath}`);
+  return {
+    bytes: await pdfDoc.save(),
+    filename: jsonData.document?.filename?.endsWith('.pdf')
+      ? jsonData.document.filename
+      : `${jsonData.document?.filename || 'output'}.pdf`
+  };
 };
 
 function rgbHex(hex) {
   const bigint = parseInt(hex.replace('#', ''), 16);
-  return rgb(
-    ((bigint >> 16) & 255) / 255,
-    ((bigint >> 8) & 255) / 255,
-    (bigint & 255) / 255
-  );
+  return rgb(((bigint >> 16) & 255) / 255, ((bigint >> 8) & 255) / 255, (bigint & 255) / 255);
 }
 
-createSchedulePDF();
+export function getOutputFilename() {
+  const jsonPath = path.resolve('./sample.json');
+  const rawData = readFileSync(jsonPath, 'utf8');
+  const jsonData = JSON.parse(rawData);
+  return jsonData.document?.filename?.endsWith('.pdf')
+    ? jsonData.document.filename
+    : `${jsonData.document?.filename || 'output'}.pdf`;
+}
