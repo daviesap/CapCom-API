@@ -42,7 +42,7 @@ if (process.argv.includes('--local')) {
   (async () => {
     try {
       const { bytes, filename } = await generatePdfBuffer();
-      const outputPath = path.resolve(`./${filename}`);
+      const outputPath = path.resolve(`./pdfoutput/${filename}`);
       await writeFile(outputPath, bytes);
       console.log(`✅ PDF saved locally: ${outputPath}`);
     } catch (err) {
