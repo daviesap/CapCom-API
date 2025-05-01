@@ -4,7 +4,20 @@ import { readFile } from 'fs/promises';
 import path from 'path';
 import fetch from 'node-fetch';
 import { readFileSync } from 'node:fs';
-//import { writeLog } from './utils/logging.mjs';
+
+function rgbHex(hex) {
+  const bigint = parseInt(hex.replace('#', ''), 16);
+  return rgb(((bigint >> 16) & 255) / 255, ((bigint >> 8) & 255) / 255, (bigint & 255) / 255);
+}
+
+function resolveStyle(style, boldFont, regularFont) {
+  const fontSize = style.fontSize || 10;
+  const font = (style.fontWeight || '').toLowerCase() === 'bold' ? boldFont : regularFont;
+  const color = rgbHex(style.colour || style.fontColour || '#000000');
+  const lineHeight = fontSize + 2;
+  const paddingBottom = style.paddingBottom || 0;
+  return { fontSize, font, color, lineHeight, paddingBottom };
+}
 
 export const generatePdfBuffer = async () => {
   const jsonPath = path.resolve('./sample.json');
@@ -12,14 +25,13 @@ export const generatePdfBuffer = async () => {
 
   const pageWidth = jsonData.document?.pageSize?.width || 842;
   const pageHeight = jsonData.document?.pageSize?.height || 595;
-
   const leftMargin = jsonData.document?.leftMargin || 50;
   const rightMargin = jsonData.document?.rightMargin || 50;
   const topMargin = jsonData.document?.topMargin || 50;
   const bottomMargin = jsonData.document?.bottomMargin || 50;
-
   const headerPaddingBottom = jsonData.document?.headerPaddingBottom || 10;
   const footerPaddingTop = jsonData.document?.footerPaddingTop || 10;
+  const groupPaddingBottom = jsonData.document?.groupPaddingBottom || 0;
 
   const pdfDoc = await PDFDocument.create();
   const regularFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
@@ -28,50 +40,79 @@ export const generatePdfBuffer = async () => {
   const header = jsonData.document?.header;
   const footer = jsonData.document?.footer;
   const defaultStyle = jsonData.styles?.defaultRow || {};
-  const fontSize = defaultStyle.fontSize || 10;
-  const font = defaultStyle.fontWeight?.toLowerCase() === 'bold' ? boldFont : regularFont;
-  const fontColor = rgbHex(defaultStyle.fontColour || '#000000');
-  const lineHeight = fontSize + 6;
+  const groupTitleStyle = jsonData.styles?.groupTitle || {};
+  const groupMetadataStyle = jsonData.styles?.groupMetadata || {};
+  const { fontSize, font, color: fontColor, lineHeight } = resolveStyle(defaultStyle, boldFont, regularFont);
+
+  const columns = jsonData.columns || [];
 
   const pages = [];
-
-  const dummyLines = Array.from({ length: 200 }, () => 'Test line of text to fill the page.');
-
   let currentPage = pdfDoc.addPage([pageWidth, pageHeight]);
   pages.push(currentPage);
   let y = pageHeight - topMargin;
 
   if (header?.text?.length) {
-    const headerStyle = header.style || {};
-    const headerFontSize = headerStyle.fontSize || 10;
-    const headerLineHeight = headerFontSize + 2;
+    const { lineHeight: headerLineHeight } = resolveStyle(header.style || {}, boldFont, regularFont);
     y -= (header.text.length * headerLineHeight) + headerPaddingBottom;
   }
 
   const footerYLimit = bottomMargin + footerPaddingTop;
 
-  for (const line of dummyLines) {
-    if (y < footerYLimit) {
+  const checkSpaceAndAddPage = (linesNeeded = 1) => {
+    if (y - linesNeeded * lineHeight < footerYLimit) {
       currentPage = pdfDoc.addPage([pageWidth, pageHeight]);
       pages.push(currentPage);
       y = pageHeight - topMargin;
-
       if (header?.text?.length) {
-        const headerStyle = header.style || {};
-        const headerFontSize = headerStyle.fontSize || 10;
-        const headerLineHeight = headerFontSize + 2;
+        const { lineHeight: headerLineHeight } = resolveStyle(header.style || {}, boldFont, regularFont);
         y -= (header.text.length * headerLineHeight) + headerPaddingBottom;
       }
     }
+  };
 
-    currentPage.drawText(line, {
+  for (const group of jsonData.groups) {
+    const { fontSize: titleFontSize, font: titleFont, color: titleColor, lineHeight: titleLineHeight } = resolveStyle(groupTitleStyle, boldFont, regularFont);
+    checkSpaceAndAddPage(2);
+    currentPage.drawText(group.groupTitle, {
       x: leftMargin,
       y,
-      size: fontSize,
-      font,
-      color: fontColor,
+      size: titleFontSize,
+      font: titleFont,
+      color: titleColor,
     });
-    y -= lineHeight;
+    y -= titleLineHeight;
+
+    const { fontSize: metaFontSize, font: metaFont, color: metaColor, lineHeight: metaLineHeight, paddingBottom: metaPaddingBottom } = resolveStyle(groupMetadataStyle, boldFont, regularFont);
+    currentPage.drawText(group.groupMetadata, {
+      x: leftMargin,
+      y,
+      size: metaFontSize,
+      font: metaFont,
+      color: metaColor,
+    });
+    y -= metaLineHeight + metaPaddingBottom;
+
+    for (const entry of group.groupContent) {
+      const { rows } = entry;
+      checkSpaceAndAddPage(1);
+      let x = leftMargin;
+      for (const col of columns) {
+        let text = rows[col.field];
+        if (Array.isArray(text)) text = text.join(', ');
+        if (text === undefined || text === null) text = '';
+        currentPage.drawText(text, {
+          x,
+          y,
+          size: fontSize,
+          font,
+          color: fontColor,
+        });
+        x += col.width || 100;
+      }
+      y -= lineHeight;
+    }
+
+    y -= groupPaddingBottom;
   }
 
   const totalPages = pdfDoc.getPageCount();
@@ -82,33 +123,21 @@ export const generatePdfBuffer = async () => {
     minute: '2-digit',
   }).replace(',', '');
 
-  // await writeLog({
-  //   logName: 'pdf-generator-log',
-  //   severity: 'DEBUG',
-  //   functionName: 'generateFromJson',
-  //   message: `Timestamp generated: ${timestamp}`
-  // });
-
   for (let i = 0; i < totalPages; i++) {
     const page = pages[i];
 
     if (header?.text?.length) {
-      const style = header.style || {};
-      const fontSize = style.fontSize || 10;
-      const font = style.fontWeight === 'bold' ? boldFont : regularFont;
-      const color = rgbHex(style.colour || '#000000');
-      let y = pageHeight - topMargin;
-      const lineHeight = fontSize + 2;
-
+      const { fontSize, font, color, lineHeight } = resolveStyle(header.style || {}, boldFont, regularFont);
+      let headerY = pageHeight - topMargin;
       for (const line of header.text) {
         page.drawText(line, {
           x: leftMargin,
-          y,
+          y: headerY,
           size: fontSize,
           font,
           color,
         });
-        y -= lineHeight;
+        headerY -= lineHeight;
       }
     }
 
@@ -134,10 +163,7 @@ export const generatePdfBuffer = async () => {
     }
 
     if (footer?.text) {
-      const style = footer.style || {};
-      const fontSize = style.fontSize || 10;
-      const font = style.fontWeight === 'bold' ? boldFont : regularFont;
-      const color = rgbHex(style.colour || '#000000');
+      const { fontSize, font, color } = resolveStyle(footer.style || {}, boldFont, regularFont);
       const y = bottomMargin;
 
       page.drawText(footer.text, {
@@ -158,8 +184,9 @@ export const generatePdfBuffer = async () => {
         color,
       });
 
-      const timestampWidth = font.widthOfTextAtSize(`Document generated ${timestamp}`, fontSize);
-      page.drawText(`Document generated ${timestamp}`, {
+      const timestampText = `Document generated ${timestamp}`;
+      const timestampWidth = font.widthOfTextAtSize(timestampText, fontSize);
+      page.drawText(timestampText, {
         x: pageWidth - rightMargin - timestampWidth,
         y,
         size: fontSize,
@@ -176,11 +203,6 @@ export const generatePdfBuffer = async () => {
       : `${jsonData.document?.filename || 'output'}.pdf`
   };
 };
-
-function rgbHex(hex) {
-  const bigint = parseInt(hex.replace('#', ''), 16);
-  return rgb(((bigint >> 16) & 255) / 255, ((bigint >> 8) & 255) / 255, (bigint & 255) / 255);
-}
 
 export function getOutputFilename() {
   const jsonPath = path.resolve('./sample.json');
