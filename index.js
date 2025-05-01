@@ -3,6 +3,7 @@ import { writeFile } from 'fs/promises';
 import path from 'path';
 import { Storage } from '@google-cloud/storage';
 import { generatePdfBuffer } from './generateFromJson.mjs';
+
 //import { writeLog } from './utils/logging.mjs';
 
 const bucketName = 'generatedpdfs';
@@ -22,13 +23,13 @@ export const generatePdf = async (req, res) => {
     res.status(200).json({ message: '✅ PDF uploaded', url: publicUrl });
 
 
-    // Log the successful upload
-    //await writeLog({
-    //  logName: 'pdf-generator-log',
-    //  severity: 'INFO',
-    //  functionName: 'generatePdf',
-    //  message: 'PDF Uploaded'
-    //});
+    //Log the successful upload
+    await writeLog({
+      logName: 'pdf-generator-log',
+      severity: 'INFO',
+      functionName: 'generatePdf',
+      message: 'PDF Uploaded'
+    });
 
   } catch (err) {
     console.error('❌ Cloud Function error:', err);
