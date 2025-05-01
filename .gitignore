@@ -1,0 +1,50 @@
+# macOS system files
+.DS_Store
+
+# Node modules
+node_modules/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime files
+dist/
+build/
+.env
+.env.*
+
+# Optional npm cache directory
+.npm/
+
+# OS-specific files
+Thumbs.db
+
+# VSCode settings
+.vscode/
+
+# Google Cloud Functions
+functions/node_modules/
+functions/lib/
+functions/.env
+
+# Firebase/Cloud related (optional)
+.firebaserc
+.firebase/
+
+# Coverage reports
+coverage/
+
+# Compiled files
+*.tsbuildinfo
+*.pyc
+__pycache__/
+
+# Local testing artifacts
+local.settings.json
+
+# Others
+*.log
+*.bak
+*.tmp
