@@ -2,7 +2,7 @@
   "document": {
     "user": "andrew@flair.london",
     "appName": "GWC24 - Carlsbad",
-    "filename": "GWC24 - Carlsbad Full Schedule - Sample",
+    "filename": "GWC24 - Carlsbad Full Schedule - Sample 2",
     "leftMargin": 20,
     "rightMargin": 20,
     "topMargin": 30,
@@ -10,6 +10,7 @@
     "headerPaddingBottom": 10,
     "footerPaddingTop": 20,
     "groupPaddingBottom": 12,
+    "bottomPageThreshold": 60,
     "pageSize": {
       "height": 595,
       "width": 842

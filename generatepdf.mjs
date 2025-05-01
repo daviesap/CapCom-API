@@ -32,6 +32,7 @@ export const generatePdfBuffer = async () => {
   const headerPaddingBottom = jsonData.document?.headerPaddingBottom || 10;
   const footerPaddingTop = jsonData.document?.footerPaddingTop || 10;
   const groupPaddingBottom = jsonData.document?.groupPaddingBottom || 0;
+  const bottomPageThreshold = jsonData.document?.bottomPageThreshold || 0;
 
   const pdfDoc = await PDFDocument.create();
   const regularFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
@@ -51,10 +52,14 @@ export const generatePdfBuffer = async () => {
   pages.push(currentPage);
   let y = pageHeight - topMargin;
 
-  if (header?.text?.length) {
-    const { lineHeight: headerLineHeight } = resolveStyle(header.style || {}, boldFont, regularFont);
-    y -= (header.text.length * headerLineHeight) + headerPaddingBottom;
-  }
+  const drawHeader = () => {
+    if (header?.text?.length) {
+      const { lineHeight: headerLineHeight } = resolveStyle(header.style || {}, boldFont, regularFont);
+      y -= (header.text.length * headerLineHeight) + headerPaddingBottom;
+    }
+  };
+
+  drawHeader();
 
   const footerYLimit = bottomMargin + footerPaddingTop;
 
@@ -63,16 +68,22 @@ export const generatePdfBuffer = async () => {
       currentPage = pdfDoc.addPage([pageWidth, pageHeight]);
       pages.push(currentPage);
       y = pageHeight - topMargin;
-      if (header?.text?.length) {
-        const { lineHeight: headerLineHeight } = resolveStyle(header.style || {}, boldFont, regularFont);
-        y -= (header.text.length * headerLineHeight) + headerPaddingBottom;
-      }
+      drawHeader();
     }
   };
 
   for (const group of jsonData.groups) {
     const { fontSize: titleFontSize, font: titleFont, color: titleColor, lineHeight: titleLineHeight } = resolveStyle(groupTitleStyle, boldFont, regularFont);
-    checkSpaceAndAddPage(2);
+    const { fontSize: metaFontSize, font: metaFont, color: metaColor, lineHeight: metaLineHeight, paddingBottom: metaPaddingBottom } = resolveStyle(groupMetadataStyle, boldFont, regularFont);
+
+    const linesNeededForGroupIntro = titleLineHeight + metaLineHeight + metaPaddingBottom;
+    if (y - linesNeededForGroupIntro < bottomPageThreshold) {
+      currentPage = pdfDoc.addPage([pageWidth, pageHeight]);
+      pages.push(currentPage);
+      y = pageHeight - topMargin;
+      drawHeader();
+    }
+
     currentPage.drawText(group.groupTitle, {
       x: leftMargin,
       y,
@@ -82,7 +93,6 @@ export const generatePdfBuffer = async () => {
     });
     y -= titleLineHeight;
 
-    const { fontSize: metaFontSize, font: metaFont, color: metaColor, lineHeight: metaLineHeight, paddingBottom: metaPaddingBottom } = resolveStyle(groupMetadataStyle, boldFont, regularFont);
     currentPage.drawText(group.groupMetadata, {
       x: leftMargin,
       y,

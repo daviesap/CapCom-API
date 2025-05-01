@@ -2,7 +2,7 @@
 import { writeFile } from 'fs/promises';
 import path from 'path';
 import { Storage } from '@google-cloud/storage';
-import { generatePdfBuffer } from './generateFromJson.mjs';
+import { generatePdfBuffer } from './generatepdf.mjs';
 
 //import { writeLog } from './utils/logging.mjs';
 
