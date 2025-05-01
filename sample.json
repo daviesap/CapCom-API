@@ -1,0 +1,182 @@
+{
+  "document": {
+    "user": "andrew@flair.london",
+    "appName": "GWC24 - Carlsbad",
+    "filename": "GWC24 - Carlsbad Full Schedule - Sample",
+    "leftMargin": 20,
+    "rightMargin": 20,
+    "topMargin": 20,
+    "bottomMargin": 20,
+    "pageSize": {
+      "height": 595,
+      "width": 842
+    },
+    "header": {
+      "logo": {
+        "url": "https://images.webapi.gc.middlesbroughfcservices.co.uk/fit-in/200x200/7af04870-d2d4-11ec-93d3-b732dfcf0a3b.png",
+        "width": 100,
+        "height": 40
+      },
+      "text": [
+        "Carlsbad Event 2025",
+        "AVS Daily Schedule",
+        "21st April 2025",
+        "Sausages and Beer"
+      ],
+      "style": {
+        "fontSize": 14,
+        "fontWeight": "normal",
+        "colour": "#444444",
+        "alignment": "left"
+      }
+    },
+    "footer": {
+      "text": "Carlsbad Event 2025",
+      "style": {
+        "fontSize": 8,
+        "fontWeight": "normal",
+        "colour": "#444444"
+      }
+    }
+  },
+  "styles": {
+    "groupTitle": {
+      "fontSize": 12,
+      "fontWeight": "bold",
+      "colour": "#000000"
+    },
+    "defaultRow": {
+      "fontSize": 10,
+      "fontColour": "#000000",
+      "fontWeight": "Normal",
+      "backgroundColour": "#FFFFFF"
+    }
+  },
+  "columns": [
+    {
+      "field": "time",
+      "label": "Time",
+      "width": 2000,
+      "wrap": false
+    },
+    {
+      "field": "description",
+      "label": "Description",
+      "width": 400,
+      "wrap": true
+    },
+    {
+      "field": "tags",
+      "label": "Tags",
+      "width": 200,
+      "wrap": false
+    },
+    {
+      "field": "location",
+      "label": "Location",
+      "width": 200,
+      "wrap": false
+    }
+  ],
+  "groups": [
+    {
+      "groupTitle": "Monday 1 April 2025",
+      "groupMetadata": {
+        "dayDescription": "Pre-event setup"
+      },
+      "groupContent": [
+        {
+          "rows": {
+            "time": "08:00",
+            "description": "Venue access",
+            "tags": [
+              "Logistics"
+            ],
+            "location": [
+              "Main Hall"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "10:00",
+            "description": "Stage rigging",
+            "tags": [
+              "AVS"
+            ],
+            "location": [
+              "Main Hall"
+            ]
+          },
+          "format": {}
+        }
+      ]
+    },
+    {
+      "groupTitle": "Tuesday 2 April 2025",
+      "groupMetadata": {
+        "dayDescription": "Build Day"
+      },
+      "groupContent": [
+        {
+          "rows": {
+            "time": "09:00",
+            "description": "Lighting install",
+            "tags": [
+              "Lighting"
+            ],
+            "location": [
+              "Ballroom"
+            ]
+          },
+          "format": {}
+        }
+      ]
+    },
+    {
+      "groupTitle": "Wednesday 3 April 2025",
+      "groupMetadata": {
+        "dayDescription": "Tech Rehearsals"
+      },
+      "groupContent": [
+        {
+          "rows": {
+            "time": "13:00",
+            "description": "Rehearsal with speakers",
+            "tags": [
+              "Rehearsals"
+            ],
+            "location": [
+              "Main Stage"
+            ]
+          },
+          "format": {}
+        }
+      ]
+    },
+    {
+      "groupTitle": "Thursday 4 April 2025",
+      "groupMetadata": {
+        "dayDescription": "Event Launch"
+      },
+      "groupContent": [
+        {
+          "rows": {
+            "time": "08:00",
+            "description": "Doors Open",
+            "tags": [
+              "Event live"
+            ],
+            "location": [
+              "Main Entrance"
+            ]
+          },
+          "format": {
+            "textColour": "#D50000"
+          }
+        }
+      ]
+    }
+  ]
+}
