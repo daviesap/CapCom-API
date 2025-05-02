@@ -48,3 +48,6 @@ local.settings.json
 *.log
 *.bak
 *.tmp
+
+#No need to upload generated PDFs
+*.pdf
