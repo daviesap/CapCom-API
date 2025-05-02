@@ -3,7 +3,6 @@ import { writeFile } from 'fs/promises';
 import path from 'path';
 import { Storage } from '@google-cloud/storage';
 import { generatePdfBuffer } from './generatepdf.mjs';
-// import { writeLog } from './utils/logging.mjs';
 
 const bucketName = 'generatedpdfs';
 const storage = new Storage();
@@ -22,7 +21,6 @@ export const generatePdf = async (req, res) => {
     const publicUrl = `https://storage.googleapis.com/${bucketName}/${filename}`;
     res.status(200).json({ message: '✅ PDF uploaded', url: publicUrl });
 
-    // await writeLog({...}); // Optional
   } catch (err) {
     console.error('❌ Cloud Function error:', err);
     res.status(500).send('Failed to generate PDF.');
