@@ -65,12 +65,8 @@
     }
   },
   "filters": {
-    "tags": [
-      "Haze"
-    ],
-    "location": [
-      "Sol Ballroom"
-    ]
+    "tags": [],
+    "location": []
   },
   "columns": [
     {

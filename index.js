@@ -11,19 +11,30 @@ const storage = new Storage();
 export const generatePdf = async (req, res) => {
   console.time('Script execution');
   try {
-    const { bytes, filename } = await generatePdfBuffer();
+    const jsonInput = req.body;
+    const { bytes, filename } = await generatePdfBuffer(jsonInput);
     const file = storage.bucket(bucketName).file(filename);
 
-    await file.save(bytes, {
-      contentType: 'application/pdf',
-    });
+    await file.save(bytes, { contentType: 'application/pdf' });
 
-    const publicUrl = `https://storage.googleapis.com/${bucketName}/${filename}`;
-    res.status(200).json({ message: '✅ PDF uploaded', url: publicUrl });
+    const publicUrl = `https://storage.googleapis.com/${bucketName}/${encodeURIComponent(filename)}`;
+    const timestamp = new Date().toISOString(); // ISO format, can be adjusted if needed
+
+    res.status(200).json({
+      success: true,
+      message: '✅ PDF generated and uploaded successfully',
+      url: publicUrl,
+      timestamp,
+    });
 
   } catch (err) {
     console.error('❌ Cloud Function error:', err);
-    res.status(500).send('Failed to generate PDF.');
+    res.status(500).json({
+      success: false,
+      message: `PDF generation failed: ${err.message}`,
+      url: null,
+      timestamp: new Date().toISOString()
+    });
   } finally {
     console.timeEnd('Script execution');
   }

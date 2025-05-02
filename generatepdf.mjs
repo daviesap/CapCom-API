@@ -6,8 +6,8 @@ import fetch from 'node-fetch';
 import { readFileSync } from 'node:fs';
 import { getFormattedTimestamp } from './utils/timestamp.mjs';
 import { cleanJson } from './utils/cleanJSON.mjs';
-
 import { filterJson } from './utils/filterJSON.mjs';
+import { sanitiseText } from './utils/sanitiseText.mjs';
 
 function rgbHex(hex) {
   const bigint = parseInt(hex.replace('#', ''), 16);
@@ -23,16 +23,19 @@ function resolveStyle(style, boldFont, regularFont) {
   return { fontSize, font, color, lineHeight, paddingBottom };
 }
 
-export const generatePdfBuffer = async () => {
-  const jsonPath = path.resolve('./sample.json');
- // let jsonData = JSON.parse(await readFile(jsonPath, 'utf8'));
+export const generatePdfBuffer = async (jsonInput = null) => {
+  let jsonData;
 
+  if (jsonInput) {
+    // 👆 Cloud function: Use the request body
+    jsonData = typeof jsonInput === 'string' ? cleanJson(jsonInput) : jsonInput;
+  } else {
+    // 👇 Local: Load local.json file
+    const localPath = path.resolve('./local.json');
+    const dirtyJsonString = await readFile(localPath, 'utf8');
+    jsonData = cleanJson(dirtyJsonString);
+  }
 
-  //Clean JSON data
-  const dirtyJsonString = await readFile(jsonPath, 'utf8');
-  let jsonData = cleanJson(dirtyJsonString); // returns a parsed object
-  
-  // Filter JSON data
   jsonData = filterJson(jsonData);
 
   const pageWidth = jsonData.document?.pageSize?.width || 842;
@@ -96,7 +99,7 @@ export const generatePdfBuffer = async () => {
       drawHeader();
     }
 
-    currentPage.drawText(group.groupTitle, {
+    currentPage.drawText(sanitiseText(group.groupTitle), {
       x: leftMargin,
       y,
       size: titleFontSize,
@@ -105,7 +108,7 @@ export const generatePdfBuffer = async () => {
     });
     y -= titleLineHeight;
 
-    currentPage.drawText(group.groupMetadata, {
+    currentPage.drawText(sanitiseText(group.groupMetadata), {
       x: leftMargin,
       y,
       size: metaFontSize,
@@ -124,7 +127,7 @@ export const generatePdfBuffer = async () => {
       let x = leftMargin;
       for (const col of columns) {
         if (col.showLabel) {
-          currentPage.drawText(col.label || '', {
+          currentPage.drawText(sanitiseText(col.label) || '', {
             x,
             y,
             size: labelFontSize,
@@ -148,9 +151,10 @@ export const generatePdfBuffer = async () => {
           let text = rows[col.field];
           if (Array.isArray(text)) text = text.join(', ');
           if (text === undefined || text === null) text = '';
+          text = sanitiseText(text);
       
           const maxWidth = col.width || 100;
-          const words = text.split(' ');
+          const words = sanitiseText(text).split(' ');
           const lines = [];
           let line = '';
       
@@ -180,7 +184,7 @@ export const generatePdfBuffer = async () => {
           const lines = wrappedColumns[i];
           let lineY = y;
           for (const line of lines) {
-            currentPage.drawText(line, {
+            currentPage.drawText(sanitiseText(line), {
               x,
               y: lineY,
               size: fontSize,
@@ -210,7 +214,7 @@ export const generatePdfBuffer = async () => {
       const { fontSize, font, color, lineHeight } = resolveStyle(header.style || {}, boldFont, regularFont);
       let headerY = pageHeight - topMargin;
       for (const line of header.text) {
-        page.drawText(line, {
+        page.drawText(sanitiseText(line), {
           x: leftMargin,
           y: headerY,
           size: fontSize,
@@ -256,7 +260,7 @@ export const generatePdfBuffer = async () => {
 
       const pageText = `Page ${i + 1} of ${totalPages}`;
       const textWidth = font.widthOfTextAtSize(pageText, fontSize);
-      page.drawText(pageText, {
+      page.drawText(sanitiseText(pageText), {
         x: (pageWidth - textWidth) / 2,
         y,
         size: fontSize,
@@ -266,7 +270,7 @@ export const generatePdfBuffer = async () => {
 
       const timestampText = `Document generated ${timestamp}`;
       const timestampWidth = font.widthOfTextAtSize(timestampText, fontSize);
-      page.drawText(timestampText, {
+      page.drawText(sanitiseText(timestampText), {
         x: pageWidth - rightMargin - timestampWidth,
         y,
         size: fontSize,
