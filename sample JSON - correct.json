@@ -1,0 +1,1420 @@
+{
+  "document": {
+    "user": "andrew@flair.london",
+    "appName": "GWC24 - Carlsbad",
+    "filename": "GWC24 - Carlsbad Full Schedule - Sample 2",
+    "leftMargin": 20,
+    "rightMargin": 20,
+    "topMargin": 30,
+    "bottomMargin": 20,
+    "headerPaddingBottom": 10,
+    "footerPaddingTop": 20,
+    "groupPaddingBottom": 12,
+    "bottomPageThreshold": 60,
+    "pageSize": {
+      "height": 595,
+      "width": 842
+    },
+    "header": {
+      "logo": {
+        "url": "https://storage.googleapis.com/admin-dashboard-assets/flair-logo.png",
+        "width": 36,
+        "height": 36
+      },
+      "text": [
+        "Carlsbad Event 2025",
+        "AVS Daily Schedule",
+        "21st April 2025",
+        "Sausages and Beer",
+        "Carlsbad, California",
+        "USA"
+      ],
+      "style": {
+        "fontSize": 12,
+        "fontWeight": "normal",
+        "colour": "#FF0000"
+      }
+    },
+    "footer": {
+      "text": "Carlsbad Event 2025",
+      "style": {
+        "fontSize": 8,
+        "fontWeight": "normal",
+        "colour": "#FF0000"
+      }
+    }
+  },
+  "styles": {
+    "groupTitle": {
+      "fontSize": 10,
+      "fontWeight": "bold",
+      "colour": "#000000"
+    },
+    "groupMetadata": {
+      "fontSize": 8,
+      "fontWeight": "normal",
+      "colour": "#FF0000",
+      "paddingBottom": 2
+    },
+    "labelRow": {
+      "fontSize": 8,
+      "fontColour": "#000000",
+      "fontWeight": "bold"
+    },
+    "defaultRow": {
+      "fontSize": 8,
+      "fontColour": "#000000",
+      "fontWeight": "Normal"
+    }
+  },
+  "filters":{
+  },
+  "columns": [
+    {
+      "field": "time",
+      "label": "Time",
+      "width": 100,
+      "showLabel": true
+    },
+    {
+      "field": "description",
+      "label": "Description",
+      "width": 400,
+      "showLabel": true
+    },
+    {
+      "field": "tags",
+      "label": "Tags",
+      "width": 200,
+      "showLabel": true
+    },
+    {
+      "field": "location",
+      "label": "Location",
+      "width": 200,
+      "showLabel": true
+    }
+  ],
+  "groups": [
+    {
+      "groupTitle": "Monday 1 April 2025",
+      "groupMetadata": "Pre-event setup",
+      "groupContent": [
+        {
+          "rows": {
+            "time": "08:00",
+            "description": "Venue access",
+            "tags": [
+              "Logistics"
+            ],
+            "location": [
+              "Main Hall"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "10:00",
+            "description": "Stage rigging",
+            "tags": [
+              "AVS"
+            ],
+            "location": [
+              "Main Hall"
+            ]
+          },
+          "format": {}
+        }
+      ]
+    },
+    {
+      "groupTitle": "Tuesday 2 April 2025",
+      "groupMetadata": "Build Day",
+      "groupContent": [
+        {
+          "rows": {
+            "time": "09:00",
+            "description": "Lighting install",
+            "tags": [
+              "Lighting"
+            ],
+            "location": [
+              "Ballroom"
+            ]
+          },
+          "format": {}
+        }
+      ]
+    },
+    {
+      "groupTitle": "Wednesday 3 April 2025",
+      "groupMetadata": "Tech Rehearsals",
+      "groupContent": [
+        {
+          "rows": {
+            "time": "13:00",
+            "description": "Rehearsal with speakers",
+            "tags": [
+              "Rehearsals"
+            ],
+            "location": [
+              "Main Stage"
+            ]
+          },
+          "format": {}
+        }
+      ]
+    },
+    {
+      "groupTitle": "Thursday 4 April 2025",
+      "groupMetadata": "Event Launch",
+      "groupContent": [
+        {
+          "rows": {
+            "time": "08:00",
+            "description": "Doors Open",
+            "tags": [
+              "Event live"
+            ],
+            "location": [
+              "Main Entrance"
+            ]
+          },
+          "format": {
+            "textColour": "#D50000"
+          }
+        }
+      ]
+    },
+    {
+      "groupTitle": "Saturday 5 April 2025",
+      "groupMetadata": "Keynote prep",
+      "groupContent": [
+        {
+          "rows": {
+            "time": "12:00",
+            "description": "Task 1 for Saturday 5 April 2025",
+            "tags": [
+              "Lighting"
+            ],
+            "location": [
+              "Conference Room"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "09:00",
+            "description": "Task 2 for Saturday 5 April 2025",
+            "tags": [
+              "Logistics"
+            ],
+            "location": [
+              "Conference Room"
+            ]
+          },
+          "format": {}
+        }
+      ]
+    },
+    {
+      "groupTitle": "Sunday 6 April 2025",
+      "groupMetadata": "Registration desk",
+      "groupContent": [
+        {
+          "rows": {
+            "time": "10:00",
+            "description": "Task 1 for Sunday 6 April 2025",
+            "tags": [
+              "Logistics"
+            ],
+            "location": [
+              "Ballroom"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "13:00",
+            "description": "Task 2 for Sunday 6 April 2025",
+            "tags": [
+              "Sound"
+            ],
+            "location": [
+              "Ballroom"
+            ]
+          },
+          "format": {}
+        }
+      ]
+    },
+    {
+      "groupTitle": "Monday 7 April 2025",
+      "groupMetadata": "Sponsor briefing",
+      "groupContent": [
+        {
+          "rows": {
+            "time": "14:00",
+            "description": "Task 1 for Monday 7 April 2025",
+            "tags": [
+              "Logistics"
+            ],
+            "location": [
+              "Conference Room"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "09:00",
+            "description": "Task 2 for Monday 7 April 2025",
+            "tags": [
+              "Lighting"
+            ],
+            "location": [
+              "Lobby"
+            ]
+          },
+          "format": {}
+        }
+      ]
+    },
+    {
+      "groupTitle": "Tuesday 8 April 2025",
+      "groupMetadata": "Setup continues",
+      "groupContent": [
+        {
+          "rows": {
+            "time": "08:00",
+            "description": "Task 1 for Tuesday 8 April 2025",
+            "tags": [
+              "Catering"
+            ],
+            "location": [
+              "Main Hall"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "13:00",
+            "description": "Task 2 for Tuesday 8 April 2025",
+            "tags": [
+              "Logistics"
+            ],
+            "location": [
+              "Garden"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "15:00",
+            "description": "Task 3 for Tuesday 8 April 2025",
+            "tags": [
+              "Logistics"
+            ],
+            "location": [
+              "Main Hall"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "08:00",
+            "description": "Task 4 for Tuesday 8 April 2025",
+            "tags": [
+              "Lighting"
+            ],
+            "location": [
+              "Garden"
+            ]
+          },
+          "format": {}
+        }
+      ]
+    },
+    {
+      "groupTitle": "Wednesday 9 April 2025",
+      "groupMetadata": "Keynote prep",
+      "groupContent": [
+        {
+          "rows": {
+            "time": "10:00",
+            "description": "Task 1 for Wednesday 9 April 2025",
+            "tags": [
+              "AV"
+            ],
+            "location": [
+              "Garden"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "12:00",
+            "description": "Task 2 for Wednesday 9 April 2025",
+            "tags": [
+              "Sound"
+            ],
+            "location": [
+              "Ballroom"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "09:00",
+            "description": "Task 3 for Wednesday 9 April 2025",
+            "tags": [
+              "Sound"
+            ],
+            "location": [
+              "Lobby"
+            ]
+          },
+          "format": {}
+        }
+      ]
+    },
+    {
+      "groupTitle": "Thursday 10 April 2025",
+      "groupMetadata": "Breakout session setup",
+      "groupContent": [
+        {
+          "rows": {
+            "time": "14:00",
+            "description": "Task 1 for Thursday 10 April 2025",
+            "tags": [
+              "Security"
+            ],
+            "location": [
+              "Garden"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "08:00",
+            "description": "Task 2 for Thursday 10 April 2025",
+            "tags": [
+              "Security"
+            ],
+            "location": [
+              "Conference Room"
+            ]
+          },
+          "format": {}
+        }
+      ]
+    },
+    {
+      "groupTitle": "Friday 11 April 2025",
+      "groupMetadata": "Breakout session setup",
+      "groupContent": [
+        {
+          "rows": {
+            "time": "14:00",
+            "description": "Task 1 for Friday 11 April 2025",
+            "tags": [
+              "Security"
+            ],
+            "location": [
+              "Garden"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "12:00",
+            "description": "Task 2 for Friday 11 April 2025",
+            "tags": [
+              "AV"
+            ],
+            "location": [
+              "Lobby"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "12:00",
+            "description": "Task 3 for Friday 11 April 2025",
+            "tags": [
+              "Sound"
+            ],
+            "location": [
+              "Lobby"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "11:00",
+            "description": "Task 4 for Friday 11 April 2025",
+            "tags": [
+              "Lighting"
+            ],
+            "location": [
+              "Ballroom"
+            ]
+          },
+          "format": {}
+        }
+      ]
+    },
+    {
+      "groupTitle": "Saturday 12 April 2025",
+      "groupMetadata": "Sound check",
+      "groupContent": [
+        {
+          "rows": {
+            "time": "08:00",
+            "description": "Task 1 for Saturday 12 April 2025",
+            "tags": [
+              "Catering"
+            ],
+            "location": [
+              "Conference Room"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "12:00",
+            "description": "Task 2 for Saturday 12 April 2025",
+            "tags": [
+              "Security"
+            ],
+            "location": [
+              "Ballroom"
+            ]
+          },
+          "format": {}
+        }
+      ]
+    },
+    {
+      "groupTitle": "Sunday 13 April 2025",
+      "groupMetadata": "Registration desk",
+      "groupContent": [
+        {
+          "rows": {
+            "time": "17:00",
+            "description": "Task 1 for Sunday 13 April 2025",
+            "tags": [
+              "Security"
+            ],
+            "location": [
+              "Conference Room"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "15:00",
+            "description": "Task 2 for Sunday 13 April 2025",
+            "tags": [
+              "Logistics"
+            ],
+            "location": [
+              "Main Hall"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "09:00",
+            "description": "Task 3 for Sunday 13 April 2025",
+            "tags": [
+              "AV"
+            ],
+            "location": [
+              "Main Hall"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "11:00",
+            "description": "Task 4 for Sunday 13 April 2025",
+            "tags": [
+              "Lighting"
+            ],
+            "location": [
+              "Ballroom"
+            ]
+          },
+          "format": {}
+        }
+      ]
+    },
+    {
+      "groupTitle": "Monday 14 April 2025",
+      "groupMetadata": "Keynote prep",
+      "groupContent": [
+        {
+          "rows": {
+            "time": "08:00",
+            "description": "Task 1 for Monday 14 April 2025",
+            "tags": [
+              "Sound"
+            ],
+            "location": [
+              "Lobby"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "11:00",
+            "description": "Task 2 for Monday 14 April 2025",
+            "tags": [
+              "Lighting"
+            ],
+            "location": [
+              "Ballroom"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "14:00",
+            "description": "Task 3 for Monday 14 April 2025",
+            "tags": [
+              "Security"
+            ],
+            "location": [
+              "Ballroom"
+            ]
+          },
+          "format": {}
+        }
+      ]
+    },
+    {
+      "groupTitle": "Tuesday 15 April 2025",
+      "groupMetadata": "Sound check",
+      "groupContent": [
+        {
+          "rows": {
+            "time": "16:00",
+            "description": "Task 1 for Tuesday 15 April 2025",
+            "tags": [
+              "Lighting"
+            ],
+            "location": [
+              "Ballroom"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "17:00",
+            "description": "Task 2 for Tuesday 15 April 2025",
+            "tags": [
+              "AV"
+            ],
+            "location": [
+              "Ballroom"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "11:00",
+            "description": "Task 3 for Tuesday 15 April 2025",
+            "tags": [
+              "Catering"
+            ],
+            "location": [
+              "Lobby"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "17:00",
+            "description": "Task 4 for Tuesday 15 April 2025",
+            "tags": [
+              "Catering"
+            ],
+            "location": [
+              "Conference Room"
+            ]
+          },
+          "format": {}
+        }
+      ]
+    },
+    {
+      "groupTitle": "Wednesday 16 April 2025",
+      "groupMetadata": "Sound check",
+      "groupContent": [
+        {
+          "rows": {
+            "time": "12:00",
+            "description": "Task 1 for Wednesday 16 April 2025",
+            "tags": [
+              "Security"
+            ],
+            "location": [
+              "Main Hall"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "13:00",
+            "description": "Task 2 for Wednesday 16 April 2025",
+            "tags": [
+              "Sound"
+            ],
+            "location": [
+              "Lobby"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "13:00",
+            "description": "Task 3 for Wednesday 16 April 2025",
+            "tags": [
+              "Sound"
+            ],
+            "location": [
+              "Lobby"
+            ]
+          },
+          "format": {}
+        }
+      ]
+    },
+    {
+      "groupTitle": "Thursday 17 April 2025",
+      "groupMetadata": "Sponsor briefing",
+      "groupContent": [
+        {
+          "rows": {
+            "time": "16:00",
+            "description": "Task 1 for Thursday 17 April 2025",
+            "tags": [
+              "Security"
+            ],
+            "location": [
+              "Main Hall"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "08:00",
+            "description": "Task 2 for Thursday 17 April 2025",
+            "tags": [
+              "Sound"
+            ],
+            "location": [
+              "Conference Room"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "13:00",
+            "description": "Task 3 for Thursday 17 April 2025",
+            "tags": [
+              "Sound"
+            ],
+            "location": [
+              "Garden"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "17:00",
+            "description": "Task 4 for Thursday 17 April 2025",
+            "tags": [
+              "Security"
+            ],
+            "location": [
+              "Lobby"
+            ]
+          },
+          "format": {}
+        }
+      ]
+    },
+    {
+      "groupTitle": "Friday 18 April 2025",
+      "groupMetadata": "Breakout session setup",
+      "groupContent": [
+        {
+          "rows": {
+            "time": "12:00",
+            "description": "Task 1 for Friday 18 April 2025",
+            "tags": [
+              "Lighting"
+            ],
+            "location": [
+              "Main Hall"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "08:00",
+            "description": "Task 2 for Friday 18 April 2025",
+            "tags": [
+              "AV"
+            ],
+            "location": [
+              "Main Hall"
+            ]
+          },
+          "format": {}
+        }
+      ]
+    },
+    {
+      "groupTitle": "Saturday 19 April 2025",
+      "groupMetadata": "Breakout session setup",
+      "groupContent": [
+        {
+          "rows": {
+            "time": "17:00",
+            "description": "Task 1 for Saturday 19 April 2025",
+            "tags": [
+              "Security"
+            ],
+            "location": [
+              "Conference Room"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "12:00",
+            "description": "Task 2 for Saturday 19 April 2025",
+            "tags": [
+              "Lighting"
+            ],
+            "location": [
+              "Main Hall"
+            ]
+          },
+          "format": {}
+        }
+      ]
+    },
+    {
+      "groupTitle": "Sunday 20 April 2025",
+      "groupMetadata": "Rehearsals",
+      "groupContent": [
+        {
+          "rows": {
+            "time": "13:00",
+            "description": "Task 1 for Sunday 20 April 2025",
+            "tags": [
+              "Lighting"
+            ],
+            "location": [
+              "Ballroom"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "17:00",
+            "description": "Task 2 for Sunday 20 April 2025",
+            "tags": [
+              "Catering"
+            ],
+            "location": [
+              "Lobby"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "16:00",
+            "description": "Task 3 for Sunday 20 April 2025",
+            "tags": [
+              "Security"
+            ],
+            "location": [
+              "Conference Room"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "14:00",
+            "description": "Task 4 for Sunday 20 April 2025",
+            "tags": [
+              "Lighting"
+            ],
+            "location": [
+              "Conference Room"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "10:00",
+            "description": "Task 5 for Sunday 20 April 2025",
+            "tags": [
+              "Sound"
+            ],
+            "location": [
+              "Lobby"
+            ]
+          },
+          "format": {}
+        }
+      ]
+    },
+    {
+      "groupTitle": "Monday 21 April 2025",
+      "groupMetadata": "Rehearsals",
+      "groupContent": [
+        {
+          "rows": {
+            "time": "14:00",
+            "description": "Task 1 for Monday 21 April 2025",
+            "tags": [
+              "Sound"
+            ],
+            "location": [
+              "Lobby"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "16:00",
+            "description": "Task 2 for Monday 21 April 2025",
+            "tags": [
+              "AV"
+            ],
+            "location": [
+              "Ballroom"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "10:00",
+            "description": "Task 3 for Monday 21 April 2025",
+            "tags": [
+              "Catering"
+            ],
+            "location": [
+              "Ballroom"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "17:00",
+            "description": "Task 4 for Monday 21 April 2025",
+            "tags": [
+              "AV"
+            ],
+            "location": [
+              "Lobby"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "16:00",
+            "description": "Task 5 for Monday 21 April 2025",
+            "tags": [
+              "Sound"
+            ],
+            "location": [
+              "Garden"
+            ]
+          },
+          "format": {}
+        }
+      ]
+    },
+    {
+      "groupTitle": "Tuesday 22 April 2025",
+      "groupMetadata": "Post-event",
+      "groupContent": [
+        {
+          "rows": {
+            "time": "12:00",
+            "description": "Task 1 for Tuesday 22 April 2025",
+            "tags": [
+              "Logistics"
+            ],
+            "location": [
+              "Main Hall"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "11:00",
+            "description": "Task 2 for Tuesday 22 April 2025",
+            "tags": [
+              "Logistics"
+            ],
+            "location": [
+              "Garden"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "10:00",
+            "description": "Task 3 for Tuesday 22 April 2025",
+            "tags": [
+              "Logistics"
+            ],
+            "location": [
+              "Garden"
+            ]
+          },
+          "format": {}
+        }
+      ]
+    },
+    {
+      "groupTitle": "Wednesday 23 April 2025",
+      "groupMetadata": "Setup",
+      "groupContent": [
+        {
+          "rows": {
+            "time": "13:00",
+            "description": "Task 1 for Wednesday 23 April 2025",
+            "tags": [
+              "Lighting"
+            ],
+            "location": [
+              "Lobby"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "14:00",
+            "description": "Task 2 for Wednesday 23 April 2025",
+            "tags": [
+              "Lighting"
+            ],
+            "location": [
+              "Lobby"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "12:00",
+            "description": "Task 3 for Wednesday 23 April 2025",
+            "tags": [
+              "Lighting"
+            ],
+            "location": [
+              "Lobby"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "08:00",
+            "description": "Task 4 for Wednesday 23 April 2025",
+            "tags": [
+              "Security"
+            ],
+            "location": [
+              "Ballroom"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "16:00",
+            "description": "Task 5 for Wednesday 23 April 2025",
+            "tags": [
+              "Lighting"
+            ],
+            "location": [
+              "Main Hall"
+            ]
+          },
+          "format": {}
+        }
+      ]
+    },
+    {
+      "groupTitle": "Thursday 24 April 2025",
+      "groupMetadata": "Setup",
+      "groupContent": [
+        {
+          "rows": {
+            "time": "13:00",
+            "description": "Task 1 for Thursday 24 April 2025",
+            "tags": [
+              "Sound"
+            ],
+            "location": [
+              "Garden"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "11:00",
+            "description": "Task 2 for Thursday 24 April 2025",
+            "tags": [
+              "Sound"
+            ],
+            "location": [
+              "Main Hall"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "10:00",
+            "description": "Task 3 for Thursday 24 April 2025",
+            "tags": [
+              "Lighting"
+            ],
+            "location": [
+              "Ballroom"
+            ]
+          },
+          "format": {}
+        }
+      ]
+    },
+    {
+      "groupTitle": "Friday 25 April 2025",
+      "groupMetadata": "Breakout sessions",
+      "groupContent": [
+        {
+          "rows": {
+            "time": "14:00",
+            "description": "Task 1 for Friday 25 April 2025",
+            "tags": [
+              "Security"
+            ],
+            "location": [
+              "Ballroom"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "17:00",
+            "description": "Task 2 for Friday 25 April 2025",
+            "tags": [
+              "Catering"
+            ],
+            "location": [
+              "Ballroom"
+            ]
+          },
+          "format": {}
+        }
+      ]
+    },
+    {
+      "groupTitle": "Saturday 26 April 2025",
+      "groupMetadata": "Rehearsals",
+      "groupContent": [
+        {
+          "rows": {
+            "time": "10:00",
+            "description": "Task 1 for Saturday 26 April 2025",
+            "tags": [
+              "AV"
+            ],
+            "location": [
+              "Ballroom"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "11:00",
+            "description": "Task 2 for Saturday 26 April 2025",
+            "tags": [
+              "AV"
+            ],
+            "location": [
+              "Garden"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "12:00",
+            "description": "Task 3 for Saturday 26 April 2025",
+            "tags": [
+              "Catering"
+            ],
+            "location": [
+              "Main Hall"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "10:00",
+            "description": "Task 4 for Saturday 26 April 2025",
+            "tags": [
+              "Lighting"
+            ],
+            "location": [
+              "Ballroom"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "15:00",
+            "description": "Task 5 for Saturday 26 April 2025",
+            "tags": [
+              "AV"
+            ],
+            "location": [
+              "Garden"
+            ]
+          },
+          "format": {}
+        }
+      ]
+    },
+    {
+      "groupTitle": "Sunday 27 April 2025",
+      "groupMetadata": "Post-event",
+      "groupContent": [
+        {
+          "rows": {
+            "time": "10:00",
+            "description": "Task 1 for Sunday 27 April 2025",
+            "tags": [
+              "Security"
+            ],
+            "location": [
+              "Lobby"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "17:00",
+            "description": "Task 2 for Sunday 27 April 2025",
+            "tags": [
+              "Lighting"
+            ],
+            "location": [
+              "Conference Room"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "17:00",
+            "description": "Task 3 for Sunday 27 April 2025",
+            "tags": [
+              "Sound"
+            ],
+            "location": [
+              "Ballroom"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "16:00",
+            "description": "Task 4 for Sunday 27 April 2025",
+            "tags": [
+              "Catering"
+            ],
+            "location": [
+              "Conference Room"
+            ]
+          },
+          "format": {}
+        }
+      ]
+    },
+    {
+      "groupTitle": "Monday 28 April 2025",
+      "groupMetadata": "Rehearsals",
+      "groupContent": [
+        {
+          "rows": {
+            "time": "13:00",
+            "description": "Task 1 for Monday 28 April 2025",
+            "tags": [
+              "AV"
+            ],
+            "location": [
+              "Ballroom"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "12:00",
+            "description": "Task 2 for Monday 28 April 2025",
+            "tags": [
+              "Lighting"
+            ],
+            "location": [
+              "Conference Room"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "08:00",
+            "description": "Task 3 for Monday 28 April 2025",
+            "tags": [
+              "AV"
+            ],
+            "location": [
+              "Lobby"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "15:00",
+            "description": "Task 4 for Monday 28 April 2025",
+            "tags": [
+              "Security"
+            ],
+            "location": [
+              "Conference Room"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "11:00",
+            "description": "Task 5 for Monday 28 April 2025",
+            "tags": [
+              "Catering"
+            ],
+            "location": [
+              "Lobby"
+            ]
+          },
+          "format": {}
+        }
+      ]
+    },
+    {
+      "groupTitle": "Tuesday 29 April 2025",
+      "groupMetadata": "Event Day",
+      "groupContent": [
+        {
+          "rows": {
+            "time": "15:00",
+            "description": "Task 1 for Tuesday 29 April 2025",
+            "tags": [
+              "Logistics"
+            ],
+            "location": [
+              "Main Hall"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "16:00",
+            "description": "Task 2 for Tuesday 29 April 2025",
+            "tags": [
+              "Sound"
+            ],
+            "location": [
+              "Ballroom"
+            ]
+          },
+          "format": {}
+        },
+        {
+          "rows": {
+            "time": "14:00",
+            "description": "Task 3 for Tuesday 29 April 2025",
+            "tags": [
+              "Logistics"
+            ],
+            "location": [
+              "Ballroom"
+            ]
+          },
+          "format": {}
+        }
+      ]
+    }
+  ]
+}
