@@ -56,37 +56,41 @@
       "colour": "#FF0000",
       "paddingBottom": 2
     },
+    "labelRow": {
+      "fontSize": 8,
+      "fontColour": "#000000",
+      "fontWeight": "bold"
+    },
     "defaultRow": {
       "fontSize": 8,
       "fontColour": "#000000",
-      "fontWeight": "Normal",
-      "backgroundColour": "#FFFFFF"
+      "fontWeight": "Normal"
     }
   },
   "columns": [
     {
-      "field": "time",
+      "field": "location",
       "label": "Time",
       "width": 100,
-      "wrap": false
+      "showLabel": false
     },
     {
       "field": "description",
       "label": "Description",
+      "width": 400,
+      "showLabel": true
+    },
+    {
+      "field": "time",
+      "label": "Tags",
       "width": 200,
-      "wrap": true
+      "showLabel": false
     },
     {
       "field": "tags",
-      "label": "Tags",
-      "width": 200,
-      "wrap": false
-    },
-    {
-      "field": "location",
       "label": "Location",
       "width": 200,
-      "wrap": false
+      "showLabel": false
     }
   ],
   "groups": [

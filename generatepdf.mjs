@@ -103,25 +103,86 @@ export const generatePdfBuffer = async () => {
     });
     y -= metaLineHeight + metaPaddingBottom;
 
-    for (const entry of group.groupContent) {
-      const { rows } = entry;
+    // Check if any column has showLabel = true
+    const labelRowStyle = jsonData.styles?.labelRow || {};
+    const { fontSize: labelFontSize, font: labelFont, color: labelColor, lineHeight: labelLineHeight } = resolveStyle(labelRowStyle, boldFont, regularFont);
+    
+    const shouldShowLabels = columns.some(col => col.showLabel);
+    if (shouldShowLabels) {
       checkSpaceAndAddPage(1);
       let x = leftMargin;
       for (const col of columns) {
-        let text = rows[col.field];
-        if (Array.isArray(text)) text = text.join(', ');
-        if (text === undefined || text === null) text = '';
-        currentPage.drawText(text, {
-          x,
-          y,
-          size: fontSize,
-          font,
-          color: fontColor,
-        });
+        if (col.showLabel) {
+          currentPage.drawText(col.label || '', {
+            x,
+            y,
+            size: labelFontSize,
+            font: labelFont,
+            color: labelColor,
+          });
+        }
         x += col.width || 100;
       }
-      y -= lineHeight;
+      y -= labelLineHeight;
     }
+
+    for (const entry of group.groupContent) {
+        const { rows } = entry;
+      
+        // Store how many lines each column needs
+        const lineCounts = [];
+      
+        // First pass: wrap all column text and count lines
+        const wrappedColumns = columns.map(col => {
+          let text = rows[col.field];
+          if (Array.isArray(text)) text = text.join(', ');
+          if (text === undefined || text === null) text = '';
+      
+          const maxWidth = col.width || 100;
+          const words = text.split(' ');
+          const lines = [];
+          let line = '';
+      
+          for (const word of words) {
+            const testLine = line ? `${line} ${word}` : word;
+            const testWidth = font.widthOfTextAtSize(testLine, fontSize);
+            if (testWidth > maxWidth) {
+              if (line) lines.push(line);
+              line = word;
+            } else {
+              line = testLine;
+            }
+          }
+          if (line) lines.push(line);
+      
+          lineCounts.push(lines.length);
+          return lines;
+        });
+      
+        const rowHeight = Math.max(...lineCounts) * lineHeight;
+        checkSpaceAndAddPage(rowHeight / lineHeight);  // convert height back to line count
+      
+        // Second pass: render the wrapped lines
+        let x = leftMargin;
+        for (let i = 0; i < columns.length; i++) {
+          const col = columns[i];
+          const lines = wrappedColumns[i];
+          let lineY = y;
+          for (const line of lines) {
+            currentPage.drawText(line, {
+              x,
+              y: lineY,
+              size: fontSize,
+              font,
+              color: fontColor,
+            });
+            lineY -= lineHeight;
+          }
+          x += col.width || 100;
+        }
+      
+        y -= rowHeight;
+      }
 
     y -= groupPaddingBottom;
   }
@@ -130,30 +191,6 @@ export const generatePdfBuffer = async () => {
 
   //Get friendly timestamp
   const timestamp = getFormattedTimestamp();
-  // const now = new Date();
-  // const londonDate = new Date(now.toLocaleString('en-GB', { timeZone: 'Europe/London' }));
-
-  // const weekday = londonDate.toLocaleString('en-GB', { weekday: 'long' });
-  // const day = londonDate.getDate();
-  // const month = londonDate.toLocaleString('en-GB', { month: 'long' });
-  // const year = londonDate.getFullYear();
-  // let hour = londonDate.getHours();
-  // const minutes = londonDate.getMinutes().toString().padStart(2, '0');
-  // const ampm = hour >= 12 ? 'pm' : 'am';
-
-  // hour = hour % 12 || 12;
-
-  // const timestamp = `${weekday} ${day}${getOrdinalSuffix(day)} ${month} ${year} at ${hour}.${minutes}${ampm}`;
-
-
-
-
-  // const timestamp = new Date().toLocaleString('en-GB', {
-  //   day: 'numeric',
-  //   month: 'long',
-  //   hour: 'numeric',
-  //   minute: '2-digit',
-  // }).replace(',', '');
 
   for (let i = 0; i < totalPages; i++) {
     const page = pages[i];
