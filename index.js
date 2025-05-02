@@ -3,14 +3,14 @@ import { writeFile } from 'fs/promises';
 import path from 'path';
 import { Storage } from '@google-cloud/storage';
 import { generatePdfBuffer } from './generatepdf.mjs';
-
-//import { writeLog } from './utils/logging.mjs';
+// import { writeLog } from './utils/logging.mjs';
 
 const bucketName = 'generatedpdfs';
 const storage = new Storage();
 
-// 👇 Exported for Google Cloud Function use
+// Cloud Function
 export const generatePdf = async (req, res) => {
+  console.time('Script execution');
   try {
     const { bytes, filename } = await generatePdfBuffer();
     const file = storage.bucket(bucketName).file(filename);
@@ -22,24 +22,19 @@ export const generatePdf = async (req, res) => {
     const publicUrl = `https://storage.googleapis.com/${bucketName}/${filename}`;
     res.status(200).json({ message: '✅ PDF uploaded', url: publicUrl });
 
-
-    //Log the successful upload
-    await writeLog({
-      logName: 'pdf-generator-log',
-      severity: 'INFO',
-      functionName: 'generatePdf',
-      message: 'PDF Uploaded'
-    });
-
+    // await writeLog({...}); // Optional
   } catch (err) {
     console.error('❌ Cloud Function error:', err);
     res.status(500).send('Failed to generate PDF.');
+  } finally {
+    console.timeEnd('Script execution');
   }
 };
 
-// 👇 Local CLI mode: run with `node index.js --local`
+// Local mode
 if (process.argv.includes('--local')) {
   (async () => {
+    console.time('Script execution');
     try {
       const { bytes, filename } = await generatePdfBuffer();
       const outputPath = path.resolve(`./pdfoutput/${filename}`);
@@ -47,6 +42,8 @@ if (process.argv.includes('--local')) {
       console.log(`✅ PDF saved locally: ${outputPath}`);
     } catch (err) {
       console.error('❌ Local run error:', err);
+    } finally {
+      console.timeEnd('Script execution');
     }
   })();
 }
