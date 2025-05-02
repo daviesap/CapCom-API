@@ -5,6 +5,7 @@ import path from 'path';
 import fetch from 'node-fetch';
 import { readFileSync } from 'node:fs';
 import { getFormattedTimestamp } from './utils/timestamp.mjs';
+import { filterJson } from './utils/filterJSON.mjs';
 
 function rgbHex(hex) {
   const bigint = parseInt(hex.replace('#', ''), 16);
@@ -22,7 +23,10 @@ function resolveStyle(style, boldFont, regularFont) {
 
 export const generatePdfBuffer = async () => {
   const jsonPath = path.resolve('./sample.json');
-  const jsonData = JSON.parse(await readFile(jsonPath, 'utf8'));
+  let jsonData = JSON.parse(await readFile(jsonPath, 'utf8'));
+
+  // Filter JSON data
+  jsonData = filterJson(jsonData);
 
   const pageWidth = jsonData.document?.pageSize?.width || 842;
   const pageHeight = jsonData.document?.pageSize?.height || 595;

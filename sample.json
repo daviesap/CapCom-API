@@ -67,12 +67,14 @@
       "fontWeight": "Normal"
     }
   },
+  "filters":{
+  },
   "columns": [
     {
-      "field": "location",
+      "field": "time",
       "label": "Time",
       "width": 100,
-      "showLabel": false
+      "showLabel": true
     },
     {
       "field": "description",
@@ -81,16 +83,16 @@
       "showLabel": true
     },
     {
-      "field": "time",
+      "field": "tags",
       "label": "Tags",
       "width": 200,
-      "showLabel": false
+      "showLabel": true
     },
     {
-      "field": "tags",
+      "field": "location",
       "label": "Location",
       "width": 200,
-      "showLabel": false
+      "showLabel": true
     }
   ],
   "groups": [
