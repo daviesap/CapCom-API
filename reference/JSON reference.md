@@ -1,166 +1,147 @@
-# JSON Format Specification for **flair-pdf-generator**
+PDF Generator JSON Reference
 
-This document defines the required JSON structure and field types for generating PDFs with the **flair-pdf-generator** tool. Use this as a reference when constructing or validating your payload.
+This document describes the structure of the JSON payload consumed by the PDF generator. Required keys are marked accordingly.
 
----
+⸻
 
-## Root Object
+1. Top‐Level Keys
+	•	document (object) — Required
+	•	Contains layout, metadata, and filename settings.
+	•	styles (object) — Required
+	•	Defines text and row formatting styles.
+	•	filters (object)
+	•	(Optional) Lists of tags or locations to filter out groups before rendering.
+	•	columns (array) — Required
+	•	Describes each table column.
+	•	groups (array) — Required
+	•	The content groups to render, each with its own rows.
 
-The top-level JSON object must contain the following keys:
+⸻
 
-| Key        | Type   | Description                                            |
-| ---------- | ------ | ------------------------------------------------------ |
-| `document` | Object | PDF settings (filename, page, margins, spacing).       |
-| `header`   | Object | Header content and styling (text lines, logo).         |
-| `footer`   | Object | Footer content and styling.                            |
-| `styles`   | Object | Named text styles used throughout the document.        |
-| `columns`  | Array  | Definition of table columns (order, width, labels).    |
-| `groups`   | Array  | An ordered list of content groups to render as tables. |
+2. document Object
 
----
+Key	Type	Required	Description
+user	string	❌	(Optional) Caller identifier for logging.
+appName	string	❌	(Optional) Title shown in logs or header fallback.
+filename	string	✅	Base name for the generated PDF (no .pdf suffix required).
+leftMargin,			
+rightMargin,			
+topMargin,			
+bottomMargin	number	✅	Page margins in points.
+headerPaddingBottom	number	❌	Space below header text before content begins. Default: 10.
+footerPaddingTop	number	❌	Space above footer text before content ends. Default: 10.
+groupPaddingBottom	number	❌	Vertical gap after each group. Default: 0.
+bottomPageThreshold	number	❌	(Unused) Legacy threshold for page breaks.
+pageSize (object)	object	✅	Custom page dimensions:
+			• width: page width in points.
+			• height: page height in points.
+header (object)	object	❌	Header configuration:
+			• logo (object): { url, width, height } — embeds an image.
+			• text: array of lines to draw above content.
+			• style: { fontSize, fontWeight, colour } for header text.
+footer (object)	object	❌	Footer configuration:
+			• text: single line of footer text.
+			• style: { fontSize, fontWeight, colour } for footer text.
 
-## `document` Object
 
-Defines the overall page and spacing parameters.
 
-| Field                 | Type   | Description                                               | Example          |
-| --------------------- | ------ | --------------------------------------------------------- | ---------------- |
-| `filename`            | String | Output PDF filename (should end with `.pdf`).             | `"schedule.pdf"` |
-| `pageSize.width`      | Number | Page width in points (e.g. 595 for A4 portrait).          | `842`            |
-| `pageSize.height`     | Number | Page height in points (e.g. 842 for A4 landscape).        | `595`            |
-| `leftMargin`          | Number | Left margin in points.                                    | `50`             |
-| `rightMargin`         | Number | Right margin in points.                                   | `50`             |
-| `topMargin`           | Number | Top margin in points.                                     | `50`             |
-| `bottomMargin`        | Number | Bottom margin in points.                                  | `50`             |
-| `headerPaddingBottom` | Number | Space below header before content starts, in points.      | `20`             |
-| `footerPaddingTop`    | Number | Space above footer before page end, in points.            | `20`             |
-| `groupPaddingBottom`  | Number | Extra space after each group/table, in points.            | `10`             |
-| `bottomPageThreshold` | Number | Minimum remaining space (points) before forcing new page. | `100`            |
+⸻
 
----
+3. styles Object
 
-## `header` Object
+Defines named style rules used throughout the PDF.
 
-Specifies header text and optional logo.
-
-| Field              | Type           | Description                                            | Example                           |
-| ------------------ | -------------- | ------------------------------------------------------ | --------------------------------- |
-| `text`             | Array\[String] | Array of header lines (each rendered on its own line). | `["Event 2025","Daily Schedule"]` |
-| `style.fontSize`   | Number         | Font size for header text in points.                   | `16`                              |
-| `style.fontWeight` | String         | Font weight: `"normal"` or `"bold"`.                   | `"bold"`                          |
-| `style.colour`     | String         | Hex color code for text.                               | `"#000000"`                       |
-| `logo.url`         | String         | URL or local path to a PNG logo.                       | `"/assets/logo.png"`              |
-| `logo.width`       | Number         | Logo width in points.                                  | `120`                             |
-| `logo.height`      | Number         | Logo height in points.                                 | `40`                              |
-
----
-
-## `footer` Object
-
-Single-line footer and its style.
-
-| Field              | Type   | Description                            | Example               |
-| ------------------ | ------ | -------------------------------------- | --------------------- |
-| `text`             | String | Footer text (rendered once at bottom). | `"© 2025 My Company"` |
-| `style.fontSize`   | Number | Font size in points.                   | `10`                  |
-| `style.fontWeight` | String | Font weight: `"normal"` or `"bold"`.   | `"normal"`            |
-| `style.colour`     | String | Hex color code for text.               | `"#333333"`           |
-
----
-
-## `styles` Object
-
-Reusable named styles for table text.
-
-Each style must include:
-
-| Style Key       | Type   | Fields (all required)                               |
-| --------------- | ------ | --------------------------------------------------- |
-| `defaultRow`    | Object | `fontSize`, `fontWeight`, `colour`                  |
-| `groupTitle`    | Object | `fontSize`, `fontWeight`, `colour`                  |
-| `groupMetadata` | Object | `fontSize`, `fontWeight`, `colour`, `paddingBottom` |
-| `labelRow`      | Object | `fontSize`, `fontWeight`, `colour`                  |
-
-Use this pattern for each:
-
-```jsonc
-"<styleName>": {
-  "fontSize": <Number>,
-  "fontWeight": "normal" | "bold",
-  "colour": "#RRGGBB",
-  // optional for groupMetadata:
-  "paddingBottom": <Number>
-}
-```
-
----
-
-## `columns` Array
-
-Defines table column order, width, and labels.
-
-Each entry:
-
-| Field       | Type    | Description                                       | Example  |
-| ----------- | ------- | ------------------------------------------------- | -------- |
-| `field`     | String  | Key in each row’s `rows` object.                  | `"time"` |
-| `label`     | String  | Column header text (shown if `showLabel = true`). | `"Time"` |
-| `width`     | Number  | Column width in points.                           | `100`    |
-| `showLabel` | Boolean | Whether to render the label row for this column.  | `true`   |
-
-Example:
-
-```json
-"columns": [
-  {"field":"time","label":"Time","width":100,"showLabel":true},
-  {"field":"session","label":"Session","width":300,"showLabel":true}
-]
-```
-
----
-
-## `groups` Array
-
-An ordered list of content groups (renders as separate tables).
-
-Each group object:
-
-| Field           | Type           | Description                                          | Example              |
-| --------------- | -------------- | ---------------------------------------------------- | -------------------- |
-| `groupTitle`    | String         | Title text rendered above the table.                 | `"Morning Sessions"` |
-| `groupMetadata` | String         | Subheading or note (rendered below title).           | `"Main Hall"`        |
-| `groupContent`  | Array\[Object] | List of rows, each with a `rows` object (see below). | …                    |
-
-### `groupContent` entries
-
-Each entry in `groupContent` must be an object with a `rows` key. The `rows` object maps each `columns.field` to a cell value (string):
-
-```json
-{
-  "rows": {
-    "time": "09:00 – 10:00",
-    "session": "Welcome Remarks",
-    "speaker": "Dr. Jane Smith"
+"styles": {
+  "groupTitle": { ... },
+  "groupMetadata": { ... },
+  "labelRow": { ... },
+  "row": {
+    "default": { ... },
+    "highlight": { ... },
+    "lowlight": { ... }
   }
 }
-```
 
-* **Order** of `groupContent` defines row order.
-* Every key in `rows` **must** match one of your defined `columns.field` values.
+	•	groupTitle — Style for group titles.
+	•	groupMetadata — Style for the metadata line under each title.
+	•	labelRow — Style for the header row of each table.
+	•	row — An object whose keys correspond to row formats:
+	•	default — Used when format is omitted.
+	•	Other keys (e.g. highlight, lowlight) may add backgroundColour.
 
----
+Each style object supports:
+	•	fontSize (number)
+	•	fontWeight ("normal" or "bold")
+	•	colour or fontColour (hex string)
+	•	backgroundColour (hex string) — for rows only
+	•	paddingBottom (number)
 
-## Full Example Structure
+⸻
 
-```json
-{
-  "document": { … },
-  "header":   { … },
-  "footer":   { … },
-  "styles":   { … },
-  "columns":  [ … ],
-  "groups":   [ … ]
-}
-```
+4. filters Object
 
-Ensure your JSON payload strictly follows the types and keys specified above to avoid runtime validation errors.
+"filters": { "tags": [], "location": [] }
+
+	•	tags, location — Lists of values; any group entries matching these are omitted. If unused, set to empty arrays.
+
+⸻
+
+5. columns Array
+
+Each column definition controls layout and labeling:
+
+"columns": [
+  {
+    "field": "time",       // key in each row object
+    "label": "Time",       // header text
+    "width": 80,            // column width in points
+    "showLabel": true       // whether to draw the label row
+  },
+  ...
+]
+
+	•	field (string, Required) — Property name in rows objects.
+	•	label (string, Required if showLabel) — Text for the column header.
+	•	width (number) — Column width in points. Defaults to 100.
+	•	showLabel (boolean) — Draw this column’s header label row.
+
+⸻
+
+6. groups Array
+
+Each group represents a section of the schedule:
+
+"groups": [
+  {
+    "groupTitle": "Sunday 30 March 2025",   // Section header
+    "groupMetadata": "PMs fly California", // Subheader text
+    "groupContent": [                        // Array of row entries
+      {
+        "rows": {                           // Actual cell data
+          "date": "Sun 30 March",
+          "time": "tbc",
+          "description": "...",
+          "tags": ["Logistics"],
+          "location": []
+        },
+        "format": "highlight"              // Matches a key in styles.row
+      },
+      ...
+    ]
+  },
+  ...
+]
+
+	•	groupTitle (string, Required) — Printed in bold at group start.
+	•	groupMetadata (string, Required) — Printed beneath the title.
+	•	groupContent (array, Required) — Entries to render as rows.
+	•	Each entry must have:
+	•	rows (object, Required) — Maps each column’s field to a value (string or array).
+	•	format (string) — Optional; picks a style in styles.row. Defaults to default.
+
+⸻
+
+Validation notes:
+	•	The generator expects all required keys to exist. Missing document.filename, document.pageSize, styles.row.default, columns, or groups will cause errors.
+	•	Optional keys (e.g. document.user, filters, footer) have safe defaults.
+	•	It is recommended to always supply filename, margin settings, at least one column, and one group.

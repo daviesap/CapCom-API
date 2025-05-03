@@ -50,4 +50,5 @@ local.settings.json
 *.tmp
 
 #No need to upload generated PDFs
-*.pdf
+/pdfoutput
+

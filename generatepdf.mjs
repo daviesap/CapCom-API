@@ -9,6 +9,12 @@ import { cleanJson } from './utils/cleanJSON.mjs';
 import { filterJson } from './utils/filterJSON.mjs';
 import { sanitiseText } from './utils/sanitiseText.mjs';
 
+// === Configuration ===
+// Default column width if not specified in JSON (points)
+const DEFAULT_COLUMN_WIDTH = 100;
+// Right-side padding inside each cell to prevent text touching the cell edge (points)
+const CELL_PADDING = 5;
+
 function rgbHex(hex) {
   const bigint = parseInt(hex.replace('#', ''), 16);
   return rgb(
@@ -84,10 +90,9 @@ export const generatePdfBuffer = async (jsonInput = null) => {
 
   const footerYLimit = bottomMargin + footerPaddingTop;
 
-  const checkBreak = (needed) => {
-    const defaultLH = resolveStyle(defaultStyle, boldFont, regularFont).lineHeight;
-    if (y - needed < footerYLimit) {
-      console.log(`→ break at y=${y.toFixed(1)}, need=${needed}`);
+  const checkBreak = (neededHeight) => {
+    if (y - neededHeight < footerYLimit) {
+      //console.log(`→ break at y=${y.toFixed(1)}, need=${neededHeight}`);
       currentPage = pdfDoc.addPage([pageWidth, pageHeight]);
       pages.push(currentPage);
       y = pageHeight - topMargin;
@@ -117,7 +122,7 @@ export const generatePdfBuffer = async (jsonInput = null) => {
         if (col.showLabel) {
           currentPage.drawText(sanitiseText(col.label), { x, y, size: lFS, font: lF, color: lC });
         }
-        x += col.width || 100;
+        x += col.width || DEFAULT_COLUMN_WIDTH;
       }
       y -= lLH;
     }
@@ -132,7 +137,7 @@ export const generatePdfBuffer = async (jsonInput = null) => {
         if (Array.isArray(txt)) txt = txt.join(', ');
         if (txt == null) txt = '';
         txt = sanitiseText(txt);
-        const maxW = col.width || 100;
+        const maxW = (col.width || DEFAULT_COLUMN_WIDTH) - CELL_PADDING; // right-side padding only
         const words = txt.split(' ');
         const lines = [];
         let ln = '';
@@ -152,20 +157,20 @@ export const generatePdfBuffer = async (jsonInput = null) => {
 
       if (rowStyle.backgroundColour) {
         const bg = rgbHex(rowStyle.backgroundColour);
-        const totalW = columns.reduce((sum, c) => sum + (c.width || 100), 0);
-        // move rectangle down by 2 units for better alignment
+        const totalW = columns.reduce((sum, c) => sum + (c.width || DEFAULT_COLUMN_WIDTH), 0);
         const rectY = y - rowH - 3;
         currentPage.drawRectangle({ x: leftMargin, y: rectY, width: totalW, height: rowH, color: bg });
       }
 
-      let x = leftMargin;
+      let xStart = leftMargin;
       for (const lines of wrapped) {
         let ly = y;
         for (const txt of lines) {
-          currentPage.drawText(txt, { x, y: ly, size: rFS, font: rF, color: rC });
+          // left-side padding removed: draw at xStart exactly
+          currentPage.drawText(txt, { x: xStart, y: ly, size: rFS, font: rF, color: rC });
           ly -= rLH;
         }
-        x += columns[wrapped.indexOf(lines)].width || 100;
+        xStart += columns[wrapped.indexOf(lines)].width || DEFAULT_COLUMN_WIDTH;
       }
       y -= rowH;
     }
@@ -177,7 +182,6 @@ export const generatePdfBuffer = async (jsonInput = null) => {
   const ts = getFormattedTimestamp();
   for (let i = 0; i < total; i++) {
     const pg = pages[i];
-
     if (header?.text) {
       const { lineHeight: hLH, fontSize: hFS, font: hF, color: hC } = resolveStyle(header.style || {}, boldFont, regularFont);
       let hy = pageHeight - topMargin;
@@ -187,9 +191,13 @@ export const generatePdfBuffer = async (jsonInput = null) => {
       }
     }
     if (header?.logo && embeddedLogo) {
-      pg.drawImage(embeddedLogo, { x: pageWidth - (header.logo.width||embeddedLogo.width) - rightMargin, y: pageHeight - (header.logo.height||embeddedLogo.height) - topMargin, width: header.logo.width||embeddedLogo.width, height: header.logo.height||embeddedLogo.height });
+      pg.drawImage(embeddedLogo, {
+        x: pageWidth - (header.logo.width || embeddedLogo.width) - rightMargin,
+        y: pageHeight - (header.logo.height || embeddedLogo.height) - topMargin,
+        width: header.logo.width || embeddedLogo.width,
+        height: header.logo.height || embeddedLogo.height,
+      });
     }
-
     if (footer?.text) {
       const { fontSize: fFS, font: fF, color: fC } = resolveStyle(footer.style || {}, regularFont, regularFont);
       const fy = bottomMargin;
@@ -203,7 +211,10 @@ export const generatePdfBuffer = async (jsonInput = null) => {
     }
   }
 
-  return { bytes: await pdfDoc.save(), filename: jsonData.document.filename.endsWith('.pdf') ? jsonData.document.filename : `${jsonData.document.filename}.pdf` };
+  return {
+    bytes: await pdfDoc.save(),
+    filename: jsonData.document.filename.endsWith('.pdf') ? jsonData.document.filename : `${jsonData.document.filename}.pdf`,
+  };
 };
 
 export function getOutputFilename() {
