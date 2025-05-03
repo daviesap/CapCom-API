@@ -2,10 +2,12 @@
 import { readFile, writeFile } from 'fs/promises';
 import path from 'path';
 import { Storage } from '@google-cloud/storage';
+import { SecretManagerServiceClient } from '@google-cloud/secret-manager';
 import { generatePdfBuffer } from './generatepdf.mjs';
 
 const bucketName = 'generatedpdfs';
 const storage = new Storage();
+const secretClient = new SecretManagerServiceClient();
 
 // Cloud Function
 export const generatePdf = async (req, res) => {
@@ -13,7 +15,45 @@ export const generatePdf = async (req, res) => {
   const startTime = Date.now();
 
   // Log incoming JSON
-  console.log('📦 Incoming payload:', JSON.stringify(req.body));
+  //console.log('📦 Incoming payload:', JSON.stringify(req.body));
+
+  // Retrieve expected API key from Secret Manager
+  let expectedKey;
+  try {
+    const [version] = await secretClient.accessSecretVersion({
+      name: process.env.API_KEY_SECRET_NAME // e.g. "projects/PROJECT_ID/secrets/API_KEY/versions/latest"
+    });
+    expectedKey = version.payload.data.toString('utf8').trim();
+  } catch (err) {
+    console.error('❌ Failed to access API key secret:', err);
+    return res.status(500).json({
+      success: false,
+      message: 'Internal error retrieving API key',
+      url: null,
+      timestamp: new Date().toISOString(),
+      executionTimeSeconds: 0,
+    });
+  }
+
+  // Validate incoming api_key
+  if (!req.body.api_key) {
+    return res.status(400).json({
+      success: false,
+      message: 'Missing API Key',
+      url: null,
+      timestamp: new Date().toISOString(),
+      executionTimeSeconds: 0,
+    });
+  }
+  if (req.body.api_key !== expectedKey) {
+    return res.status(403).json({
+      success: false,
+      message: 'Incorrect API key',
+      url: null,
+      timestamp: new Date().toISOString(),
+      executionTimeSeconds: 0,
+    });
+  }
 
   console.time('Script execution');
   try {
