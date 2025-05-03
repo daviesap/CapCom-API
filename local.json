@@ -40,27 +40,24 @@
       "colour": "#555555"
     }
   },
-  "styles": {
-    "defaultRow": {
-      "fontSize": 10,
-      "fontWeight": "normal",
-      "colour": "#000000"
-    },
-    "groupTitle": {
-      "fontSize": 12,
-      "fontWeight": "bold",
-      "colour": "#0D47A1"
-    },
-    "groupMetadata": {
-      "fontSize": 10,
-      "fontWeight": "normal",
-      "colour": "#333333",
-      "paddingBottom": 8
-    },
-    "labelRow": {
-      "fontSize": 11,
-      "fontWeight": "bold",
-      "colour": "#0D47A1"
+"styles": {
+    "row": {
+      "default": {
+        "fontSize": 10,
+        "fontWeight": "normal",
+        "colour": "#000000"
+      },
+      "highlight": {
+        "fontSize": 10,
+        "fontWeight": "bold",
+        "colour": "#000000",
+        "backgroundColour": "#FFFF00"
+      },
+      "lowlight": {
+        "fontSize": 10,
+        "fontWeight": "normal",
+        "colour": "#888888"
+      }
     }
   },
   "columns": [

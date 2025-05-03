@@ -55,7 +55,7 @@ export const generatePdfBuffer = async (jsonInput = null) => {
 
   const header = jsonData.document?.header;
   const footer = jsonData.document?.footer;
-  const defaultStyle = jsonData.styles?.defaultRow || {};
+  const defaultStyle = jsonData.styles?.row?.default || {};
   const groupTitleStyle = jsonData.styles?.groupTitle || {};
   const groupMetadataStyle = jsonData.styles?.groupMetadata || {};
   const { fontSize, font, color: fontColor, lineHeight } = resolveStyle(defaultStyle, boldFont, regularFont);
