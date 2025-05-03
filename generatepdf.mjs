@@ -11,12 +11,16 @@ import { sanitiseText } from './utils/sanitiseText.mjs';
 
 function rgbHex(hex) {
   const bigint = parseInt(hex.replace('#', ''), 16);
-  return rgb(((bigint >> 16) & 255) / 255, ((bigint >> 8) & 255) / 255, (bigint & 255) / 255);
+  return rgb(
+    ((bigint >> 16) & 255) / 255,
+    ((bigint >> 8) & 255) / 255,
+    (bigint & 255) / 255
+  );
 }
 
 function resolveStyle(style, boldFont, regularFont) {
   const fontSize = style.fontSize || 10;
-  const font = (style.fontWeight || '').toLowerCase() === 'bold' ? boldFont : regularFont;
+  const font = style.fontWeight?.toLowerCase() === 'bold' ? boldFont : regularFont;
   const color = rgbHex(style.colour || style.fontColour || '#000000');
   const lineHeight = fontSize + 2;
   const paddingBottom = style.paddingBottom || 0;
@@ -25,41 +29,44 @@ function resolveStyle(style, boldFont, regularFont) {
 
 export const generatePdfBuffer = async (jsonInput = null) => {
   let jsonData;
-
   if (jsonInput) {
-    // 👆 Cloud function: Use the request body
     jsonData = typeof jsonInput === 'string' ? cleanJson(jsonInput) : jsonInput;
   } else {
-    // 👇 Local: Load local.json file
-    const localPath = path.resolve('./local.json');
-    const dirtyJsonString = await readFile(localPath, 'utf8');
-    jsonData = cleanJson(dirtyJsonString);
+    const localJson = await readFile(path.resolve('./local.json'), 'utf8');
+    jsonData = cleanJson(localJson);
   }
-
   jsonData = filterJson(jsonData);
 
-  const pageWidth = jsonData.document?.pageSize?.width || 842;
-  const pageHeight = jsonData.document?.pageSize?.height || 595;
-  const leftMargin = jsonData.document?.leftMargin || 50;
-  const rightMargin = jsonData.document?.rightMargin || 50;
-  const topMargin = jsonData.document?.topMargin || 50;
-  const bottomMargin = jsonData.document?.bottomMargin || 50;
-  const headerPaddingBottom = jsonData.document?.headerPaddingBottom || 10;
-  const footerPaddingTop = jsonData.document?.footerPaddingTop || 10;
-  const groupPaddingBottom = jsonData.document?.groupPaddingBottom || 0;
-  const bottomPageThreshold = jsonData.document?.bottomPageThreshold || 0;
+  const { width: pageWidth = 842, height: pageHeight = 595 } = jsonData.document.pageSize || {};
+  const leftMargin = jsonData.document.leftMargin || 50;
+  const rightMargin = jsonData.document.rightMargin || 50;
+  const topMargin = jsonData.document.topMargin || 50;
+  const bottomMargin = jsonData.document.bottomMargin || 50;
+  const headerPaddingBottom = jsonData.document.headerPaddingBottom || 10;
+  const footerPaddingTop = jsonData.document.footerPaddingTop || 10;
+  const groupPaddingBottom = jsonData.document.groupPaddingBottom || 0;
 
   const pdfDoc = await PDFDocument.create();
   const regularFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
   const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
-  const header = jsonData.document?.header;
-  const footer = jsonData.document?.footer;
-  const defaultStyle = jsonData.styles?.row?.default || {};
-  const groupTitleStyle = jsonData.styles?.groupTitle || {};
-  const groupMetadataStyle = jsonData.styles?.groupMetadata || {};
-  const { fontSize, font, color: fontColor, lineHeight } = resolveStyle(defaultStyle, boldFont, regularFont);
+  const header = jsonData.document.header;
+  const footer = jsonData.document.footer;
+  let embeddedLogo = null;
+  if (header?.logo?.url) {
+    try {
+      const res = await fetch(header.logo.url);
+      const buf = await res.arrayBuffer();
+      embeddedLogo = await pdfDoc.embedPng(buf);
+    } catch (e) {
+      console.warn('Logo load failed:', e.message);
+    }
+  }
 
+  const defaultStyle = jsonData.styles?.row?.default || {};
+  const labelRowStyle = jsonData.styles?.labelRow || {};
+  const groupTitleStyle = jsonData.styles?.groupTitle || {};
+  const groupMetaStyle = jsonData.styles?.groupMetadata || {};
   const columns = jsonData.columns || [];
 
   const pages = [];
@@ -67,232 +74,141 @@ export const generatePdfBuffer = async (jsonInput = null) => {
   pages.push(currentPage);
   let y = pageHeight - topMargin;
 
-  const drawHeader = () => {
+  const reserveHeader = () => {
     if (header?.text?.length) {
-      const { lineHeight: headerLineHeight } = resolveStyle(header.style || {}, boldFont, regularFont);
-      y -= (header.text.length * headerLineHeight) + headerPaddingBottom;
+      const { lineHeight } = resolveStyle(header.style || {}, boldFont, regularFont);
+      y -= header.text.length * lineHeight + headerPaddingBottom;
     }
   };
-
-  drawHeader();
+  reserveHeader();
 
   const footerYLimit = bottomMargin + footerPaddingTop;
 
-  const checkSpaceAndAddPage = (linesNeeded = 1) => {
-    if (y - linesNeeded * lineHeight < footerYLimit) {
+  const checkBreak = (needed) => {
+    const defaultLH = resolveStyle(defaultStyle, boldFont, regularFont).lineHeight;
+    if (y - needed < footerYLimit) {
+      console.log(`→ break at y=${y.toFixed(1)}, need=${needed}`);
       currentPage = pdfDoc.addPage([pageWidth, pageHeight]);
       pages.push(currentPage);
       y = pageHeight - topMargin;
-      drawHeader();
+      reserveHeader();
     }
   };
 
   for (const group of jsonData.groups) {
-    const { fontSize: titleFontSize, font: titleFont, color: titleColor, lineHeight: titleLineHeight } = resolveStyle(groupTitleStyle, boldFont, regularFont);
-    const { fontSize: metaFontSize, font: metaFont, color: metaColor, lineHeight: metaLineHeight, paddingBottom: metaPaddingBottom } = resolveStyle(groupMetadataStyle, boldFont, regularFont);
+    const { lineHeight: tLH, fontSize: tFS, font: tF, color: tC } = resolveStyle(groupTitleStyle, boldFont, regularFont);
+    const { lineHeight: mLH, fontSize: mFS, font: mF, color: mC, paddingBottom: mPB } = resolveStyle(groupMetaStyle, boldFont, regularFont);
+    const labelInfo = resolveStyle(labelRowStyle, boldFont, regularFont);
+    const hasLabels = columns.some(c => c.showLabel);
 
-    const linesNeededForGroupIntro = titleLineHeight + metaLineHeight + metaPaddingBottom;
-    if (y - linesNeededForGroupIntro < bottomPageThreshold) {
-      currentPage = pdfDoc.addPage([pageWidth, pageHeight]);
-      pages.push(currentPage);
-      y = pageHeight - topMargin;
-      drawHeader();
-    }
+    const introHeight = tLH + mLH + mPB + (hasLabels ? labelInfo.lineHeight : 0);
+    checkBreak(introHeight);
 
-    currentPage.drawText(sanitiseText(group.groupTitle), {
-      x: leftMargin,
-      y,
-      size: titleFontSize,
-      font: titleFont,
-      color: titleColor,
-    });
-    y -= titleLineHeight;
+    currentPage.drawText(sanitiseText(group.groupTitle), { x: leftMargin, y, size: tFS, font: tF, color: tC });
+    y -= tLH;
+    currentPage.drawText(sanitiseText(group.groupMetadata), { x: leftMargin, y, size: mFS, font: mF, color: mC });
+    y -= mLH + mPB;
 
-    currentPage.drawText(sanitiseText(group.groupMetadata), {
-      x: leftMargin,
-      y,
-      size: metaFontSize,
-      font: metaFont,
-      color: metaColor,
-    });
-    y -= metaLineHeight + metaPaddingBottom;
-
-    // Check if any column has showLabel = true
-    const labelRowStyle = jsonData.styles?.labelRow || {};
-    const { fontSize: labelFontSize, font: labelFont, color: labelColor, lineHeight: labelLineHeight } = resolveStyle(labelRowStyle, boldFont, regularFont);
-    
-    const shouldShowLabels = columns.some(col => col.showLabel);
-    if (shouldShowLabels) {
-      checkSpaceAndAddPage(1);
+    if (hasLabels) {
       let x = leftMargin;
+      const { fontSize: lFS, font: lF, color: lC, lineHeight: lLH } = labelInfo;
+      checkBreak(lLH);
       for (const col of columns) {
         if (col.showLabel) {
-          currentPage.drawText(sanitiseText(col.label) || '', {
-            x,
-            y,
-            size: labelFontSize,
-            font: labelFont,
-            color: labelColor,
-          });
+          currentPage.drawText(sanitiseText(col.label), { x, y, size: lFS, font: lF, color: lC });
         }
         x += col.width || 100;
       }
-      y -= labelLineHeight;
+      y -= lLH;
     }
 
     for (const entry of group.groupContent) {
-        const { rows } = entry;
-      
-        // Store how many lines each column needs
-        const lineCounts = [];
-      
-        // First pass: wrap all column text and count lines
-        const wrappedColumns = columns.map(col => {
-          let text = rows[col.field];
-          if (Array.isArray(text)) text = text.join(', ');
-          if (text === undefined || text === null) text = '';
-          text = sanitiseText(text);
-      
-          const maxWidth = col.width || 100;
-          const words = sanitiseText(text).split(' ');
-          const lines = [];
-          let line = '';
-      
-          for (const word of words) {
-            const testLine = line ? `${line} ${word}` : word;
-            const testWidth = font.widthOfTextAtSize(testLine, fontSize);
-            if (testWidth > maxWidth) {
-              if (line) lines.push(line);
-              line = word;
-            } else {
-              line = testLine;
-            }
-          }
-          if (line) lines.push(line);
-      
-          lineCounts.push(lines.length);
-          return lines;
-        });
-      
-        const rowHeight = Math.max(...lineCounts) * lineHeight;
-        checkSpaceAndAddPage(rowHeight / lineHeight);  // convert height back to line count
-      
-        // Second pass: render the wrapped lines
-        let x = leftMargin;
-        for (let i = 0; i < columns.length; i++) {
-          const col = columns[i];
-          const lines = wrappedColumns[i];
-          let lineY = y;
-          for (const line of lines) {
-            currentPage.drawText(sanitiseText(line), {
-              x,
-              y: lineY,
-              size: fontSize,
-              font,
-              color: fontColor,
-            });
-            lineY -= lineHeight;
-          }
-          x += col.width || 100;
+      const styleKey = entry.format || 'default';
+      const rowStyle = jsonData.styles?.row?.[styleKey] || defaultStyle;
+      const { lineHeight: rLH, fontSize: rFS, font: rF, color: rC } = resolveStyle(rowStyle, boldFont, regularFont);
+
+      const wrapped = columns.map(col => {
+        let txt = entry.rows[col.field];
+        if (Array.isArray(txt)) txt = txt.join(', ');
+        if (txt == null) txt = '';
+        txt = sanitiseText(txt);
+        const maxW = col.width || 100;
+        const words = txt.split(' ');
+        const lines = [];
+        let ln = '';
+        for (const w of words) {
+          const test = ln ? `${ln} ${w}` : w;
+          if (rF.widthOfTextAtSize(test, rFS) > maxW) {
+            if (ln) lines.push(ln);
+            ln = w;
+          } else ln = test;
         }
-      
-        y -= rowHeight;
+        if (ln) lines.push(ln);
+        return lines;
+      });
+
+      const rowH = Math.max(...wrapped.map(w => w.length)) * rLH;
+      checkBreak(rowH);
+
+      if (rowStyle.backgroundColour) {
+        const bg = rgbHex(rowStyle.backgroundColour);
+        const totalW = columns.reduce((sum, c) => sum + (c.width || 100), 0);
+        // move rectangle down by 2 units for better alignment
+        const rectY = y - rowH - 3;
+        currentPage.drawRectangle({ x: leftMargin, y: rectY, width: totalW, height: rowH, color: bg });
       }
+
+      let x = leftMargin;
+      for (const lines of wrapped) {
+        let ly = y;
+        for (const txt of lines) {
+          currentPage.drawText(txt, { x, y: ly, size: rFS, font: rF, color: rC });
+          ly -= rLH;
+        }
+        x += columns[wrapped.indexOf(lines)].width || 100;
+      }
+      y -= rowH;
+    }
 
     y -= groupPaddingBottom;
   }
 
-  const totalPages = pdfDoc.getPageCount();
+  const total = pdfDoc.getPageCount();
+  const ts = getFormattedTimestamp();
+  for (let i = 0; i < total; i++) {
+    const pg = pages[i];
 
-  //Get friendly timestamp
-  const timestamp = getFormattedTimestamp();
-
-  for (let i = 0; i < totalPages; i++) {
-    const page = pages[i];
-
-    if (header?.text?.length) {
-      const { fontSize, font, color, lineHeight } = resolveStyle(header.style || {}, boldFont, regularFont);
-      let headerY = pageHeight - topMargin;
-      for (const line of header.text) {
-        page.drawText(sanitiseText(line), {
-          x: leftMargin,
-          y: headerY,
-          size: fontSize,
-          font,
-          color,
-        });
-        headerY -= lineHeight;
+    if (header?.text) {
+      const { lineHeight: hLH, fontSize: hFS, font: hF, color: hC } = resolveStyle(header.style || {}, boldFont, regularFont);
+      let hy = pageHeight - topMargin;
+      for (const ln of header.text) {
+        pg.drawText(sanitiseText(ln), { x: leftMargin, y: hy, size: hFS, font: hF, color: hC });
+        hy -= hLH;
       }
     }
-
-    if (header?.logo?.url) {
-      try {
-        const logoRes = await fetch(header.logo.url);
-        const logoBytes = await logoRes.arrayBuffer();
-        const logoImage = await pdfDoc.embedPng(logoBytes);
-        const logoWidth = header.logo.width || 100;
-        const logoHeight = header.logo.height || 40;
-        const logoX = pageWidth - logoWidth - rightMargin;
-        const logoY = pageHeight - logoHeight - topMargin;
-
-        page.drawImage(logoImage, {
-          x: logoX,
-          y: logoY,
-          width: logoWidth,
-          height: logoHeight,
-        });
-      } catch (err) {
-        console.warn('⚠️ Could not load logo:', err.message);
-      }
+    if (header?.logo && embeddedLogo) {
+      pg.drawImage(embeddedLogo, { x: pageWidth - (header.logo.width||embeddedLogo.width) - rightMargin, y: pageHeight - (header.logo.height||embeddedLogo.height) - topMargin, width: header.logo.width||embeddedLogo.width, height: header.logo.height||embeddedLogo.height });
     }
 
     if (footer?.text) {
-      const { fontSize, font, color } = resolveStyle(footer.style || {}, boldFont, regularFont);
-      const y = bottomMargin;
-
-      page.drawText(footer.text, {
-        x: leftMargin,
-        y,
-        size: fontSize,
-        font,
-        color,
-      });
-
-      const pageText = `Page ${i + 1} of ${totalPages}`;
-      const textWidth = font.widthOfTextAtSize(pageText, fontSize);
-      page.drawText(sanitiseText(pageText), {
-        x: (pageWidth - textWidth) / 2,
-        y,
-        size: fontSize,
-        font,
-        color,
-      });
-
-      const timestampText = `Document generated ${timestamp}`;
-      const timestampWidth = font.widthOfTextAtSize(timestampText, fontSize);
-      page.drawText(sanitiseText(timestampText), {
-        x: pageWidth - rightMargin - timestampWidth,
-        y,
-        size: fontSize,
-        font,
-        color,
-      });
+      const { fontSize: fFS, font: fF, color: fC } = resolveStyle(footer.style || {}, regularFont, regularFont);
+      const fy = bottomMargin;
+      pg.drawText(footer.text, { x: leftMargin, y: fy, size: fFS, font: fF, color: fC });
+      const pgText = `Page ${i+1} of ${total}`;
+      const w = fF.widthOfTextAtSize(pgText, fFS);
+      pg.drawText(pgText, { x: (pageWidth - w)/2, y: fy, size: fFS, font: fF, color: fC });
+      const tText = `Document generated ${ts}`;
+      const tw = fF.widthOfTextAtSize(tText, fFS);
+      pg.drawText(tText, { x: pageWidth - rightMargin - tw, y: fy, size: fFS, font: fF, color: fC });
     }
   }
 
-  return {
-    bytes: await pdfDoc.save(),
-    filename: jsonData.document?.filename?.endsWith('.pdf')
-      ? jsonData.document.filename
-      : `${jsonData.document?.filename || 'output'}.pdf`
-  };
+  return { bytes: await pdfDoc.save(), filename: jsonData.document.filename.endsWith('.pdf') ? jsonData.document.filename : `${jsonData.document.filename}.pdf` };
 };
 
 export function getOutputFilename() {
-  const jsonPath = path.resolve('./sample.json');
-  const rawData = readFileSync(jsonPath, 'utf8');
-  const jsonData = JSON.parse(rawData);
-  return jsonData.document?.filename?.endsWith('.pdf')
-    ? jsonData.document.filename
-    : `${jsonData.document?.filename || 'output'}.pdf`;
+  const p = path.resolve('./sample.json');
+  const r = readFileSync(p, 'utf8');
+  const d = JSON.parse(r);
+  return d.document.filename.endsWith('.pdf') ? d.document.filename : `${d.document.filename}.pdf`;
 }
