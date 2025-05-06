@@ -28,7 +28,7 @@
       ],
       "style": {
         "fontSize": 12,
-        "fontWeight": "normal",
+        "fontStyle": "bolditalic",
         "colour": "#FF0000"
       }
     },
@@ -36,45 +36,45 @@
       "text": "Carlsbad Event 2025",
       "style": {
         "fontSize": 8,
-        "fontWeight": "normal",
+        "fontStyle": "normal",
         "colour": "#FF0000"
       }
     }
   },
   "styles": {
-    "groupTitle": {
+    "title": {
       "fontSize": 12,
-      "fontWeight": "bold",
+      "fontStyle": "bold",
       "colour": "#000000"
     },
     "row": {
       "default": {
         "fontSize": 10,
-        "fontWeight": "normal",
+        "fontStyle": "italic",
         "colour": "#000000"
       },
       "highlight": {
         "fontSize": 10,
-        "fontWeight": "bold",
+        "fontStyle": "italic",
         "colour": "#000000",
         "backgroundColour": "#FFFF00"
       },
       "lowlight": {
         "fontSize": 10,
-        "fontWeight": "normal",
+        "fontStyle": "normal",
         "colour": "#888888"
       }
     },
-    "groupMetadata": {
+    "metadata": {
       "fontSize": 11,
-      "fontWeight": "normal",
+      "fontStyle": "normal",
       "colour": "#FF0000",
       "paddingBottom": 12
     },
     "labelRow": {
       "fontSize": 11,
       "fontColour": "#000000",
-      "fontWeight": "bold"
+      "fontStyle": "bold"
     }
   },
   "filters": {
@@ -109,11 +109,11 @@
   ],
   "groups": [
     {
-      "groupTitle": "Sunday 30 March 2025",
-      "groupMetadata": "PMs fly California",
-      "groupContent": [
+      "title": "Sunday 30 March 2025",
+      "metadata": "PMs fly California",
+      "entries": [
         {
-          "rows": {
+          "fields": {
             "date": "Sun 30 March",
             "time": "tbc",
             "description": "Andrew Davies and LS fly California",
@@ -122,10 +122,10 @@
             ],
             "location": []
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sun 30 March",
             "time": "16:00 ",
             "description": "Shipment delivery in Eclipse - Brittany to handle ",
@@ -135,10 +135,10 @@
             ],
             "location": []
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sun 30 March",
             "time": "on 3/29",
             "description": "Additional tables for breakfast delivered - hotel handling",
@@ -147,16 +147,16 @@
             ],
             "location": []
           },
-          "format": "lowlight"
+          "style": "lowlight"
         }
       ]
     },
     {
-      "groupTitle": "Monday 31 March 2025",
-      "groupMetadata": "Pre-con meetings / UK Crew fly California ",
-      "groupContent": [
+      "title": "Monday 31 March 2025",
+      "metadata": "Pre-con meetings / UK Crew fly California ",
+      "entries": [
         {
-          "rows": {
+          "fields": {
             "date": "Mon 31 March",
             "time": "tbc",
             "description": "UK Crew fly California",
@@ -165,20 +165,20 @@
             ],
             "location": []
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Mon 31 March",
             "time": "11:00",
             "description": "Pre-con with hotel - Poinsettia 1",
             "tags": [],
             "location": []
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Mon 31 March",
             "time": "11:00",
             "description": "Box Movement - To Be Designed Warehouse to Omni (Meka arranging Task Rabbit box movers)",
@@ -189,7 +189,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Mon 31 March",
             "time": "12:00 - 16:00",
             "description": "Meeting with Jack Person - Andrew and Louis",
@@ -198,10 +198,10 @@
             ],
             "location": []
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Mon 31 March",
             "time": "15:30 (n/a)",
             "description": "James Holt lands SAN (James Holt is on a American Airlines flight and lands at SD Airport at 3:30pm)",
@@ -211,10 +211,10 @@
             ],
             "location": []
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Mon 31 March",
             "time": "15:45 (n/a)",
             "description": "Mikey Hinkle lands SAN (Flight 2998 from Denver South West)",
@@ -224,10 +224,10 @@
             ],
             "location": []
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Mon 31 March",
             "time": "TBD",
             "description": "Scenic Build Visit - Show Imaging Warehouse  (Meka arranging Task Rabbit box movers)",
@@ -236,16 +236,16 @@
             ],
             "location": []
           },
-          "format": "lowlight"
+          "style": "lowlight"
         }
       ]
     },
     {
-      "groupTitle": "Tuesday 1 April 2025",
-      "groupMetadata": "Build Circle Lounge Day 1/2  Luna rigging",
-      "groupContent": [
+      "title": "Tuesday 1 April 2025",
+      "metadata": "Build Circle Lounge Day 1/2  Luna rigging",
+      "entries": [
         {
-          "rows": {
+          "fields": {
             "date": "Tue 1 April",
             "time": "07:00",
             "description": "Access to Luna Ballroom",
@@ -254,10 +254,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Tue 1 April",
             "time": "08:00",
             "description": "Deliver scenic to Circle Lounge",
@@ -268,10 +268,10 @@
               "Veranda (Circle Lounge)"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Tue 1 April",
             "time": "08:00 - 10:00",
             "description": "Forklifts x 2 delivered",
@@ -282,10 +282,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Tue 1 April",
             "time": "08:00 - 13:00",
             "description": "Commence Rigging in Luna x 4 riggers",
@@ -296,10 +296,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Tue 1 April",
             "time": "08:00 - 16:00 (8 hrs)",
             "description": "JH and MH assist in circle lounge ",
@@ -310,10 +310,10 @@
               "Veranda (Circle Lounge)"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Tue 1 April",
             "time": "08:30",
             "description": "Sheraton to Omni",
@@ -322,7 +322,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Tue 1 April",
             "time": "08:30",
             "description": "Commence build of Lounge scenic",
@@ -333,20 +333,20 @@
               "Veranda (Circle Lounge)"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Tue 1 April",
             "time": "09:30",
             "description": "Sheraton to Omni",
             "tags": [],
             "location": []
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Tue 1 April",
             "time": "10:00 - 12:00",
             "description": "Ropes/Stanchions delivery to Eclipse ",
@@ -357,10 +357,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Tue 1 April",
             "time": "12:00 ",
             "description": "To Be Designed Load In - Circle Lounge Furniture",
@@ -373,17 +373,17 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Tue 1 April",
             "time": "12:30",
             "description": "Sheraton to Omni",
             "tags": [],
             "location": []
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Tue 1 April",
             "time": "14:00",
             "description": "Stages for both ballrooms delivered",
@@ -394,10 +394,10 @@
               "Sol Ballroom"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Tue 1 April",
             "time": "14:00",
             "description": "Luna truss at working height",
@@ -408,30 +408,30 @@
               "Luna Ballroom"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Tue 1 April",
             "time": "14:30",
             "description": "Omni to Sheraton",
             "tags": [],
             "location": []
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Tue 1 April",
             "time": "17:30",
             "description": "Omni to Sheraton",
             "tags": [],
             "location": []
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Tue 1 April",
             "time": "18:30",
             "description": "Sheraton to Omni",
@@ -440,7 +440,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Tue 1 April",
             "time": "19:00 - 22:00",
             "description": "Crew Welcome ",
@@ -451,30 +451,30 @@
               "Luna Lawn"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Tue 1 April",
             "time": "19:30",
             "description": "Sheraton to Omni",
             "tags": [],
             "location": []
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Tue 1 April",
             "time": "20:30",
             "description": "Omni to Sheraton",
             "tags": [],
             "location": []
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Tue 1 April",
             "time": "21:30",
             "description": "Omni to Sheraton",
@@ -483,23 +483,23 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Tue 1 April",
             "time": "22:30",
             "description": "Omni to Sheraton",
             "tags": [],
             "location": []
           },
-          "format": "default"
+          "style": "default"
         }
       ]
     },
     {
-      "groupTitle": "Wednesday 2 April 2025",
-      "groupMetadata": "Build Circle Lounge Day 2/2.  Luna deliveries. O/N rigging in Sol",
-      "groupContent": [
+      "title": "Wednesday 2 April 2025",
+      "metadata": "Build Circle Lounge Day 2/2.  Luna deliveries. O/N rigging in Sol",
+      "entries": [
         {
-          "rows": {
+          "fields": {
             "date": "Wed 2 April",
             "time": "08:00",
             "description": "Commence registration build",
@@ -510,10 +510,10 @@
               "Veranda (Circle Lounge)"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Wed 2 April",
             "time": "08:00",
             "description": "Deliver lighting and truss into Luna",
@@ -524,10 +524,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Wed 2 April",
             "time": "08:00",
             "description": "AVS Crew travel",
@@ -537,10 +537,10 @@
             ],
             "location": []
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Wed 2 April",
             "time": "08:00 - 16:00 (8 hrs)",
             "description": "JH and MH assist in circle lounge ",
@@ -551,10 +551,10 @@
               "Veranda (Circle Lounge)"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Wed 2 April",
             "time": "08:00 - 19:00 (11 hrs)",
             "description": "6 x Stagehands unload trucks and assist (including 2 x forklift drivers)",
@@ -565,10 +565,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Wed 2 April",
             "time": "09:00",
             "description": "Install Circle Lounge AV - Ready by end of day (Danial Show Imaging)",
@@ -579,10 +579,10 @@
               "Veranda (Circle Lounge)"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Wed 2 April",
             "time": "09:00 - 17:00",
             "description": "La Tavola - Linen delivery to arrive onsite at Omni",
@@ -593,10 +593,10 @@
               "Veranda (Circle Lounge)"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Wed 2 April",
             "time": "10:00",
             "description": "Build backlight truss",
@@ -607,10 +607,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Wed 2 April",
             "time": "14:00",
             "description": "Deliver Stages into Luna",
@@ -621,10 +621,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Wed 2 April",
             "time": "14:00",
             "description": "Build stages in Luna",
@@ -635,10 +635,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Wed 2 April",
             "time": "16:00",
             "description": "Circle Lounge Floral Delivery (Jennifer Cole)",
@@ -649,10 +649,10 @@
               "Veranda (Circle Lounge)"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Wed 2 April",
             "time": "18:00",
             "description": "Registration and Circle Lounge sign off",
@@ -663,10 +663,10 @@
               "Veranda (Circle Lounge)"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Wed 2 April",
             "time": "19:00",
             "description": "Access to Sol Ballroom",
@@ -675,10 +675,10 @@
               "Sol Ballroom"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Wed 2 April",
             "time": "19:01",
             "description": "Commence Rigging in Sol x 5 riggers",
@@ -689,10 +689,10 @@
               "Sol Ballroom"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Wed 2 April",
             "time": "tbc",
             "description": "Travel ",
@@ -703,16 +703,16 @@
               "Sol Ballroom"
             ]
           },
-          "format": "default"
+          "style": "default"
         }
       ]
     },
     {
-      "groupTitle": "Thursday 3 April 2025",
-      "groupMetadata": "Circle Lounge open / Wave 1 Arrivals.  AV install in Ballrooms",
-      "groupContent": [
+      "title": "Thursday 3 April 2025",
+      "metadata": "Circle Lounge open / Wave 1 Arrivals.  AV install in Ballrooms",
+      "entries": [
         {
-          "rows": {
+          "fields": {
             "date": "Thu 3 April",
             "time": "06:00",
             "description": "Commence lighting install (Prioritise truss over stages)",
@@ -724,10 +724,10 @@
               "Sol Ballroom"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Thu 3 April",
             "time": "06:00",
             "description": "Truss at working height (Pinnacle say 2.5 hours to get truss in both ballrooms floating.  Not on your Nelly )",
@@ -738,10 +738,10 @@
               "Sol Ballroom"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Thu 3 April",
             "time": "06:00 - 17:00 (11 hrs)",
             "description": "4 x Stagehands unload trucks and assist (inc 2 x forklift drivers)",
@@ -753,10 +753,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Thu 3 April",
             "time": "08:00",
             "description": "AVS Truck 1 / 3 Delivers 53' Semi (LED) (LED for both ballrooms)",
@@ -767,10 +767,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Thu 3 April",
             "time": "08:00",
             "description": "Lasers install ",
@@ -781,10 +781,10 @@
               "Sol Ballroom"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Thu 3 April",
             "time": "08:00 - 14:00",
             "description": "Registration open",
@@ -795,10 +795,10 @@
               "Veranda (Circle Lounge)"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Thu 3 April",
             "time": "08:00 - 18:00",
             "description": "Lounge Open",
@@ -809,10 +809,10 @@
               "Veranda (Circle Lounge)"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Thu 3 April",
             "time": "08:00 - 19:00 (11 hrs)",
             "description": "4 x LED hands to assist LED build in Luna (1st) and then Sol",
@@ -824,10 +824,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Thu 3 April",
             "time": "08:00 - 19:00 (11 hrs)",
             "description": "4 x Stagehands unload trucks and assist",
@@ -841,7 +841,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Thu 3 April",
             "time": "08:01",
             "description": "LED and AV / sound install",
@@ -852,10 +852,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Thu 3 April",
             "time": "10:00",
             "description": "AV / sound install",
@@ -866,10 +866,10 @@
               "Sol Ballroom"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Thu 3 April",
             "time": "10:00",
             "description": "AVS Truck 2 / 3 Delivers 53' Semi (Luna AV) (Sound / video kit for Luna\nTrailer stays on site for empties)",
@@ -880,10 +880,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Thu 3 April",
             "time": "10:00",
             "description": "To Be Designed Load In - Welcome Reception",
@@ -896,7 +896,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Thu 3 April",
             "time": "10:00 - 16:00",
             "description": "Delegate Arrivals",
@@ -907,10 +907,10 @@
               "Veranda (Circle Lounge)"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Thu 3 April",
             "time": "12:00",
             "description": "AVS Truck 3 / 3 Delivers 53' Semi (Sol AV) (Sound / video kit for Sol)",
@@ -921,10 +921,10 @@
               "Sol Ballroom"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Thu 3 April",
             "time": "12:00",
             "description": "Build stage in Sol (When truss is lifted)",
@@ -935,10 +935,10 @@
               "Sol Ballroom"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Thu 3 April",
             "time": "12:00 - 16:00",
             "description": "Space Heaters delivered to Luna Lawn ",
@@ -949,10 +949,10 @@
               "Luna Lawn"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Thu 3 April",
             "time": "12:00 - 18:00",
             "description": "Truss flown to trim - Riggers x 5",
@@ -964,10 +964,10 @@
               "Sol Ballroom"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Thu 3 April",
             "time": "12:00 - 18:00",
             "description": "Riggers on hand to lift trusses to trim x 4 riggers",
@@ -980,7 +980,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Thu 3 April",
             "time": "14:00",
             "description": "Build small stage in Luna ",
@@ -991,10 +991,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Thu 3 April",
             "time": "14:00",
             "description": "LED install",
@@ -1005,10 +1005,10 @@
               "Sol Ballroom"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Thu 3 April",
             "time": "15:00 - 18:00",
             "description": "Off stage rehearsals  (Carnation Room - Event Centre East)",
@@ -1020,7 +1020,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Thu 3 April",
             "time": "TBD",
             "description": "La Tavola - Gala order Wave 1 delivered",
@@ -1031,16 +1031,16 @@
               "Luna Ballroom"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         }
       ]
     },
     {
-      "groupTitle": "Friday 4 April 2025",
-      "groupMetadata": "Wave 1 Arrivals / GC Brunch / Welcome",
-      "groupContent": [
+      "title": "Friday 4 April 2025",
+      "metadata": "Wave 1 Arrivals / GC Brunch / Welcome",
+      "entries": [
         {
-          "rows": {
+          "fields": {
             "date": "Fri 4 April",
             "time": "07:00 - 19:00",
             "description": "Circle Lounge Open",
@@ -1052,10 +1052,10 @@
               "Veranda (Circle Lounge)"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Fri 4 April",
             "time": "07:30",
             "description": "GC Brunch Floral Delivery (Jennifer Cole) *storing photo opp at Lillians",
@@ -1064,10 +1064,10 @@
             ],
             "location": []
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Fri 4 April",
             "time": "08:00",
             "description": "Continue AV install",
@@ -1078,10 +1078,10 @@
               "Sol Ballroom"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Fri 4 April",
             "time": "08:00 - 15:00 ",
             "description": "Show Imaging Load In / Build / Backload Welcome (Please store in Eclipse Rooms for the entirety of the week)",
@@ -1092,10 +1092,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Fri 4 April",
             "time": "08:00 - 18:00",
             "description": "Continue AV install",
@@ -1106,10 +1106,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Fri 4 April",
             "time": "08:00 - 19:00 (11 hrs)",
             "description": "14 x Stagehands general assist (4 for Nteractive to help with Small Props 10am to 1pm))",
@@ -1121,10 +1121,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Fri 4 April",
             "time": "09:00 - 11:00 ",
             "description": "Platinum Props Load In - Mario & Theme Props (Please store in Eclipse Rooms for the entirety of the week)",
@@ -1135,10 +1135,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Fri 4 April",
             "time": "09:30",
             "description": "Wet Weather Call",
@@ -1149,10 +1149,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Fri 4 April",
             "time": "09:30 - 10:30",
             "description": "LM Treasures Load In - Fruit & Candy Props (Please store in Eclipse Rooms for the entirety of the week)",
@@ -1165,7 +1165,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Fri 4 April",
             "time": "10:00",
             "description": "Gartner production crew deliver Kick Off assets",
@@ -1174,10 +1174,10 @@
               "Sol Ballroom"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Fri 4 April",
             "time": "10:00 - 13:00 (3 hrs)",
             "description": "(4) Hands available for production (small props)",
@@ -1189,10 +1189,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Fri 4 April",
             "time": "10:00 - 22:00",
             "description": "Haze for welcome programming and show",
@@ -1203,10 +1203,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Fri 4 April",
             "time": "11:00 - 22:00",
             "description": "Show Imaging LX crew on site",
@@ -1217,10 +1217,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Fri 4 April",
             "time": "12:00 - 18:00",
             "description": "Haze for Kick off programming / rehearsals",
@@ -1231,10 +1231,10 @@
               "Sol Ballroom"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Fri 4 April",
             "time": "13:00",
             "description": "GC Brunch Floral STRIKE (Jennifer Cole)",
@@ -1243,10 +1243,10 @@
             ],
             "location": []
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Fri 4 April",
             "time": "13:00 - 15:00",
             "description": "Cue to cue Kick Off",
@@ -1261,7 +1261,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Fri 4 April",
             "time": "15:00",
             "description": "Blue Truck arrival - Welcome  (Please store in Eclipse Rooms for the entirety of the week)",
@@ -1272,10 +1272,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Fri 4 April",
             "time": "15:00",
             "description": "To Be Designed - Blue Truck styling (Please store in Eclipse Rooms for the entirety of the week)",
@@ -1286,10 +1286,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Fri 4 April",
             "time": "15:00 - 17:00",
             "description": "On stage Kick Off rehearsals",
@@ -1301,10 +1301,10 @@
               "Sol Ballroom"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Fri 4 April",
             "time": "17:00 - 18:00",
             "description": "Side Kicks - Sound Check",
@@ -1315,10 +1315,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Fri 4 April",
             "time": "17:00 - 18:00",
             "description": "Cue to cue Kick Off",
@@ -1333,7 +1333,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Fri 4 April",
             "time": "18:00 - 18:30",
             "description": "Lee Coulter - Sound Check (Small stage)",
@@ -1346,7 +1346,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Fri 4 April",
             "time": "19:00",
             "description": "Circle Lounge Floral REFRESH (Jennifer Cole)",
@@ -1357,10 +1357,10 @@
               "Veranda (Circle Lounge)"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Fri 4 April",
             "time": "19:00",
             "description": "Set Style Shack",
@@ -1369,10 +1369,10 @@
               "Veranda (Circle Lounge)"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Fri 4 April",
             "time": "19:00 - 22:00",
             "description": "Welcome Reception - Wave 1",
@@ -1383,10 +1383,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Fri 4 April",
             "time": "19:30 ",
             "description": "Registration flip to Style Shack",
@@ -1399,7 +1399,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Fri 4 April",
             "time": "20:00",
             "description": "Install DJ Booth (Tony Bo) (DJ Kara rider\n- 2x Pioneer 2000 CDJ (or 3000's)  \n- DJM-900NXS2 mixer\n- USB Hub and 3 USB Data Cables (I can provide if needed) \n- Booth Speaker (preferably on left side) \n- Wireless Microphone\n- Sufficient Sound throughout space \n- 3 Power Outlets\n- Kara provideing DJ controller (RANE FOUR))",
@@ -1410,10 +1410,10 @@
               "Bar Traza"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Fri 4 April",
             "time": "20:00",
             "description": "Install Circle Late Lounge Neon",
@@ -1424,10 +1424,10 @@
               "Bar Traza"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Fri 4 April",
             "time": "20:00 - 01:00 (8pm) (5 hrs)",
             "description": "4 x Stagehands general assist Nteractive / Bar Traza (For Nteractive to pack away after Welcome and load in Bar Traza)",
@@ -1440,7 +1440,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Fri 4 April",
             "time": "22:00",
             "description": "To Be Designed Flip - Welcome Load Out & Breakfast Table Set (Please store in Eclipse Rooms for the entirety of the week)",
@@ -1453,7 +1453,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Fri 4 April",
             "time": "22:00 - 01:00",
             "description": "Circle Late Lounge",
@@ -1465,10 +1465,10 @@
               "Bar Traza"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Fri 4 April",
             "time": "22:00 - 03:00",
             "description": "Show Imaging Flip - Welcome Strike & Load in for Theme",
@@ -1479,10 +1479,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Fri 4 April",
             "time": "22:30 - 12:30 (10.30pm) (14 hrs)",
             "description": "(4) Hands available for production (small props) (Store in Eclipse)",
@@ -1494,10 +1494,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Fri 4 April",
             "time": "All day",
             "description": "Program / plot / focus",
@@ -1508,10 +1508,10 @@
               "Sol Ballroom"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Fri 4 April",
             "time": "tbc",
             "description": "Off stage Kick Off rehearsals",
@@ -1520,16 +1520,16 @@
             ],
             "location": []
           },
-          "format": "highlight"
+          "style": "highlight"
         }
       ]
     },
     {
-      "groupTitle": "Saturday 5 April 2025",
-      "groupMetadata": "Wave 1 Kick Off / Wave 1 Theme",
-      "groupContent": [
+      "title": "Saturday 5 April 2025",
+      "metadata": "Wave 1 Kick Off / Wave 1 Theme",
+      "entries": [
         {
-          "rows": {
+          "fields": {
             "date": "Sat 5 April",
             "time": "02:00",
             "description": "Strike DJ Booth (Hands needed to assist)",
@@ -1540,10 +1540,10 @@
               "Bar Traza"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sat 5 April",
             "time": "05:30",
             "description": "Install DJ Booth on Luna Lawn",
@@ -1552,10 +1552,10 @@
               "Luna Lawn"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sat 5 April",
             "time": "06:30 - 08:45",
             "description": "Kick Off Group Breakfast on Luna Lawn and Sol Terrace with DJ",
@@ -1569,7 +1569,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sat 5 April",
             "time": "07:00 - 11:00",
             "description": "Haze for kick off show",
@@ -1580,10 +1580,10 @@
               "Sol Ballroom"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sat 5 April",
             "time": "07:00 - 19:00",
             "description": "Circle Lounge Open",
@@ -1594,10 +1594,10 @@
               "Veranda (Circle Lounge)"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sat 5 April",
             "time": "07:00 (tbc)",
             "description": "Crew call",
@@ -1612,7 +1612,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sat 5 April",
             "time": "07:30 - 08:00",
             "description": "Cue to cue Kick Off",
@@ -1626,7 +1626,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sat 5 April",
             "time": "08:00",
             "description": "To Be Designed Load In - Theme (Lawn available at 9:30am) (Set by 4:30 pm)",
@@ -1639,7 +1639,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sat 5 April",
             "time": "08:00 - 08:45",
             "description": "On stage rehearsals",
@@ -1653,7 +1653,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sat 5 April",
             "time": "08:00 - 5:00pm ",
             "description": "Show Imaging - Theme Party Build (9:30am Lawn available) (Set by 4:30 pm)",
@@ -1664,10 +1664,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sat 5 April",
             "time": "08:45 - 10:00",
             "description": "Kick Off presentation - Wave 1",
@@ -1681,10 +1681,10 @@
               "Sol Ballroom"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sat 5 April",
             "time": "09:00 - 11:00",
             "description": "Space Heaters refilled ",
@@ -1695,10 +1695,10 @@
               "Luna Lawn"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sat 5 April",
             "time": "09:00 - 18:00",
             "description": "Reset for Theme Party",
@@ -1710,10 +1710,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sat 5 April",
             "time": "09:30",
             "description": "Wet Weather Call",
@@ -1724,10 +1724,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sat 5 April",
             "time": "10:00",
             "description": "CEG Interactive Load In - LED Dance Floor",
@@ -1740,7 +1740,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sat 5 April",
             "time": "12:00",
             "description": "Build Theme Photo walls - Sol Foyer. Ready by 3pm (12’ wide x 2, 16’ wide x 1)",
@@ -1751,10 +1751,10 @@
               "Sol Ballroom"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sat 5 April",
             "time": "12:00 - 01:00",
             "description": "Haze for Theme programming and show",
@@ -1765,10 +1765,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sat 5 April",
             "time": "12:00 - 16:00",
             "description": "(4) Stage Hands to support Nteractive (small props / stanchion placement)",
@@ -1779,10 +1779,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sat 5 April",
             "time": "12:00 - 17:00 (5 hrs)",
             "description": "10 x Stagehands general assist (2 hands to help Nteractive pack props 12pm to 2pm)",
@@ -1794,10 +1794,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sat 5 April",
             "time": "14:00 - 15:00",
             "description": "Liquid Blue arrive and set up",
@@ -1806,10 +1806,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sat 5 April",
             "time": "14:00 - 19:00",
             "description": "Nteractive Pull decor - OC Theme Party Reception - Anna 1 & 2",
@@ -1818,10 +1818,10 @@
             ],
             "location": []
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sat 5 April",
             "time": "14:30",
             "description": "Party Pals arrival - Arcade games ",
@@ -1832,10 +1832,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sat 5 April",
             "time": "15:00 - 01:00",
             "description": "Show Imaging LX Crew on site",
@@ -1846,10 +1846,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sat 5 April",
             "time": "16:00",
             "description": "All props set ready for LX Focus",
@@ -1860,10 +1860,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sat 5 April",
             "time": "16:00",
             "description": "Performers arrive and block",
@@ -1876,7 +1876,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sat 5 April",
             "time": "16:00 - 18:00",
             "description": "LX Focus",
@@ -1887,10 +1887,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sat 5 April",
             "time": "16:30 - 18:00",
             "description": "Filming on Sol Ballroom stage",
@@ -1904,10 +1904,10 @@
               "Sol Ballroom"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sat 5 April",
             "time": "18:15 - 18:30",
             "description": "DJ Kara arrive and set up (Big Stage)",
@@ -1916,10 +1916,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sat 5 April",
             "time": "18:15 - 19:00",
             "description": "OC Theme Party Reception - Anna 1 & 2",
@@ -1930,7 +1930,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sat 5 April",
             "time": "19:00 - 22:00",
             "description": "Theme Party - Wave 1",
@@ -1941,10 +1941,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sat 5 April",
             "time": "19:30",
             "description": "Style Shack load out / flip",
@@ -1957,7 +1957,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sat 5 April",
             "time": "22:00 - 01:00",
             "description": "Circle Club",
@@ -1968,16 +1968,16 @@
               "Luna Ballroom"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         }
       ]
     },
     {
-      "groupTitle": "Sunday 6 April 2025",
-      "groupMetadata": "Wave 1 Gala Dinner",
-      "groupContent": [
+      "title": "Sunday 6 April 2025",
+      "metadata": "Wave 1 Gala Dinner",
+      "entries": [
         {
-          "rows": {
+          "fields": {
             "date": "Sun 6 April",
             "time": "01:00 - 04:00 (1am Sunday morning) (3 hrs)",
             "description": "6 x Stagehands general assist Nteractive (5 hours from 11pm through to 4am) ( (Pack Theme props & remove ropes/stanchions - put in eclipse))",
@@ -1989,10 +1989,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sun 6 April",
             "time": "01:30",
             "description": "CEG Interactive Load out - LED Dance Floor",
@@ -2003,10 +2003,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sun 6 April",
             "time": "01:30",
             "description": "Party Pals pickup - Arcade games ",
@@ -2017,10 +2017,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sun 6 April",
             "time": "01:30 - 10:30am",
             "description": "To Be Designed Flip - Load Out Theme & Luna Foyer Set & Breakfast Set ((hard out from outside at 6am))",
@@ -2031,10 +2031,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sun 6 April",
             "time": "01:30 - 10:30am",
             "description": "Show Imaging Flip - Load Out Theme & Luna Foyer Set & Breakfast Set *STRIKE LAWN FIRST ((hard out from outside at 6am))",
@@ -2045,10 +2045,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sun 6 April",
             "time": "06:00 - 10:00",
             "description": "Group Breakfast on Luna Lawn",
@@ -2061,7 +2061,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sun 6 April",
             "time": " 07:00 - 18:30",
             "description": "Circle Lounge Open",
@@ -2072,10 +2072,10 @@
               "Veranda (Circle Lounge)"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sun 6 April",
             "time": "08:00 - 19:00 (11 hrs)",
             "description": "8 x Stagehands general assist",
@@ -2089,7 +2089,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sun 6 April",
             "time": "10:00",
             "description": "Tables set (No chairs)",
@@ -2099,10 +2099,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sun 6 April",
             "time": "11:00 - 18:00",
             "description": "Reset for Gala Dinner",
@@ -2114,10 +2114,10 @@
               "Sol Ballroom"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sun 6 April",
             "time": "12:00 ",
             "description": "To Be Designed - Furniture Check  (Representative from TBD coming to check Gala foyer set)",
@@ -2130,7 +2130,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sun 6 April",
             "time": "12:00",
             "description": "Build Gala Photo walls - Sol Foyer. Ready by 3pm (12’ wide x 2\n16’ wide x 1)",
@@ -2141,10 +2141,10 @@
               "Sol Ballroom"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sun 6 April",
             "time": "12:00",
             "description": "Build Gala Photo walls - Luna Foyer.  Ready by 3pm (12’ wide x 1\n16’ wide x 1)",
@@ -2155,10 +2155,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sun 6 April",
             "time": "12:00 ",
             "description": "Jennifer Cole - Floral Delivery (Representative from TBD coming to check Gala foyer set)",
@@ -2170,10 +2170,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sun 6 April",
             "time": "12:00 - 01:00",
             "description": "Haze for Gala programming and show",
@@ -2185,10 +2185,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sun 6 April",
             "time": "12:00 - 02:00",
             "description": "Show Imaging LX Crew on site",
@@ -2199,10 +2199,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sun 6 April",
             "time": "12:00 - 14:00",
             "description": "Space Heaters refilled ",
@@ -2213,10 +2213,10 @@
               "Luna Lawn"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sun 6 April",
             "time": "13:00",
             "description": "Chairs set (Follow pin spots)",
@@ -2228,7 +2228,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sun 6 April",
             "time": "13:00 - 15:00",
             "description": "Gala Cue to cue",
@@ -2240,10 +2240,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sun 6 April",
             "time": "14:00 - 22:00",
             "description": "Show Imaging LX Crew on site",
@@ -2254,10 +2254,10 @@
               "Sol Ballroom"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sun 6 April",
             "time": "15:00 - 17:00",
             "description": "On stage rehearsals",
@@ -2269,10 +2269,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sun 6 April",
             "time": "16:00 - 17:00",
             "description": "Liquid Blue Sound Check",
@@ -2285,7 +2285,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sun 6 April",
             "time": "17:00 - 18:00",
             "description": "TranscenDANCE rehearsal #1",
@@ -2299,7 +2299,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sun 6 April",
             "time": "17:30 - 18:00",
             "description": "TranscenDANCE rehearsal #2",
@@ -2313,7 +2313,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sun 6 April",
             "time": "18:00 - 18:45",
             "description": "Pre-drinks / Photo walls",
@@ -2325,10 +2325,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sun 6 April",
             "time": "18:00 - 19:00",
             "description": "Jazz trio plays in Luna Foyer ",
@@ -2341,7 +2341,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sun 6 April",
             "time": "18:30 - 22:00",
             "description": "Wave 1 Gold Circle Arrivals in ballroom",
@@ -2355,7 +2355,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sun 6 April",
             "time": "19:00",
             "description": "Circle Lounge Floral REFRESH (Jennifer Cole)",
@@ -2366,10 +2366,10 @@
               "Veranda (Circle Lounge)"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sun 6 April",
             "time": "19:00 - 22:00",
             "description": "Wave 1 Gala Dinner (Sol and Luna)",
@@ -2384,7 +2384,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sun 6 April",
             "time": "20:30 - 21:10",
             "description": "Jazz trio plays in Luna Foyer at end of show",
@@ -2397,7 +2397,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sun 6 April",
             "time": "21:00 - 23:00",
             "description": "Gala After Party",
@@ -2408,10 +2408,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sun 6 April",
             "time": "23:00 - 01:00",
             "description": "Circle Club - DJ Kara Live ",
@@ -2426,11 +2426,11 @@
       ]
     },
     {
-      "groupTitle": "Monday 7 April 2025",
-      "groupMetadata": "Wave 2 Golden Circle Arrivals - No presentations",
-      "groupContent": [
+      "title": "Monday 7 April 2025",
+      "metadata": "Wave 2 Golden Circle Arrivals - No presentations",
+      "entries": [
         {
-          "rows": {
+          "fields": {
             "date": "Mon 7 April",
             "time": "01:30",
             "description": "To Be Designed - Load Out & Breakfast Set",
@@ -2443,7 +2443,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Mon 7 April",
             "time": "06:00 - 10:00",
             "description": "Group Breakfast on Luna Lawn",
@@ -2454,10 +2454,10 @@
               "Luna Lawn"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Mon 7 April",
             "time": "07:00 - 19:00",
             "description": "Circle Lounge Open",
@@ -2468,10 +2468,10 @@
               "Veranda (Circle Lounge)"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Mon 7 April",
             "time": "10:00",
             "description": "To Be Designed Load In - Welcome Reception (ballroom only) ",
@@ -2484,7 +2484,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Mon 7 April",
             "time": "15:00 - 18:00",
             "description": "Off stage rehearsals  (Carnation Room - Event Centre East)",
@@ -2496,7 +2496,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Mon 7 April",
             "time": "TBD",
             "description": "La Tavola - Gala order Wave 1 picked up",
@@ -2507,10 +2507,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Mon 7 April",
             "time": "TBD",
             "description": "La Tavola - Gala order Wave 2 delivered",
@@ -2521,16 +2521,16 @@
               "Luna Ballroom"
             ]
           },
-          "format": "default"
+          "style": "default"
         }
       ]
     },
     {
-      "groupTitle": "Tuesday 8 April 2025",
-      "groupMetadata": "Wave 2 Arrivals / Golden Circle Brunch / Welcome",
-      "groupContent": [
+      "title": "Tuesday 8 April 2025",
+      "metadata": "Wave 2 Arrivals / Golden Circle Brunch / Welcome",
+      "entries": [
         {
-          "rows": {
+          "fields": {
             "date": "Tue 8 April",
             "time": "07:00 - 19:00",
             "description": "Circle Lounge Open",
@@ -2541,10 +2541,10 @@
               "Veranda (Circle Lounge)"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Tue 8 April",
             "time": "07:30",
             "description": "GC Brunch Floral Delivery (Jennifer Cole)",
@@ -2553,10 +2553,10 @@
             ],
             "location": []
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Tue 8 April",
             "time": "08:00 - 15:00 ",
             "description": "Show Imaging Load In / Build / Backload Welcome (Please store in Eclipse Rooms for the entirety of the week)",
@@ -2567,10 +2567,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Tue 8 April",
             "time": "08:00 - 18:00",
             "description": "Reset for Welcome Reception",
@@ -2582,10 +2582,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Tue 8 April",
             "time": "08:00 - 19:00 (11 hrs)",
             "description": "6 x Stagehands general assist",
@@ -2597,10 +2597,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Tue 8 April",
             "time": "09:30",
             "description": "Wet Weather Call",
@@ -2611,10 +2611,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Tue 8 April",
             "time": "10:00 - 13:00",
             "description": "(4) Hands available for production (small props)",
@@ -2625,10 +2625,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Tue 8 April",
             "time": "12:00",
             "description": "Strike all photo walls",
@@ -2640,10 +2640,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Tue 8 April",
             "time": "12:00",
             "description": "Reset drum risers (Check stage facias etc)",
@@ -2654,10 +2654,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Tue 8 April",
             "time": "12:00 - 18:00",
             "description": "Haze for Kick off programming / rehearsals",
@@ -2668,10 +2668,10 @@
               "Sol Ballroom"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Tue 8 April",
             "time": "12:00 - 22:00",
             "description": "Haze for welcome programming and show",
@@ -2682,10 +2682,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Tue 8 April",
             "time": "13:00",
             "description": "GC Brunch Floral STRIKE (Jennifer Cole)",
@@ -2694,10 +2694,10 @@
             ],
             "location": []
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Tue 8 April",
             "time": "13:00 - 15:00",
             "description": "Cue to cue Kick Off",
@@ -2712,7 +2712,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Tue 8 April",
             "time": "15:00",
             "description": "To Be Designed - Blue Truck styling (Please store in Eclipse Rooms for the entirety of the week)",
@@ -2723,10 +2723,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Tue 8 April",
             "time": "15:00",
             "description": "Blue Truck arrival - Welcome  (Please store in Eclipse Rooms for the entirety of the week)",
@@ -2737,10 +2737,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Tue 8 April",
             "time": "15:00 - 17:00",
             "description": "On stage Kick Off rehearsals",
@@ -2755,7 +2755,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Tue 8 April",
             "time": "17:00 - 18:00",
             "description": "Cue to cue Kick Off",
@@ -2769,7 +2769,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Tue 8 April",
             "time": "17:00 - 18:00",
             "description": "Side Kicks - Sound Check",
@@ -2782,7 +2782,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Tue 8 April",
             "time": "18:00 - 18:30",
             "description": "Lee Coulter - Sound Check (Small stage)",
@@ -2795,7 +2795,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Tue 8 April",
             "time": "19:00",
             "description": "Circle Lounge Floral REFRESH (Jennifer Cole)",
@@ -2806,10 +2806,10 @@
               "Veranda (Circle Lounge)"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Tue 8 April",
             "time": "19:00",
             "description": "Set Style Shack",
@@ -2818,10 +2818,10 @@
               "Veranda (Circle Lounge)"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Tue 8 April",
             "time": "19:00 - 22:00",
             "description": "Welcome Reception - Wave 2",
@@ -2832,10 +2832,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Tue 8 April",
             "time": "20:00",
             "description": "Install DJ Booth",
@@ -2846,10 +2846,10 @@
               "Bar Traza"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Tue 8 April",
             "time": "20:00 - 01:00 (5 hrs)",
             "description": "4 x Stagehands general assist Nteractive / Bar Traza (For Nteractive to pack away after Welcome)",
@@ -2863,7 +2863,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Tue 8 April",
             "time": "22:00",
             "description": "To Be Designed Flip - Welcome Load Out & Breakfast Table Set",
@@ -2874,10 +2874,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Tue 8 April",
             "time": "22:00 - 00:00",
             "description": "Circle Late Lounge",
@@ -2888,10 +2888,10 @@
               "Bar Traza"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Tue 8 April",
             "time": "22:30 - 12:30",
             "description": "(4) Hands available for production (small props) (Store in Eclipse)",
@@ -2902,16 +2902,16 @@
               "Luna Ballroom"
             ]
           },
-          "format": "default"
+          "style": "default"
         }
       ]
     },
     {
-      "groupTitle": "Wednesday 9 April 2025",
-      "groupMetadata": "Wave 2 Kick Off / Theme",
-      "groupContent": [
+      "title": "Wednesday 9 April 2025",
+      "metadata": "Wave 2 Kick Off / Theme",
+      "entries": [
         {
-          "rows": {
+          "fields": {
             "date": "Wed 9 April",
             "time": "02:00",
             "description": "Strike DJ Booth",
@@ -2922,10 +2922,10 @@
               "Bar Traza"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Wed 9 April",
             "time": "06:00 - 10:00",
             "description": "Kick Off Group Breakfast on Luna Lawn and Sol Terrace",
@@ -2937,10 +2937,10 @@
               "Sol Terrace"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Wed 9 April",
             "time": "07:00 - 11:00",
             "description": "Haze for kick off show",
@@ -2951,10 +2951,10 @@
               "Sol Ballroom"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Wed 9 April",
             "time": "07:00 - 19:00",
             "description": "Circle Lounge Open",
@@ -2966,10 +2966,10 @@
               "Veranda (Circle Lounge)"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Wed 9 April",
             "time": "07:00 (tbc)",
             "description": "Crew call",
@@ -2983,7 +2983,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Wed 9 April",
             "time": "07:30 - 08:00",
             "description": "Cue to cue Kick Off",
@@ -2997,7 +2997,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Wed 9 April",
             "time": "08:00 ",
             "description": "To Be Designed Load In - Theme (lawn available at 9:30am)",
@@ -3008,10 +3008,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Wed 9 April",
             "time": "08:00 - 08:45",
             "description": "On stage rehearsals",
@@ -3025,7 +3025,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Wed 9 April",
             "time": "08:00 - 5:00pm ",
             "description": "Show Imaging - Theme Party Build (9:30am Lawn available) (Set by 4:30 pm)",
@@ -3036,10 +3036,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Wed 9 April",
             "time": "09:00 - 10:00",
             "description": "Kick Off presentation - Wave 2",
@@ -3051,10 +3051,10 @@
               "Sol Ballroom"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Wed 9 April",
             "time": "09:00 - 18:00",
             "description": "Reset for Theme Party",
@@ -3066,10 +3066,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Wed 9 April",
             "time": "09:30",
             "description": "Wet Weather Call",
@@ -3080,10 +3080,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Wed 9 April",
             "time": "12:00",
             "description": "Build Theme Photo walls - Sol Foyer.  Ready by 3pm (2’ wide x 2, 16’ wide x 1)",
@@ -3094,10 +3094,10 @@
               "Sol Ballroom"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Wed 9 April",
             "time": "12:00 - 16:00",
             "description": "(2) Stage Hands to support Nteractive (small props)",
@@ -3108,10 +3108,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Wed 9 April",
             "time": "12:00 - 17:00 (5 hrs)",
             "description": "6 x Stagehands general assist",
@@ -3123,10 +3123,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Wed 9 April",
             "time": "12:00 - 17:00",
             "description": "CEG Interactive Load In - LED Dancefloor",
@@ -3139,7 +3139,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Wed 9 April",
             "time": "14:00 - 01:00",
             "description": "Haze for Theme programming and show",
@@ -3150,10 +3150,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Wed 9 April",
             "time": "14:00 - 15:00",
             "description": "Liquid Blue arrive and set up",
@@ -3164,7 +3164,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Wed 9 April",
             "time": "14:00 - 19:00",
             "description": "Nteractive Pull decor - OC Theme Party Reception - Anna 1 & 2",
@@ -3173,10 +3173,10 @@
             ],
             "location": []
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Wed 9 April",
             "time": "14:30",
             "description": "Party Pals arrival - Arcade games ",
@@ -3187,10 +3187,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Wed 9 April",
             "time": "16:00",
             "description": "Performers arrive and block",
@@ -3201,7 +3201,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Wed 9 April",
             "time": "18:15 - 18:30",
             "description": "DJ Kara arrive and set up (Big Stage)",
@@ -3212,7 +3212,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Wed 9 April",
             "time": "18:15 - 19:00",
             "description": "OC Theme Party Reception - Anna 1 & 2",
@@ -3221,10 +3221,10 @@
             ],
             "location": []
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Wed 9 April",
             "time": "19:00 - 01:00",
             "description": "Theme Party - Wave 2",
@@ -3235,10 +3235,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Wed 9 April",
             "time": "22:00 - 01:00",
             "description": "Circle Club",
@@ -3249,10 +3249,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Wed 9 April",
             "time": "23:00 - 04:00 (5 hrs)",
             "description": "4 x Stagehands general assist Nteractive (5 hours from 11pm through to 4am) ( (Pack Theme props))",
@@ -3267,11 +3267,11 @@
       ]
     },
     {
-      "groupTitle": "Thursday 10 April 2025",
-      "groupMetadata": "Wave 2 Gala Dinner",
-      "groupContent": [
+      "title": "Thursday 10 April 2025",
+      "metadata": "Wave 2 Gala Dinner",
+      "entries": [
         {
-          "rows": {
+          "fields": {
             "date": "Thu 10 April",
             "time": "01:00 - 04:00",
             "description": "(4) Stage Hands to support Nteractive (small props) - Theme load out (Store props in Eclipse)",
@@ -3282,10 +3282,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Thu 10 April",
             "time": "01:30",
             "description": "To Be Designed Flip - Load Out Theme & Luna Foyer Set & Breakfast Set",
@@ -3296,10 +3296,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Thu 10 April",
             "time": "01:30",
             "description": "Party Pals pickup - Arcade games ",
@@ -3310,10 +3310,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Thu 10 April",
             "time": "01:30 - 10:30am",
             "description": "Show Imaging Flip - Load Out Theme & Luna Foyer Set & Breakfast Set ((hard out from outside at 6am))",
@@ -3324,10 +3324,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Thu 10 April",
             "time": "06:00 - 10:00",
             "description": "Group Breakfast on Luna Lawn",
@@ -3338,10 +3338,10 @@
               "Luna Lawn"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Thu 10 April",
             "time": "07:00 - 19:00",
             "description": "Circle Lounge Open",
@@ -3352,10 +3352,10 @@
               "Veranda (Circle Lounge)"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Thu 10 April",
             "time": "08:00 - 13:00 (5 hrs)",
             "description": "0 x LED Techs (CALL CANCELLED)",
@@ -3366,10 +3366,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Thu 10 April",
             "time": "08:00 - 17:00",
             "description": "Reset for Gala Dinner",
@@ -3381,10 +3381,10 @@
               "Sol Ballroom"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Thu 10 April",
             "time": "09:00 - 11:00",
             "description": "Platinum Props Load Out - Theme & Mario Props",
@@ -3395,10 +3395,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Thu 10 April",
             "time": "09:00 - 17:00 ",
             "description": "La Tavola - Linen Pick Up from Omni",
@@ -3409,10 +3409,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Thu 10 April",
             "time": "09:00 - 18:00",
             "description": "Soft strike of Luna section 1 to 3 (Small stage)",
@@ -3424,10 +3424,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Thu 10 April",
             "time": "09:00 - 18:00",
             "description": "Set for Gala After Party - NOW IN LUNA BIG BALLROOM",
@@ -3439,10 +3439,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Thu 10 April",
             "time": "09:30 - 10:30",
             "description": "LM Treasures Load Out - Fruit & Candy Props",
@@ -3453,10 +3453,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Thu 10 April",
             "time": "10:00",
             "description": "Tables set (No chairs)",
@@ -3467,7 +3467,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Thu 10 April",
             "time": "10:00",
             "description": "Strike and stack small stage in Luna (2’ wide x 2, 16’ wide x 1)",
@@ -3478,10 +3478,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Thu 10 April",
             "time": "10:00 - 15:00 (5 hrs)",
             "description": "8 x Stagehands general assist - including 2 x forklift drivers (TIME AND QUANTITY CHANGE)",
@@ -3493,10 +3493,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Thu 10 April",
             "time": "12:00",
             "description": "To Be Designed - Furniture Check ",
@@ -3507,10 +3507,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Thu 10 April",
             "time": "12:00 ",
             "description": "Jennifer Cole - Floral Delivery (Representative from TBD coming to check Gala foyer set)",
@@ -3521,10 +3521,10 @@
               "Sol Ballroom"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Thu 10 April",
             "time": "12:00",
             "description": "Build Gala Photo walls - Sol Foyer.  Ready by 3pm (2’ wide x 2, 16’ wide x 1)",
@@ -3535,10 +3535,10 @@
               "Sol Ballroom"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Thu 10 April",
             "time": "13:00",
             "description": "Chairs set (Follow pin spots)",
@@ -3549,7 +3549,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Thu 10 April",
             "time": "13:00 - 15:00",
             "description": "Gala Cue to cue",
@@ -3564,7 +3564,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Thu 10 April",
             "time": "14:00 - 01:00",
             "description": "Haze for Gala programming and show",
@@ -3575,10 +3575,10 @@
               "Sol Ballroom"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Thu 10 April",
             "time": "15:00 - 17:00",
             "description": "On stage rehearsals",
@@ -3593,7 +3593,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Thu 10 April",
             "time": "17:00 - 16:00",
             "description": "TranscenDANCE rehearsal ",
@@ -3606,7 +3606,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Thu 10 April",
             "time": "18:30 - 22:00",
             "description": "Wave 2 Gold Circle Arrivals in ballroom",
@@ -3619,7 +3619,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Thu 10 April",
             "time": "19:00 - 22:00",
             "description": "Wave 2 Gala Dinner (Sol Ballroom only)",
@@ -3631,10 +3631,10 @@
               "Sol Ballroom"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Thu 10 April",
             "time": "19:30",
             "description": "Premium Gift Removal / Replace with furniture ",
@@ -3645,10 +3645,10 @@
               "Veranda (Circle Lounge)"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Thu 10 April",
             "time": "21:00 - 02:00",
             "description": "Gala After Party",
@@ -3659,10 +3659,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Thu 10 April",
             "time": "23:00 - 01:00",
             "description": "Circle Club - DJ Kara Live ",
@@ -3677,11 +3677,11 @@
       ]
     },
     {
-      "groupTitle": "Friday 11 April 2025",
-      "groupMetadata": "Derig ballrooms / Circle Lounge open all day",
-      "groupContent": [
+      "title": "Friday 11 April 2025",
+      "metadata": "Derig ballrooms / Circle Lounge open all day",
+      "entries": [
         {
-          "rows": {
+          "fields": {
             "date": "Fri 11 April",
             "time": "tbc",
             "description": "ER Travel home",
@@ -3693,10 +3693,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Fri 11 April",
             "time": "01:30",
             "description": "To Be Designed - Load Out & Breakfast Set",
@@ -3709,7 +3709,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Fri 11 April",
             "time": "06:00 - 10:00",
             "description": "Group Breakfast on Luna Lawn",
@@ -3720,10 +3720,10 @@
               "Luna Lawn"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Fri 11 April",
             "time": "07:00 - 19:00 - tbc",
             "description": "Circle Lounge Open",
@@ -3734,10 +3734,10 @@
               "Veranda (Circle Lounge)"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Fri 11 April",
             "time": "08:00",
             "description": "Commence derig",
@@ -3751,10 +3751,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Fri 11 April",
             "time": "08:00",
             "description": "Strike and stack stages in Sol and Luna",
@@ -3766,10 +3766,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Fri 11 April",
             "time": "08:00",
             "description": "Collate all photo walls",
@@ -3781,10 +3781,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Fri 11 April",
             "time": "08:00 - 13:00 (5 hrs)",
             "description": "8 x LED Techs assist LED wall dismantle (UPDATED FROM 4)",
@@ -3795,10 +3795,10 @@
               "Sol Ballroom"
             ]
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Fri 11 April",
             "time": "08:00 - 19:00 (11 hrs)",
             "description": "16 x Stagehands general assist (UPDATED FROM 12)",
@@ -3810,10 +3810,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Fri 11 April",
             "time": "10:00 - 15:00",
             "description": "Riggers drop trusses",
@@ -3826,7 +3826,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Fri 11 April",
             "time": "12:00 - 18:00",
             "description": "Truss dropped - Riggers x 5",
@@ -3839,7 +3839,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Fri 11 April",
             "time": "14:00 - 15:00",
             "description": "Ropes/Stanchions pickup from Eclipse",
@@ -3850,10 +3850,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Fri 11 April",
             "time": "17:00",
             "description": "To Be Designed Load Out - Circle Lounge Furniture & Breakfast Tables *loading out breakfast tables first / CL closes at 7",
@@ -3867,7 +3867,7 @@
           }
         },
         {
-          "rows": {
+          "fields": {
             "date": "Fri 11 April",
             "time": "18:00",
             "description": "Circle Lounge Closes - Commence de-rig",
@@ -3879,10 +3879,10 @@
               "Veranda (Circle Lounge)"
             ]
           },
-          "format": "default"
+          "style": "default"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Fri 11 April",
             "time": "18:00",
             "description": "Ballrooms to be clear",
@@ -3896,10 +3896,10 @@
               "Luna Ballroom"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Fri 11 April",
             "time": "19:00",
             "description": "Derig Circle Lounge",
@@ -3910,10 +3910,10 @@
               "Veranda (Circle Lounge)"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Fri 11 April",
             "time": "19:00 ",
             "description": "Jennifer Cole - load out Circle Lounge",
@@ -3924,10 +3924,10 @@
               "Veranda (Circle Lounge)"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Fri 11 April",
             "time": "19:30 - 22:30",
             "description": "Crew farewell at 264 Fresco (No transport arranged.  Share Ubers\n\n264 Fresco\n264 Carlsbad Village Dr\nCarlsbad, CA 92008)",
@@ -3936,10 +3936,10 @@
             ],
             "location": []
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Fri 11 April",
             "time": "20:00",
             "description": "Circle Lounge truck loads and departs",
@@ -3950,16 +3950,16 @@
               "Veranda (Circle Lounge)"
             ]
           },
-          "format": "highlight"
+          "style": "highlight"
         }
       ]
     },
     {
-      "groupTitle": "Saturday 12 April 2025",
-      "groupMetadata": "UK Crew fly home",
-      "groupContent": [
+      "title": "Saturday 12 April 2025",
+      "metadata": "UK Crew fly home",
+      "entries": [
         {
-          "rows": {
+          "fields": {
             "date": "Sat 12 April",
             "time": "tbc",
             "description": "All crew fly home",
@@ -3968,10 +3968,10 @@
             ],
             "location": []
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sat 12 April",
             "time": "tbc",
             "description": "JH & MH fly home",
@@ -3980,10 +3980,10 @@
             ],
             "location": []
           },
-          "format": "highlight"
+          "style": "highlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sat 12 April",
             "time": "tbc",
             "description": "Additional tables for breakfast picked up - hotel handling",
@@ -3992,10 +3992,10 @@
             ],
             "location": []
           },
-          "format": "lowlight"
+          "style": "lowlight"
         },
         {
-          "rows": {
+          "fields": {
             "date": "Sat 12 April",
             "time": "TBD",
             "description": "La Tavola - Gala order Wave 2 picked up",
@@ -4006,7 +4006,7 @@
               "Luna Ballroom"
             ]
           },
-          "format": "default"
+          "style": "default"
         }
       ]
     }
