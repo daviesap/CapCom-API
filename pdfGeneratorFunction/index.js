@@ -1,69 +1,52 @@
-// index.js
 import { readFile, writeFile } from 'fs/promises';
 import path from 'path';
 import { Storage } from '@google-cloud/storage';
 import { SecretManagerServiceClient } from '@google-cloud/secret-manager';
 import { generatePdfBuffer } from './generatepdf.mjs';
+import { initializeApp, applicationDefault } from 'firebase-admin/app';
+import { getFirestore } from 'firebase-admin/firestore';
 
+// Firebase Admin init
+let db;
+try {
+  initializeApp({ credential: applicationDefault() });
+  db = getFirestore();
+} catch (e) {
+  console.warn("⚠️ Firebase Admin was already initialized.");
+}
+
+// GCP Services
 const bucketName = 'generatedpdfs';
 const storage = new Storage();
 const secretClient = new SecretManagerServiceClient();
 
 // Cloud Function
 export const generatePdf = async (req, res) => {
-  // start timing
   const startTime = Date.now();
 
-  // Log incoming JSON
-  //console.log('📦 Incoming payload:', JSON.stringify(req.body));
-
-  // Retrieve expected API key from Secret Manager
+  // 🔐 API Key check
   let expectedKey;
   try {
     const [version] = await secretClient.accessSecretVersion({
-      name: process.env.API_KEY_SECRET_NAME // e.g. "projects/PROJECT_ID/secrets/API_KEY/versions/latest"
+      name: process.env.API_KEY_SECRET_NAME
     });
     expectedKey = version.payload.data.toString('utf8').trim();
   } catch (err) {
     console.error('❌ Failed to access API key secret:', err);
-    return res.status(500).json({
-      success: false,
-      message: 'Internal error retrieving API key',
-      url: null,
-      timestamp: new Date().toISOString(),
-      executionTimeSeconds: 0,
-    });
+    return res.status(500).json({ success: false, message: 'Internal error retrieving API key', url: null, timestamp: new Date().toISOString(), executionTimeSeconds: 0 });
   }
 
-  // Validate incoming api_key
-  if (!req.body.api_key) {
-    return res.status(400).json({
-      success: false,
-      message: 'Missing API Key',
-      url: null,
-      timestamp: new Date().toISOString(),
-      executionTimeSeconds: 0,
-    });
-  }
-  if (req.body.api_key !== expectedKey) {
-    return res.status(403).json({
-      success: false,
-      message: 'Incorrect API key',
-      url: null,
-      timestamp: new Date().toISOString(),
-      executionTimeSeconds: 0,
-    });
+  if (!req.body.api_key || req.body.api_key !== expectedKey) {
+    return res.status(403).json({ success: false, message: 'Invalid or missing API key', url: null, timestamp: new Date().toISOString(), executionTimeSeconds: 0 });
   }
 
   console.time('Script execution');
-  try {
-    // 1. Detect whether the client sent a top-level `document` key
-    const hasDocument =
-      req.body &&
-      Object.prototype.hasOwnProperty.call(req.body, 'document');
 
-    // 2. If they did, use it; otherwise load local.json
+  try {
+    // 📥 Load input JSON
     let jsonInput;
+    const hasDocument = req.body && Object.prototype.hasOwnProperty.call(req.body, 'document');
+
     if (hasDocument) {
       jsonInput = req.body;
     } else {
@@ -72,10 +55,28 @@ export const generatePdf = async (req, res) => {
       jsonInput = JSON.parse(raw);
     }
 
-    // 3. Generate PDF bytes
+    // 🔍 If projectId is provided, log styles from Firestore
+    if (jsonInput.projectId) {
+      try {
+        const profileRef = db.collection("styleProfiles").doc(jsonInput.projectId);
+        const profileSnap = await profileRef.get();
+
+        if (profileSnap.exists) {
+          const profileData = profileSnap.data();
+          console.log(`📄 Firestore styles for projectId "${jsonInput.projectId}":`);
+          console.dir(profileData.styles, { depth: null });
+        } else {
+          console.warn(`⚠️ No Firestore profile found for projectId "${jsonInput.projectId}"`);
+        }
+      } catch (err) {
+        console.error("🔥 Error fetching Firestore profile:", err);
+      }
+    }
+
+    // 📄 Generate PDF
     const { bytes, filename } = await generatePdfBuffer(jsonInput);
 
-    // 4. Save to GCS without caching (bucket is publicly readable)
+    // ☁️ Upload to GCS
     const file = storage.bucket(bucketName).file(filename);
     await file.save(bytes, {
       metadata: {
@@ -86,11 +87,8 @@ export const generatePdf = async (req, res) => {
 
     const publicUrl = `https://storage.googleapis.com/${bucketName}/${encodeURIComponent(filename)}`;
     const timestamp = new Date().toISOString();
-
-    // calculate execution time in seconds
     const executionTimeSeconds = (Date.now() - startTime) / 1000;
 
-    // respond with details
     res.status(200).json({
       success: true,
       message: '✅ PDF generated and uploaded successfully',
@@ -99,10 +97,8 @@ export const generatePdf = async (req, res) => {
       executionTimeSeconds,
     });
   } catch (err) {
-    console.error('❌ Cloud Function error:', err);
-
-    // calculate execution time even on error
     const executionTimeSeconds = (Date.now() - startTime) / 1000;
+    console.error('❌ Cloud Function error:', err);
     res.status(500).json({
       success: false,
       message: `PDF generation failed: ${err.message}`,
@@ -115,7 +111,40 @@ export const generatePdf = async (req, res) => {
   }
 };
 
-// Local mode
+// 🔍 Optional CLI inspection
+if (process.argv.includes('--project')) {
+  const idx = process.argv.indexOf('--project');
+  const projectId = process.argv[idx + 1];
+
+  if (!projectId) {
+    console.error("❌ Please provide a project ID after --project");
+    process.exit(1);
+  }
+
+  const { initializeApp, applicationDefault } = await import('firebase-admin/app');
+  const { getFirestore } = await import('firebase-admin/firestore');
+
+  try {
+    initializeApp({ credential: applicationDefault() });
+    const db = getFirestore();
+    const docRef = db.collection('styleProfiles').doc(projectId);
+    const snap = await docRef.get();
+
+    if (!snap.exists) {
+      console.error(`❌ No profile found for "${projectId}"`);
+      process.exit(1);
+    }
+
+    const data = snap.data();
+    console.log(`✅ Loaded Firestore profile: "${projectId}"\n`);
+    console.dir(data, { depth: null, colors: true });
+  } catch (err) {
+    console.error("🔥 Error retrieving Firestore profile:", err);
+    process.exit(1);
+  }
+}
+
+// 🔧 Local mode
 if (process.argv.includes('--local')) {
   (async () => {
     console.time('Script execution');

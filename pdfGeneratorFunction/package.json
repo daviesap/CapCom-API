@@ -2,13 +2,14 @@
   "name": "pdf-generator",
   "type": "module",
   "main": "index.js",
-"scripts": {
-  "deploy": "gcloud functions deploy generatePdf --source=. --service-account=generatepdf@flair-pdf-generator.iam.gserviceaccount.com --runtime=nodejs20 --trigger-http --project=flair-pdf-generator --region=europe-west2 --entry-point=generatePdf --allow-unauthenticated --set-env-vars=API_KEY_SECRET_NAME=projects/flair-pdf-generator/secrets/api_key/versions/latest"
-},
+  "scripts": {
+    "deploy": "gcloud functions deploy generatePdf --source=. --service-account=generatepdf@flair-pdf-generator.iam.gserviceaccount.com --runtime=nodejs20 --trigger-http --project=flair-pdf-generator --region=europe-west2 --entry-point=generatePdf --allow-unauthenticated --set-env-vars=API_KEY_SECRET_NAME=projects/flair-pdf-generator/secrets/api_key/versions/latest"
+  },
   "dependencies": {
     "@google-cloud/logging": "^11.2.0",
     "@google-cloud/secret-manager": "^6.0.1",
-    "@google-cloud/storage": "^6.10.0",
+    "@google-cloud/storage": "^6.12.0",
+    "firebase-admin": "^13.3.0",
     "node-fetch": "^3.3.2",
     "pdf-lib": "^1.17.1"
   }

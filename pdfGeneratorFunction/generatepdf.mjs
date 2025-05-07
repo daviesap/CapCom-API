@@ -9,6 +9,7 @@ import { cleanJson } from './utils/cleanJSON.mjs';
 import { filterJson } from './utils/filterJSON.mjs';
 import { sanitiseText } from './utils/sanitiseText.mjs';
 
+
 // === Configuration ===
 // Default column width if not specified in JSON (points)
 const DEFAULT_COLUMN_WIDTH = 100;
