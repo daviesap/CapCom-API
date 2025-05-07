@@ -7,13 +7,10 @@ body, html, #root {
 }
 
 .App {
-  max-width: 500px;
   margin: 2rem auto;
   padding: 1rem;
   font-family: sans-serif;
-  background: #f9f9f9;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  background: #e3e3e3;
 }
 
 /* App.css or global CSS */
@@ -24,6 +21,21 @@ input[type="color"] {
   width: 20px;
   height: 32px;
   cursor: pointer;
+}
+
+.main-wrapper {
+  display: flex;
+  justify-content: center;
+  background-color: #ffffff;
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+.editor-box {
+  max-width: 800px;
+  width: 100%;
+  font-family: Arial, sans-serif;
+  color: rgb(0, 0, 0);
 }
 
 .login-wrapper {

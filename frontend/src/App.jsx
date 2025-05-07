@@ -6,8 +6,7 @@ import TitleStyleEditor from "./TitleStyleEditor"; // 👈 Import your JSON edit
 
 
 const allowedEmails = [
-  "andrew@flair.london",
-  "test@example.com"
+  "andrew@flair.london"
 ];
 
 function AppContent() {
