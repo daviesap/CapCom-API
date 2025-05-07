@@ -1,3 +1,11 @@
+body, html, #root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background-color: white;
+  color: black;
+}
+
 .App {
   max-width: 500px;
   margin: 2rem auto;
@@ -6,6 +14,28 @@
   background: #f9f9f9;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+/* App.css or global CSS */
+input[type="color"] {
+  background-color: white;
+  border: 1px solid #ccc;
+  padding: 0;
+  width: 20px;
+  height: 32px;
+  cursor: pointer;
+}
+
+.login-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  width: 100vw;
+  background-color: white;
+  text-align: center;
+  padding: 2rem;
 }
 
 .form-group {

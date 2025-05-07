@@ -1,72 +1,78 @@
-import { useState } from "react";
-import { db } from "./firebase";
-import { collection, addDoc } from "firebase/firestore";
+import { AuthProvider, useAuth } from "./AuthProvider";
 import "./App.css";
+import { useState } from "react";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import TitleStyleEditor from "./TitleStyleEditor"; // 👈 Import your JSON editor component
 
-function App() {
-  // State for our simple JSON object
-  const [profile, setProfile] = useState({
-    profileName: "",
-    title: "",
-    background: "#ffffff"
-  });
 
-  // Handle form field changes
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setProfile((prevProfile) => ({
-      ...prevProfile,
-      [name]: value
-    }));
-  };
+const allowedEmails = [
+  "andrew@flair.london",
+  "test@example.com"
+];
 
-  // Save the profile to Firestore
-  const handleSave = async () => {
+function AppContent() {
+  const { user, authLoading, loginWithGoogle, logout } = useAuth();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const handleEmailLogin = async () => {
     try {
-      // We'll store the profile in a Firestore collection called "profiles"
-      const docRef = await addDoc(collection(db, "profiles"), profile);
-      alert(`Profile saved with ID: ${docRef.id}`);
-    } catch (error) {
-      console.error("Error adding document: ", error);
-      alert("Error saving profile. See console for details.");
+      const auth = getAuth();
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch (err) {
+      setError(err.message);
     }
   };
 
+  if (authLoading) return <p>Loading...</p>;
+
+  if (!user) {
+    return (
+      <div className="login-wrapper">
+        <img
+          src="/logo.png"
+          alt="Flair Logo"
+          style={{
+            maxWidth: "200px",
+            marginBottom: "1.5rem"
+          }}
+        />
+        <h1
+          style={{
+            fontSize: "1.5rem",
+            fontWeight: "normal",
+            marginBottom: "2rem"
+          }}
+        >
+          Flair PDF Generator – Admin
+        </h1>
+        <button onClick={loginWithGoogle}>Login with Google</button>
+        {error && <p style={{ color: "red" }}>{error}</p>}
+      </div>
+    );
+  }
+
+  if (!allowedEmails.includes(user.email)) {
+    return <p>Access denied for {user.email}</p>;
+  }
+
   return (
     <div className="App">
-      <h1>Create a Test Profile</h1>
-      <div className="form-group">
-        <label>Profile Name:</label>
-        <input 
-          type="text" 
-          name="profileName" 
-          value={profile.profileName}
-          onChange={handleChange}
-          placeholder="Enter profile name"
-        />
-      </div>
-      <div className="form-group">
-        <label>Title:</label>
-        <input 
-          type="text" 
-          name="title"
-          value={profile.title}
-          onChange={handleChange}
-          placeholder="Enter a title"
-        />
-      </div>
-      <div className="form-group">
-        <label>Background Colour:</label>
-        <input 
-          type="color" 
-          name="background"
-          value={profile.background}
-          onChange={handleChange}
-        />
-      </div>
-      <button onClick={handleSave}>Save Profile</button>
+      <p>Welcome, {user.displayName || user.email}</p>
+      <button onClick={logout}>Logout</button>
+
+      {/* 👇 JSON editor component now shown here after login */}
+    
+      <TitleStyleEditor />
     </div>
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
+  );
+}
