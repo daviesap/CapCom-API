@@ -7,14 +7,23 @@ function AppContent() {
   const { user, authLoading, loginWithGoogle, logout } = useAuth();
 
   if (authLoading) return <p>Loading...</p>;
-  if (!user) return <button onClick={loginWithGoogle}>Login with Google</button>;
+  if (!user) {
+    return (
+      <div className="login-wrapper">
+        <div className="login-box">
+          <img src="/logo.png" alt="Flair logo" className="logo" />
+          <button onClick={loginWithGoogle}>Login with Google</button>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="App" style={{ padding: "1rem" }}>
+    <>
       <p>Welcome, {user.displayName || user.email}</p>
       <button onClick={logout}>Logout</button>
       <ProfileList />
-    </div>
+    </>
   );
 }
 
