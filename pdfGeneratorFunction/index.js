@@ -5,6 +5,7 @@ import { SecretManagerServiceClient } from '@google-cloud/secret-manager';
 import { generatePdfBuffer } from './generatepdf.mjs';
 import { initializeApp, applicationDefault } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
+import { merge } from 'lodash-es'; // Place this at the top of your file
 
 // Firebase Admin init
 let db;
@@ -60,11 +61,19 @@ export const generatePdf = async (req, res) => {
       try {
         const profileRef = db.collection("styleProfiles").doc(jsonInput.projectId);
         const profileSnap = await profileRef.get();
-
+    
         if (profileSnap.exists) {
           const profileData = profileSnap.data();
-          console.log(`📄 Firestore styles for projectId "${jsonInput.projectId}":`);
-          console.dir(profileData.styles, { depth: null });
+          const firestoreStyles = profileData.styles || {};
+    
+          // Ensure jsonInput.styles exists
+          jsonInput.styles = jsonInput.styles || {};
+    
+          // Deep merge: jsonInput.styles takes priority
+          jsonInput.styles = merge({}, firestoreStyles, jsonInput.styles);
+    
+          console.log(`🧩 Styles merged from Firestore for projectId "${jsonInput.projectId}":`);
+          console.dir(jsonInput.styles, { depth: null });
         } else {
           console.warn(`⚠️ No Firestore profile found for projectId "${jsonInput.projectId}"`);
         }
