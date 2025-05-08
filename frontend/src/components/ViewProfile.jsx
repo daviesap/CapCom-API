@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import ProfileStylesViewer from './ProfileStylesViewer';
 import { useNavigate } from 'react-router-dom';
@@ -7,7 +7,8 @@ import { useNavigate } from 'react-router-dom';
 export default function ViewProfile({ profileId }) {
   const navigate = useNavigate();
   const [profileData, setProfileData] = useState(null);
-  const [editingStyle, setEditingStyle] = useState(null);
+  const [editingPath, setEditingPath] = useState(null); // e.g. ['row', 'default']
+  const [previewStyle, setPreviewStyle] = useState(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -19,23 +20,26 @@ export default function ViewProfile({ profileId }) {
     fetchProfile();
   }, [profileId]);
 
-  const handleStyleSave = async (styleKey, newData) => {
-    const docRef = doc(db, "styleProfiles", profileId);
+  const handleStyleSave = async (newValue) => {
+    if (!editingPath) return;
+
     const updatedStyles = { ...profileData.styles };
 
-    if (styleKey.startsWith("row.")) {
-      const rowKey = styleKey.split(".")[1];
-      updatedStyles.row = {
-        ...updatedStyles.row,
-        [rowKey]: newData
+    if (editingPath.length === 1) {
+      updatedStyles[editingPath[0]] = newValue;
+    } else if (editingPath.length === 2) {
+      updatedStyles[editingPath[0]] = {
+        ...updatedStyles[editingPath[0]],
+        [editingPath[1]]: newValue,
       };
-    } else {
-      updatedStyles[styleKey] = newData;
     }
 
-    await setDoc(docRef, { styles: updatedStyles }, { merge: true });
-    setProfileData(prev => ({ ...prev, styles: updatedStyles }));
-    setEditingStyle(null);
+    const updatedProfile = { ...profileData, styles: updatedStyles };
+    await updateDoc(doc(db, "styleProfiles", profileId), { styles: updatedStyles });
+
+    setProfileData(updatedProfile);
+    setEditingPath(null);
+    setPreviewStyle(null);
   };
 
   if (!profileData) return <p>Loading profile data...</p>;
@@ -49,8 +53,22 @@ export default function ViewProfile({ profileId }) {
       <h3>Styles</h3>
       <ProfileStylesViewer
         styles={profileData.styles}
-        onEdit={setEditingStyle}
-        editingStyle={editingStyle}
+        editingStyle={
+          editingPath
+            ? editingPath.length === 1
+              ? profileData.styles?.[editingPath[0]]
+              : profileData.styles?.[editingPath[0]]?.[editingPath[1]]
+            : null
+        }
+        onEdit={(pathArray) => {
+          setEditingPath(pathArray);
+          const [k1, k2] = pathArray;
+          const style =
+            pathArray.length === 1
+              ? profileData.styles?.[k1]
+              : profileData.styles?.[k1]?.[k2];
+          setPreviewStyle(style);
+        }}
         onSave={handleStyleSave}
       />
 
