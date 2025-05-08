@@ -63,14 +63,16 @@ export const generatePdfBuffer = async (jsonInput = null) => {
     jsonData = cleanJson(localJson);
   }
   jsonData = filterJson(jsonData);
+  const styles = jsonData.styles || {};
 
   const { width: pageWidth = 842, height: pageHeight = 595 } = jsonData.document.pageSize || {};
   const leftMargin = jsonData.document.leftMargin || 50;
   const rightMargin = jsonData.document.rightMargin || 50;
   const topMargin = jsonData.document.topMargin || 50;
   const bottomMargin = jsonData.document.bottomMargin || 50;
-  const headerPaddingBottom = jsonData.document.headerPaddingBottom || 10;
-  const footerPaddingTop = jsonData.document.footerPaddingTop || 10;
+  //const headerPaddingBottom = jsonData.document.headerPaddingBottom || 10;
+  const headerPaddingBottom = styles.header?.paddingBottom || 10;
+  const footerPaddingTop = styles.footer?.paddingTop || 10;
   const groupPaddingBottom = jsonData.document.groupPaddingBottom || 0;
 
   const pdfDoc = await PDFDocument.create();
@@ -221,10 +223,10 @@ export const generatePdfBuffer = async (jsonInput = null) => {
         height: header.logo.height || embeddedLogo.height,
       });
     }
-    if (footer?.text) {
-      const { fontSize: fFS, font: fF, color: fC } = resolveStyle(footer.style || {}, regularFont, regularFont, italicFont, boldItalicFont);
+    if (footer) {
+      const { fontSize: fFS, font: fF, color: fC } = resolveStyle(styles.footer || {}, regularFont, regularFont, italicFont, boldItalicFont);
       const fy = bottomMargin;
-      pg.drawText(footer.text, { x: leftMargin, y: fy, size: fFS, font: fF, color: fC });
+      pg.drawText(footer, { x: leftMargin, y: fy, size: fFS, font: fF, color: fC });
       const pgText = `Page ${i+1} of ${total}`;
       const w = fF.widthOfTextAtSize(pgText, fFS);
       pg.drawText(pgText, { x: (pageWidth - w)/2, y: fy, size: fFS, font: fF, color: fC });

@@ -20,6 +20,18 @@
       "backgroundColour": "#FFFFFF",
       "fontColour": "#000000"
     },
+    "header": {
+        "fontSize": 10,
+        "fontStyle": "normal",
+        "fontColour": "#000000",
+        "paddingBottom":20
+      },
+      "footer": {
+        "fontSize": 10,
+        "fontStyle": "normal",
+        "fontColour": "#000000",
+        "paddingTop": 20
+      },
     "row": {
       "default": {
         "fontSize": 10,
@@ -49,7 +61,9 @@
     "leftMargin": 50,
     "rightMargin": 50,
     "topMargin": 30,
-    "bottomMargin": 20
+    "bottomMargin": 20,
+    "groupPaddingBottom": 10,
+    "bottomPageThreshold": 40
   },
   "columns": [
     {
@@ -78,3 +92,6 @@
     }
   ]
 }
+
+
+

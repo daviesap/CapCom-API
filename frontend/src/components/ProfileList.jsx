@@ -3,10 +3,13 @@ import { collection, getDocs, doc, setDoc, deleteDoc } from 'firebase/firestore'
 import { db } from '../firebase';
 import { nanoid } from 'nanoid';
 import { createStyleProfile } from '../services/styleProfileService';
+import { useNavigate } from 'react-router-dom';
 
 export default function ProfileList() {
   const [profiles, setProfiles] = useState([]);
   const [newName, setNewName] = useState("");
+
+  const navigate = useNavigate();
 
   const fetchProfiles = async () => {
     const querySnapshot = await getDocs(collection(db, 'styleProfiles'));
@@ -70,12 +73,11 @@ export default function ProfileList() {
               <td><strong>{profile.profileName}</strong></td>
               <td>{profile.profileId}</td>
               <td>
-                <button
-                  onClick={() => window.open(`/view?profileId=${profile.profileId}`, '_blank')}
-                  style={{ marginRight: "0.5rem" }}
-                >
-                  View
-                </button>
+              <button
+  onClick={() => navigate(`/view?profileId=${profile.profileId}`)}
+>
+  View
+</button>
                 <button
                   onClick={() => deleteProfile(profile.profileId, profile.profileName)}
                   style={{ color: "red" }}
