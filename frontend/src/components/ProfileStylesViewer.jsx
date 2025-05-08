@@ -1,100 +1,78 @@
-import React from 'react';
+import React from "react";
 
-const fontStyleOptions = ['normal', 'bold', 'italic', 'bold-italic'];
-
-export default function ProfileStylesViewer({ styles, onEdit, editingStyle, onSave }) {
-  const renderStyleRow = (key, value) => {
-    const isEditing = editingStyle === key;
-
-    const handleChange = (field, fieldValue) => {
-      if (onEdit) {
-        onEdit(key, { ...value, [field]: fieldValue });
-      }
-    };
-
+export default function ProfileStylesViewer({ styles, onEdit }) {
+  const renderStyleBox = (styleKey, styleData) => {
     const sampleStyle = {
-      backgroundColor: value.backgroundColour,
-      color: value.fontColour,
-      fontStyle: value.fontStyle?.includes("italic") ? "italic" : "normal",
-      fontWeight: value.fontStyle?.includes("bold") ? "bold" : "normal",
-      fontSize: value.fontSize,
-      padding: "0.25rem",
+      backgroundColor: styleData.backgroundColour || "#fff",
+      color: styleData.fontColour || styleData.colour || "#000",
+      fontSize: `${styleData.fontSize || 12}px`,
+      fontStyle: styleData.fontStyle === "italic" ? "italic" : "normal",
+      fontWeight: styleData.fontStyle?.includes("bold") ? "bold" : "normal",
+      padding: "0.5rem",
+      borderRadius: "4px",
+      border: "1px solid #ccc",
+      minWidth: "80px",
+      textAlign: "center",
     };
 
     return (
-      <tr key={key}>
-        <td style={{ fontWeight: "bold" }}>{key}</td>
-        <td>
-          {isEditing ? (
-            <>
-              <div>
-                Font size:{" "}
-                <input
-                  type="number"
-                  value={value.fontSize}
-                  onChange={(e) => handleChange("fontSize", parseInt(e.target.value))}
-                />
-              </div>
-              <div>
-                Font style:{" "}
-                <select
-                  value={value.fontStyle}
-                  onChange={(e) => handleChange("fontStyle", e.target.value)}
-                >
-                  {fontStyleOptions.map(opt => (
-                    <option key={opt} value={opt}>{opt}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                Background:{" "}
-                <input
-                  type="color"
-                  value={value.backgroundColour}
-                  onChange={(e) => handleChange("backgroundColour", e.target.value)}
-                />
-              </div>
-              <div>
-                Font colour:{" "}
-                <input
-                  type="color"
-                  value={value.fontColour}
-                  onChange={(e) => handleChange("fontColour", e.target.value)}
-                />
-              </div>
-              <button onClick={() => onSave(key)}>Save</button>
-            </>
-          ) : (
-            <>
-              fontSize: {value.fontSize}, fontStyle: {value.fontStyle}, background: {value.backgroundColour}, colour: {value.fontColour}
-            </>
-          )}
-        </td>
-        <td><div style={sampleStyle}>Sample</div></td>
-        <td><button onClick={() => onEdit(key, value)}>Edit</button></td>
-      </tr>
+      <div
+        key={styleKey}
+        style={{
+          display: "grid",
+          gridTemplateColumns: "150px 1fr 100px 100px",
+          alignItems: "center",
+          gap: "1rem",
+          borderBottom: "1px solid #ccc",
+          padding: "1rem 0",
+          width: "100%",
+          boxSizing: "border-box"
+        }}
+      >
+        <strong>{styleKey}</strong>
+
+        <pre
+          style={{
+            backgroundColor: "#f9f9f9",
+            padding: "0.5rem",
+            borderRadius: "4px",
+            whiteSpace: "pre-wrap",
+            margin: 0
+          }}
+        >
+          {Object.entries(styleData)
+            .map(([k, v]) => `${k}: ${v}`)
+            .join("\n")}
+        </pre>
+
+        <div style={sampleStyle}>Sample</div>
+
+        <button
+          onClick={() => onEdit(styleKey)}
+          style={{
+            padding: "0.5rem 1rem",
+            backgroundColor: "#eee",
+            border: "none",
+            borderRadius: "4px",
+            cursor: "pointer",
+          }}
+        >
+          Edit
+        </button>
+      </div>
     );
   };
 
   return (
-    <table style={{ width: "100%", marginTop: "1rem" }}>
-      <thead>
-        <tr>
-          <th>Style Name</th>
-          <th>Settings</th>
-          <th>Sample</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {Object.entries(styles).map(([key, value]) =>
-          key === "row"
-            ? Object.entries(value).map(([variant, rowValue]) =>
-                renderStyleRow(`${key}.${variant}`, rowValue)
-              )
-            : renderStyleRow(key, value)
-        )}
-      </tbody>
-    </table>
+    <div style={{ maxWidth: "1000px", margin: "0 auto", padding: "2rem" }}>
+      {Object.entries(styles).map(([styleKey, styleData]) => {
+        if (styleKey === "row" && typeof styleData === "object") {
+          return Object.entries(styleData).map(([subKey, subData]) =>
+            renderStyleBox(`${styleKey}.${subKey}`, subData)
+          );
+        }
+        return renderStyleBox(styleKey, styleData);
+      })}
+    </div>
   );
 }

@@ -1,89 +1,135 @@
-// ProfileList.jsx
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { collection, getDocs, doc, setDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '../firebase';
-import { collection, getDocs, addDoc, deleteDoc, doc } from 'firebase/firestore';
-import { Link } from 'react-router-dom';
 import { nanoid } from 'nanoid';
 
 export default function ProfileList() {
   const [profiles, setProfiles] = useState([]);
-  const [newProfileName, setNewProfileName] = useState('');
+  const [newName, setNewName] = useState("");
+
+  const fetchProfiles = async () => {
+    const querySnapshot = await getDocs(collection(db, 'styleProfiles'));
+    const data = querySnapshot.docs.map(doc => ({
+      profileId: doc.id,
+      profileName: doc.data().name || "(Unnamed Profile)"
+    }));
+    setProfiles(data);
+  };
 
   useEffect(() => {
-    const fetchProfiles = async () => {
-      const snapshot = await getDocs(collection(db, 'styleProfiles'));
-      const data = snapshot.docs.map((doc) => ({
-        profileId: doc.id,
-        ...doc.data(),
-      }));
-      setProfiles(data);
-    };
     fetchProfiles();
   }, []);
 
-  const handleAddProfile = async () => {
-    const id = nanoid(10);
-    const docRef = doc(db, 'styleProfiles', id);
-    await setDoc(docRef, {
-      name: newProfileName,
-      styles: {},
+  const addProfile = async () => {
+    if (!newName.trim()) return;
+
+    const newId = nanoid(10);
+
+    await setDoc(doc(db, "styleProfiles", newId), {
+      name: newName,
+      styles: {
+        title: {
+          fontSize: 12,
+          fontStyle: "bold",
+          backgroundColour: "#FFFFFF",
+          paddingBottom: 0,
+          fontColour: "#000000"
+        },
+        metadata: {
+          fontSize: 11,
+          fontStyle: "normal",
+          backgroundColour: "#FFFFFF",
+          paddingBottom: 12,
+          fontColour: "#000000"
+        },
+        labelRow: {
+          fontSize: 11,
+          fontStyle: "bold",
+          backgroundColour: "#FFFFFF",
+          fontColour: "#000000"
+        },
+        row: {
+          default: {
+            fontSize: 10,
+            fontStyle: "italic",
+            backgroundColour: "#FFFFFF",
+            fontColour: "#000000"
+          },
+          highlight: {
+            fontSize: 10,
+            fontStyle: "italic",
+            backgroundColour: "#FFFF00",
+            fontColour: "#000000"
+          },
+          lowlight: {
+            fontSize: 10,
+            fontStyle: "normal",
+            backgroundColour: "#FFFFFF",
+            fontColour: "#000000"
+          }
+        }
+      }
     });
-    setProfiles([...profiles, { profileId: id, name: newProfileName, styles: {} }]);
-    setNewProfileName('');
+
+    setNewName("");
+    fetchProfiles();
   };
 
-  const handleDeleteProfile = async (id) => {
-    await deleteDoc(doc(db, 'styleProfiles', id));
-    setProfiles(profiles.filter((p) => p.profileId !== id));
+  const deleteProfile = async (id, name) => {
+    const confirmed = window.confirm(`Are you sure you want to delete profile "${name}"?`);
+    if (!confirmed) return;
+
+    await deleteDoc(doc(db, "styleProfiles", id));
+    fetchProfiles();
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-6">Saved Profiles</h1>
+    <div>
+      <h2>Profiles</h2>
 
-      <div className="flex items-center gap-4 mb-6">
+      <div style={{ marginBottom: "1rem" }}>
         <input
           type="text"
-          className="border px-2 py-1 rounded w-1/2"
+          value={newName}
+          onChange={(e) => setNewName(e.target.value)}
           placeholder="New profile name"
-          value={newProfileName}
-          onChange={(e) => setNewProfileName(e.target.value)}
         />
-        <button
-          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-          onClick={handleAddProfile}
-          disabled={!newProfileName.trim()}
-        >
+        <button onClick={addProfile} style={{ marginLeft: "0.5rem" }}>
           Add Profile
         </button>
       </div>
 
-      <ul className="space-y-4">
-        {profiles.map((profile) => (
-          <li key={profile.profileId} className="bg-white shadow rounded p-4">
-            <div className="flex justify-between items-center">
-              <div>
-                <div className="text-sm text-gray-500">ID: {profile.profileId}</div>
-                <div className="text-lg font-medium">{profile.name || 'Unnamed Profile'}</div>
-              </div>
-              <div className="flex gap-2">
-                <Link
-                  to={`/view/${profile.profileId}`}
-                  className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+      <table border="1" cellPadding="8" style={{ borderCollapse: 'collapse', width: '100%' }}>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Profile ID</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {profiles.map(profile => (
+            <tr key={profile.profileId}>
+              <td><strong>{profile.profileName}</strong></td>
+              <td>{profile.profileId}</td>
+              <td>
+                <button
+                  onClick={() => window.open(`/view?profileId=${profile.profileId}`, '_blank')}
+                  style={{ marginRight: "0.5rem" }}
                 >
                   View
-                </Link>
+                </button>
                 <button
-                  onClick={() => handleDeleteProfile(profile.profileId)}
-                  className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+                  onClick={() => deleteProfile(profile.profileId, profile.profileName)}
+                  style={{ color: "red" }}
                 >
                   Delete
                 </button>
-              </div>
-            </div>
-          </li>
-        ))}
-      </ul>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
