@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { collection, getDocs, doc, setDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import { nanoid } from 'nanoid';
+import { createStyleProfile } from '../services/styleProfileService';
 
 export default function ProfileList() {
   const [profiles, setProfiles] = useState([]);
@@ -25,51 +26,7 @@ export default function ProfileList() {
 
     const newId = nanoid(10);
 
-    await setDoc(doc(db, "styleProfiles", newId), {
-      name: newName,
-      styles: {
-        title: {
-          fontSize: 12,
-          fontStyle: "bold",
-          backgroundColour: "#FFFFFF",
-          paddingBottom: 0,
-          fontColour: "#000000"
-        },
-        metadata: {
-          fontSize: 11,
-          fontStyle: "normal",
-          backgroundColour: "#FFFFFF",
-          paddingBottom: 12,
-          fontColour: "#000000"
-        },
-        labelRow: {
-          fontSize: 11,
-          fontStyle: "bold",
-          backgroundColour: "#FFFFFF",
-          fontColour: "#000000"
-        },
-        row: {
-          default: {
-            fontSize: 10,
-            fontStyle: "italic",
-            backgroundColour: "#FFFFFF",
-            fontColour: "#000000"
-          },
-          highlight: {
-            fontSize: 10,
-            fontStyle: "italic",
-            backgroundColour: "#FFFF00",
-            fontColour: "#000000"
-          },
-          lowlight: {
-            fontSize: 10,
-            fontStyle: "normal",
-            backgroundColour: "#FFFFFF",
-            fontColour: "#000000"
-          }
-        }
-      }
-    });
+    await createStyleProfile(db, newId, newName);
 
     setNewName("");
     fetchProfiles();

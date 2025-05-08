@@ -1,0 +1,80 @@
+{
+  "styles": {
+    "title": {
+      "fontSize": 12,
+      "fontStyle": "bold",
+      "backgroundColour": "#FFFFFF",
+      "paddingBottom": 0,
+      "fontColour": "#000000"
+    },
+    "metadata": {
+      "fontSize": 11,
+      "fontStyle": "normal",
+      "backgroundColour": "#FFFFFF",
+      "paddingBottom": 12,
+      "fontColour": "#000000"
+    },
+    "labelRow": {
+      "fontSize": 11,
+      "fontStyle": "bold",
+      "backgroundColour": "#FFFFFF",
+      "fontColour": "#000000"
+    },
+    "row": {
+      "default": {
+        "fontSize": 10,
+        "fontStyle": "italic",
+        "backgroundColour": "#FFFFFF",
+        "fontColour": "#000000"
+      },
+      "highlight": {
+        "fontSize": 10,
+        "fontStyle": "italic",
+        "backgroundColour": "#FFFF00",
+        "fontColour": "#000000"
+      },
+      "lowlight": {
+        "fontSize": 10,
+        "fontStyle": "normal",
+        "backgroundColour": "#FFFFFF",
+        "fontColour": "#000000"
+      }
+    }
+  },
+  "document": {
+    "pageSize": {
+      "height": 595,
+      "width": 842
+    },
+    "leftMargin": 50,
+    "rightMargin": 50,
+    "topMargin": 30,
+    "bottomMargin": 20
+  },
+  "columns": [
+    {
+      "field": "Column 1",
+      "label": "Label 1",
+      "width": 50,
+      "showLabel": true
+    },
+    {
+      "field": "Column 2",
+      "label": "Label 2",
+      "width": 50,
+      "showLabel": true
+    },
+    {
+      "field": "Column 3",
+      "label": "Label 3",
+      "width": 50,
+      "showLabel": true
+    },
+    {
+      "field": "Column 4",
+      "label": "Label 4",
+      "width": 50,
+      "showLabel": true
+    }
+  ]
+}

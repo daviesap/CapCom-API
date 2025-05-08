@@ -56,31 +56,41 @@ export const generatePdf = async (req, res) => {
       jsonInput = JSON.parse(raw);
     }
 
-    // 🔍 If projectId is provided, log styles from Firestore
-    if (jsonInput.projectId) {
+    // 🔍 If profileId is provided, log styles from Firestore
+    if (jsonInput.profileId) {
       try {
-        const profileRef = db.collection("styleProfiles").doc(jsonInput.projectId);
+        const profileRef = db.collection("styleProfiles").doc(jsonInput.profileId);
         const profileSnap = await profileRef.get();
-    
+
         if (profileSnap.exists) {
           const profileData = profileSnap.data();
           const firestoreStyles = profileData.styles || {};
-    
-          // Ensure jsonInput.styles exists
+
+          // Ensure jsonInput.styles, columns and document exists
           jsonInput.styles = jsonInput.styles || {};
-    
+
           // Deep merge: jsonInput.styles takes priority
           jsonInput.styles = merge({}, firestoreStyles, jsonInput.styles);
-    
-          console.log(`🧩 Styles merged from Firestore for projectId "${jsonInput.projectId}":`);
+
+          // Merge Firestore's document into jsonInput.document (payload takes priority)
+          const firestoreDocument = profileData.document || {};
+          jsonInput.document = merge({}, firestoreDocument, jsonInput.document || {});
+
+          // Inject Firestore columns at top-level of payload
+          jsonInput.columns = profileData.columns || [];
+
+          console.log(`🧩 Styles merged from Firestore for profileId "${jsonInput.profileId}":`);
           console.dir(jsonInput.styles, { depth: null });
+          console.dir(jsonInput.document, { depth: null });
+          console.dir(jsonInput.columns, { depth: null });
         } else {
-          console.warn(`⚠️ No Firestore profile found for projectId "${jsonInput.projectId}"`);
+          console.warn(`⚠️ No Firestore profile found for profileId "${jsonInput.profileId}"`);
         }
       } catch (err) {
         console.error("🔥 Error fetching Firestore profile:", err);
       }
     }
+
 
     // 📄 Generate PDF
     const { bytes, filename } = await generatePdfBuffer(jsonInput);
