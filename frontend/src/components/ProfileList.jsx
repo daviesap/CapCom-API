@@ -73,17 +73,17 @@ export default function ProfileList() {
               <td><strong>{profile.profileName}</strong></td>
               <td>{profile.profileId}</td>
               <td>
-              <button
-  onClick={() => navigate(`/view?profileId=${profile.profileId}`)}
->
-  View
-</button>
-                <button
-                  onClick={() => deleteProfile(profile.profileId, profile.profileName)}
-                  style={{ color: "red" }}
-                >
-                  Delete
-                </button>
+                <div className="action-buttons">
+                  <button onClick={() => navigate(`/view?profileId=${profile.profileId}`)}>
+                    View
+                  </button>
+                  <button
+                    className="delete"
+                    onClick={() => deleteProfile(profile.profileId, profile.profileName)}
+                  >
+                    Delete
+                  </button>
+                </div>
               </td>
             </tr>
           ))}

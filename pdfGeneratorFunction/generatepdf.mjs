@@ -96,8 +96,8 @@ export const generatePdfBuffer = async (jsonInput = null) => {
 
   const defaultStyle = jsonData.styles?.row?.default || {};
   const labelRowStyle = jsonData.styles?.labelRow || {};
-  const groupTitleStyle = jsonData.styles?.title || {};
-  const groupMetaStyle = jsonData.styles?.metadata || {};
+  const groupTitleStyle = jsonData.styles?.groupTitle || {};
+  const groupMetaStyle = jsonData.styles?.groupMetadata || {};
   const columns = jsonData.columns || [];
 
   const pages = [];
@@ -134,9 +134,9 @@ export const generatePdfBuffer = async (jsonInput = null) => {
     const introHeight = tLH + mLH + mPB + (hasLabels ? labelInfo.lineHeight : 0);
     checkBreak(introHeight);
 
-    currentPage.drawText(sanitiseText(group.groupTitle), { x: leftMargin, y, size: tFS, font: tF, color: tC });
+    currentPage.drawText(sanitiseText(group.title), { x: leftMargin, y, size: tFS, font: tF, color: tC });
     y -= tLH;
-    currentPage.drawText(sanitiseText(group.groupMetadata), { x: leftMargin, y, size: mFS, font: mF, color: mC });
+    currentPage.drawText(sanitiseText(group.metadata), { x: leftMargin, y, size: mFS, font: mF, color: mC });
     y -= mLH + mPB;
 
     if (hasLabels) {

@@ -2,6 +2,7 @@ import { AuthProvider, useAuth } from "./AuthProvider";
 import { BrowserRouter as Router, Routes, Route, useSearchParams } from "react-router-dom";
 import ViewProfile from "./components/ViewProfile";
 import ProfileList from "./components/ProfileList";
+import './App.css';
 
 function AppContent() {
   const { user, authLoading, loginWithGoogle, logout } = useAuth();

@@ -1,6 +1,7 @@
 body, html, #root {
   margin: 0;
-  padding: 0;
+  padding-left: 1rem; /* 👈 Add this line */
+  padding-right: 1rem; /* (Optional) for symmetry */
   height: 100%;
   background-color: white;
   color: black;
@@ -90,15 +91,31 @@ input[type="color"] {
 }
 
 button {
-  padding: 0.7rem 1.5rem;
+  padding: 0.5rem 0.5rem;
   font-size: 1rem;
-  background-color: #007bff;
+  /*background-color: #007bff; */
   border: none;
-  color: #fff;
+  color: #000;
   border-radius: 4px;
   cursor: pointer;
 }
 
 button:hover {
   background-color: #0056b3;
+  color:#ffffff;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 0.5rem; /* Adjust spacing between buttons */
+}
+
+button.delete {
+  /*background-color: #FFF;*/
+  color: #ff4d4f;
+}
+
+button.delete:hover {
+  background-color: #cc0000;
+  color:#ffffff;
 }

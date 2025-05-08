@@ -1,13 +1,13 @@
 {
   "styles": {
-    "title": {
+    "groupTitle": {
       "fontSize": 12,
       "fontStyle": "bold",
       "backgroundColour": "#FFFFFF",
       "paddingBottom": 0,
       "fontColour": "#000000"
     },
-    "metadata": {
+    "groupMetadata": {
       "fontSize": 11,
       "fontStyle": "normal",
       "backgroundColour": "#FFFFFF",
@@ -26,7 +26,7 @@
         "fontColour": "#000000",
         "paddingBottom":20
       },
-      "footer": {
+    "footer": {
         "fontSize": 10,
         "fontStyle": "normal",
         "fontColour": "#000000",
