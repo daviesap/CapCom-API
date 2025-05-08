@@ -6,70 +6,132 @@ import ProfileStylesViewer from "./ProfileStylesViewer";
 
 function DocumentEditor({ documentData, onSave }) {
   const [draft, setDraft] = useState(documentData);
+
   useEffect(() => {
     setDraft(documentData);
   }, [documentData]);
 
-  // Only non-object fields in the top row
-  const nonObjectEntries = Object.entries(draft).filter(
-    ([_, value]) => typeof value !== 'object' || value === null
-  );
-  // Object-type fields (like pageSize, etc) for rendering below
-  const objectEntries = Object.entries(draft).filter(
-    ([_, value]) => typeof value === 'object' && value !== null
-  );
+  const updateValue = (key, subKey, value) => {
+    if (subKey) {
+      setDraft({
+        ...draft,
+        [key]: {
+          ...draft[key],
+          [subKey]: value,
+        },
+      });
+    } else {
+      setDraft({
+        ...draft,
+        [key]: value,
+      });
+    }
+  };
 
   return (
     <div style={{ marginBottom: '1rem' }}>
-      <h3>Document</h3>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
-        {nonObjectEntries.map(([key, value]) => (
-          <div key={key} style={{ marginBottom: '0.5rem', minWidth: '120px', flex: '1 1 120px' }}>
-            <label style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
-              {key}:
+      <h3>Document Styles</h3>
+      <table style={{ borderCollapse: 'collapse', width: '100%', maxWidth: '600px' }}>
+        <thead>
+          <tr>
+            <th style={{ borderBottom: '1px solid #ccc', padding: '0.5rem' }}>Type</th>
+            <th style={{ borderBottom: '1px solid #ccc', padding: '0.5rem' }}>Field</th>
+            <th style={{ borderBottom: '1px solid #ccc', padding: '0.5rem' }}>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          {/* Page Size */}
+          <tr>
+            <td rowSpan="2" style={{ padding: '0.5rem', verticalAlign: 'top' }}>Page Size</td>
+            <td style={{ padding: '0.5rem' }}>Width</td>
+            <td style={{ padding: '0.5rem' }}>
               <input
-                type={typeof value === 'number' ? 'number' : 'text'}
-                value={value}
-                onChange={e => {
-                  const newValue = typeof value === 'number' ? parseFloat(e.target.value) || 0 : e.target.value;
-                  setDraft({ ...draft, [key]: newValue });
-                }}
-                style={{ marginTop: '0.25rem', width: '6ch' }}
+                type="number"
+                value={draft.pageSize.width}
+                onChange={e => updateValue('pageSize', 'width', parseFloat(e.target.value) || 0)}
               />
-            </label>
-          </div>
-        ))}
-      </div>
-      {/* Render object-type fields below */}
-      {objectEntries.map(([key, value]) => (
-        <div key={key} style={{ marginBottom: '0.5rem' }}>
-          <div style={{ fontWeight: 'bold' }}>{key}</div>
-          <div style={{ display: 'flex', gap: '1rem', marginLeft: '1rem', marginBottom: '0.5rem' }}>
-            {Object.entries(value).map(([subKey, subValue]) => (
-              <label key={subKey} style={{ display: 'flex', flexDirection: 'column' }}>
-                {subKey}:
-                <input
-                  type={typeof subValue === 'number' ? 'number' : 'text'}
-                  value={subValue}
-                  onChange={e => {
-                    const newValue =
-                      typeof subValue === 'number' ? parseFloat(e.target.value) || 0 : e.target.value;
-                    setDraft({
-                      ...draft,
-                      [key]: {
-                        ...value,
-                        [subKey]: newValue,
-                      },
-                    });
-                  }}
-                  style={{ marginTop: '0.25rem', width: '6ch' }}
-                />
-              </label>
-            ))}
-          </div>
-        </div>
-      ))}
-      <button onClick={() => onSave(draft)}>Save Document</button>
+            </td>
+          </tr>
+          <tr>
+            <td style={{ padding: '0.5rem' }}>Height</td>
+            <td style={{ padding: '0.5rem' }}>
+              <input
+                type="number"
+                value={draft.pageSize.height}
+                onChange={e => updateValue('pageSize', 'height', parseFloat(e.target.value) || 0)}
+              />
+            </td>
+          </tr>
+
+          {/* Margins */}
+          <tr>
+            <td rowSpan="4" style={{ padding: '0.5rem', verticalAlign: 'top' }}>Margins</td>
+            <td style={{ padding: '0.5rem' }}>Top</td>
+            <td style={{ padding: '0.5rem' }}>
+              <input
+                type="number"
+                value={draft.topMargin}
+                onChange={e => updateValue('topMargin', null, parseFloat(e.target.value) || 0)}
+              />
+            </td>
+          </tr>
+          <tr>
+            <td style={{ padding: '0.5rem' }}>Left</td>
+            <td style={{ padding: '0.5rem' }}>
+              <input
+                type="number"
+                value={draft.leftMargin}
+                onChange={e => updateValue('leftMargin', null, parseFloat(e.target.value) || 0)}
+              />
+            </td>
+          </tr>
+          <tr>
+            <td style={{ padding: '0.5rem' }}>Bottom</td>
+            <td style={{ padding: '0.5rem' }}>
+              <input
+                type="number"
+                value={draft.bottomMargin}
+                onChange={e => updateValue('bottomMargin', null, parseFloat(e.target.value) || 0)}
+              />
+            </td>
+          </tr>
+          <tr>
+            <td style={{ padding: '0.5rem' }}>Right</td>
+            <td style={{ padding: '0.5rem' }}>
+              <input
+                type="number"
+                value={draft.rightMargin}
+                onChange={e => updateValue('rightMargin', null, parseFloat(e.target.value) || 0)}
+              />
+            </td>
+          </tr>
+
+          {/* Others */}
+          <tr>
+            <td rowSpan="2" style={{ padding: '0.5rem', verticalAlign: 'top' }}>Other</td>
+            <td style={{ padding: '0.5rem' }}>Group Padding Bottom</td>
+            <td style={{ padding: '0.5rem' }}>
+              <input
+                type="number"
+                value={draft.groupPaddingBottom}
+                onChange={e => updateValue('groupPaddingBottom', null, parseFloat(e.target.value) || 0)}
+              />
+            </td>
+          </tr>
+          <tr>
+            <td style={{ padding: '0.5rem' }}>Bottom Page Threshold</td>
+            <td style={{ padding: '0.5rem' }}>
+              <input
+                type="number"
+                value={draft.bottomPageThreshold}
+                onChange={e => updateValue('bottomPageThreshold', null, parseFloat(e.target.value) || 0)}
+              />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <button style={{ marginTop: '1rem' }} onClick={() => onSave(draft)}>Save Document JSON</button>
     </div>
   );
 }
@@ -144,7 +206,7 @@ function ColumnsEditor({ columnsData, onSave }) {
         </div>
       ))}
       <button onClick={handleAddColumn} style={{ marginRight: '1rem' }}>Add Column</button>
-      <button onClick={() => onSave(draft)}>Save Columns</button>
+      <button onClick={() => onSave(draft)}>Save Column JSON</button>
     </div>
   );
 }

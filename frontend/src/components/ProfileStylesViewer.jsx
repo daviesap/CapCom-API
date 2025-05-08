@@ -140,7 +140,7 @@ function StyleBox({ styleKey, styleData, pathArray, editingStyle, onEdit, onSave
               onClick={() => onSave(draft)}
               style={{ marginRight: "0.5rem" }}
             >
-              Save
+              Save JSON
             </button>
             <button onClick={() => onEdit(null)}>Cancel</button>
           </>
