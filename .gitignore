@@ -8,6 +8,8 @@ node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+*.log
+firebase-debug.log
 
 # Runtime files
 dist/
@@ -45,11 +47,8 @@ __pycache__/
 local.settings.json
 
 # Others
-*.log
 *.bak
 *.tmp
 
-#No need to upload generated PDFs
+# No need to upload generated PDFs
 /pdfoutput
-
-git status

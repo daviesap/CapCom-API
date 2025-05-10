@@ -1,16 +1,30 @@
-# This file specifies files that are *not* uploaded to Google Cloud
-# using gcloud. It follows the same syntax as .gitignore, with the addition of
-# "#!include" directives (which insert the entries of the given .gitignore-style
-# file at that point).
-#
-# For more information, run:
-#   $ gcloud topic gcloudignore
-#
-.gcloudignore
-# If you would like to upload your .git directory, .gitignore file or files
-# from your .gitignore file, remove the corresponding line
-# below:
+#G  Cloud Ignore file for Google Cloud Functions
+# Ignore everything by default
+**
+
+# Only include files needed for Cloud Function
+!index.js
+!package.json
+!package-lock.json
+!generatepdf.mjs
+!utils/
+!JSON/
+
+# Exclude common junk files and dev artifacts
+node_modules/
+dist/
+build/
+.DS_Store
+firebase-debug.log
+*.log
+*.tmp
+*.bak
+coverage/
+pdfoutput/
+.env
+.env.*
+local.settings.json
+
+# Ignore Git-related metadata
 .git
 .gitignore
-
-node_modules
