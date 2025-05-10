@@ -212,5 +212,5 @@ async function logPdfEvent({ timestamp, filename, url, userId, userEmail, succes
     errorMessage: errorMessage || null,
   };
 
-  await db.collection('pdfLogs').add(logData);
+  await db.collection('pdfCreationLog').add(logData);
 }

@@ -4,6 +4,7 @@ import { db } from '../firebase';
 import { nanoid } from 'nanoid';
 import { createStyleProfile } from '../services/styleProfileService';
 import { useNavigate } from 'react-router-dom';
+import PdfCreationLog from '../components/pdfCreationLog';
 
 export default function ProfileList() {
   const [profiles, setProfiles] = useState([]);
@@ -89,6 +90,10 @@ export default function ProfileList() {
           ))}
         </tbody>
       </table>
+
+    <div>
+      <PdfCreationLog />
     </div>
-  );
+    </div>
+    );
 }
