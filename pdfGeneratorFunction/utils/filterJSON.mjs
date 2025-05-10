@@ -15,25 +15,27 @@ export function filterJson(jsonData) {
   if (!hasTagFilter && !hasLocationFilter) return jsonData;
 
   const filteredGroups = jsonData.groups.map(group => {
-    const filteredContent = group.groupContent.filter(entry => {
-      const { tags = [], location = [] } = entry.rows;
+    const filteredEntries = group.entries.filter(entry => {
+      const fields = entry.fields || {};
+      const tags = Array.isArray(fields.tags) ? fields.tags : [];
+      const locations = Array.isArray(fields.locations) ? fields.locations : [];
 
       const matchesTags = hasTagFilter
         ? tags.some(tag => filters.tags.includes(tag))
         : true;
 
       const matchesLocations = hasLocationFilter
-        ? location.some(loc => filters.location.includes(loc))
+        ? locations.some(loc => filters.location.includes(loc))
         : true;
 
-      return matchesTags && matchesLocations; // ✅ Only include if BOTH match
+      return matchesTags && matchesLocations;
     });
 
     return {
       ...group,
-      groupContent: filteredContent
+      entries: filteredEntries
     };
-  }).filter(group => group.groupContent.length > 0);
+  }).filter(group => group.entries.length > 0); // Remove empty groups
 
   return {
     ...jsonData,
