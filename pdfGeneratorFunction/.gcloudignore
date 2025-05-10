@@ -1,30 +1,42 @@
-#G  Cloud Ignore file for Google Cloud Functions
-# Ignore everything by default
-**
+# This file specifies files that are *not* uploaded to Google Cloud
+# using gcloud. It follows the same syntax as .gitignore, with the addition of
+# "#!include" directives (which insert the entries of the given .gitignore-style
+# file at that point).
+#
+# For more information, run:
+#   $ gcloud topic gcloudignore
+#
+.gcloudignore
+# If you would like to upload your .git directory, .gitignore file or files
+# from your .gitignore file, remove the corresponding line
+# below:
 
-# Only include files needed for Cloud Function
-!index.js
-!package.json
-!package-lock.json
-!generatepdf.mjs
-!utils/
-!JSON/
 
-# Exclude common junk files and dev artifacts
+# Ignore node modules
 node_modules/
+npm-debug.log
+yarn-error.log
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore build output
 dist/
 build/
-.DS_Store
-firebase-debug.log
-*.log
-*.tmp
-*.bak
 coverage/
-pdfoutput/
+*.log
+
+# Ignore environment files
 .env
 .env.*
 local.settings.json
 
-# Ignore Git-related metadata
+# Ignore Git-related files
 .git
 .gitignore
+
+# Ignore editor/IDE settings
+.vscode/
+.idea/
+*.swp

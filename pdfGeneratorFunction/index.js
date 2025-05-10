@@ -115,6 +115,7 @@ export const generatePdf = async (req, res) => {
       url: publicUrl,
       userId: req.body.userId || 'unknown userId',
       userEmail: req.body.userEmail || 'unknown email',
+      profileId: req.body.profileId || 'unknown profileId',
       success: true,
     });
     
@@ -142,6 +143,7 @@ export const generatePdf = async (req, res) => {
       url: '',
       userId: req.body.userId || 'unknown userId',
       userEmail: req.body.userEmail || 'unknown email',
+      profileId: req.body.profileId || 'unknown profileId',
       success: false,
       errorMessage: err.message,
     });
@@ -201,13 +203,14 @@ if (process.argv.includes('--local')) {
 }
 
 //Function to log to Firestore
-async function logPdfEvent({ timestamp, filename, url, userId, userEmail, success, errorMessage }) {
+async function logPdfEvent({ timestamp, filename, url, userId, userEmail, profileId, success, errorMessage }) {
   const logData = {
     timestamp,
     filename,
     url,
     userId,
     userEmail,
+    profileId,
     success,
     errorMessage: errorMessage || null,
   };

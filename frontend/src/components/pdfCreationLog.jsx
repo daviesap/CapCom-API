@@ -34,6 +34,7 @@ export default function PdfCreationLog() {
             <th>URL</th>
             <th>User ID</th>
             <th>User email</th>
+            <th>Profile ID</th>
             <th>Status</th>
             <th>Error</th>
           </tr>
@@ -50,6 +51,7 @@ export default function PdfCreationLog() {
               </td>
               <td>{log.userId}</td>
               <td>{log.userEmail}</td>
+              <td>{log.profileId}</td>
               <td>{log.success ? 'Success' : 'Failed'}</td>
               <td style={{ color: 'red' }}>{log.errorMessage || '—'}</td>
             </tr>
