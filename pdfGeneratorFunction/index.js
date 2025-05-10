@@ -108,6 +108,17 @@ export const generatePdf = async (req, res) => {
     const timestamp = new Date().toISOString();
     const executionTimeSeconds = (Date.now() - startTime) / 1000;
 
+    //Log a successful PDF generation event to Firestore
+    await logPdfEvent({
+      timestamp: new Date().toISOString(),
+      filename: filename || 'filename not provided',
+      url: publicUrl,
+      userId: req.body.userId || 'unknown userId',
+      userEmail: req.body.userEmail || 'unknown email',
+      success: true,
+    });
+    
+
     res.status(200).json({
       success: true,
       message: '✅ PDF generated and uploaded successfully',
@@ -124,6 +135,15 @@ export const generatePdf = async (req, res) => {
       url: null,
       timestamp: new Date().toISOString(),
       executionTimeSeconds,
+    });
+    await logPdfEvent({
+      timestamp: new Date().toISOString(),
+      filename: filename || 'filename not provided',
+      url: '',
+      userId: req.body.userId || 'unknown userId',
+      userEmail: req.body.userEmail || 'unknown email',
+      success: false,
+      errorMessage: err.message,
     });
   } finally {
     console.timeEnd('Script execution');
@@ -178,4 +198,19 @@ if (process.argv.includes('--local')) {
       console.timeEnd('Script execution');
     }
   })();
+}
+
+//Function to log to Firestore
+async function logPdfEvent({ timestamp, filename, url, userId, userEmail, success, errorMessage }) {
+  const logData = {
+    timestamp,
+    filename,
+    url,
+    userId,
+    userEmail,
+    success,
+    errorMessage: errorMessage || null,
+  };
+
+  await db.collection('pdfLogs').add(logData);
 }
