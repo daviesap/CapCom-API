@@ -2,9 +2,10 @@ import { AuthProvider, useAuth } from "./AuthProvider";
 import { BrowserRouter as Router, Routes, Route, useSearchParams } from "react-router-dom";
 import ViewProfile from "./components/ViewProfile";
 import ProfileList from "./components/ProfileList";
-import './App.css';
+import './index.css';
 import pdfCreationLog from './components/pdfCreationLog';
 import React, { useState } from "react";
+import TabsExample from './components/tabs';
 
 <Route path="/pdf-log" element={<pdfCreationLog />} />
 
@@ -74,6 +75,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<AppContent />} />
           <Route path="/view" element={<ViewWrapper />} />
+          <Route path="/tabs" element={<TabsExample />} />
         </Routes>
       </Router>
     </AuthProvider>
