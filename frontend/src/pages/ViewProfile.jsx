@@ -215,7 +215,7 @@ function ViewProfile({ profileId }) {
   const navigate = useNavigate();
   const [profileData, setProfileData] = useState(null);
   const [editingPath, setEditingPath] = useState(null);
-  const [previewStyle, setPreviewStyle] = useState(null);
+  const [ setPreviewStyle] = useState(null);
 
   useEffect(() => {
     const fetchProfile = async () => {

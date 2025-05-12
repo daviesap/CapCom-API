@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import StyleBoxList from "./StyleBoxList";
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
-function StyleBox({ styleKey, styleData, pathArray, editingStyle, onEdit, onSave }) {
+export default function StyleBox({ styleKey, styleData, pathArray, editingStyle, onEdit, onSave }) {
   const isEditing =
     editingStyle &&
     JSON.stringify(styleData) === JSON.stringify(editingStyle);
@@ -12,7 +13,6 @@ function StyleBox({ styleKey, styleData, pathArray, editingStyle, onEdit, onSave
     if (isEditing) setDraft(styleData);
   }, [isEditing, styleData]);
 
-  // Preview style for the sample box
   const sampleStyle = {
     backgroundColor: styleData.backgroundColour || "#fff",
     color: styleData.fontColour || styleData.colour || "#000",
@@ -23,19 +23,13 @@ function StyleBox({ styleKey, styleData, pathArray, editingStyle, onEdit, onSave
     ...(styleData.fontStyle?.toLowerCase().includes("bold")
       ? { fontWeight: "bold" }
       : { fontWeight: "normal" }),
-    padding: "0.5rem",
-    borderRadius: "4px",
-    border: "1px solid #ccc",
-    minWidth: "80px",
-    textAlign: "center",
   };
 
-  // Helpers to detect input types
   const isColorKey = (key) => /color|colour|background/i.test(key);
   const isFontStyleKey = (key) => key === "fontStyle";
 
   return (
-  <div className="style-box" key={pathArray.join(".")}>
+    <div className="style-box" key={pathArray.join(".")}>
       <div>
         <strong>{styleKey}</strong>
         <pre style={{ whiteSpace: "pre-wrap", wordBreak: "break-all" }}>
@@ -45,36 +39,30 @@ function StyleBox({ styleKey, styleData, pathArray, editingStyle, onEdit, onSave
         </pre>
       </div>
 
-      <div style={sampleStyle}>Sample</div>
+      <div className="style-preview" style={sampleStyle}>Sample</div>
 
       <div>
         {isEditing ? (
           <>
             {Object.entries(draft).map(([key, value]) => {
-              // determine valid color value
-              let colorValue = "#000000";
-              if (
-                typeof value === "string" &&
-                value.startsWith("#") &&
-                (value.length === 7 || value.length === 4)
-              ) {
-                colorValue = value;
-              }
               const isColor = isColorKey(key);
               const isFontStyle = isFontStyleKey(key);
               const isNumeric = typeof value === "number";
 
+              let colorValue = "#000000";
+              if (typeof value === "string" && value.startsWith("#") && (value.length === 7 || value.length === 4)) {
+                colorValue = value;
+              }
+
               return (
                 <div key={key} style={{ marginBottom: "0.5rem" }}>
-                  <label style={{ display: "flex", flexDirection: "column" }}>
+                  <label>
                     {key}:
                     {isFontStyle ? (
-                      <select className="style-select"
+                      <select
+                        className="style-select"
                         value={draft.fontStyle || "normal"}
-                        onChange={(e) =>
-                          setDraft({ ...draft, fontStyle: e.target.value })
-                        }
-                        style={{ marginTop: "0.25rem" }}
+                        onChange={(e) => setDraft({ ...draft, fontStyle: e.target.value })}
                       >
                         <option value="normal">normal</option>
                         <option value="bold">bold</option>
@@ -84,74 +72,48 @@ function StyleBox({ styleKey, styleData, pathArray, editingStyle, onEdit, onSave
                     ) : isColor ? (
                       <input
                         type="color"
+                        className="style-color-input"
                         value={colorValue}
-                        onChange={(e) =>
-                          setDraft({ ...draft, [key]: e.target.value })
-                        }
-                        style={{
-                          marginTop: "0.25rem",
-                          width: "3rem",
-                          height: "2rem",
-                          padding: 0,
-                          border: `1px solid ${
-                            colorValue.toLowerCase() === "#ffffff" ||
-                            colorValue.toLowerCase() === "#fff"
-                              ? "#000"
-                              : "#ccc"
-                          }`,
-                          borderRadius: "4px",
-                        }}
+                        onChange={(e) => setDraft({ ...draft, [key]: e.target.value })}
                       />
                     ) : isNumeric ? (
                       <input
                         type="number"
-                        step={1}
+                        className="style-input"
                         value={value}
                         onChange={(e) => {
                           const num = parseInt(e.target.value, 10);
                           setDraft({ ...draft, [key]: isNaN(num) ? 0 : num });
                         }}
-                        style={{ marginTop: "0.25rem", width: "4rem" }}
                       />
                     ) : (
                       <input
                         type="text"
+                        className="style-input"
                         value={value}
-                        onChange={(e) =>
-                          setDraft({ ...draft, [key]: e.target.value })
-                        }
-                        style={{ marginTop: "0.25rem" }}
+                        onChange={(e) => setDraft({ ...draft, [key]: e.target.value })}
                       />
                     )}
                   </label>
                 </div>
               );
             })}
-            <button
-              onClick={() => onSave(draft)}
-              style={{ marginRight: "0.5rem" }}
-            >
-              Save JSON
-            </button>
+          <button
+  onClick={() => {
+    onSave(draft);
+    toast.success("Style saved!");
+  }}
+  style={{ marginRight: "0.5rem" }}
+>
+  Save JSON
+</button>
             <button onClick={() => onEdit(null)}>Cancel</button>
           </>
         ) : (
           <button onClick={() => onEdit(pathArray)}>Edit</button>
         )}
+        <ToastContainer position="top-left" autoClose={2000} />
       </div>
-    </div>
-  );
-}
-
-export default function ProfileStylesViewer({ styles, editingStyle, onEdit, onSave }) {
-  return (
-    <div style={{ maxWidth: "1000px", margin: "0 auto", padding: "2rem" }}>
-      <StyleBoxList
-        styles={styles}
-        editingStyle={editingStyle}
-        onEdit={onEdit}
-        onSave={onSave}
-      />
     </div>
   );
 }
