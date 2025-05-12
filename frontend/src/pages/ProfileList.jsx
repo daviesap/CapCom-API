@@ -4,7 +4,7 @@ import { db } from '../services/firebase';
 import { nanoid } from 'nanoid';
 import { createStyleProfile } from '../services/styleProfileService';
 import { useNavigate } from 'react-router-dom';
-import PdfCreationLog from '../components/PpdfCreationLog';
+import PdfCreationLog from '../components/pdfCreationLog';
 
 export default function ProfileList() {
   const [profiles, setProfiles] = useState([]);
@@ -75,7 +75,7 @@ export default function ProfileList() {
               <td>{profile.profileId}</td>
               <td>
                 <div className="action-buttons">
-                  <button onClick={() => navigate(`/view?profileId=${profile.profileId}`)}>
+                  <button onClick={() => navigate(`/view-tabs?profileId=${profile.profileId}`)}>
                     View
                   </button>
                   <button

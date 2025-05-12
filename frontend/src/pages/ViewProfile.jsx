@@ -163,7 +163,7 @@ function ColumnsEditor({ columnsData, onSave }) {
 
   return (
     <div style={{ marginBottom: '1rem' }}>
-      <h3>Columns</h3>
+      <h3>Columns OLD</h3>
       {draft.map((col, i) => (
         <div key={i} style={{ display: 'flex', gap: '1rem', marginBottom: '0.5rem', alignItems: 'center' }}>
           <label style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
