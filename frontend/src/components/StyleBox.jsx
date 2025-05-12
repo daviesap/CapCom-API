@@ -98,21 +98,20 @@ export default function StyleBox({ styleKey, styleData, pathArray, editingStyle,
                 </div>
               );
             })}
-          <button
-  onClick={() => {
-    onSave(draft);
-    toast.success("Style saved!");
-  }}
-  style={{ marginRight: "0.5rem" }}
->
-  Save JSON
-</button>
+            <button
+              onClick={() => {
+                onSave(draft);
+                toast.success("Style saved!");
+              }}
+              style={{ marginRight: "0.5rem" }}
+            >
+              Save JSON
+            </button>
             <button onClick={() => onEdit(null)}>Cancel</button>
           </>
         ) : (
           <button onClick={() => onEdit(pathArray)}>Edit</button>
         )}
-        <ToastContainer position="top-left" autoClose={2000} />
       </div>
     </div>
   );

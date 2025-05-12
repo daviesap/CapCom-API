@@ -2,6 +2,8 @@
 // src/components/DocumentEditor.jsx
 
 import React, { useEffect, useState } from "react";
+import 'react-toastify/dist/ReactToastify.css';
+import { toast } from "react-toastify";
 
 export default function DocumentStylesEditor({ documentData, onSave }) {
   const [draft, setDraft] = useState(documentData || {});
@@ -130,7 +132,17 @@ export default function DocumentStylesEditor({ documentData, onSave }) {
         </tbody>
       </table>
 
-      <button style={{ marginTop: '1rem' }} onClick={() => onSave(draft)}>Save Document JSON</button>
+      <button
+        style={{ marginTop: '1rem' }}
+        onClick={() => {
+          onSave(draft);
+          toast.success("Document JSON saved!");
+        }}
+      >
+        Save Document JSON
+      </button>
     </div>
+    
   );
 }
+

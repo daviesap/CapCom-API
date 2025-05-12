@@ -9,6 +9,7 @@ export default function App() {
   return (
     <AuthProvider>
       <AppRoutes />
+      <ToastContainer position="bottom-right" autoClose={2000} />
     </AuthProvider>
   );
 }

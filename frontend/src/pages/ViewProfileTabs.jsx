@@ -3,16 +3,67 @@ import React, { useEffect, useState } from "react";
 import { getDoc, doc, updateDoc } from "firebase/firestore";
 import { db } from "../services/firebase";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 import Tabs from "../components/Tabs";
 import ProfileStylesViewer from "../components/ProfileStylesViewer";
 import DocumentEditor from "../components/DocumentEditor";
 import ColumnsEditor from "../components/ColumnsEditor";
 
+
+
+
 export default function ViewProfileTabs({ profileId }) {
   const [profile, setProfile] = useState(null);
   const [editingStylePath, setEditingStylePath] = useState(null);
   const navigate = useNavigate();
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false); //NOT FULLY USED YET - NEED TO ADD.
+
+  const handleBackClick = () => {
+  toast.info(
+    ({ closeToast }) => (
+      <div>
+        <p><strong>Make sure you have saved your changes first.</strong></p>
+        <div style={{ display: "flex", gap: "1rem", marginTop: "1rem" }}>
+          <button
+            onClick={() => {
+              closeToast();
+              navigate("/");
+            }}
+            style={{
+              backgroundColor: "#007bff",
+              color: "white",
+              padding: "0.5rem 1rem",
+              borderRadius: "4px",
+              border: "none",
+              cursor: "pointer"
+            }}
+          >
+            Continue
+          </button>
+          <button
+            onClick={closeToast}
+            style={{
+              backgroundColor: "#ccc",
+              color: "#333",
+              padding: "0.5rem 1rem",
+              borderRadius: "4px",
+              border: "none",
+              cursor: "pointer"
+            }}
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    ),
+    {
+      autoClose: false,
+      closeOnClick: false,
+      draggable: false
+    }
+  );
+};
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -88,6 +139,7 @@ export default function ViewProfileTabs({ profileId }) {
                 onSave={async (updatedDocument) => {
                   const updatedProfile = { ...profile, document: updatedDocument };
                   setProfile(updatedProfile);
+                  setHasUnsavedChanges(false);
 
                   const docRef = doc(db, "styleProfiles", profileId);
                   await updateDoc(docRef, { document: updatedDocument });
@@ -118,7 +170,7 @@ export default function ViewProfileTabs({ profileId }) {
 
       {/* Bottom section */}
       <div style={{ textAlign: "center", marginTop: "2rem" }}>
-        <button onClick={() => navigate("/")} style={{ padding: "0.75rem 1.5rem" }}>
+        <button onClick={handleBackClick} style={{ padding: "0.75rem 1.5rem" }}>
           ← Back to Profile List
         </button>
       </div>

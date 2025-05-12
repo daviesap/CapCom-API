@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 export default function ColumnsEditor({ columnsData, onSave }) {
   const [draft, setDraft] = useState(columnsData || []);
@@ -71,7 +72,13 @@ export default function ColumnsEditor({ columnsData, onSave }) {
         </div>
       ))}
       <button onClick={handleAddColumn} style={{ marginRight: '1rem' }}>Add Column</button>
-      <button onClick={() => onSave(draft)}>Save Column JSON</button>
-    </div>
+      <button
+       onClick={() => {
+        onSave(draft);
+      toast.success("Columns JSON saved!");
+        }}
+        >Save Column JSON
+        </button>
+    </div >
   );
 }
