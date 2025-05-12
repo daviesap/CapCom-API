@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
-import { db } from '../firebase';
+import { db } from '../services/firebase';
 
 export default function PdfCreationLog() {
   const [logs, setLogs] = useState([]);

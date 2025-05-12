@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { collection, getDocs, doc, setDoc, deleteDoc } from 'firebase/firestore';
-import { db } from '../firebase';
+import { db } from '../services/firebase';
 import { nanoid } from 'nanoid';
 import { createStyleProfile } from '../services/styleProfileService';
 import { useNavigate } from 'react-router-dom';
-import PdfCreationLog from '../components/pdfCreationLog';
+import PdfCreationLog from '../components/PpdfCreationLog';
 
 export default function ProfileList() {
   const [profiles, setProfiles] = useState([]);

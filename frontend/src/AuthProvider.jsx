@@ -8,7 +8,7 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
 } from "firebase/auth";
-import { app } from "./firebase";
+import { app } from "./services/firebase";
 
 const AuthContext = createContext();
 const auth = getAuth(app);
