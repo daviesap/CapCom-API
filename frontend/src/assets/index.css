@@ -196,13 +196,14 @@ input[type="email"] {
 }
 
 .tab-button:hover {
-  color: #007bff;
+  color: #ffffff;
 }
 
 .tab-button.active {
   border-bottom: 3px solid #007bff;
-  font-weight: bold;
   color: #007bff;
+  background-color: #ffffff;
+  text-shadow: 0 0 0.5px currentColor; /* subtle fake-bold */
 }
 
 .tab-button.inactive {
@@ -210,15 +211,19 @@ input[type="email"] {
 }
 
 .tab-content {
-  width: 900px;               /* ✅ Fixed width */
-  margin: 0 auto;             /* ✅ Center horizontally */
-  border: 1px solid #ddd;
+  width: 900px;               /* ✅ Fixed width to prevent jump */
+  min-height: 600px;          /* ✅ Reserve space to avoid layout shift */
+  margin: 0 auto;
   padding: 1rem;
+  box-sizing: border-box;
+  border: 1px solid #ddd;
   border-radius: 6px;
   background-color: #f9f9f9;
   animation: fadeIn 0.3s ease-in;
-  box-sizing: border-box;
+  overflow-y: auto;           /* ✅ Always show scrollbar space if needed */
 }
+
+
 /* === ANIMATIONS === */
 @keyframes fadeIn {
   from {
@@ -275,4 +280,33 @@ input[type="email"] {
   border-radius: 4px;
   padding: 0.25rem;
   width: 100%;*/
+}
+
+
+.back-button {
+  padding: 0.75rem 1.5rem;
+}
+
+.toast-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.toast-button-primary {
+  background-color: #007bff;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+}
+
+.toast-button-secondary {
+  background-color: #ccc;
+  color: #333;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
 }

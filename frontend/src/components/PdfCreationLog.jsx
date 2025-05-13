@@ -24,7 +24,7 @@ export default function PdfCreationLog() {
   }, []);
 
   return (
-    <div style={{ margin: '2rem' }}>
+    <div>
       <h2>PDF Creation Log</h2>
       <table border="1" cellPadding="8" style={{ borderCollapse: 'collapse', width: '100%' }}>
         <thead>

@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../services/firebase";
-import ProfileStylesViewer from "../components/ProfileStylesViewer";
+import ProfileStylesViewer from "../components/StylesEditor";
 
 function DocumentEditor({ documentData, onSave }) {
   const [draft, setDraft] = useState(documentData);

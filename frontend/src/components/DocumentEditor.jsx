@@ -2,10 +2,10 @@
 // src/components/DocumentEditor.jsx
 
 import React, { useEffect, useState } from "react";
-import 'react-toastify/dist/ReactToastify.css';
 import { toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
-export default function DocumentStylesEditor({ documentData, onSave }) {
+export default function DocumentStylesEditor({ documentData, onSave, onChange }) {
   const [draft, setDraft] = useState(documentData || {});
 
   useEffect(() => {
@@ -13,20 +13,19 @@ export default function DocumentStylesEditor({ documentData, onSave }) {
   }, [documentData]);
 
   const updateValue = (key, subKey, value) => {
+    const updated = { ...draft };
+
     if (subKey) {
-      setDraft((prev) => ({
-        ...prev,
-        [key]: {
-          ...(prev[key] || {}),
-          [subKey]: value,
-        },
-      }));
+      updated[key] = {
+        ...(draft[key] || {}),
+        [subKey]: value,
+      };
     } else {
-      setDraft((prev) => ({
-        ...prev,
-        [key]: value,
-      }));
+      updated[key] = value;
     }
+
+    setDraft(updated);
+    if (onChange) onChange(updated); // ✅ Notify parent of change
   };
 
   return (

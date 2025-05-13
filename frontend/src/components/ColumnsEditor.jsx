@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
-export default function ColumnsEditor({ columnsData, onSave }) {
+export default function ColumnsEditor({ columnsData, onSave, onChange }) {
   const [draft, setDraft] = useState(columnsData || []);
 
   useEffect(() => {
@@ -12,32 +12,49 @@ export default function ColumnsEditor({ columnsData, onSave }) {
     const updated = [...draft];
     updated[index] = { ...updated[index], [key]: value };
     setDraft(updated);
+    if (onChange) onChange(updated); // ✅ Notify parent of change
   };
 
   const handleAddColumn = () => {
-    setDraft([
+    const updated = [
       ...draft,
-      { field: `Column ${draft.length + 1}`, label: `Label ${draft.length + 1}`, width: 50, showLabel: true },
-    ]);
+      {
+        field: `Column ${draft.length + 1}`,
+        label: `Label ${draft.length + 1}`,
+        width: 50,
+        showLabel: true
+      },
+    ];
+    setDraft(updated);
+    if (onChange) onChange(updated); // ✅ Notify parent of change
   };
 
   const handleRemoveColumn = (index) => {
     const updated = [...draft];
     updated.splice(index, 1);
     setDraft(updated);
+    if (onChange) onChange(updated); // ✅ Notify parent of change
   };
 
   return (
     <div style={{ marginBottom: '1rem' }}>
       <h3>Columns</h3>
       {draft.map((col, i) => (
-        <div key={i} style={{ display: 'flex', gap: '1rem', marginBottom: '0.5rem', alignItems: 'center' }}>
+        <div
+          key={i}
+          style={{
+            display: 'flex',
+            gap: '1rem',
+            marginBottom: '0.5rem',
+            alignItems: 'center'
+          }}
+        >
           <label style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
             Field:
             <input
               type="text"
               value={col.field}
-              onChange={e => handleChange(i, 'field', e.target.value)}
+              onChange={(e) => handleChange(i, 'field', e.target.value)}
               style={{ marginTop: '0.25rem' }}
             />
           </label>
@@ -46,7 +63,7 @@ export default function ColumnsEditor({ columnsData, onSave }) {
             <input
               type="text"
               value={col.label}
-              onChange={e => handleChange(i, 'label', e.target.value)}
+              onChange={(e) => handleChange(i, 'label', e.target.value)}
               style={{ marginTop: '0.25rem' }}
             />
           </label>
@@ -55,7 +72,9 @@ export default function ColumnsEditor({ columnsData, onSave }) {
             <input
               type="number"
               value={col.width}
-              onChange={e => handleChange(i, 'width', parseInt(e.target.value, 10) || 0)}
+              onChange={(e) =>
+                handleChange(i, 'width', parseInt(e.target.value, 10) || 0)
+              }
               style={{ marginTop: '0.25rem' }}
             />
           </label>
@@ -64,21 +83,30 @@ export default function ColumnsEditor({ columnsData, onSave }) {
             <input
               type="checkbox"
               checked={col.showLabel}
-              onChange={e => handleChange(i, 'showLabel', e.target.checked)}
+              onChange={(e) => handleChange(i, 'showLabel', e.target.checked)}
               style={{ marginTop: '0.5rem' }}
             />
           </label>
-          <button onClick={() => handleRemoveColumn(i)} style={{ height: '2rem' }}>Remove</button>
+          <button
+            onClick={() => handleRemoveColumn(i)}
+            style={{ height: '2rem' }}
+          >
+            Remove
+          </button>
         </div>
       ))}
-      <button onClick={handleAddColumn} style={{ marginRight: '1rem' }}>Add Column</button>
+
+      <button onClick={handleAddColumn} style={{ marginRight: '1rem' }}>
+        Add Column
+      </button>
       <button
-       onClick={() => {
-        onSave(draft);
-      toast.success("Columns JSON saved!");
+        onClick={() => {
+          onSave(draft);
+          toast.success("Columns JSON saved!");
         }}
-        >Save Column JSON
-        </button>
-    </div >
+      >
+        Save Column JSON
+      </button>
+    </div>
   );
 }

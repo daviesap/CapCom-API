@@ -143,7 +143,7 @@ function StyleBox({ styleKey, styleData, pathArray, editingStyle, onEdit, onSave
   );
 }
 
-export default function ProfileStylesViewer({ styles, editingStyle, onEdit, onSave }) {
+export default function StylesEditor({ styles, editingStyle, onEdit, onSave }) {
   return (
     <div style={{ maxWidth: "1000px", margin: "0 auto", padding: "2rem" }}>
       <StyleBoxList
