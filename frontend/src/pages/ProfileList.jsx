@@ -75,7 +75,7 @@ export default function ProfileList() {
               <td>{profile.profileId}</td>
               <td>
                 <div className="action-buttons">
-                  <button onClick={() => navigate(`/view-tabs?profileId=${profile.profileId}`)}>
+                  <button onClick={() => navigate(`/viewprofile?profileId=${profile.profileId}`)}>
                     View
                   </button>
                   <button

@@ -1,319 +1,174 @@
-import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+// src/pages/ViewProfileTabs.jsx
+import React, { useEffect, useState } from "react";
+import { getDoc, doc, updateDoc } from "firebase/firestore";
 import { db } from "../services/firebase";
-import ProfileStylesViewer from "../components/StylesEditor";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import isEqual from "lodash.isequal"; // for comparing JSON objects
 
-function DocumentEditor({ documentData, onSave }) {
-  const [draft, setDraft] = useState(documentData);
+import Tabs from "../components/Tabs";
+import StylesEditor from "../components/StylesEditor"; // Renamed import
+import DocumentEditor from "../components/DocumentEditor";
+import ColumnsEditor from "../components/ColumnsEditor";
 
-  useEffect(() => {
-    setDraft(documentData);
-  }, [documentData]);
-
-  const updateValue = (key, subKey, value) => {
-    if (subKey) {
-      setDraft({
-        ...draft,
-        [key]: {
-          ...draft[key],
-          [subKey]: value,
-        },
-      });
-    } else {
-      setDraft({
-        ...draft,
-        [key]: value,
-      });
-    }
-  };
-
-  return (
-    <div style={{ marginBottom: '1rem' }}>
-      <h3>Document Styles</h3>
-      <table style={{ borderCollapse: 'collapse', width: '100%', maxWidth: '600px' }}>
-        <thead>
-          <tr>
-            <th style={{ borderBottom: '1px solid #ccc', padding: '0.5rem' }}>Type</th>
-            <th style={{ borderBottom: '1px solid #ccc', padding: '0.5rem' }}>Field</th>
-            <th style={{ borderBottom: '1px solid #ccc', padding: '0.5rem' }}>Value</th>
-          </tr>
-        </thead>
-        <tbody>
-          {/* Page Size */}
-          <tr>
-            <td rowSpan="2" style={{ padding: '0.5rem', verticalAlign: 'top' }}>Page Size</td>
-            <td style={{ padding: '0.5rem' }}>Width</td>
-            <td style={{ padding: '0.5rem' }}>
-              <input
-                type="number"
-                value={draft.pageSize.width}
-                onChange={e => updateValue('pageSize', 'width', parseFloat(e.target.value) || 0)}
-              />
-            </td>
-          </tr>
-          <tr>
-            <td style={{ padding: '0.5rem' }}>Height</td>
-            <td style={{ padding: '0.5rem' }}>
-              <input
-                type="number"
-                value={draft.pageSize.height}
-                onChange={e => updateValue('pageSize', 'height', parseFloat(e.target.value) || 0)}
-              />
-            </td>
-          </tr>
-
-          {/* Margins */}
-          <tr>
-            <td rowSpan="4" style={{ padding: '0.5rem', verticalAlign: 'top' }}>Margins</td>
-            <td style={{ padding: '0.5rem' }}>Top</td>
-            <td style={{ padding: '0.5rem' }}>
-              <input
-                type="number"
-                value={draft.topMargin}
-                onChange={e => updateValue('topMargin', null, parseFloat(e.target.value) || 0)}
-              />
-            </td>
-          </tr>
-          <tr>
-            <td style={{ padding: '0.5rem' }}>Left</td>
-            <td style={{ padding: '0.5rem' }}>
-              <input
-                type="number"
-                value={draft.leftMargin}
-                onChange={e => updateValue('leftMargin', null, parseFloat(e.target.value) || 0)}
-              />
-            </td>
-          </tr>
-          <tr>
-            <td style={{ padding: '0.5rem' }}>Bottom</td>
-            <td style={{ padding: '0.5rem' }}>
-              <input
-                type="number"
-                value={draft.bottomMargin}
-                onChange={e => updateValue('bottomMargin', null, parseFloat(e.target.value) || 0)}
-              />
-            </td>
-          </tr>
-          <tr>
-            <td style={{ padding: '0.5rem' }}>Right</td>
-            <td style={{ padding: '0.5rem' }}>
-              <input
-                type="number"
-                value={draft.rightMargin}
-                onChange={e => updateValue('rightMargin', null, parseFloat(e.target.value) || 0)}
-              />
-            </td>
-          </tr>
-
-          {/* Others */}
-          <tr>
-            <td rowSpan="2" style={{ padding: '0.5rem', verticalAlign: 'top' }}>Other</td>
-            <td style={{ padding: '0.5rem' }}>Group Padding Bottom</td>
-            <td style={{ padding: '0.5rem' }}>
-              <input
-                type="number"
-                value={draft.groupPaddingBottom}
-                onChange={e => updateValue('groupPaddingBottom', null, parseFloat(e.target.value) || 0)}
-              />
-            </td>
-          </tr>
-          <tr>
-            <td style={{ padding: '0.5rem' }}>Bottom Page Threshold</td>
-            <td style={{ padding: '0.5rem' }}>
-              <input
-                type="number"
-                value={draft.bottomPageThreshold}
-                onChange={e => updateValue('bottomPageThreshold', null, parseFloat(e.target.value) || 0)}
-              />
-            </td>
-          </tr>
-        </tbody>
-      </table>
-
-      <button style={{ marginTop: '1rem' }} onClick={() => onSave(draft)}>Save Document JSON</button>
-    </div>
-  );
-}
-
-function ColumnsEditor({ columnsData, onSave }) {
-  const [draft, setDraft] = useState(columnsData || []);
-  useEffect(() => {
-    setDraft(columnsData || []);
-  }, [columnsData]);
-
-  const handleChange = (index, key, value) => {
-    const updated = [...draft];
-    updated[index] = { ...updated[index], [key]: value };
-    setDraft(updated);
-  };
-
-  const handleAddColumn = () => {
-    setDraft([
-      ...draft,
-      { field: `Column ${draft.length + 1}`, label: `Label ${draft.length + 1}`, width: 50, showLabel: true },
-    ]);
-  };
-
-  const handleRemoveColumn = (index) => {
-    const updated = [...draft];
-    updated.splice(index, 1);
-    setDraft(updated);
-  };
-
-  return (
-    <div style={{ marginBottom: '1rem' }}>
-      <h3>Columns OLD</h3>
-      {draft.map((col, i) => (
-        <div key={i} style={{ display: 'flex', gap: '1rem', marginBottom: '0.5rem', alignItems: 'center' }}>
-          <label style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-            Field:
-            <input
-              type="text"
-              value={col.field}
-              onChange={e => handleChange(i, 'field', e.target.value)}
-              style={{ marginTop: '0.25rem' }}
-            />
-          </label>
-          <label style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-            Label:
-            <input
-              type="text"
-              value={col.label}
-              onChange={e => handleChange(i, 'label', e.target.value)}
-              style={{ marginTop: '0.25rem' }}
-            />
-          </label>
-          <label style={{ flex: 0.5, display: 'flex', flexDirection: 'column' }}>
-            Width:
-            <input
-              type="number"
-              value={col.width}
-              onChange={e => handleChange(i, 'width', parseInt(e.target.value, 10) || 0)}
-              style={{ marginTop: '0.25rem' }}
-            />
-          </label>
-          <label style={{ flex: 0.5, display: 'flex', flexDirection: 'column' }}>
-            Show Label:
-            <input
-              type="checkbox"
-              checked={col.showLabel}
-              onChange={e => handleChange(i, 'showLabel', e.target.checked)}
-              style={{ marginTop: '0.5rem' }}
-            />
-          </label>
-          <button onClick={() => handleRemoveColumn(i)} style={{ height: '2rem' }}>Remove</button>
-        </div>
-      ))}
-      <button onClick={handleAddColumn} style={{ marginRight: '1rem' }}>Add Column</button>
-      <button onClick={() => onSave(draft)}>Save Column JSON</button>
-    </div>
-  );
-}
-
-function ViewProfile({ profileId }) {
+export default function ViewProfileTabs({ profileId }) {
+  const [profile, setProfile] = useState(null); // editable version
+  const [originalProfile, setOriginalProfile] = useState(null); // original copy
+  const [editingStylePath, setEditingStylePath] = useState(null);
   const navigate = useNavigate();
-  const [profileData, setProfileData] = useState(null);
-  const [editingPath, setEditingPath] = useState(null);
-  const [ setPreviewStyle] = useState(null);
 
+  // Load profile from Firestore
   useEffect(() => {
-    const fetchProfile = async () => {
-      const snap = await getDoc(doc(db, "styleProfiles", profileId));
-      if (snap.exists()) {
-        setProfileData(snap.data());
+    const loadProfile = async () => {
+      const docRef = doc(db, "styleProfiles", profileId);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        setProfile(data);
+        setOriginalProfile(data);
       }
     };
-    fetchProfile();
+    loadProfile();
   }, [profileId]);
 
-  const handleStyleSave = async (newValue) => {
-    if (!editingPath) return;
-    const updatedStyles = { ...profileData.styles };
-
-    if (editingPath.length === 1) {
-      updatedStyles[editingPath[0]] = newValue;
-    } else if (editingPath.length === 2) {
-      updatedStyles[editingPath[0]] = {
-        ...updatedStyles[editingPath[0]],
-        [editingPath[1]]: newValue,
-      };
+  // Warn before navigating back if there are unsaved changes
+  const handleBackClick = () => {
+    if (!isEqual(profile, originalProfile)) {
+      toast.info(
+        ({ closeToast }) => (
+          <div className="toast-warning-buttons">
+            <button
+              className="continue-btn"
+              onClick={() => {
+                closeToast();
+                navigate("/");
+              }}
+            >
+              Continue
+            </button>
+            <button
+              className="cancel-btn"
+              onClick={closeToast}
+            >
+              Cancel
+            </button>
+          </div>
+        ),
+        {
+          autoClose: false,
+          closeOnClick: false,
+          draggable: false
+        }
+      );
+    } else {
+      navigate("/");
     }
-
-    const updatedProfile = { ...profileData, styles: updatedStyles };
-    await updateDoc(doc(db, "styleProfiles", profileId), { styles: updatedStyles });
-
-    setProfileData(updatedProfile);
-    setEditingPath(null);
-    setPreviewStyle(null);
   };
 
-  const handleDocumentSave = async (newDoc) => {
-    const updatedProfile = { ...profileData, document: newDoc };
-    await updateDoc(doc(db, "styleProfiles", profileId), { document: newDoc });
-    setProfileData(updatedProfile);
-  };
-
-  const handleColumnsSave = async (newCols) => {
-    const updatedProfile = { ...profileData, columns: newCols };
-    await updateDoc(doc(db, "styleProfiles", profileId), { columns: newCols });
-    setProfileData(updatedProfile);
-  };
-
-  if (!profileData) return <p>Loading profile data...</p>;
+  if (!profile) return <p>Loading...</p>;
 
   return (
-    <div style={{ padding: "2rem", fontFamily: "Arial" }}>
-      <h2>Profile Viewer</h2>
-      <p><strong>Profile ID:</strong> {profileId}</p>
-      <p><strong>Profile Name:</strong> {profileData.name || "(unnamed)"}</p>
+    <div className="tabs-wrapper">
+      <div style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
+        <h3>Editing:</h3><p>{profile.name}</p>
+        <h3>Profile ID:</h3><p>{profileId}</p>
+      </div>
 
-      <h3>Styles</h3>
-      <ProfileStylesViewer
-        styles={profileData.styles}
-        editingStyle={
-          editingPath
-            ? editingPath.length === 1
-              ? profileData.styles?.[editingPath[0]]
-              : profileData.styles?.[editingPath[0]]?.[editingPath[1]]
-            : null
-        }
-        onEdit={(pathArray) => {
-          setEditingPath(pathArray);
-          const [k1, k2] = pathArray;
-          const style =
-            pathArray.length === 1
-              ? profileData.styles?.[k1]
-              : profileData.styles?.[k1]?.[k2];
-          setPreviewStyle(style);
-        }}
-        onSave={handleStyleSave}
-      />
-      <DocumentEditor
-        documentData={profileData.document}
-        onSave={handleDocumentSave}
-      />
-      <ColumnsEditor
-        columnsData={profileData.columns}
-        onSave={handleColumnsSave}
+      <Tabs
+        tabs={[
+          {
+            label: "Styles",
+            content: (
+              <StylesEditor
+                styles={profile.styles}
+                editingStyle={
+                  editingStylePath
+                    ? editingStylePath.length === 2
+                      ? profile.styles?.[editingStylePath[0]]?.[editingStylePath[1]]
+                      : profile.styles?.[editingStylePath[0]]
+                    : null
+                }
+                onEdit={(pathArray) => setEditingStylePath(pathArray)}
+                onSave={async (updatedBlock) => {
+                  if (!editingStylePath) return;
+
+                  const [section, subKey] = editingStylePath;
+                  const newStyles = { ...profile.styles };
+
+                  if (subKey) {
+                    newStyles[section] = {
+                      ...newStyles[section],
+                      [subKey]: updatedBlock
+                    };
+                  } else {
+                    newStyles[section] = updatedBlock;
+                  }
+
+                  const updatedProfile = { ...profile, styles: newStyles };
+                  setProfile(updatedProfile);
+                  setEditingStylePath(null);
+
+                  const docRef = doc(db, "styleProfiles", profileId);
+                  await updateDoc(docRef, { styles: newStyles });
+
+                  setOriginalProfile(updatedProfile);
+                  console.log("✅ Style block saved to Firestore");
+                }}
+              />
+            )
+          },
+          {
+            label: "Document Styles",
+            content: (
+              <DocumentEditor
+                documentData={profile.document}
+                onChange={(updatedDoc) => {
+                  const updatedProfile = { ...profile, document: updatedDoc };
+                  setProfile(updatedProfile); // 👈 updates profile live
+                }}
+                onSave={async (updatedDocument) => {
+                  const updatedProfile = { ...profile, document: updatedDocument };
+                  setProfile(updatedProfile);
+
+                  const docRef = doc(db, "styleProfiles", profileId);
+                  await updateDoc(docRef, { document: updatedDocument });
+
+                  setOriginalProfile(updatedProfile);
+                  console.log("✅ Document saved");
+                }}
+              />
+            )
+          },
+          {
+            label: "Columns",
+            content: (
+              <ColumnsEditor
+                columnsData={profile.columns}
+                onChange={(updated) => {
+                  setProfile((prev) => ({ ...prev, columns: updated }));
+                }}
+                onSave={async (updatedColumns) => {
+                  const updatedProfile = { ...profile, columns: updatedColumns };
+                  setProfile(updatedProfile);
+
+                  const docRef = doc(db, "styleProfiles", profileId);
+                  await updateDoc(docRef, { columns: updatedColumns });
+
+                  setOriginalProfile(updatedProfile); // Update original reference for comparison
+                  console.log("✅ Columns saved");
+                }}
+              />
+            )
+          }
+        ]}
       />
 
-      <button
-        onClick={() => navigate("/")}
-        style={{
-          marginTop: "2rem",
-          padding: "0.5rem 1rem",
-          backgroundColor: "#007bff",
-          color: "white",
-          border: "none",
-          borderRadius: "4px",
-          cursor: "pointer",
-        }}
-      >
-        ← Back to Home
-      </button>
+      <div style={{ textAlign: "center", marginTop: "2rem" }}>
+        <button onClick={handleBackClick} className="back-button">
+          ← Back to Profile List
+        </button>
+
+      </div>
     </div>
   );
 }
-
-export default ViewProfile;
