@@ -5,20 +5,24 @@ export default function Tabs({ tabs }) {
 
   return (
     <div>
-      <div className="tabs-bar">
+      {/* Tab Buttons */}
+      <div className="flex border-b border-gray-300">
         {tabs.map((tab, index) => (
           <button
             key={index}
             onClick={() => setActiveTab(index)}
-            className={`tab-button ${activeTab === index ? "active" : "inactive"}`}
+            className={`px-4 py-2 text-sm font-medium transition duration-200
+              ${activeTab === index
+                ? "border-b-2 border-blue-600 text-blue-600"
+                : "text-gray-600 hover:text-blue-500"}`}
           >
             {tab.label}
           </button>
         ))}
       </div>
 
-      {/* ✅ This is the missing content section */}
-      <div className="tab-content" style={{ marginTop: '1rem' }}>
+      {/* Tab Content */}
+      <div className="mt-4">
         {tabs[activeTab].content}
       </div>
     </div>

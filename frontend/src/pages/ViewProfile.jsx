@@ -1,23 +1,21 @@
-// src/pages/ViewProfileTabs.jsx
 import React, { useEffect, useState } from "react";
 import { getDoc, doc, updateDoc } from "firebase/firestore";
 import { db } from "../services/firebase";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import isEqual from "lodash.isequal"; // for comparing JSON objects
+import isEqual from "lodash.isequal";
 
 import Tabs from "../components/Tabs";
-import StylesEditor from "../components/StylesEditor"; // Renamed import
+import StylesEditor from "../components/StylesEditor";
 import DocumentEditor from "../components/DocumentEditor";
 import ColumnsEditor from "../components/ColumnsEditor";
 
-export default function ViewProfileTabs({ profileId }) {
-  const [profile, setProfile] = useState(null); // editable version
-  const [originalProfile, setOriginalProfile] = useState(null); // original copy
+export default function ViewProfile({ profileId }) {
+  const [profile, setProfile] = useState(null);
+  const [originalProfile, setOriginalProfile] = useState(null);
   const [editingStylePath, setEditingStylePath] = useState(null);
   const navigate = useNavigate();
 
-  // Load profile from Firestore
   useEffect(() => {
     const loadProfile = async () => {
       const docRef = doc(db, "styleProfiles", profileId);
@@ -31,33 +29,35 @@ export default function ViewProfileTabs({ profileId }) {
     loadProfile();
   }, [profileId]);
 
-  // Warn before navigating back if there are unsaved changes
   const handleBackClick = () => {
     if (!isEqual(profile, originalProfile)) {
       toast.info(
         ({ closeToast }) => (
-          <div className="toast-warning-buttons">
-            <button
-              className="continue-btn"
-              onClick={() => {
-                closeToast();
-                navigate("/");
-              }}
-            >
-              Continue
-            </button>
-            <button
-              className="cancel-btn"
-              onClick={closeToast}
-            >
-              Cancel
-            </button>
+          <div className="flex flex-col gap-2">
+            <p className="font-medium">You have unsaved changes.</p>
+            <div className="flex justify-center gap-4">
+              <button
+                onClick={() => {
+                  closeToast();
+                  navigate("/");
+                }}
+                className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition"
+              >
+                Continue
+              </button>
+              <button
+                onClick={closeToast}
+                className="bg-gray-200 px-4 py-2 rounded hover:bg-gray-300 transition"
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         ),
         {
           autoClose: false,
           closeOnClick: false,
-          draggable: false
+          draggable: false,
         }
       );
     } else {
@@ -65,13 +65,15 @@ export default function ViewProfileTabs({ profileId }) {
     }
   };
 
-  if (!profile) return <p>Loading...</p>;
+  if (!profile) return <p className="text-center mt-8 text-gray-500">Loading...</p>;
 
   return (
-    <div className="tabs-wrapper">
-      <div style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
-        <h3>Editing:</h3><p>{profile.name}</p>
-        <h3>Profile ID:</h3><p>{profileId}</p>
+    <div className="max-w-5xl mx-auto px-4 py-6">
+      <div className="flex flex-wrap gap-4 items-center mb-6">
+        <h3 className="text-lg font-semibold">Editing:</h3>
+        <p className="text-base">{profile.name}</p>
+        <h3 className="text-lg font-semibold">Profile ID:</h3>
+        <code className="text-sm bg-gray-100 px-2 py-1 rounded">{profileId}</code>
       </div>
 
       <Tabs
@@ -98,7 +100,7 @@ export default function ViewProfileTabs({ profileId }) {
                   if (subKey) {
                     newStyles[section] = {
                       ...newStyles[section],
-                      [subKey]: updatedBlock
+                      [subKey]: updatedBlock,
                     };
                   } else {
                     newStyles[section] = updatedBlock;
@@ -115,7 +117,7 @@ export default function ViewProfileTabs({ profileId }) {
                   console.log("✅ Style block saved to Firestore");
                 }}
               />
-            )
+            ),
           },
           {
             label: "Document Styles",
@@ -124,7 +126,7 @@ export default function ViewProfileTabs({ profileId }) {
                 documentData={profile.document}
                 onChange={(updatedDoc) => {
                   const updatedProfile = { ...profile, document: updatedDoc };
-                  setProfile(updatedProfile); // 👈 updates profile live
+                  setProfile(updatedProfile);
                 }}
                 onSave={async (updatedDocument) => {
                   const updatedProfile = { ...profile, document: updatedDocument };
@@ -137,7 +139,7 @@ export default function ViewProfileTabs({ profileId }) {
                   console.log("✅ Document saved");
                 }}
               />
-            )
+            ),
           },
           {
             label: "Columns",
@@ -154,20 +156,22 @@ export default function ViewProfileTabs({ profileId }) {
                   const docRef = doc(db, "styleProfiles", profileId);
                   await updateDoc(docRef, { columns: updatedColumns });
 
-                  setOriginalProfile(updatedProfile); // Update original reference for comparison
+                  setOriginalProfile(updatedProfile);
                   console.log("✅ Columns saved");
                 }}
               />
-            )
-          }
+            ),
+          },
         ]}
       />
 
-      <div style={{ textAlign: "center", marginTop: "2rem" }}>
-        <button onClick={handleBackClick} className="back-button">
+      <div className="text-center mt-10">
+        <button
+          onClick={handleBackClick}
+          className="text-blue-600 hover:text-blue-800 underline"
+        >
           ← Back to Profile List
         </button>
-
       </div>
     </div>
   );
