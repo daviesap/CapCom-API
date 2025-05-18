@@ -31,11 +31,11 @@ export default function StyleBox({ styleKey, styleData, pathArray, editingStyle,
   return (
     <div
       key={pathArray.join(".")}
-      className="border border-gray-300 rounded p-4 mb-4 shadow-sm"
+      className="border border-gray-300 rounded p-4 mb-4 shadow-sm bg-gray-50"
     >
       <div className="mb-2">
         <strong className="block text-lg mb-1">{styleKey}</strong>
-        <pre className="whitespace-pre-wrap break-words text-sm text-gray-700 bg-gray-50 p-2 rounded">
+        <pre className="whitespace-pre-wrap break-words text-sm text-gray-700 p-2 rounded">
           {Object.entries(styleData)
             .map(([k, v]) => `${k}: ${v}`)
             .join("\n")}
