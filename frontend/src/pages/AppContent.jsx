@@ -12,21 +12,26 @@ export default function AppContent() {
 
   if (!user) {
     return (
-      <div className="login-wrapper">
-        <div className="login-box">
-          <img src="/logo.png" alt="Flair logo" className="logo" />
+      <div className="max-w-sm mx-auto mt-20 p-6 bg-white shadow rounded text-center">
+        <h1 className="text-3xl font-semibold text-gray-800 tracking-tight mb-2">PDF Admin</h1>
+        <h2 className="text-lg font-medium text-gray-500 mb-6">Login</h2>
+        <div>
+          <img src="/logo.png" alt="Flair logo" />
           <input
+            className="block w-full border mb-2 p-2 rounded"
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
           <input
+            className="block w-full border mb-2 p-2 rounded"
             placeholder="Password"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
           <button
+          className="mt-2 w-full bg-blue-600 text-white font-semibold p-2 rounded hover:bg-blue-700"
             onClick={async () => {
               setError('');
               try {
@@ -53,3 +58,30 @@ export default function AppContent() {
     </>
   );
 }
+
+
+
+//       <input
+//         type="email"
+//         placeholder="Email"
+//         value={email}
+//         onChange={(e) => setEmail(e.target.value)}
+//         className="block w-full border mb-2 p-2 rounded"
+//       />
+//       <input
+//         type="password"
+//         placeholder="Password"
+//         value={password}
+//         onChange={(e) => setPassword(e.target.value)}
+//         className="block w-full border mb-2 p-2 rounded"
+//       />
+//       {error && <p className="text-red-500 text-sm">{error}</p>}
+//       <button
+//         onClick={login}
+//         className="mt-2 w-full bg-blue-600 text-white font-semibold p-2 rounded hover:bg-blue-700"
+//       >
+//         Sign In
+//       </button>
+//     </div>
+//   );
+// }
