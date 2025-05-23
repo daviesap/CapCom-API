@@ -51,6 +51,7 @@ function resolveStyle(style, boldFont, regularFont, italicFont, boldItalicFont) 
   const lineHeight = fontSize + 2;
   const paddingBottom = style.paddingBottom || 0;
 
+
   return { fontSize, font, color, lineHeight, paddingBottom };
 }
 
@@ -63,14 +64,15 @@ export const generatePdfBuffer = async (jsonInput = null) => {
     jsonData = cleanJson(localJson);
   }
   jsonData = filterJson(jsonData);
+  const debug = jsonData.debug === true;
   const styles = jsonData.styles || {};
+  const bottomPageThreshold = jsonData.document.bottomPageThreshold ?? 0;
 
   const { width: pageWidth = 842, height: pageHeight = 595 } = jsonData.document.pageSize || {};
   const leftMargin = jsonData.document.leftMargin || 50;
   const rightMargin = jsonData.document.rightMargin || 50;
   const topMargin = jsonData.document.topMargin || 50;
   const bottomMargin = jsonData.document.bottomMargin || 50;
-  //const headerPaddingBottom = jsonData.document.headerPaddingBottom || 10;
   const headerPaddingBottom = styles.header?.paddingBottom || 10;
   const footerPaddingTop = styles.footer?.paddingTop || 10;
   const groupPaddingBottom = jsonData.document.groupPaddingBottom || 0;
@@ -126,6 +128,16 @@ export const generatePdfBuffer = async (jsonInput = null) => {
   };
 
   for (const group of jsonData.groups) {
+    if (debug) {
+      drawThresholdLine(currentPage, bottomPageThreshold, pageWidth);
+    }
+    if (y < bottomPageThreshold) {
+      currentPage = pdfDoc.addPage([pageWidth, pageHeight]);
+      pages.push(currentPage);
+      y = pageHeight - topMargin;
+      reserveHeader();
+
+    }
     const { lineHeight: tLH, fontSize: tFS, font: tF, color: tC } = resolveStyle(groupTitleStyle, boldFont, regularFont, italicFont, boldItalicFont);
     const { lineHeight: mLH, fontSize: mFS, font: mF, color: mC, paddingBottom: mPB } = resolveStyle(groupMetaStyle, boldFont, regularFont, italicFont, boldItalicFont);
     const labelInfo = resolveStyle(labelRowStyle, boldFont, regularFont, italicFont, boldItalicFont);
@@ -227,9 +239,9 @@ export const generatePdfBuffer = async (jsonInput = null) => {
       const { fontSize: fFS, font: fF, color: fC } = resolveStyle(styles.footer || {}, regularFont, regularFont, italicFont, boldItalicFont);
       const fy = bottomMargin;
       pg.drawText(footer, { x: leftMargin, y: fy, size: fFS, font: fF, color: fC });
-      const pgText = `Page ${i+1} of ${total}`;
+      const pgText = `Page ${i + 1} of ${total}`;
       const w = fF.widthOfTextAtSize(pgText, fFS);
-      pg.drawText(pgText, { x: (pageWidth - w)/2, y: fy, size: fFS, font: fF, color: fC });
+      pg.drawText(pgText, { x: (pageWidth - w) / 2, y: fy, size: fFS, font: fF, color: fC });
       const tText = `Document generated ${ts}`;
       const tw = fF.widthOfTextAtSize(tText, fFS);
       pg.drawText(tText, { x: pageWidth - rightMargin - tw, y: fy, size: fFS, font: fF, color: fC });
@@ -247,4 +259,17 @@ export function getOutputFilename() {
   const r = readFileSync(p, 'utf8');
   const d = JSON.parse(r);
   return d.document.filename.endsWith('.pdf') ? d.document.filename : `${d.document.filename}.pdf`;
+}
+
+
+function drawThresholdLine(page, bottomPageThreshold, pageWidth) {
+  if (bottomPageThreshold > 0) {
+    page.drawLine({
+      start: { x: 0, y: bottomPageThreshold },
+      end: { x: pageWidth, y: bottomPageThreshold },
+      thickness: 0.5,
+      color: rgb(0.8, 0.2, 0.2),
+      opacity: 0.5,
+    });
+  }
 }
