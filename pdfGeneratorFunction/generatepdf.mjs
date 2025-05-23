@@ -165,8 +165,10 @@ export const generatePdfBuffer = async (jsonInput = null) => {
     }
 
     for (const entry of group.entries) {
-      const styleKey = entry.style || 'default';
-      const rowStyle = jsonData.styles?.entries?.[styleKey] || defaultStyle;
+      //const styleKey = entry.style || 'default'; OLD LINE
+      const styleKey = entry.format || 'default';
+      //const rowStyle = jsonData.styles?.entries?.[styleKey] || defaultStyle; OLD LINE
+      const rowStyle = jsonData.styles?.row?.[styleKey] || defaultStyle;
       const { lineHeight: rLH, fontSize: rFS, font: rF, color: rC } = resolveStyle(rowStyle, boldFont, regularFont, italicFont, boldItalicFont);
 
       const wrapped = columns.map(col => {
