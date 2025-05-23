@@ -9,6 +9,7 @@ import Tabs from "../components/Tabs";
 import StylesEditor from "../components/StylesEditor";
 import DocumentEditor from "../components/DocumentEditor";
 import ColumnsEditor from "../components/ColumnsEditor";
+import JSONdisplay from "../components/JSONDisplay";
 
 export default function ViewProfile({ profileId }) {
   const [profile, setProfile] = useState(null);
@@ -160,6 +161,12 @@ export default function ViewProfile({ profileId }) {
                   console.log("✅ Columns saved");
                 }}
               />
+            ),
+          },
+          {
+            label: "JSON",
+            content: (
+              <JSONdisplay jsonData={profile} />
             ),
           },
         ]}
