@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useAuth } from "../AuthProvider";
 import ProfileList from "./ProfileList"; // already inside `pages/`
+import PdfCreationLog from '../components/pdfCreationLog';
 
 export default function AppContent() {
   const { user, authLoading, loginWithEmail, logout } = useAuth();
@@ -31,7 +32,7 @@ export default function AppContent() {
             onChange={(e) => setPassword(e.target.value)}
           />
           <button
-          className="mt-2 w-full bg-blue-600 text-white font-semibold p-2 rounded hover:bg-blue-700"
+            className="mt-2 w-full bg-blue-600 text-white font-semibold p-2 rounded hover:bg-blue-700"
             onClick={async () => {
               setError('');
               try {
@@ -53,35 +54,16 @@ export default function AppContent() {
   return (
     <>
       <p>Welcome, {user.email}</p>
-      <button onClick={logout}>Logout</button>
+
       <ProfileList />
+      <button
+        onClick={logout}
+        className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-700 transition"
+
+      >Logout</button>
+      <div className="mt-6">
+        <PdfCreationLog />
+      </div>
     </>
   );
 }
-
-
-
-//       <input
-//         type="email"
-//         placeholder="Email"
-//         value={email}
-//         onChange={(e) => setEmail(e.target.value)}
-//         className="block w-full border mb-2 p-2 rounded"
-//       />
-//       <input
-//         type="password"
-//         placeholder="Password"
-//         value={password}
-//         onChange={(e) => setPassword(e.target.value)}
-//         className="block w-full border mb-2 p-2 rounded"
-//       />
-//       {error && <p className="text-red-500 text-sm">{error}</p>}
-//       <button
-//         onClick={login}
-//         className="mt-2 w-full bg-blue-600 text-white font-semibold p-2 rounded hover:bg-blue-700"
-//       >
-//         Sign In
-//       </button>
-//     </div>
-//   );
-// }

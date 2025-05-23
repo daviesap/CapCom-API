@@ -97,10 +97,6 @@ export default function ProfileList() {
           </tbody>
         </table>
       </div>
-
-      <div className="mt-6">
-        <PdfCreationLog />
-      </div>
     </div>
   );
 }
