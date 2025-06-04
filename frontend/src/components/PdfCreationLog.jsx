@@ -35,7 +35,6 @@ export default function PdfCreationLog() {
               <th className="border border-gray-300 px-4 py-2 text-left">Timestamp</th>
               <th className="border border-gray-300 px-4 py-2 text-left">Filename</th>
               <th className="border border-gray-300 px-4 py-2 text-left">URL</th>
-              <th className="border border-gray-300 px-4 py-2 text-left">User ID</th>
               <th className="border border-gray-300 px-4 py-2 text-left">User Email</th>
               <th className="border border-gray-300 px-4 py-2 text-left">Profile ID</th>
               <th className="border border-gray-300 px-4 py-2 text-left">Status</th>
@@ -65,7 +64,6 @@ export default function PdfCreationLog() {
                     </a>
                   ) : '—'}
                 </td>
-                <td className="border border-gray-300 px-4 py-2">{log.userId || '—'}</td>
                 <td className="border border-gray-300 px-4 py-2">{log.userEmail || '—'}</td>
                 <td className="border border-gray-300 px-4 py-2">{log.profileId || '—'}</td>
                 <td className="border border-gray-300 px-4 py-2">
