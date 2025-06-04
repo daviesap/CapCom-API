@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { collection, getDocs, doc, deleteDoc } from 'firebase/firestore';
+import { collection, getDocs, getDoc, doc, deleteDoc } from 'firebase/firestore';
 import { db } from '../services/firebase';
 import { nanoid } from 'nanoid';
 import { createStyleProfile } from '../services/styleProfileService';
@@ -42,6 +42,32 @@ export default function ProfileList() {
     fetchProfiles();
   };
 
+const duplicateProfile = async (originalId, originalName) => {
+  const newName = prompt(`Enter a name for the duplicate of "${originalName}":`);
+  if (!newName || !newName.trim()) return;
+
+  try {
+    const originalDocRef = doc(db, "styleProfiles", originalId);
+    const originalSnap = await getDoc(originalDocRef);
+    const originalData = originalSnap.data();
+
+    if (!originalData) {
+      alert("Original profile not found.");
+      return;
+    }
+
+    const newId = nanoid(10);
+    const clonedData = { ...originalData };
+    delete clonedData.name;
+
+    await createStyleProfile(db, newId, newName.trim(), clonedData);
+    fetchProfiles(); // Refresh the list
+  } catch (error) {
+    console.error("Error duplicating profile:", error);
+    alert("Something went wrong duplicating the profile.");
+  }
+};
+
   return (
     <div className="max-w-4xl mx-auto px-4 py-6">
       <h2 className="text-2xl font-semibold mb-4">Profiles</h2>
@@ -83,6 +109,12 @@ export default function ProfileList() {
                       className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 transition"
                     >
                       View
+                    </button>
+                    <button
+                      onClick={() => duplicateProfile(profile.profileId, profile.profileName)}
+                      className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 transition"
+                    >
+                      Duplicate
                     </button>
                     <button
                       onClick={() => deleteProfile(profile.profileId, profile.profileName)}
