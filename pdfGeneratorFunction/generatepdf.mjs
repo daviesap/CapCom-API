@@ -109,7 +109,7 @@ export const generatePdfBuffer = async (jsonInput = null) => {
 
   const reserveHeader = () => {
     if (header?.text?.length) {
-      const { lineHeight } = resolveStyle(header.style || {}, boldFont, regularFont, italicFont, boldItalicFont);
+      const { lineHeight } = resolveStyle(styles.header || {}, boldFont, regularFont, italicFont, boldItalicFont);
       y -= header.text.length * lineHeight + headerPaddingBottom;
     }
   };
@@ -222,7 +222,7 @@ export const generatePdfBuffer = async (jsonInput = null) => {
   for (let i = 0; i < total; i++) {
     const pg = pages[i];
     if (header?.text) {
-      const { lineHeight: hLH, fontSize: hFS, font: hF, color: hC } = resolveStyle(header.style || {}, boldFont, regularFont, italicFont, boldItalicFont);
+      const { lineHeight: hLH, fontSize: hFS, font: hF, color: hC } = resolveStyle(styles.header || {}, boldFont, regularFont, italicFont, boldItalicFont);
       let hy = pageHeight - topMargin;
       for (const ln of header.text) {
         pg.drawText(sanitiseText(ln), { x: leftMargin, y: hy, size: hFS, font: hF, color: hC });
