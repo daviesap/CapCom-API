@@ -5,7 +5,7 @@
   "scripts": {
     "deploy:frontend": "cd frontend && npm run build && firebase deploy --only hosting --project flair-pdf-generator",
     "deploy:pdfgen": "cd pdfGeneratorFunction && npm run deploy",
-    "deploy:all": "npm run deploy:frontend && npm run deploy:pdfgen"
+    "deploy:all": "npm run deploy:frontend && npm run deploy:pdfgen && firebase deploy --only firestore:rules --project flair-pdf-generator"
   },
   "devDependencies": {
     "@eslint/js": "^9.26.0",
