@@ -168,21 +168,10 @@ export default function ViewProfile({ profileId }) {
             label: "Logo",
             content: (
               <LogoUploader
-                logoData={profile.logo}
-                onChange={(updatedLogo) => {
-                  const updatedProfile = { ...profile, logo: updatedLogo };
-                  setProfile(updatedProfile);
-                }}
-                onSave={async (updatedLogo) => {
-                  const updatedProfile = { ...profile, logo: updatedLogo };
-                  setProfile(updatedProfile);
-
-                  const docRef = doc(db, "styleProfiles", profileId);
-                  await updateDoc(docRef, { logo: updatedLogo });
-
-                  setOriginalProfile(updatedProfile);
-                  console.log("✅ Logo saved");
-                }}
+                profile={profile}
+                setProfile={setProfile}
+                setOriginalProfile={setOriginalProfile}
+                profileId={profileId}
               />
             )
           },
