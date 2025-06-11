@@ -1,3 +1,4 @@
+//frontend/src/AuthProvider.jsx
 import { createContext, useContext, useEffect, useState } from "react";
 import {
   getAuth,

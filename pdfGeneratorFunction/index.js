@@ -3,7 +3,8 @@
 
 import { readFile } from 'fs/promises';
 import path from 'path';
-import { Storage } from '@google-cloud/storage';
+//import { Storage } from '@google-cloud/storage';  No longer needed, using Firebase Storage
+import { getStorage } from 'firebase-admin/storage';
 import { SecretManagerServiceClient } from '@google-cloud/secret-manager';
 import { generatePdfBuffer } from './generatepdf.mjs';
 import { initializeApp, applicationDefault } from 'firebase-admin/app';
@@ -13,15 +14,18 @@ import { merge } from 'lodash-es';
 // Firebase Admin init
 let db;
 try {
-  initializeApp({ credential: applicationDefault() });
+  initializeApp({
+    credential: applicationDefault(),
+    storageBucket: 'flair-pdf-generator.firebasestorage.app',
+  });
   db = getFirestore();
 } catch {
   console.warn("⚠️ Firebase Admin was already initialized.");
 }
 
 // GCP Services
-const bucketName = 'generatedpdfs';
-const storage = new Storage();
+//const bucketName = 'generatedpdfs';
+//const storage = new Storage();
 const secretClient = new SecretManagerServiceClient();
 
 // Cloud Function
@@ -29,9 +33,9 @@ export const generatePdf = async (req, res) => {
   const startTime = Date.now();
   const timestamp = new Date().toISOString();
 
-    const action = req.query?.action || '';
+  const action = req.query?.action || '';
 
-      if (action === 'getProfileIds') {
+  if (action === 'getProfileIds') {
     try {
       const snapshot = await db.collection("styleProfiles").get();
       const ids = snapshot.docs.map(doc => ({
@@ -144,11 +148,30 @@ export const generatePdf = async (req, res) => {
       }
     }
 
+
+    //Get appName from JSON
+    const appName = jsonInput.appName || 'Flair PDF Generator';
+    const safeAppName = appName.replace(/\s+/g, '_');
+
     // 📄 Generate PDF
     const { bytes, filename } = await generatePdfBuffer(jsonInput);
 
-    // ☁️ Upload to GCS
-    const file = storage.bucket(bucketName).file(filename);
+    // ☁️ Upload to GCS -REMOVED Firebase Storage
+    //const file = storage.bucket(bucketName).file(filename);
+    //await file.save(bytes, {
+    //metadata: {
+    //contentType: 'application/pdf',
+    //cacheControl: 'no-cache, max-age=0, no-transform',
+    // },
+    // });
+
+    //const publicUrl = `https://storage.googleapis.com/${bucketName}/${encodeURIComponent(filename)}`;
+
+    // ☁️ Upload to Firebase Storage
+    const bucket = getStorage().bucket(); // default bucket flair-pdf-generator.appspot.com
+
+    // Upload file under /pdfs/ folder for clean separation
+    const file = bucket.file(`pdfs/${safeAppName}/${filename}`);
     await file.save(bytes, {
       metadata: {
         contentType: 'application/pdf',
@@ -156,13 +179,19 @@ export const generatePdf = async (req, res) => {
       },
     });
 
-    const publicUrl = `https://storage.googleapis.com/${bucketName}/${encodeURIComponent(filename)}`;
+    // Generate signed public URL valid for 24 hours
+    const [signedUrl] = await file.getSignedUrl({
+      action: 'read',
+      expires: Date.now() + 24 * 60 * 60 * 1000,
+    });
+
+
     const executionTimeSeconds = (Date.now() - startTime) / 1000;
 
     await logPdfEvent({
       timestamp,
       filename,
-      url: publicUrl,
+      url: signedUrl,
       userId: req.body.userId || 'unknown userId',
       userEmail: req.body.userEmail || 'unknown email',
       profileId: req.body.profileId || 'unknown profileId',
@@ -172,7 +201,7 @@ export const generatePdf = async (req, res) => {
     res.status(200).json({
       success: true,
       message: '✅ PDF generated and uploaded successfully',
-      url: publicUrl,
+      url: signedUrl,
       timestamp,
       executionTimeSeconds,
     });
