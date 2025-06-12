@@ -177,30 +177,29 @@ export const generatePdf = async (req, res) => {
 
 
     //Get appName from JSON
-    const appName = jsonInput.appName || 'Flair PDF Generator';
+    const appName = jsonInput.glideAppName || 'Flair PDF Generator';
     const safeAppName = appName.replace(/\s+/g, '_');
+    const eventName = jsonInput.eventName || 'Event Name Not Set';
+    const safeEventName = eventName.replace(/\s+/g, '_');
 
     // 📄 Generate PDF
     const { bytes, filename, glideAppName: extractedGlideAppName } = await generatePdfBuffer(jsonInput);
     glideAppName = extractedGlideAppName;
 
-     // ☁️ Upload to Firebase Storage
+    // ☁️ Upload to Firebase Storage
     const bucket = getStorage().bucket(); // default bucket flair-pdf-generator.appspot.com
 
     // Upload file under /pdfs/ folder for clean separation
-    const file = bucket.file(`pdfs/${safeAppName}/${filename}`);
+ const file = bucket.file(`pdfs/${safeAppName}/${safeEventName}/${filename}`);
     await file.save(bytes, {
       metadata: {
         contentType: 'application/pdf',
         cacheControl: 'no-cache, max-age=0, no-transform',
       },
     });
-
-    // Generate signed public URL valid for 24 hours
-    const [signedUrl] = await file.getSignedUrl({
-      action: 'read',
-      expires: Date.now() + 24 * 60 * 60 * 1000,
-    });
+    //Before adding storage.flair.london
+    //const publicUrl = `https://storage.googleapis.com/flair-pdf-generator.firebasestorage.app/pdfs/${safeAppName}/${filename}`;
+    const publicUrl = `https://storage.flair.london/${safeAppName}/${safeEventName}/${filename}`;
 
 
     const executionTimeSeconds = (Date.now() - startTime) / 1000;
@@ -210,7 +209,7 @@ export const generatePdf = async (req, res) => {
       archiveDate,
       glideAppName,
       filename,
-      url: signedUrl,
+      url: publicUrl,
       userId: req.body.userId || 'unknown userId',
       userEmail: req.body.userEmail || 'unknown email',
       profileId: req.body.profileId || 'unknown profileId',
@@ -220,7 +219,7 @@ export const generatePdf = async (req, res) => {
     res.status(200).json({
       success: true,
       message: '✅ PDF generated and uploaded successfully',
-      url: signedUrl,
+      url: publicUrl,
       timestamp,
       executionTimeSeconds,
       ...(debugMode && {
