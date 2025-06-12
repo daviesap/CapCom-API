@@ -16,7 +16,6 @@ import JSONdisplay from "../components/JSONDisplay";
 export default function ViewProfile({ profileId }) {
   const [profile, setProfile] = useState(null);
   const [originalProfile, setOriginalProfile] = useState(null);
-  const [editingStylePath, setEditingStylePath] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
