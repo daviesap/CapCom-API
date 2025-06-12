@@ -96,12 +96,25 @@ export default function StyleSection({ sectionKey, sectionData, onSave }) {
                             onChange={(e) => handleChange("lineSpacing", parseInt(e.target.value))}
                             className="border rounded p-1 w-32"
                         />
-                    </div>
+                        <br /><button
+                            onClick={() => onSave(localData)}
+                            className="mt-4 px-4 py-2 rounded bg-green-500 text-white shadow"
+                        >
+                            Save
+                        </button></div>
 
                     {["default", "highlight", "lowlight"].map((subKey) => (
                         <div key={subKey} className="mb-6 p-3 border rounded">
                             <div className="font-semibold mb-3 capitalize">{subKey}</div>
                             {renderStyleFields(localData[subKey], (field, value) => handleRowChange(subKey, field, value), `${subKey}.`)}
+                            <button
+                                onClick={() => onSave(localData)}
+                                className="mt-4 px-4 py-2 rounded bg-green-500 text-white shadow"
+                            >
+                                Save
+                            </button>
+
+
                         </div>
                     ))}
                 </>
@@ -109,12 +122,7 @@ export default function StyleSection({ sectionKey, sectionData, onSave }) {
                 renderStyleFields(localData, handleChange)
             )}
 
-            <button
-                onClick={() => onSave(localData)}
-                className="mt-4 px-4 py-2 rounded bg-green-500 text-white shadow"
-            >
-                Save
-            </button>
+
         </div>
     );
 }
