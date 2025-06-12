@@ -262,6 +262,7 @@ export const generatePdfBuffer = async (jsonInput = null) => {
   return {
     bytes: await pdfDoc.save(),
     filename: jsonData.document.filename.endsWith('.pdf') ? jsonData.document.filename : `${jsonData.document.filename}.pdf`,
+    glideAppName: jsonData.glideAppName || 'Glide App Name not set',
   };
 };
 

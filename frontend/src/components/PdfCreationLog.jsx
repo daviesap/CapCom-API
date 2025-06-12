@@ -33,6 +33,7 @@ export default function PdfCreationLog() {
           <thead className="bg-gray-100">
             <tr>
               <th className="border border-gray-300 px-4 py-2 text-left">Timestamp</th>
+              <th className="border border-gray-300 px-4 py-2 text-left">Glide App</th>
               <th className="border border-gray-300 px-4 py-2 text-left">Filename</th>
               <th className="border border-gray-300 px-4 py-2 text-left">URL</th>
               <th className="border border-gray-300 px-4 py-2 text-left">User Email</th>
@@ -49,6 +50,7 @@ export default function PdfCreationLog() {
                     ? new Date(log.timestamp).toLocaleString()
                     : '—'}
                 </td>
+                <td className="border border-gray-300 px-4 py-2">{log.glideAppName}</td>
                 <td className="border border-gray-300 px-4 py-2">
                   {log.filename || '—'}
                 </td>

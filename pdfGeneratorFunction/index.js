@@ -32,6 +32,7 @@ const secretClient = new SecretManagerServiceClient();
 export const generatePdf = async (req, res) => {
   const startTime = Date.now();
   const timestamp = new Date().toISOString();
+  const archiveDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
 
   //Set variables to return raw JSON when debugging
   const debugMode = req.body?.debug === true;
@@ -95,6 +96,8 @@ export const generatePdf = async (req, res) => {
 
   console.time('Script execution');
 
+  let glideAppName = 'Glide App Name not set';
+
   try {
     let jsonInput;
     const hasDocument = req.body && Object.prototype.hasOwnProperty.call(req.body, 'document');
@@ -149,6 +152,7 @@ export const generatePdf = async (req, res) => {
 
           await logPdfEvent({
             timestamp,
+            archiveDate,
             filename: 'not generated',
             url: '',
             userId: req.body.userId || 'unknown userId',
@@ -177,20 +181,10 @@ export const generatePdf = async (req, res) => {
     const safeAppName = appName.replace(/\s+/g, '_');
 
     // 📄 Generate PDF
-    const { bytes, filename } = await generatePdfBuffer(jsonInput);
+    const { bytes, filename, glideAppName: extractedGlideAppName } = await generatePdfBuffer(jsonInput);
+    glideAppName = extractedGlideAppName;
 
-    // ☁️ Upload to GCS -REMOVED Firebase Storage
-    //const file = storage.bucket(bucketName).file(filename);
-    //await file.save(bytes, {
-    //metadata: {
-    //contentType: 'application/pdf',
-    //cacheControl: 'no-cache, max-age=0, no-transform',
-    // },
-    // });
-
-    //const publicUrl = `https://storage.googleapis.com/${bucketName}/${encodeURIComponent(filename)}`;
-
-    // ☁️ Upload to Firebase Storage
+     // ☁️ Upload to Firebase Storage
     const bucket = getStorage().bucket(); // default bucket flair-pdf-generator.appspot.com
 
     // Upload file under /pdfs/ folder for clean separation
@@ -213,6 +207,8 @@ export const generatePdf = async (req, res) => {
 
     await logPdfEvent({
       timestamp,
+      archiveDate,
+      glideAppName,
       filename,
       url: signedUrl,
       userId: req.body.userId || 'unknown userId',
@@ -241,6 +237,8 @@ export const generatePdf = async (req, res) => {
 
     await logPdfEvent({
       timestamp,
+      archiveDate,
+      glideAppName,
       filename: 'not generated',
       url: '',
       userId: req.body.userId || 'unknown userId',
@@ -263,9 +261,11 @@ export const generatePdf = async (req, res) => {
 };
 
 // 🧾 Log to Firestore
-async function logPdfEvent({ timestamp, filename, url, userId, userEmail, profileId, success, errorMessage }) {
+async function logPdfEvent({ timestamp, archiveDate, glideAppName, filename, url, userId, userEmail, profileId, success, errorMessage }) {
   const logData = {
     timestamp,
+    archiveDate,
+    glideAppName,
     filename,
     url,
     userId,
