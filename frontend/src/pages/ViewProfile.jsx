@@ -1,3 +1,4 @@
+//ViewProfile.jsx
 import React, { useEffect, useState } from "react";
 import { getDoc, doc, updateDoc } from "firebase/firestore";
 import { db } from "../services/firebase";
@@ -7,7 +8,6 @@ import isEqual from "lodash.isequal";
 import LogoUploader from "../components/LogoUploader";
 
 import Tabs from "../components/Tabs";
-import StylesEditor from "../components/StylesEditor";
 import StyleBoxList from "../components/StyleBoxList";
 import DocumentEditor from "../components/DocumentEditor";
 import ColumnsEditor from "../components/ColumnsEditor";
@@ -67,24 +67,20 @@ export default function ViewProfile({ profileId }) {
     }
   };
 
-  const handleSaveSection = async (sectionKey, updatedData) => {
-    const newStyles = {
-      ...profile.styles,
-      [sectionKey]: updatedData
-    };
-
-    const updatedProfile = {
-      ...profile,
-      styles: newStyles
-    };
-
+  // 🔧 Generalized save function for any section
+  const saveSection = async (field, updatedValue) => {
+    const updatedProfile = { ...profile, [field]: updatedValue };
     setProfile(updatedProfile);
-
     const docRef = doc(db, "styleProfiles", profileId);
-    await updateDoc(docRef, { styles: newStyles });
-
+    await updateDoc(docRef, { [field]: updatedValue });
     setOriginalProfile(updatedProfile);
-    console.log("✅ Style section saved to Firestore");
+    console.log(`✅ ${field} saved to Firestore`);
+  };
+
+  // 🔧 Slightly simplified Style save (still fully safe)
+  const handleSaveSection = async (sectionKey, updatedData) => {
+    const newStyles = { ...profile.styles, [sectionKey]: updatedData };
+    await saveSection("styles", newStyles);
   };
 
   if (!profile) return <p className="text-center mt-8 text-gray-500">Loading...</p>;
@@ -118,16 +114,7 @@ export default function ViewProfile({ profileId }) {
                   const updatedProfile = { ...profile, document: updatedDoc };
                   setProfile(updatedProfile);
                 }}
-                onSave={async (updatedDocument) => {
-                  const updatedProfile = { ...profile, document: updatedDocument };
-                  setProfile(updatedProfile);
-
-                  const docRef = doc(db, "styleProfiles", profileId);
-                  await updateDoc(docRef, { document: updatedDocument });
-
-                  setOriginalProfile(updatedProfile);
-                  console.log("✅ Document saved");
-                }}
+                onSave={(updatedDocument) => saveSection("document", updatedDocument)}
               />
             ),
           },
@@ -141,16 +128,7 @@ export default function ViewProfile({ profileId }) {
                 onChange={(updated) => {
                   setProfile((prev) => ({ ...prev, columns: updated }));
                 }}
-                onSave={async (updatedColumns) => {
-                  const updatedProfile = { ...profile, columns: updatedColumns };
-                  setProfile(updatedProfile);
-
-                  const docRef = doc(db, "styleProfiles", profileId);
-                  await updateDoc(docRef, { columns: updatedColumns });
-
-                  setOriginalProfile(updatedProfile);
-                  console.log("✅ Columns saved");
-                }}
+                onSave={(updatedColumns) => saveSection("columns", updatedColumns)}
               />
             )
           },
