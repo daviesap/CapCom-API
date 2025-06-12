@@ -33,6 +33,11 @@ export const generatePdf = async (req, res) => {
   const startTime = Date.now();
   const timestamp = new Date().toISOString();
 
+  //Set variables to return raw JSON when debugging
+  const debugMode = req.body?.debug === true;
+  let rawJson = req.body;
+  let firestoreProfileJson = null;
+
   const action = req.query?.action || '';
 
   if (action === 'getProfileIds') {
@@ -110,6 +115,7 @@ export const generatePdf = async (req, res) => {
 
         if (profileSnap.exists) {
           const profileData = profileSnap.data();
+          firestoreProfileJson = profileData;
           const firestoreStyles = profileData.styles || {};
 
           jsonInput.styles = merge({}, firestoreStyles, jsonInput.styles || {});
@@ -204,6 +210,13 @@ export const generatePdf = async (req, res) => {
       url: signedUrl,
       timestamp,
       executionTimeSeconds,
+      ...(debugMode && {
+        debugPayload: {
+          rawJson,
+          firestoreProfileJson,
+          mergedJson: jsonInput
+        }
+      })
     });
   } catch (err) {
     const executionTimeSeconds = (Date.now() - startTime) / 1000;
