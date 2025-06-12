@@ -8,6 +8,7 @@ import LogoUploader from "../components/LogoUploader";
 
 import Tabs from "../components/Tabs";
 import StylesEditor from "../components/StylesEditor";
+import StyleBoxList from "../components/StyleBoxList";
 import DocumentEditor from "../components/DocumentEditor";
 import ColumnsEditor from "../components/ColumnsEditor";
 import JSONdisplay from "../components/JSONDisplay";
@@ -67,6 +68,26 @@ export default function ViewProfile({ profileId }) {
     }
   };
 
+  const handleSaveSection = async (sectionKey, updatedData) => {
+    const newStyles = {
+      ...profile.styles,
+      [sectionKey]: updatedData
+    };
+
+    const updatedProfile = {
+      ...profile,
+      styles: newStyles
+    };
+
+    setProfile(updatedProfile);
+
+    const docRef = doc(db, "styleProfiles", profileId);
+    await updateDoc(docRef, { styles: newStyles });
+
+    setOriginalProfile(updatedProfile);
+    console.log("✅ Style section saved to Firestore");
+  };
+
   if (!profile) return <p className="text-center mt-8 text-gray-500">Loading...</p>;
 
   return (
@@ -83,41 +104,9 @@ export default function ViewProfile({ profileId }) {
           {
             label: "Styles",
             content: (
-              <StylesEditor
+              <StyleBoxList
                 styles={profile.styles}
-                editingStyle={
-                  editingStylePath
-                    ? editingStylePath.length === 2
-                      ? profile.styles?.[editingStylePath[0]]?.[editingStylePath[1]]
-                      : profile.styles?.[editingStylePath[0]]
-                    : null
-                }
-                onEdit={(pathArray) => setEditingStylePath(pathArray)}
-                onSave={async (updatedBlock) => {
-                  if (!editingStylePath) return;
-
-                  const [section, subKey] = editingStylePath;
-                  const newStyles = { ...profile.styles };
-
-                  if (subKey) {
-                    newStyles[section] = {
-                      ...newStyles[section],
-                      [subKey]: updatedBlock,
-                    };
-                  } else {
-                    newStyles[section] = updatedBlock;
-                  }
-
-                  const updatedProfile = { ...profile, styles: newStyles };
-                  setProfile(updatedProfile);
-                  setEditingStylePath(null);
-
-                  const docRef = doc(db, "styleProfiles", profileId);
-                  await updateDoc(docRef, { styles: newStyles });
-
-                  setOriginalProfile(updatedProfile);
-                  console.log("✅ Style block saved to Firestore");
-                }}
+                onSaveSection={handleSaveSection}
               />
             ),
           },

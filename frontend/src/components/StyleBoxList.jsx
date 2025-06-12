@@ -1,42 +1,119 @@
-import React from "react";
-import StyleBox from "./StyleBox";
+import React, { useState } from "react";
+import StyleSection from "./StyleSection";
 
-export default function StyleBoxList({ styles, editingStyle, onEdit, onSave }) {
+export default function StyleBoxList({ styles, onSaveSection }) {
   if (!styles) return null;
 
-  return (
-    <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
-      {Object.entries(styles)
-        .sort(([aKey], [bKey]) => aKey.localeCompare(bKey))
-        .flatMap(([styleKey, styleData]) => {
-          if (styleKey === "row" && typeof styleData === "object") {
-            return Object.entries(styleData)
-              .sort(([aKey], [bKey]) => aKey.localeCompare(bKey))
-              .map(([subKey, subData]) => (
-                <StyleBox
-                  key={`${styleKey}.${subKey}`}
-                  styleKey={`${styleKey}.${subKey}`}
-                  styleData={subData}
-                  pathArray={[styleKey, subKey]}
-                  editingStyle={editingStyle}
-                  onEdit={onEdit}
-                  onSave={onSave}
-                />
-              ));
-          }
+  const sectionKeys = [
+    "header",
+    "footer",
+    "groupTitle",
+    "groupMetadata",
+    "labelRow",
+    "row"
+  ];
+
+  const [openSection, setOpenSection] = useState(null);
+
+  // Helper function to render the sample text for each section
+const renderSample = (sectionKey) => {
+  const section = styles[sectionKey];
+
+  if (!section) return null;
+
+  if (sectionKey === "row") {
+    return (
+      <div className="flex gap-4">
+        {["default", "highlight", "lowlight"].map((subKey) => {
+          const styleData = section[subKey] || {};
+          const {
+            fontSize = 12,
+            fontStyle = "normal",
+            fontColour = "#000000",
+            backgroundColour = "#FFFFFF"
+          } = styleData;
+
+          const fontWeight = fontStyle.toLowerCase().includes("bold") ? "bold" : "normal";
+          const fontStyleCss = fontStyle.toLowerCase().includes("italic") ? "italic" : "normal";
 
           return (
-            <StyleBox
-              key={styleKey}
-              styleKey={styleKey}
-              styleData={styleData}
-              pathArray={[styleKey]}
-              editingStyle={editingStyle}
-              onEdit={onEdit}
-              onSave={onSave}
-            />
+            <div
+              key={subKey}
+              className="px-2 py-1 rounded"
+              style={{
+                fontSize: `${fontSize}px`,
+                fontWeight: fontWeight,
+                fontStyle: fontStyleCss,
+                color: fontColour,
+                backgroundColor: backgroundColour,
+                minWidth: "100px",
+              }}
+            >
+              {subKey}
+            </div>
           );
         })}
+      </div>
+    );
+  }
+
+  // All other sections
+  const {
+    fontSize = 12,
+    fontStyle = "normal",
+    fontColour = "#000000",
+    backgroundColour = "#FFFFFF"
+  } = section;
+
+  const fontWeight = fontStyle.toLowerCase().includes("bold") ? "bold" : "normal";
+  const fontStyleCss = fontStyle.toLowerCase().includes("italic") ? "italic" : "normal";
+
+  return (
+    <div
+      className="px-2 py-1 rounded"
+      style={{
+        fontSize: `${fontSize}px`,
+        fontWeight: fontWeight,
+        fontStyle: fontStyleCss,
+        color: fontColour,
+        backgroundColor: backgroundColour,
+        minWidth: "120px",
+      }}
+    >
+      Sample Text
+    </div>
+  );
+};
+
+  return (
+    <div className="space-y-4">
+      {sectionKeys.map((sectionKey) => (
+        <div key={sectionKey} className="p-4 rounded-xl shadow border border-gray-300 bg-white">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-8">
+              <div className="w-40 font-semibold text-lg capitalize">{sectionKey}</div>
+              <div>{renderSample(sectionKey)}</div>
+            </div>
+            <button
+              onClick={() => setOpenSection(openSection === sectionKey ? null : sectionKey)}
+              className="px-3 py-1 rounded bg-blue-500 text-white shadow"
+            >
+              {openSection === sectionKey ? "Close" : "Edit"}
+            </button>
+          </div>
+
+          {openSection === sectionKey && (
+            <StyleSection
+              sectionKey={sectionKey}
+              sectionData={styles[sectionKey]}
+              onSave={(updatedData) => {
+                onSaveSection(sectionKey, updatedData);
+                setOpenSection(null);
+              }}
+            />
+          )}
+        </div>
+      ))}
     </div>
   );
 }

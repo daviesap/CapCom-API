@@ -26,7 +26,7 @@ function rgbHex(hex) {
   );
 }
 
-function resolveStyle(style, boldFont, regularFont, italicFont, boldItalicFont) {
+function resolveStyle(style, boldFont, regularFont, italicFont, boldItalicFont, rowLineSpacing = 2) {
   const fontSize = style.fontSize || 10;
   const fontStyle = (style.fontStyle || '').toLowerCase();
 
@@ -49,7 +49,7 @@ function resolveStyle(style, boldFont, regularFont, italicFont, boldItalicFont) 
   }
 
   const color = rgbHex(style.colour || style.fontColour || '#000000');
-  const lineHeight = fontSize + 2;
+  const lineHeight = fontSize + rowLineSpacing;
   const paddingBottom = style.paddingBottom || 0;
 
 
@@ -98,6 +98,7 @@ export const generatePdfBuffer = async (jsonInput = null) => {
   }
 
   const defaultStyle = jsonData.styles?.row?.default || {};
+  const rowLineSpacing = styles?.row?.lineSpacing ?? 2;
   const labelRowStyle = jsonData.styles?.labelRow || {};
   const groupTitleStyle = jsonData.styles?.groupTitle || {};
   const groupMetaStyle = jsonData.styles?.groupMetadata || {};
@@ -170,7 +171,14 @@ export const generatePdfBuffer = async (jsonInput = null) => {
       const styleKey = entry.format || 'default';
       //const rowStyle = jsonData.styles?.entries?.[styleKey] || defaultStyle; OLD LINE
       const rowStyle = jsonData.styles?.row?.[styleKey] || defaultStyle;
-      const { lineHeight: rLH, fontSize: rFS, font: rF, color: rC } = resolveStyle(rowStyle, boldFont, regularFont, italicFont, boldItalicFont);
+      const { lineHeight: rLH, fontSize: rFS, font: rF, color: rC } = resolveStyle(
+        rowStyle,
+        boldFont,
+        regularFont,
+        italicFont,
+        boldItalicFont,
+        rowLineSpacing
+      );
 
       const wrapped = columns.map(col => {
         let txt = entry.fields[col.field];

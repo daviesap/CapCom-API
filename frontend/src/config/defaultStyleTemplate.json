@@ -33,12 +33,12 @@
         "paddingTop": 20
       },
     "row": {
+      "lineSpacing":2,
       "default": {
         "fontSize": 10,
         "fontStyle": "italic",
         "backgroundColour": "#FFFFFF",
-        "fontColour": "#000000",
-        "lineSpacing":2
+        "fontColour": "#000000"
       },
       "highlight": {
         "fontSize": 10,
