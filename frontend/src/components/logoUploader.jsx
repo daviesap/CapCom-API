@@ -41,7 +41,7 @@ export default function LogoUploader({ profile, setProfile, setOriginalProfile, 
           document: {
             ...profile.document,
             header: {
-              ...profile.document?.header,
+              ...(profile.document?.header || {}),
               logo: {
                 url,
                 width: Number(width),

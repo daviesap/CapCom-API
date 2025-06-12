@@ -63,7 +63,14 @@
     "topMargin": 30,
     "bottomMargin": 20,
     "groupPaddingBottom": 10,
-    "bottomPageThreshold": 40
+    "bottomPageThreshold": 40,
+    "header": {
+      "logo": {
+        "url": "https://firebasestorage.googleapis.com/v0/b/flair-pdf-generator.firebasestorage.app/o/logos%2Fflair-logo.png?alt=media&token=2f79f8b7-2c31-4ee9-aa3f-223a7d6ed5cf",
+        "width": 36,
+        "height": 36
+      }
+    }
   },
   "columns": [
     {
