@@ -137,6 +137,8 @@ export default function ViewProfile({ profileId }) {
             content: (
               <ColumnsEditor
                 columnsData={profile.columns}
+                detectedFields={profile.detectedFields || []}
+                fieldsLastUpdated={profile.fieldsLastUpdated || null}
                 onChange={(updated) => {
                   setProfile((prev) => ({ ...prev, columns: updated }));
                 }}
@@ -151,7 +153,7 @@ export default function ViewProfile({ profileId }) {
                   console.log("✅ Columns saved");
                 }}
               />
-            ),
+            )
           },
           {
             label: "Logo",

@@ -122,6 +122,23 @@ export const generatePdf = async (req, res) => {
           jsonInput.document = merge({}, profileData.document || {}, jsonInput.document || {});
           jsonInput.columns = profileData.columns || [];
 
+          // 🔍 Extract field names from fully merged JSON
+          const fieldNames = new Set();
+
+          for (const group of jsonInput.groups || []) {
+            for (const entry of group.entries || []) {
+              if (entry.fields) {
+                Object.keys(entry.fields).forEach(key => fieldNames.add(key));
+              }
+            }
+          }
+
+          // 🔧 Write back to Firestore
+          await db.collection("styleProfiles").doc(jsonInput.profileId).update({
+            detectedFields: Array.from(fieldNames),
+            fieldsLastUpdated: new Date().toISOString()
+          });
+
           console.log(`🧩 Styles merged from Firestore for profileId "${jsonInput.profileId}":`);
           console.dir(jsonInput.styles, { depth: null });
           console.dir(jsonInput.document, { depth: null });
