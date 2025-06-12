@@ -37,7 +37,8 @@
         "fontSize": 10,
         "fontStyle": "italic",
         "backgroundColour": "#FFFFFF",
-        "fontColour": "#000000"
+        "fontColour": "#000000",
+        "lineSpacing":2
       },
       "highlight": {
         "fontSize": 10,
