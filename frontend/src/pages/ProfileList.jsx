@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { 
-  collection, getDocs, query, where, orderBy, limit, getDoc, doc, deleteDoc 
-} from 'firebase/firestore';
+import { collection, getDocs, getDoc, doc, deleteDoc } from 'firebase/firestore';
 import { db } from '../services/firebase';
 import { nanoid } from 'nanoid';
 import { createStyleProfile } from '../services/styleProfileService';
 import { useNavigate } from 'react-router-dom';
-import { formatDistanceToNow } from 'date-fns';
+import PdfCreationLog from '../components/pdfCreationLog';
 
 export default function ProfileList() {
   const [profiles, setProfiles] = useState([]);
@@ -16,37 +14,10 @@ export default function ProfileList() {
 
   const fetchProfiles = async () => {
     const querySnapshot = await getDocs(collection(db, 'styleProfiles'));
-
-    const data = await Promise.all(
-      querySnapshot.docs.map(async (docSnap) => {
-        const profileId = docSnap.id;
-        const profileName = docSnap.data()?.name || "(Unnamed Profile)";
-
-        // Query latest log for this profileId
-        const logsRef = collection(db, 'pdfCreationLog');
-        const logsQuery = query(
-          logsRef,
-          where("profileId", "==", profileId),
-          orderBy("timestamp", "desc"),
-          limit(1)
-        );
-
-        const logsSnapshot = await getDocs(logsQuery);
-        let lastUsed = null;
-
-        if (!logsSnapshot.empty) {
-          const logDoc = logsSnapshot.docs[0].data();
-          lastUsed = logDoc.timestamp;
-        }
-
-        return {
-          profileId,
-          profileName,
-          lastUsed,
-        };
-      })
-    );
-
+    const data = querySnapshot.docs.map(doc => ({
+      profileId: doc.id,
+      profileName: doc.data().name || "(Unnamed Profile)"
+    }));
     setProfiles(data);
   };
 
@@ -71,34 +42,34 @@ export default function ProfileList() {
     fetchProfiles();
   };
 
-  const duplicateProfile = async (originalId, originalName) => {
-    const newName = prompt(`Enter a name for the duplicate of "${originalName}":`);
-    if (!newName || !newName.trim()) return;
+const duplicateProfile = async (originalId, originalName) => {
+  const newName = prompt(`Enter a name for the duplicate of "${originalName}":`);
+  if (!newName || !newName.trim()) return;
 
-    try {
-      const originalDocRef = doc(db, "styleProfiles", originalId);
-      const originalSnap = await getDoc(originalDocRef);
-      const originalData = originalSnap.data();
+  try {
+    const originalDocRef = doc(db, "styleProfiles", originalId);
+    const originalSnap = await getDoc(originalDocRef);
+    const originalData = originalSnap.data();
 
-      if (!originalData) {
-        alert("Original profile not found.");
-        return;
-      }
-
-      const newId = nanoid(10);
-      const clonedData = { ...originalData };
-      delete clonedData.name;
-
-      await createStyleProfile(db, newId, newName.trim(), clonedData);
-      fetchProfiles();
-    } catch (error) {
-      console.error("Error duplicating profile:", error);
-      alert("Something went wrong duplicating the profile.");
+    if (!originalData) {
+      alert("Original profile not found.");
+      return;
     }
-  };
+
+    const newId = nanoid(10);
+    const clonedData = { ...originalData };
+    delete clonedData.name;
+
+    await createStyleProfile(db, newId, newName.trim(), clonedData);
+    fetchProfiles(); // Refresh the list
+  } catch (error) {
+    console.error("Error duplicating profile:", error);
+    alert("Something went wrong duplicating the profile.");
+  }
+};
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-6">
+    <div className="max-w-4xl mx-auto px-4 py-6">
       <h2 className="text-2xl font-semibold mb-4">Profiles</h2>
 
       <div className="mb-4 flex items-center gap-2">
@@ -123,7 +94,6 @@ export default function ProfileList() {
             <tr className="bg-gray-100">
               <th className="border border-gray-300 px-4 py-2">Name</th>
               <th className="border border-gray-300 px-4 py-2">Profile ID</th>
-              <th className="border border-gray-300 px-4 py-2">Last Used</th>
               <th className="border border-gray-300 px-4 py-2">Actions</th>
             </tr>
           </thead>
@@ -132,11 +102,6 @@ export default function ProfileList() {
               <tr key={profile.profileId} className="hover:bg-gray-50">
                 <td className="border border-gray-300 px-4 py-2 font-medium">{profile.profileName}</td>
                 <td className="border border-gray-300 px-4 py-2">{profile.profileId}</td>
-                <td className="border border-gray-300 px-4 py-2">
-                  {profile.lastUsed
-                    ? `${formatDistanceToNow(new Date(profile.lastUsed), { addSuffix: true })}`
-                    : "Never used"}
-                </td>
                 <td className="border border-gray-300 px-4 py-2">
                   <div className="flex gap-2">
                     <button

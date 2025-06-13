@@ -1,9 +1,8 @@
-// ColumnsEditor.jsx
+//ColumnsEditor.jsx
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { formatDistanceToNow } from 'date-fns';
 
-export default function ColumnsEditor({ columnsData, detectedFields = [], fieldsLastUpdated = null, onSave, onChange }) {
+export default function ColumnsEditor({ columnsData, onSave, onChange }) {
   const [draft, setDraft] = useState(columnsData || []);
 
   useEffect(() => {
@@ -39,28 +38,8 @@ export default function ColumnsEditor({ columnsData, detectedFields = [], fields
   };
 
   return (
-
     <div className="mb-6">
       <h3 className="text-xl font-semibold mb-4">Columns</h3>
-
-
-      {fieldsLastUpdated && (
-        <p className="text-m text-black mb-2">
-          Available fields:{" "}
-          {detectedFields
-            .slice()                         // make shallow copy so we don’t mutate original
-            .sort((a, b) => a.localeCompare(b))  // sort alphabetically
-            .map(field => field.charAt(0).toUpperCase() + field.slice(1)) // capitalise first letter
-            .join(", ")}
-
-
-          {fieldsLastUpdated && (
-            <p className="text-sm text-gray-500 mb-4">
-              Last PDF was generated and field names updated{" "}{formatDistanceToNow(new Date(fieldsLastUpdated), { addSuffix: true })}
-            </p>
-          )}</p>
-      )}
-
 
       {draft.map((col, i) => (
         <div
@@ -69,22 +48,12 @@ export default function ColumnsEditor({ columnsData, detectedFields = [], fields
         >
           <label className="flex flex-col flex-1 min-w-[150px]">
             <span className="text-sm font-medium">Field</span>
-
-            {/* Dropdown populated from detectedFields */}
-            <select
+            <input
+              type="text"
               value={col.field}
               onChange={(e) => handleChange(i, "field", e.target.value)}
               className="mt-1 px-3 py-1 border border-gray-300 rounded"
-            >
-              {detectedFields.map((fieldName) => (
-                <option key={fieldName} value={fieldName}>{fieldName}</option>
-              ))}
-              {/* Allow keeping existing value if manually entered */}
-              {!detectedFields.includes(col.field) && col.field && (
-                <option value={col.field}>{col.field}</option>
-              )}
-            </select>
-
+            />
           </label>
 
           <label className="flex flex-col flex-1 min-w-[150px]">
