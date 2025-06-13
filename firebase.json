@@ -1,11 +1,11 @@
 {
-  "firestore": {
-    "rules": "firestore.rules",
-    "indexes": "firestore.indexes.json"
-  },
   "functions": {
     "source": "functions",
-    "runtime": "nodejs20"
+    "runtime": "nodejs20",
+    "serviceAccount": "generatepdf@flair-pdf-generator.iam.gserviceaccount.com"
+  },
+  "firestore": {
+    "rules": "firestore.rules"
   },
   "hosting": {
     "public": "frontend/dist",
