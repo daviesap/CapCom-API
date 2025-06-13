@@ -27,7 +27,7 @@ function rgbHex(hex) {
   );
 }
 
-function resolveStyle(style, boldFont, regularFont, italicFont, boldItalicFont) {
+function resolveStyle(style, boldFont, regularFont, italicFont, boldItalicFont, lineSpacing = 2) {
   const fontSize = style.fontSize || 10;
   const fontStyle = (style.fontStyle || '').toLowerCase();
 
@@ -50,7 +50,7 @@ function resolveStyle(style, boldFont, regularFont, italicFont, boldItalicFont) 
   }
 
   const color = rgbHex(style.colour || style.fontColour || '#000000');
-  const lineHeight = fontSize + 2;
+  const lineHeight = fontSize + lineSpacing;
   const paddingBottom = style.paddingBottom || 0;
 
 
@@ -69,6 +69,7 @@ export const generatePdfBuffer = async (jsonInput = null) => {
   const debug = jsonData.debug === true;
   const styles = jsonData.styles || {};
   const bottomPageThreshold = jsonData.document.bottomPageThreshold ?? 0;
+  const lineSpacing = jsonData.styles?.row?.lineSpacing ?? 2;
 
   const { width: pageWidth = 842, height: pageHeight = 595 } = jsonData.document.pageSize || {};
   const leftMargin = jsonData.document.leftMargin || 50;
@@ -111,7 +112,7 @@ export const generatePdfBuffer = async (jsonInput = null) => {
 
   const reserveHeader = () => {
     if (header?.text?.length) {
-      const { lineHeight } = resolveStyle(styles.header || {}, boldFont, regularFont, italicFont, boldItalicFont);
+      const { lineHeight } = resolveStyle(styles.header || {}, boldFont, regularFont, italicFont, boldItalicFont, lineSpacing);
       y -= header.text.length * lineHeight + headerPaddingBottom;
     }
   };
@@ -140,9 +141,9 @@ export const generatePdfBuffer = async (jsonInput = null) => {
       reserveHeader();
 
     }
-    const { lineHeight: tLH, fontSize: tFS, font: tF, color: tC } = resolveStyle(groupTitleStyle, boldFont, regularFont, italicFont, boldItalicFont);
-    const { lineHeight: mLH, fontSize: mFS, font: mF, color: mC, paddingBottom: mPB } = resolveStyle(groupMetaStyle, boldFont, regularFont, italicFont, boldItalicFont);
-    const labelInfo = resolveStyle(labelRowStyle, boldFont, regularFont, italicFont, boldItalicFont);
+    const { lineHeight: tLH, fontSize: tFS, font: tF, color: tC } = resolveStyle(groupTitleStyle, boldFont, regularFont, italicFont, boldItalicFont, lineSpacing);
+    const { lineHeight: mLH, fontSize: mFS, font: mF, color: mC, paddingBottom: mPB } = resolveStyle(groupMetaStyle, boldFont, regularFont, italicFont, boldItalicFont, lineSpacing);
+    const labelInfo = resolveStyle(labelRowStyle, boldFont, regularFont, italicFont, boldItalicFont, lineSpacing);
     const hasLabels = columns.some(c => c.showLabel);
 
     const introHeight = tLH + mLH + mPB + (hasLabels ? labelInfo.lineHeight : 0);
@@ -171,7 +172,7 @@ export const generatePdfBuffer = async (jsonInput = null) => {
       const styleKey = entry.format || 'default';
       //const rowStyle = jsonData.styles?.entries?.[styleKey] || defaultStyle; OLD LINE
       const rowStyle = jsonData.styles?.row?.[styleKey] || defaultStyle;
-      const { lineHeight: rLH, fontSize: rFS, font: rF, color: rC } = resolveStyle(rowStyle, boldFont, regularFont, italicFont, boldItalicFont);
+      const { lineHeight: rLH, fontSize: rFS, font: rF, color: rC } = resolveStyle(rowStyle, boldFont, regularFont, italicFont, boldItalicFont, lineSpacing);
 
       const wrapped = columns.map(col => {
         let txt = entry.fields[col.field];
@@ -224,7 +225,7 @@ export const generatePdfBuffer = async (jsonInput = null) => {
   for (let i = 0; i < total; i++) {
     const pg = pages[i];
     if (header?.text) {
-      const { lineHeight: hLH, fontSize: hFS, font: hF, color: hC } = resolveStyle(styles.header || {}, boldFont, regularFont, italicFont, boldItalicFont);
+      const { lineHeight: hLH, fontSize: hFS, font: hF, color: hC } = resolveStyle(styles.header || {}, boldFont, regularFont, italicFont, boldItalicFont, lineSpacing);
       let hy = pageHeight - topMargin;
       for (const ln of header.text) {
         pg.drawText(sanitiseText(ln), { x: leftMargin, y: hy, size: hFS, font: hF, color: hC });
@@ -240,7 +241,7 @@ export const generatePdfBuffer = async (jsonInput = null) => {
       });
     }
     if (footer) {
-      const { fontSize: fFS, font: fF, color: fC } = resolveStyle(styles.footer || {}, regularFont, regularFont, italicFont, boldItalicFont);
+      const { fontSize: fFS, font: fF, color: fC } = resolveStyle(styles.footer || {}, regularFont, regularFont, italicFont, boldItalicFont, lineSpacing);
       const fy = bottomMargin;
       pg.drawText(footer, { x: leftMargin, y: fy, size: fFS, font: fF, color: fC });
       const pgText = `Page ${i + 1} of ${total}`;
