@@ -14,5 +14,9 @@ export function sanitiseText(str) {
     if (typeof str !== 'string') return '';
     return str
       .replace(/\r?\n/g, ' ')      // Replace line breaks with space
+      // eslint-disable-next-line no-control-regex
       .replace(/[\u0000-\u001F]/g, ''); // Remove control characters
   }
+
+
+  

@@ -11,6 +11,7 @@ import { filterJson } from './utils/filterJSON.mjs';
 import { sanitiseText } from './utils/sanitiseText.mjs';
 
 
+
 // === Configuration ===
 // Default column width if not specified in JSON (points)
 const DEFAULT_COLUMN_WIDTH = 100;
@@ -26,7 +27,7 @@ function rgbHex(hex) {
   );
 }
 
-function resolveStyle(style, boldFont, regularFont, italicFont, boldItalicFont, rowLineSpacing = 2) {
+function resolveStyle(style, boldFont, regularFont, italicFont, boldItalicFont) {
   const fontSize = style.fontSize || 10;
   const fontStyle = (style.fontStyle || '').toLowerCase();
 
@@ -49,7 +50,7 @@ function resolveStyle(style, boldFont, regularFont, italicFont, boldItalicFont, 
   }
 
   const color = rgbHex(style.colour || style.fontColour || '#000000');
-  const lineHeight = fontSize + rowLineSpacing;
+  const lineHeight = fontSize + 2;
   const paddingBottom = style.paddingBottom || 0;
 
 
@@ -98,7 +99,6 @@ export const generatePdfBuffer = async (jsonInput = null) => {
   }
 
   const defaultStyle = jsonData.styles?.row?.default || {};
-  const rowLineSpacing = styles?.row?.lineSpacing ?? 2;
   const labelRowStyle = jsonData.styles?.labelRow || {};
   const groupTitleStyle = jsonData.styles?.groupTitle || {};
   const groupMetaStyle = jsonData.styles?.groupMetadata || {};
@@ -171,14 +171,7 @@ export const generatePdfBuffer = async (jsonInput = null) => {
       const styleKey = entry.format || 'default';
       //const rowStyle = jsonData.styles?.entries?.[styleKey] || defaultStyle; OLD LINE
       const rowStyle = jsonData.styles?.row?.[styleKey] || defaultStyle;
-      const { lineHeight: rLH, fontSize: rFS, font: rF, color: rC } = resolveStyle(
-        rowStyle,
-        boldFont,
-        regularFont,
-        italicFont,
-        boldItalicFont,
-        rowLineSpacing
-      );
+      const { lineHeight: rLH, fontSize: rFS, font: rF, color: rC } = resolveStyle(rowStyle, boldFont, regularFont, italicFont, boldItalicFont);
 
       const wrapped = columns.map(col => {
         let txt = entry.fields[col.field];
@@ -262,7 +255,6 @@ export const generatePdfBuffer = async (jsonInput = null) => {
   return {
     bytes: await pdfDoc.save(),
     filename: jsonData.document.filename.endsWith('.pdf') ? jsonData.document.filename : `${jsonData.document.filename}.pdf`,
-    glideAppName: jsonData.glideAppName || 'Glide App Name not set',
   };
 };
 

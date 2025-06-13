@@ -1,0 +1,19 @@
+{
+  "name": "flair-pdf-functions",
+  "type": "module",
+  "main": "index.js",
+  "engines": {
+    "node": "20"
+  },
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "deploy:function": "gcloud functions deploy generatePdf --gen2 --region europe-west2 --runtime nodejs20 --entry-point generatePdf --source=. --service-account generatepdf@flair-pdf-generator.iam.gserviceaccount.com --project flair-pdf-generator"
+  },
+  "dependencies": {
+    "@google-cloud/secret-manager": "^6.0.1",
+    "firebase-admin": "^13.3.0",
+    "firebase-functions": "^6.3.2",
+    "lodash-es": "^4.17.21",
+    "pdf-lib": "^1.17.1"
+  }
+}
