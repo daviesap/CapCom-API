@@ -2,6 +2,10 @@ import React, { useState } from "react";
 import StyleSection from "./StyleSection";
 
 export default function StyleBoxList({ styles, onSaveSection }) {
+  // ✅ Always call hooks at the top
+  const [openSection, setOpenSection] = useState(null);
+
+  // ✅ Early return AFTER hooks
   if (!styles) return null;
 
   const sectionKeys = [
@@ -13,77 +17,75 @@ export default function StyleBoxList({ styles, onSaveSection }) {
     "row"
   ];
 
-  const [openSection, setOpenSection] = useState(null);
+  // ✅ Extracted renderSample to keep things readable
+  const renderSample = (sectionKey) => {
+    const section = styles[sectionKey];
+    if (!section) return null;
 
-  // Helper function to render the sample text for each section
-const renderSample = (sectionKey) => {
-  const section = styles[sectionKey];
+    // Handle "row" special case with multiple sub-styles
+    if (sectionKey === "row") {
+      return (
+        <div className="flex gap-4">
+          {["default", "highlight", "lowlight"].map((subKey) => {
+            const styleData = section[subKey] || {};
+            const {
+              fontSize = 12,
+              fontStyle = "normal",
+              fontColour = "#000000",
+              backgroundColour = "#FFFFFF"
+            } = styleData;
 
-  if (!section) return null;
+            const fontWeight = fontStyle.toLowerCase().includes("bold") ? "bold" : "normal";
+            const fontStyleCss = fontStyle.toLowerCase().includes("italic") ? "italic" : "normal";
 
-  if (sectionKey === "row") {
+            return (
+              <div
+                key={subKey}
+                className="px-2 py-1 rounded"
+                style={{
+                  fontSize: `${fontSize}px`,
+                  fontWeight,
+                  fontStyle: fontStyleCss,
+                  color: fontColour,
+                  backgroundColor: backgroundColour,
+                  minWidth: "100px",
+                }}
+              >
+                {subKey}
+              </div>
+            );
+          })}
+        </div>
+      );
+    }
+
+    // ✅ Default rendering for other sections
+    const {
+      fontSize = 12,
+      fontStyle = "normal",
+      fontColour = "#000000",
+      backgroundColour = "#FFFFFF"
+    } = section;
+
+    const fontWeight = fontStyle.toLowerCase().includes("bold") ? "bold" : "normal";
+    const fontStyleCss = fontStyle.toLowerCase().includes("italic") ? "italic" : "normal";
+
     return (
-      <div className="flex gap-4">
-        {["default", "highlight", "lowlight"].map((subKey) => {
-          const styleData = section[subKey] || {};
-          const {
-            fontSize = 12,
-            fontStyle = "normal",
-            fontColour = "#000000",
-            backgroundColour = "#FFFFFF"
-          } = styleData;
-
-          const fontWeight = fontStyle.toLowerCase().includes("bold") ? "bold" : "normal";
-          const fontStyleCss = fontStyle.toLowerCase().includes("italic") ? "italic" : "normal";
-
-          return (
-            <div
-              key={subKey}
-              className="px-2 py-1 rounded"
-              style={{
-                fontSize: `${fontSize}px`,
-                fontWeight: fontWeight,
-                fontStyle: fontStyleCss,
-                color: fontColour,
-                backgroundColor: backgroundColour,
-                minWidth: "100px",
-              }}
-            >
-              {subKey}
-            </div>
-          );
-        })}
+      <div
+        className="px-2 py-1 rounded"
+        style={{
+          fontSize: `${fontSize}px`,
+          fontWeight,
+          fontStyle: fontStyleCss,
+          color: fontColour,
+          backgroundColor: backgroundColour,
+          minWidth: "120px",
+        }}
+      >
+        Sample Text
       </div>
     );
-  }
-
-  // All other sections
-  const {
-    fontSize = 12,
-    fontStyle = "normal",
-    fontColour = "#000000",
-    backgroundColour = "#FFFFFF"
-  } = section;
-
-  const fontWeight = fontStyle.toLowerCase().includes("bold") ? "bold" : "normal";
-  const fontStyleCss = fontStyle.toLowerCase().includes("italic") ? "italic" : "normal";
-
-  return (
-    <div
-      className="px-2 py-1 rounded"
-      style={{
-        fontSize: `${fontSize}px`,
-        fontWeight: fontWeight,
-        fontStyle: fontStyleCss,
-        color: fontColour,
-        backgroundColor: backgroundColour,
-        minWidth: "120px",
-      }}
-    >
-      Sample Text
-    </div>
-  );
-};
+  };
 
   return (
     <div className="space-y-4">
