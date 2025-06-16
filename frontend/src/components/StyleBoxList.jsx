@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import StyleSection from "./StyleSection";
+import { normalizeStyle, normalizeRowStyles } from "../utils/styleUtils";
 
 export default function StyleBoxList({ styles, onSaveSection }) {
   const [openSection, setOpenSection] = useState(null);
@@ -20,17 +21,13 @@ export default function StyleBoxList({ styles, onSaveSection }) {
     if (!section) return null;
 
     if (sectionKey === "row") {
+      const normalizedRowStyles = normalizeRowStyles(section);
       return (
         <div className="flex gap-4">
           {["default", "highlight", "lowlight"].map((subKey) => {
-            const styleData = section[subKey] || {};
-            const {
-              fontSize = 12,
-              fontStyle = "normal",
-              fontColour = "#000000",
-              backgroundColour = "#FFFFFF"
-            } = styleData;
+            const styleData = normalizedRowStyles[subKey];
 
+            const { fontSize, fontStyle, fontColour, backgroundColour } = styleData;
             const fontWeight = fontStyle.toLowerCase().includes("bold") ? "bold" : "normal";
             const fontStyleCss = fontStyle.toLowerCase().includes("italic") ? "italic" : "normal";
 
@@ -55,13 +52,8 @@ export default function StyleBoxList({ styles, onSaveSection }) {
       );
     }
 
-    const {
-      fontSize = 12,
-      fontStyle = "normal",
-      fontColour = "#000000",
-      backgroundColour = "#FFFFFF"
-    } = section;
-
+    const normalized = normalizeStyle(section);
+    const { fontSize, fontStyle, fontColour, backgroundColour } = normalized;
     const fontWeight = fontStyle.toLowerCase().includes("bold") ? "bold" : "normal";
     const fontStyleCss = fontStyle.toLowerCase().includes("italic") ? "italic" : "normal";
 
