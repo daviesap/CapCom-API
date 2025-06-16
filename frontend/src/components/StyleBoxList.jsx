@@ -2,10 +2,8 @@ import React, { useState } from "react";
 import StyleSection from "./StyleSection";
 
 export default function StyleBoxList({ styles, onSaveSection }) {
-  // ✅ Always call hooks at the top
   const [openSection, setOpenSection] = useState(null);
 
-  // ✅ Early return AFTER hooks
   if (!styles) return null;
 
   const sectionKeys = [
@@ -17,12 +15,10 @@ export default function StyleBoxList({ styles, onSaveSection }) {
     "row"
   ];
 
-  // ✅ Extracted renderSample to keep things readable
   const renderSample = (sectionKey) => {
     const section = styles[sectionKey];
     if (!section) return null;
 
-    // Handle "row" special case with multiple sub-styles
     if (sectionKey === "row") {
       return (
         <div className="flex gap-4">
@@ -59,7 +55,6 @@ export default function StyleBoxList({ styles, onSaveSection }) {
       );
     }
 
-    // ✅ Default rendering for other sections
     const {
       fontSize = 12,
       fontStyle = "normal",
