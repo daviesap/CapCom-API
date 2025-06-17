@@ -4,6 +4,7 @@ import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 import { getAuth } from 'firebase/auth';
+import { getFunctions } from 'firebase/functions';  // ✅ Add this
 
 // ✅ Your existing Firebase config
 const firebaseConfig = {
@@ -22,6 +23,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const storage = getStorage(app);
 const auth = getAuth(app);
+const functions = getFunctions(app, "europe-west2");  // ✅ Region specified here
 
 // ✅ Export cleanly for use everywhere in your app
-export { app, db, storage, auth };
+export { app, db, storage, auth, functions };

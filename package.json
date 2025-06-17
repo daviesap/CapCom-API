@@ -5,6 +5,7 @@
   "scripts": {
     "deploy:frontend": "cd frontend && npm run build && firebase deploy --only hosting --project flair-pdf-generator",
     "deploy:pdfgen": "cd functions && npm run deploy",
+    "deploy:firebase": "cd firebase-functions && firebase deploy --only functions",
     "deploy:all": "npm run deploy:frontend && npm run deploy:pdfgen && firebase deploy --only firestore:rules --project flair-pdf-generator"
   },
   "devDependencies": {
@@ -19,6 +20,8 @@
   "dependencies": {
     "@tailwindcss/vite": "^4.1.7",
     "date-fns": "^4.1.0",
+    "firebase-admin": "^13.4.0",
+    "firebase-functions": "^6.3.2",
     "react-json-view": "^1.21.3"
   }
 }

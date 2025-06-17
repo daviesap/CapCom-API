@@ -12,8 +12,6 @@ import { sanitiseUrl } from "./utils/sanitiseUrl.mjs";
 import { filterJson } from "./utils/filterJSON.mjs";
 import { sanitiseText } from "./utils/sanitiseText.mjs";
 
-console.log("🟢 LIVE FUNCTION v2 IS RUNNING - Fully updated");
-
 initializeApp({
     credential: applicationDefault(),
     storageBucket: "flair-pdf-generator.firebasestorage.app",
