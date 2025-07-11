@@ -77,7 +77,7 @@ export const generatePdfBuffer = async (jsonInput = null) => {
   const topMargin = jsonData.document.topMargin || 50;
   const bottomMargin = jsonData.document.bottomMargin || 50;
   const headerPaddingBottom = styles.header?.paddingBottom || 10;
-  const footerPaddingTop = styles.footer?.paddingTop || 10;
+  //const footerPaddingTop = styles.footer?.paddingTop || 10;
   const groupPaddingBottom = jsonData.document.groupPaddingBottom || 0;
 
   const pdfDoc = await PDFDocument.create();
