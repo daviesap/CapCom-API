@@ -118,7 +118,11 @@ export const generatePdfBuffer = async (jsonInput = null) => {
   };
   reserveHeader();
 
-  const footerYLimit = bottomMargin + footerPaddingTop;
+  //const footerYLimit = bottomMargin + footerPaddingTop;
+  //Have made the footer two lines - readjusting code to calulate footer height
+  const footerLines = 2;
+  const resolvedFooterStyle = resolveStyle(styles.footer || {}, regularFont, regularFont, italicFont, boldItalicFont, lineSpacing);
+  const footerYLimit = bottomMargin + resolvedFooterStyle.lineHeight * footerLines;
 
   const checkBreak = (neededHeight) => {
     if (y - neededHeight < footerYLimit) {
@@ -241,15 +245,148 @@ export const generatePdfBuffer = async (jsonInput = null) => {
       });
     }
     if (footer) {
-      const { fontSize: fFS, font: fF, color: fC } = resolveStyle(styles.footer || {}, regularFont, regularFont, italicFont, boldItalicFont, lineSpacing);
-      const fy = bottomMargin;
-      pg.drawText(footer, { x: leftMargin, y: fy, size: fFS, font: fF, color: fC });
+      const {
+        fontSize: fFS,
+        font: fF,
+        color: fC,
+        lineHeight: fLH
+      } = resolveStyle(
+        styles.footer || {},
+        regularFont,
+        regularFont,
+        italicFont,
+        boldItalicFont,
+        lineSpacing
+      );
+
+      const fyMain = bottomMargin + fLH;  // Line 1 (footer, page number, timestamp)
+      const fyCredit = bottomMargin;      // Line 2 (Capcom credit)
+
+      // Line 1 - Left: footer text
+      pg.drawText(footer, {
+        x: leftMargin,
+        y: fyMain,
+        size: fFS,
+        font: fF,
+        color: fC
+      });
+
+      // Line 1 - Center: Page number
       const pgText = `Page ${i + 1} of ${total}`;
-      const w = fF.widthOfTextAtSize(pgText, fFS);
-      pg.drawText(pgText, { x: (pageWidth - w) / 2, y: fy, size: fFS, font: fF, color: fC });
+      const pgTextWidth = fF.widthOfTextAtSize(pgText, fFS);
+      pg.drawText(pgText, {
+        x: (pageWidth - pgTextWidth) / 2,
+        y: fyMain,
+        size: fFS,
+        font: fF,
+        color: fC
+      });
+
+      // Line 1 - Right: Timestamp
       const tText = `Document generated ${ts}`;
-      const tw = fF.widthOfTextAtSize(tText, fFS);
-      pg.drawText(tText, { x: pageWidth - rightMargin - tw, y: fy, size: fFS, font: fF, color: fC });
+      const tTextWidth = fF.widthOfTextAtSize(tText, fFS);
+      pg.drawText(tText, {
+        x: pageWidth - rightMargin - tTextWidth,
+        y: fyMain,
+        size: fFS,
+        font: fF,
+        color: fC
+      });
+
+      // Line 2 - Center: Capcom credit
+      const creditText = `Capcom – https://www.capcom.london`;
+      const creditWidth = fF.widthOfTextAtSize(creditText, fFS);
+      pg.drawText(creditText, {
+        x: (pageWidth - creditWidth) / 2,
+        y: fyCredit,
+        size: fFS,
+        font: fF,
+        color: fC
+      });
+    }
+    // 🔍 DEBUG LINES — header, margin, footer, threshold, plus legend on page 1
+    if (debug) {
+      // === TOP MARGIN + HEADER ===
+      const headerStyle = resolveStyle(styles.header || {}, boldFont, regularFont, italicFont, boldItalicFont, lineSpacing);
+      const headerLineHeight = headerStyle.lineHeight;
+      const headerHeight = (header?.text?.length || 0) * headerLineHeight + headerPaddingBottom;
+
+      const topMarginY = pageHeight - topMargin;
+      const headerBottomY = topMarginY - headerHeight;
+
+      // 🟣 Top margin baseline
+      pg.drawLine({
+        start: { x: 0, y: topMarginY },
+        end: { x: pageWidth, y: topMarginY },
+        thickness: 0.5,
+        color: rgb(0.5, 0, 0.5), // Purple
+        opacity: 0.4,
+      });
+
+      // 🟢 Bottom of header block
+      pg.drawLine({
+        start: { x: 0, y: headerBottomY },
+        end: { x: pageWidth, y: headerBottomY },
+        thickness: 0.5,
+        color: rgb(0, 0.6, 0), // Green
+        opacity: 0.4,
+      });
+
+      // === FOOTER AREA ===
+      const footerStyle = resolveStyle(styles.footer || {}, regularFont, regularFont, italicFont, boldItalicFont, lineSpacing);
+      const footerBlockTopY = bottomMargin + footerStyle.lineHeight * 2;
+
+      // 🔴 Top of reserved footer area
+      pg.drawLine({
+        start: { x: 0, y: footerBlockTopY },
+        end: { x: pageWidth, y: footerBlockTopY },
+        thickness: 0.5,
+        color: rgb(1, 0, 0), // Red
+        opacity: 0.4,
+      });
+
+      // 🔵 Bottom margin baseline
+      pg.drawLine({
+        start: { x: 0, y: bottomMargin },
+        end: { x: pageWidth, y: bottomMargin },
+        thickness: 0.5,
+        color: rgb(0, 0, 1), // Blue
+        opacity: 0.4,
+      });
+
+      // === PAGE BREAK THRESHOLD (ORANGE) ===
+      if (bottomPageThreshold > 0) {
+        pg.drawLine({
+          start: { x: 0, y: bottomPageThreshold },
+          end: { x: pageWidth, y: bottomPageThreshold },
+          thickness: 0.5,
+          color: rgb(1, 0.5, 0), // Orange
+          opacity: 0.4,
+        });
+      }
+
+      // === DEBUG LEGEND (first page only) ===
+      if (i === 0) {
+        const keyLines = [
+          { text: 'Red: Top of footer block', color: rgb(1, 0, 0) },
+          { text: 'Blue: Bottom margin baseline', color: rgb(0, 0, 1) },
+          { text: 'Orange: Bottom page threshold', color: rgb(1, 0.5, 0) },
+          { text: 'Green: Bottom of header block', color: rgb(0, 0.6, 0) },
+          { text: 'Purple: Top margin baseline', color: rgb(0.5, 0, 0.5) },
+        ];
+        const keyStyle = resolveStyle(styles.labelRow || {}, boldFont, regularFont, italicFont, boldItalicFont, lineSpacing);
+        let yKey = pageHeight / 2;
+        for (const { text, color } of keyLines) {
+          pg.drawText(text, {
+            x: leftMargin,
+            y: yKey,
+            size: keyStyle.fontSize,
+            font: keyStyle.font,
+            color,
+          });
+          yKey -= keyStyle.lineHeight;
+        }
+      }
     }
   }
 
@@ -273,7 +410,7 @@ function drawThresholdLine(page, bottomPageThreshold, pageWidth) {
       start: { x: 0, y: bottomPageThreshold },
       end: { x: pageWidth, y: bottomPageThreshold },
       thickness: 0.5,
-      color: rgb(0.8, 0.2, 0.2),
+      color: rgb(1, 0.5, 0), // 🟧 Orange (RGB: 255, 128, 0)
       opacity: 0.5,
     });
   }
