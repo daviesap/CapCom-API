@@ -1,3 +1,5 @@
+//console.log('🧾 Headers received:', req.headers);
+
 // generateFromJson.mjs
 //
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
@@ -110,12 +112,23 @@ export const generatePdfBuffer = async (jsonInput = null) => {
   pages.push(currentPage);
   let y = pageHeight - topMargin;
 
+  // const reserveHeader = () => {
+  //   if (header?.text?.length) {
+  //     const { lineHeight } = resolveStyle(styles.header || {}, boldFont, regularFont, italicFont, boldItalicFont, lineSpacing);
+  //     y -= header.text.length * lineHeight + headerPaddingBottom;
+  //   }
+  // };
+
   const reserveHeader = () => {
-    if (header?.text?.length) {
+    if (header?.text?.length || embeddedLogo) {
       const { lineHeight } = resolveStyle(styles.header || {}, boldFont, regularFont, italicFont, boldItalicFont, lineSpacing);
-      y -= header.text.length * lineHeight + headerPaddingBottom;
+      const headerTextHeight = (header?.text?.length || 0) * lineHeight;
+      const logoHeight = header.logo?.height || embeddedLogo?.height || 0;
+      const maxHeaderBlockHeight = Math.max(headerTextHeight, logoHeight);
+      y -= maxHeaderBlockHeight + headerPaddingBottom;
     }
   };
+
   reserveHeader();
 
   //const footerYLimit = bottomMargin + footerPaddingTop;
@@ -230,7 +243,12 @@ export const generatePdfBuffer = async (jsonInput = null) => {
     const pg = pages[i];
     if (header?.text) {
       const { lineHeight: hLH, fontSize: hFS, font: hF, color: hC } = resolveStyle(styles.header || {}, boldFont, regularFont, italicFont, boldItalicFont, lineSpacing);
-      let hy = pageHeight - topMargin;
+      const headerStyle = resolveStyle(styles.header || {}, boldFont, regularFont, italicFont, boldItalicFont, lineSpacing);
+      const headerTextHeight = (header?.text?.length || 0) * headerStyle.lineHeight;
+      const logoHeight = header.logo?.height || embeddedLogo?.height || 0;
+      const maxHeaderBlockHeight = Math.max(headerTextHeight, logoHeight);
+
+      let hy = pageHeight - topMargin - (maxHeaderBlockHeight - headerTextHeight);
       for (const ln of header.text) {
         pg.drawText(sanitiseText(ln), { x: leftMargin, y: hy, size: hFS, font: hF, color: hC });
         hy -= hLH;
@@ -366,27 +384,30 @@ export const generatePdfBuffer = async (jsonInput = null) => {
       }
 
       // === DEBUG LEGEND (first page only) ===
-      if (i === 0) {
-        const keyLines = [
-          { text: 'Red: Top of footer block', color: rgb(1, 0, 0) },
-          { text: 'Blue: Bottom margin baseline', color: rgb(0, 0, 1) },
-          { text: 'Orange: Bottom page threshold', color: rgb(1, 0.5, 0) },
-          { text: 'Green: Bottom of header block', color: rgb(0, 0.6, 0) },
-          { text: 'Purple: Top margin baseline', color: rgb(0.5, 0, 0.5) },
-        ];
-        const keyStyle = resolveStyle(styles.labelRow || {}, boldFont, regularFont, italicFont, boldItalicFont, lineSpacing);
-        let yKey = pageHeight / 2;
-        for (const { text, color } of keyLines) {
-          pg.drawText(text, {
-            x: leftMargin,
-            y: yKey,
-            size: keyStyle.fontSize,
-            font: keyStyle.font,
-            color,
-          });
-          yKey -= keyStyle.lineHeight;
-        }
-      }
+ if (i === 0) {
+  const keyLines = [
+    { text: 'Red: Top of footer block', color: rgb(1, 0, 0) },
+    { text: 'Blue: Bottom margin baseline', color: rgb(0, 0, 1) },
+    { text: 'Orange: Bottom page threshold', color: rgb(1, 0.5, 0) },
+    { text: 'Green: Bottom of header block', color: rgb(0, 0.6, 0) },
+    { text: 'Purple: Top margin baseline', color: rgb(0.5, 0, 0.5) },
+  ];
+  const keyStyle = resolveStyle(styles.labelRow || {}, boldFont, regularFont, italicFont, boldItalicFont, lineSpacing);
+  let yKey = pageHeight / 2;
+
+
+  // ✅ Draw the text
+  for (const { text, color } of keyLines) {
+    pg.drawText(text, {
+      x: leftMargin,
+      y: yKey,
+      size: keyStyle.fontSize,
+      font: keyStyle.font,
+      color,
+    });
+    yKey -= keyStyle.lineHeight;
+  }
+}
     }
   }
 
