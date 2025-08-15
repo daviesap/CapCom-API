@@ -4,6 +4,7 @@ import { getFirestore } from "firebase-admin/firestore";
 import { getStorage } from "firebase-admin/storage";
 import { SecretManagerServiceClient } from "@google-cloud/secret-manager";
 import { readFile } from "fs/promises";
+import fs from "fs";
 import path from "path";
 import process from 'process';
 import { Buffer } from 'node:buffer';
@@ -20,6 +21,11 @@ initializeApp({
 
 const db = getFirestore();
 const secretClient = new SecretManagerServiceClient();
+
+const LOCAL_OUTPUT_DIR = path.join(process.cwd(), 'local-emulator', 'output');
+
+// Track if running in emulator mode (available to all functions in this module)
+const runningEmulated = !!process.env.FUNCTIONS_EMULATOR || !!process.env.FIREBASE_EMULATOR_HUB;
 
 // Explicit action allowlist
 const ACTIONS = {
@@ -48,14 +54,19 @@ export const generatePdf = onRequest(
 
         // 1) API key is required for ALL actions (including getProfileIds)
         let expectedKey;
-        try {
-            const [version] = await secretClient.accessSecretVersion({
-                name: process.env.API_KEY_SECRET_NAME
-            });
-            expectedKey = version.payload.data.toString('utf8').trim();
-        } catch (err) {
-            console.error('❌ Failed to access API key secret:', err);
-            return res.status(500).json({ success: false, message: 'Internal error retrieving API key' });
+        if (runningEmulated) {
+            // Use a simple local key when emulated (set LOCAL_API_KEY in your shell)
+            expectedKey = process.env.LOCAL_API_KEY || 'dev-key';
+        } else {
+            try {
+                const [version] = await secretClient.accessSecretVersion({
+                    name: process.env.API_KEY_SECRET_NAME
+                });
+                expectedKey = version.payload.data.toString('utf8').trim();
+            } catch (err) {
+                console.error('❌ Failed to access API key secret:', err);
+                return res.status(500).json({ success: false, message: 'Internal error retrieving API key' });
+            }
         }
 
         if (!req.body?.api_key || req.body.api_key !== expectedKey) {
@@ -144,11 +155,20 @@ export const generatePdf = onRequest(
                     // a) Generate PDF first so we have a real URL to embed in the HTML
                     const { bytes, filename } = await generatePdfBuffer(jsonInput);
                     const safePdfName = sanitiseUrl(filename);
-                    const pdfFile = bucket.file(`pdfs/${safeAppName}/${safePdfName}`);
-                    await pdfFile.save(bytes, {
-                        metadata: { contentType: "application/pdf", cacheControl: "no-cache, max-age=0, no-transform" },
-                    });
-                    const pdfUrl = `https://storage.flair.london/${safeAppName}/${safePdfName}`;
+
+                    if (runningEmulated) {
+                        const pdfDir = path.join(LOCAL_OUTPUT_DIR, 'pdfs', safeAppName);
+                        fs.mkdirSync(pdfDir, { recursive: true });
+                        const pdfPath = path.join(pdfDir, safePdfName);
+                        fs.writeFileSync(pdfPath, bytes);
+                    } else {
+                        const pdfFile = bucket.file(`pdfs/${safeAppName}/${safePdfName}`);
+                        await pdfFile.save(bytes, {
+                            metadata: { contentType: "application/pdf", cacheControl: "no-cache, max-age=0, no-transform" },
+                        });
+                    }
+
+                    const pdfUrl = makePublicUrl(`pdfs/${safeAppName}/${safePdfName}`, bucket);
 
                     // b) Build inline HTML with a working PDF link
                     let htmlString, htmlFilenameBase;
@@ -169,11 +189,20 @@ export const generatePdf = onRequest(
                     }
 
                     const safeHtmlName = sanitiseUrl(`${htmlFilenameBase || 'schedule'}.html`);
-                    const htmlFile = bucket.file(`html/${safeAppName}/${safeHtmlName}`);
-                    await htmlFile.save(Buffer.from(htmlString, "utf8"), {
-                        metadata: { contentType: "text/html; charset=utf-8", cacheControl: "no-cache, max-age=0, no-transform" },
-                    });
-                    const htmlUrl = `https://storage.flair.london/${safeAppName}/${safeHtmlName}`;
+
+                    if (runningEmulated) {
+                        const htmlDir = path.join(LOCAL_OUTPUT_DIR, 'html', safeAppName);
+                        fs.mkdirSync(htmlDir, { recursive: true });
+                        const htmlPath = path.join(htmlDir, safeHtmlName);
+                        fs.writeFileSync(htmlPath, Buffer.from(htmlString, "utf8"));
+                    } else {
+                        const htmlFile = bucket.file(`html/${safeAppName}/${safeHtmlName}`);
+                        await htmlFile.save(Buffer.from(htmlString, "utf8"), {
+                            metadata: { contentType: "text/html; charset=utf-8", cacheControl: "no-cache, max-age=0, no-transform" },
+                        });
+                    }
+
+                    const htmlUrl = makePublicUrl(`html/${safeAppName}/${safeHtmlName}`, bucket);
 
                     // c) Log and respond
                     const executionTimeSeconds = (Date.now() - startTime) / 1000;
@@ -196,17 +225,25 @@ export const generatePdf = onRequest(
             if (action === ACTIONS.GENERATE_PDF) {
                 const { bytes, filename } = await generatePdfBuffer(jsonInput);
                 const safeFilename = sanitiseUrl(filename);
-                const file = bucket.file(`pdfs/${safeAppName}/${safeFilename}`);
 
-                await file.save(bytes, {
-                    metadata: {
-                        contentType: "application/pdf",
-                        cacheControl: "no-cache, max-age=0, no-transform",
-                    },
-                });
+                if (runningEmulated) {
+                    const pdfDir = path.join(LOCAL_OUTPUT_DIR, 'pdfs', safeAppName);
+                    fs.mkdirSync(pdfDir, { recursive: true });
+                    const pdfPath = path.join(pdfDir, safeFilename);
+                    fs.writeFileSync(pdfPath, bytes);
+                } else {
+                    const file = bucket.file(`pdfs/${safeAppName}/${safeFilename}`);
+
+                    await file.save(bytes, {
+                        metadata: {
+                            contentType: "application/pdf",
+                            cacheControl: "no-cache, max-age=0, no-transform",
+                        },
+                    });
+                }
 
                 // Keep your existing public URL mapping
-                const publicUrl = `https://storage.flair.london/${safeAppName}/${safeFilename}`;
+                const publicUrl = makePublicUrl(`pdfs/${safeAppName}/${safeFilename}`, bucket);
 
                 const executionTimeSeconds = (Date.now() - startTime) / 1000;
 
@@ -263,6 +300,22 @@ export const generatePdf = onRequest(
             return res.status(500).json({ success: false, message: `Operation failed: ${err.message}`, executionTimeSeconds });
         }
     });
+
+function makePublicUrl(objectPath, bucket) {
+    const encoded = encodeURIComponent(objectPath);
+    if (runningEmulated) {
+        // Storage emulator REST endpoint
+        return `http://127.0.0.1:9199/v0/b/${bucket.name}/o/${encoded}?alt=media`;
+    }
+    // Prod mapping using your custom domain structure html|pdfs/<safeAppName>/<filename>
+    const m = objectPath.match(/^(html|pdfs)\/([^/]+)\/(.+)$/);
+    if (m) {
+        const [, , safeAppName, safeName] = m;
+        return `https://storage.flair.london/${safeAppName}/${safeName}`;
+    }
+    // Fallback to native GCS URL
+    return `https://storage.googleapis.com/${bucket.name}/${objectPath}`;
+}
 
 async function logPdfEvent({ timestamp, filename, url, userEmail, profileId, success, errorMessage }) {
     const logData = {
