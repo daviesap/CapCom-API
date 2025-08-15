@@ -134,6 +134,17 @@ export const generatePdf = onRequest(
 
                         jsonInput = filterJson(jsonInput);
                         sanitiseJsonFields(jsonInput);
+
+                        // Save merged JSON for local debugging (emulator) or when debug is enabled
+if (runningEmulated || jsonInput.debug === true) {
+  try {
+    const appNameForDump = jsonInput.glideAppName || 'Flair PDF Generator';
+    const dumpPath = writeDebugJson(jsonInput, appNameForDump, action);
+    if (dumpPath) console.log('📝 Wrote debug JSON to', dumpPath);
+  } catch (e) {
+    console.warn('⚠️ Unable to write debug JSON:', e?.message || e);
+  }
+}
                     } else {
                         const msg = `⚠️ No Firestore profile found for profileId "${jsonInput.profileId}"`;
                         console.warn(msg);
@@ -328,6 +339,21 @@ async function logPdfEvent({ timestamp, filename, url, userEmail, profileId, suc
         errorMessage: errorMessage || null,
     };
     await db.collection("pdfCreationLog").add(logData);
+}
+
+function writeDebugJson(jsonInput, appNameOrSafe, label = 'request') {
+  try {
+    const safe = sanitiseUrl(appNameOrSafe || 'app');
+    const root = path.join(LOCAL_OUTPUT_DIR, 'json', safe);
+    fs.mkdirSync(root, { recursive: true });
+    const ts = new Date().toISOString().replace(/[:.]/g, '-');
+    const filePath = path.join(root, `${ts}-${label}.json`);
+    fs.writeFileSync(filePath, JSON.stringify(jsonInput, null, 2), 'utf8');
+    return filePath;
+  } catch (err) {
+    console.error('⚠️ Failed to write debug JSON:', err);
+    return null;
+  }
 }
 
 // 🔧 Sanitiser helper

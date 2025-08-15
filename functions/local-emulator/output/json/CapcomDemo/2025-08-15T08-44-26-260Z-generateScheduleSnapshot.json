@@ -1,5 +1,5 @@
 {
-  "debug": true,
+  "debug": false,
   "glideAppName": "Capcom Demo",
   "eventName": "Maui",
   "api_key": "Sausages2025!!",
@@ -7,14 +7,29 @@
   "userEmail": "andrew@flair.london",
   "profileId": "0ha9w3GkYW",
   "document": {
-    "filename": "GWC25 - Maui - Full schedule",
+    "leftMargin": 50,
+    "pageSize": {
+      "width": 842,
+      "height": 595
+    },
+    "bottomMargin": 10,
     "header": {
+      "logo": {
+        "url": "https://firebasestorage.googleapis.com/v0/b/flair-pdf-generator.firebasestorage.app/o/logos%2F0ha9w3GkYW_capcom_logo_transparent_png.png?alt=media&token=e233316c-8781-43ea-b7d8-12ffea13da4a",
+        "width": 60,
+        "height": 60
+      },
       "text": [
         "GWC25 - Maui - Full schedule",
         "Grand Wailea Maui",
         "Wednesday 15th April to Tuesday 21st April 2026"
       ]
     },
+    "bottomPageThreshold": 80,
+    "rightMargin": 50,
+    "topMargin": 30,
+    "groupPaddingBottom": 10,
+    "filename": "GWC25 - Maui - Full schedule",
     "footer": "GWC25 - Maui - Full schedule"
   },
   "filters": {
@@ -586,6 +601,87 @@
           }
         }
       ]
+    }
+  ],
+  "styles": {
+    "header": {
+      "fontStyle": "normal",
+      "paddingBottom": 20,
+      "fontSize": 12,
+      "fontColour": "#000000"
+    },
+    "groupTitle": {
+      "backgroundColour": "#FFFFFF",
+      "paddingBottom": 0,
+      "fontStyle": "bold",
+      "fontSize": 12,
+      "fontColour": "#000000"
+    },
+    "labelRow": {
+      "backgroundColour": "#FFFFFF",
+      "fontColour": "#000000",
+      "fontSize": 11,
+      "fontStyle": "bold"
+    },
+    "footer": {
+      "fontStyle": "normal",
+      "fontSize": 10,
+      "paddingTop": 20,
+      "fontColour": "#000000"
+    },
+    "groupMetadata": {
+      "fontStyle": "italic",
+      "fontColour": "#000000",
+      "fontSize": 11,
+      "paddingBottom": 12,
+      "backgroundColour": "#FFFFFF"
+    },
+    "row": {
+      "highlight": {
+        "fontStyle": "italic",
+        "backgroundColour": "#FFFF00",
+        "fontSize": 10,
+        "fontColour": "#000000"
+      },
+      "default": {
+        "fontColour": "#000000",
+        "backgroundColour": "#FFFFFF",
+        "fontSize": 10,
+        "fontStyle": "normal"
+      },
+      "lineSpacing": 3,
+      "lowlight": {
+        "fontSize": 10,
+        "fontColour": "#ff40ff",
+        "fontStyle": "bold",
+        "backgroundColour": "#FFFFFF"
+      }
+    }
+  },
+  "columns": [
+    {
+      "showLabel": false,
+      "width": 100,
+      "label": "Label 1",
+      "field": "time"
+    },
+    {
+      "label": "Label 2",
+      "field": "description",
+      "showLabel": false,
+      "width": 300
+    },
+    {
+      "showLabel": false,
+      "width": 100,
+      "field": "tags",
+      "label": "Label 3"
+    },
+    {
+      "showLabel": false,
+      "width": 100,
+      "field": "locations",
+      "label": "Label 4"
     }
   ]
 }

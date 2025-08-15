@@ -1,6 +1,20 @@
 import { readFile } from "fs/promises";
 import path from "path";
 
+function formatValue(v) {
+  if (v == null) return "";
+  if (Array.isArray(v)) {
+    return v.map(x => (x && typeof x === 'object'
+      ? (x.text ?? x.name ?? x.title ?? x.label ?? x.value ?? JSON.stringify(x))
+      : String(x)
+    )).join(', ');
+  }
+  if (typeof v === 'object') {
+    return (v.text ?? v.name ?? v.title ?? v.label ?? v.value ?? JSON.stringify(v));
+  }
+  return String(v);
+}
+
 export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
   const title = jsonInput?.document?.title || jsonInput?.eventName || "Schedule";
   const groups = Array.isArray(jsonInput.groups) ? jsonInput.groups : [];
@@ -33,26 +47,42 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
     ? `<div class="download">PDF: <a href="${pdfUrl}" target="_blank" rel="noopener">${pdfUrl}</a></div>`
     : "";
 
-  // Render columns if you have them; adjust to match your PDF column order
-  const columnKeys = (jsonInput.columns || []).map(c => c.key);
-  const columnHeaders = (jsonInput.columns || []).map(c => c.title || c.key);
+  // Choose columns: prefer profile columns (field/label or key/title), else detectedFields, else defaults
+  let columnKeys = [];
+  let columnHeaders = [];
+  let showHeader = true; // hide if all profile columns explicitly set showLabel:false
+  if (Array.isArray(jsonInput.columns) && jsonInput.columns.length) {
+    const cols = jsonInput.columns;
+    columnKeys = cols.map(c => (c.field ?? c.key)).filter(Boolean);
+    columnHeaders = cols.map(c => (c.label ?? c.title ?? c.field ?? c.key ?? ""));
+    // Only show header if at least one column wants a label (not strictly false)
+    showHeader = cols.some(c => c?.showLabel !== false);
+  } else if (Array.isArray(jsonInput.detectedFields) && jsonInput.detectedFields.length) {
+    columnKeys = jsonInput.detectedFields.slice();
+    columnHeaders = jsonInput.detectedFields.map(k => k.charAt(0).toUpperCase() + k.slice(1));
+    showHeader = true;
+  } else {
+    columnKeys = ["date", "time", "description", "locations", "tags"];
+    columnHeaders = ["Date", "Time", "Description", "Locations", "Tags"];
+    showHeader = true;
+  }
 
   const groupsHtml = groups.map(g => {
     const rows = Array.isArray(g.entries) ? g.entries : [];
     const rowsHtml = rows.map(r => {
-      const cells = (columnKeys.length ? columnKeys : Object.keys(r.rows || {}))
-        .map(k => `<td>${escapeHtml((r.rows?.[k] ?? ""))}</td>`)
-        .join("");
+      const data = (r && typeof r === 'object') ? (r.fields ?? r.rows ?? r) : {};
+      const cells = columnKeys.map(k => `<td>${escapeHtml(formatValue(data?.[k]))}</td>`).join("");
       return `<tr>${cells}</tr>`;
     }).join("");
 
-    const headerHtml = (columnHeaders.length
+    const headerHtml = (showHeader && columnHeaders.length)
       ? `<tr>${columnHeaders.map(h => `<th>${escapeHtml(h)}</th>`).join("")}</tr>`
-      : "");
+      : "";
 
     return `
       <section class="group">
         <div class="group-title">${escapeHtml(g.title || "")}</div>
+        ${g.metadata ? `<div class="meta">${escapeHtml(g.metadata)}</div>` : ""}
         <table>
           <thead>${headerHtml}</thead>
           <tbody>${rowsHtml}</tbody>
@@ -76,9 +106,10 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
     <h1>${escapeHtml(title)}</h1>
     <div class="meta">${escapeHtml(jsonInput?.document?.subtitle || "")}</div>
     ${downloadBlock}
+    ${jsonInput.debug === true ? (() => { const firstG=(groups||[]).find(g=>Array.isArray(g.entries)&&g.entries.length)||{}; const firstE=(firstG.entries&&firstG.entries[0])||{}; const sample=(firstE&&typeof firstE==='object')?(firstE.fields??firstE.rows??firstE):{}; return `<section style="background:#fff3cd;border:1px solid #ffeeba;padding:12px;margin:12px 0;font-size:12px;"><strong>DEBUG</strong><br/>Column keys: ${escapeHtml(JSON.stringify(columnKeys))}<br/>Column headers: ${escapeHtml(JSON.stringify(columnHeaders))}<br/>First entry keys: ${escapeHtml(JSON.stringify(Object.keys(sample)))}</section>`; })() : ""}
   </header>
   ${groupsHtml}
-  <div class="footer">${escapeHtml(jsonInput?.document?.footer?.text || "")}</div>
+  <div class="footer">${escapeHtml(typeof jsonInput?.document?.footer === 'string' ? jsonInput.document.footer : (jsonInput?.document?.footer?.text || ""))}</div>
 </body>
 </html>`;
   return { htmlString: html, htmlFilenameBase: slugify(title || "schedule") };
