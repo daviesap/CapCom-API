@@ -168,18 +168,18 @@ if (runningEmulated || jsonInput.debug === true) {
                     const safePdfName = sanitiseUrl(filename);
 
                     if (runningEmulated) {
-                        const pdfDir = path.join(LOCAL_OUTPUT_DIR, 'pdfs', safeAppName);
+                        const pdfDir = path.join(LOCAL_OUTPUT_DIR, 'snapshots', safeAppName);
                         fs.mkdirSync(pdfDir, { recursive: true });
                         const pdfPath = path.join(pdfDir, safePdfName);
                         fs.writeFileSync(pdfPath, bytes);
                     } else {
-                        const pdfFile = bucket.file(`pdfs/${safeAppName}/${safePdfName}`);
+                        const pdfFile = bucket.file(`snapshots/${safeAppName}/${safePdfName}`);
                         await pdfFile.save(bytes, {
                             metadata: { contentType: "application/pdf", cacheControl: "no-cache, max-age=0, no-transform" },
                         });
                     }
 
-                    const pdfUrl = makePublicUrl(`pdfs/${safeAppName}/${safePdfName}`, bucket);
+                    const pdfUrl = makePublicUrl(`snapshots/${safeAppName}/${safePdfName}`, bucket);
 
                     // b) Build inline HTML with a working PDF link
                     let htmlString, htmlFilenameBase;
@@ -202,18 +202,18 @@ if (runningEmulated || jsonInput.debug === true) {
                     const safeHtmlName = sanitiseUrl(`${htmlFilenameBase || 'schedule'}.html`);
 
                     if (runningEmulated) {
-                        const htmlDir = path.join(LOCAL_OUTPUT_DIR, 'html', safeAppName);
+                        const htmlDir = path.join(LOCAL_OUTPUT_DIR, 'snapshots', safeAppName);
                         fs.mkdirSync(htmlDir, { recursive: true });
                         const htmlPath = path.join(htmlDir, safeHtmlName);
                         fs.writeFileSync(htmlPath, Buffer.from(htmlString, "utf8"));
                     } else {
-                        const htmlFile = bucket.file(`html/${safeAppName}/${safeHtmlName}`);
+                        const htmlFile = bucket.file(`snapshots/${safeAppName}/${safeHtmlName}`);
                         await htmlFile.save(Buffer.from(htmlString, "utf8"), {
                             metadata: { contentType: "text/html; charset=utf-8", cacheControl: "no-cache, max-age=0, no-transform" },
                         });
                     }
 
-                    const htmlUrl = makePublicUrl(`html/${safeAppName}/${safeHtmlName}`, bucket);
+                    const htmlUrl = makePublicUrl(`snapshots/${safeAppName}/${safeHtmlName}`, bucket);
 
                     // c) Log and respond
                     const executionTimeSeconds = (Date.now() - startTime) / 1000;
@@ -238,12 +238,12 @@ if (runningEmulated || jsonInput.debug === true) {
                 const safeFilename = sanitiseUrl(filename);
 
                 if (runningEmulated) {
-                    const pdfDir = path.join(LOCAL_OUTPUT_DIR, 'pdfs', safeAppName);
+                    const pdfDir = path.join(LOCAL_OUTPUT_DIR, 'snapshots', safeAppName);
                     fs.mkdirSync(pdfDir, { recursive: true });
                     const pdfPath = path.join(pdfDir, safeFilename);
                     fs.writeFileSync(pdfPath, bytes);
                 } else {
-                    const file = bucket.file(`pdfs/${safeAppName}/${safeFilename}`);
+                    const file = bucket.file(`snapshots/${safeAppName}/${safeFilename}`);
 
                     await file.save(bytes, {
                         metadata: {
@@ -254,7 +254,7 @@ if (runningEmulated || jsonInput.debug === true) {
                 }
 
                 // Keep your existing public URL mapping
-                const publicUrl = makePublicUrl(`pdfs/${safeAppName}/${safeFilename}`, bucket);
+                const publicUrl = makePublicUrl(`snapshots/${safeAppName}/${safeFilename}`, bucket);
 
                 const executionTimeSeconds = (Date.now() - startTime) / 1000;
 
@@ -318,11 +318,12 @@ function makePublicUrl(objectPath, bucket) {
         // Storage emulator REST endpoint
         return `http://127.0.0.1:9199/v0/b/${bucket.name}/o/${encoded}?alt=media`;
     }
-    // Prod mapping using your custom domain structure html|pdfs/<safeAppName>/<filename>
-    const m = objectPath.match(/^(html|pdfs)\/([^/]+)\/(.+)$/);
+    // Prod mapping using your custom domain structure snapshots/<safeAppName>/<filename>
+    const m = objectPath.match(/^(snapshots)\/([^/]+)\/(.+)$/);
     if (m) {
-        const [, , safeAppName, safeName] = m;
-        return `https://storage.flair.london/${safeAppName}/${safeName}`;
+        const [, folder, safeAppName, safeName] = m;
+        console.log("🎯 Using snapshots path only:", objectPath);
+        return `https://storage.flair.london/${folder}/${safeAppName}/${safeName}`;
     }
     // Fallback to native GCS URL
     return `https://storage.googleapis.com/${bucket.name}/${objectPath}`;
