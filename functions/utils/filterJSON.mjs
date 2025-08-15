@@ -1,44 +1,67 @@
-// utils/filterJSON.mjs
+// functions/utils/filterJSON.mjs
 
 /**
- * Filters JSON data based on tagIds and locationIds.
- * Requires BOTH to match if BOTH filters are provided.
- * If only one filter is provided, only that one is applied.
+ * Filter the merged schedule JSON by tagIds/locationIds and ALWAYS keep groups.
+ * If a group has no matching entries, insert a single placeholder:
+ *   { fields: { description: "No entries", ... }, isPlaceholder: true }
+ *
+ * Expects the input to follow your merged shape:
+ * {
+ *   filters: { tagIds: string[], locationIds: string[] },
+ *   groups: [{ title, metadata?, entries: [{ fields: {...} }] }]
+ * }
  */
 
-export function filterJson(jsonData) {
+export function filterJson(jsonData = {}) {
   const filters = jsonData.filters || {};
-  const hasTagFilter = Array.isArray(filters.tagIds) && filters.tagIds.length > 0;
-  const hasLocationFilter = Array.isArray(filters.locationIds) && filters.locationIds.length > 0;
+  const tagIdsFilter = Array.isArray(filters.tagIds) ? filters.tagIds : [];
+  const locIdsFilter = Array.isArray(filters.locationIds) ? filters.locationIds : [];
 
-  // If no filters are set, return everything
-  if (!hasTagFilter && !hasLocationFilter) return jsonData;
+  const hasTagFilter = tagIdsFilter.length > 0;
+  const hasLocFilter = locIdsFilter.length > 0;
 
-  const filteredGroups = jsonData.groups.map(group => {
-    const filteredEntries = group.entries.filter(entry => {
-      const fields = entry.fields || {};
-      const tagIds = Array.isArray(fields.tagIds) ? fields.tagIds : [];
-      const locationIds = Array.isArray(fields.locationIds) ? fields.locationIds : [];
+  const groups = Array.isArray(jsonData.groups) ? jsonData.groups : [];
 
-      const matchesTags = hasTagFilter
-        ? tagIds.some(tagId => filters.tagIds.includes(tagId))
-        : true;
+  const processedGroups = groups.map((group) => {
+    const entries = Array.isArray(group.entries) ? group.entries : [];
 
-      const matchesLocations = hasLocationFilter
-        ? locationIds.some(locId => filters.locationIds.includes(locId))
-        : true;
+    // Apply filters to each entry
+    const filteredEntries = entries.filter((entry) => {
+      const f = (entry && entry.fields) ? entry.fields : {};
+      const entryTagIds = Array.isArray(f.tagIds) ? f.tagIds : [];
+      const entryLocIds = Array.isArray(f.locationIds) ? f.locationIds : [];
 
-      return matchesTags && matchesLocations;
+      const matchesTags = hasTagFilter ? entryTagIds.some((id) => tagIdsFilter.includes(id)) : true;
+      const matchesLocs = hasLocFilter ? entryLocIds.some((id) => locIdsFilter.includes(id)) : true;
+
+      return matchesTags && matchesLocs;
     });
 
-    return {
-      ...group,
-      entries: filteredEntries
-    };
-  }).filter(group => group.entries.length > 0); // Remove any empty groups
+    // Always keep groups; insert placeholder row if no entries remain
+    if (filteredEntries.length === 0) {
+      return {
+        ...group,
+        entries: [
+          {
+            fields: {
+              description: "No entries",
+              time: "",
+              tags: [],
+              locations: "",
+              tagIds: [],
+              locationIds: [],
+            },
+            isPlaceholder: true,
+          },
+        ],
+      };
+    }
 
-  return {
-    ...jsonData,
-    groups: filteredGroups
-  };
+    return { ...group, entries: filteredEntries };
+  });
+
+  return { ...jsonData, groups: processedGroups };
 }
+
+// Keep a default export for any legacy imports
+export default filterJson;
