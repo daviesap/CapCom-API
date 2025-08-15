@@ -52,4 +52,4 @@ local.settings.json
 
 # No need to upload generated PDFs
 /pdfoutput
-/Users/apndavies/Coding/flair-pdf-generator/functions/local-emulator/output
+functions/local-emulator/output/
