@@ -6,6 +6,7 @@ import { SecretManagerServiceClient } from "@google-cloud/secret-manager";
 import { readFile } from "fs/promises";
 import path from "path";
 import process from 'process';
+import { Buffer } from 'node:buffer';
 import { merge } from "lodash-es";
 import { generatePdfBuffer } from "./generatepdf.mjs";
 import { sanitiseUrl } from "./utils/sanitiseUrl.mjs";
@@ -139,13 +140,56 @@ export const generatePdf = onRequest(
 
             // 4) Action: generateScheduleSnapshot (HTML + PDF)
             if (action === ACTIONS.GENERATE_SNAPSHOT) {
-                // Placeholder implementation so the route is wired without breaking anything.
-                // Swap this 501 for your HTML generator when ready.
-                return res.status(501).json({
-                    success: false,
-                    message: 'generateScheduleSnapshot not yet implemented',
-                    timestamp,
-                });
+                try {
+                    // a) Generate PDF first so we have a real URL to embed in the HTML
+                    const { bytes, filename } = await generatePdfBuffer(jsonInput);
+                    const safePdfName = sanitiseUrl(filename);
+                    const pdfFile = bucket.file(`pdfs/${safeAppName}/${safePdfName}`);
+                    await pdfFile.save(bytes, {
+                        metadata: { contentType: "application/pdf", cacheControl: "no-cache, max-age=0, no-transform" },
+                    });
+                    const pdfUrl = `https://storage.flair.london/${safeAppName}/${safePdfName}`;
+
+                    // b) Build inline HTML with a working PDF link
+                    let htmlString, htmlFilenameBase;
+                    try {
+                        const { generateHtmlString } = await import("./generateHtml.mjs");
+                        const htmlResult = await generateHtmlString(jsonInput, { pdfUrl });
+                        htmlString = htmlResult.htmlString;
+                        htmlFilenameBase = htmlResult.htmlFilenameBase;
+                    } catch (importErr) {
+                        // If the module isn't present yet, return a friendly 501 with guidance
+                        console.error("⚠️ generateHtml.mjs not available:", importErr);
+                        return res.status(501).json({
+                            success: false,
+                            message: "generateScheduleSnapshot requires ./generateHtml.mjs (export generateHtmlString).",
+                            hint: "Create functions/generateHtml.mjs and export async function generateHtmlString(jsonInput, { pdfUrl })",
+                            timestamp,
+                        });
+                    }
+
+                    const safeHtmlName = sanitiseUrl(`${htmlFilenameBase || 'schedule'}.html`);
+                    const htmlFile = bucket.file(`html/${safeAppName}/${safeHtmlName}`);
+                    await htmlFile.save(Buffer.from(htmlString, "utf8"), {
+                        metadata: { contentType: "text/html; charset=utf-8", cacheControl: "no-cache, max-age=0, no-transform" },
+                    });
+                    const htmlUrl = `https://storage.flair.london/${safeAppName}/${safeHtmlName}`;
+
+                    // c) Log and respond
+                    const executionTimeSeconds = (Date.now() - startTime) / 1000;
+                    await logPdfEvent({ timestamp, filename: safePdfName, url: pdfUrl, userEmail, profileId, success: true });
+
+                    return res.status(200).json({
+                        success: true,
+                        message: "✅ Snapshot HTML and PDF generated",
+                        urls: { html: htmlUrl, pdf: pdfUrl },
+                        timestamp,
+                        executionTimeSeconds,
+                    });
+                } catch (err) {
+                    console.error("❌ Snapshot generation failed:", err);
+                    return res.status(500).json({ success: false, message: `Snapshot generation failed: ${err.message}` });
+                }
             }
 
             // 5) Action: generatePdf (PDF only)
