@@ -14,3 +14,4 @@
 .gitignore
 
 node_modules
+functions/local-emulator/output
