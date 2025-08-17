@@ -30,7 +30,20 @@ function formatValue(v) {
 }
 
 export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
-  const title  = jsonInput?.document?.title || jsonInput?.eventName || "Schedule";
+  const title = jsonInput?.document?.title || jsonInput?.eventName || "Schedule";
+
+  // Build subtitle block: include document.subtitle and each line of document.header.text on its own line
+  const headerTextArr = Array.isArray(jsonInput?.document?.header?.text)
+    ? jsonInput.document.header.text
+    : [];
+  const headerTextHtml = headerTextArr.map(escapeHtml).join("<br/>");
+
+  const subtitleRaw = jsonInput?.document?.subtitle || "";
+  const subtitleEsc = subtitleRaw ? escapeHtml(subtitleRaw) : "";
+
+  // Combine (skip empties), preserving <br/> between parts
+  const subtitleBlock = [subtitleEsc, headerTextHtml].filter(Boolean).join("<br/>");
+
   const groups = Array.isArray(jsonInput.groups) ? jsonInput.groups : [];
 
   // Required local assets (no fallbacks)
@@ -46,10 +59,12 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
     ? jsonInput.document.footer
     : (jsonInput?.document?.footer?.text || "");
 
+  const pdfIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:middle;margin-right:6px;">
+  <path d="M6 2h9l5 5v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zm8 1.5V8h4.5L14 3.5zM8 13h2.5a1.5 1.5 0 0 0 0-3H8v3zm0 5h1v-3H8v3zm3-5h1.5a2.5 2.5 0 0 0 0-5H11v5zm3 5h1v-8h-1v8z"/>
+</svg>`;
   const downloadBlock = pdfUrl
-    ? `<div class="download">PDF: <a href="${escapeHtml(pdfUrl)}" target="_blank" rel="noopener">${escapeHtml(pdfUrl)}</a></div>`
+    ? `<div class="download"><a href="${escapeHtml(pdfUrl)}" target="_blank" rel="noopener">${pdfIcon}Download PDF</a></div>`
     : "";
-
   // Columns: respect profile columns; ignore detectedFields when columns exist
   let columnKeys = [];
   let columnHeaders = [];
@@ -57,18 +72,18 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
 
   if (Array.isArray(jsonInput.columns) && jsonInput.columns.length) {
     const cols = jsonInput.columns;
-    columnKeys    = cols.map(c => (c.field ?? c.key)).filter(Boolean);
+    columnKeys = cols.map(c => (c.field ?? c.key)).filter(Boolean);
     columnHeaders = cols.map(c => (c.label ?? c.title ?? c.field ?? c.key ?? ""));
-    showHeader    = cols.some(c => c?.showLabel !== false);
+    showHeader = cols.some(c => c?.showLabel !== false);
   } else if (Array.isArray(jsonInput.detectedFields) && jsonInput.detectedFields.length) {
     // Only used when profile columns are absent
-    columnKeys    = jsonInput.detectedFields.slice();
+    columnKeys = jsonInput.detectedFields.slice();
     columnHeaders = jsonInput.detectedFields.map(k => k.charAt(0).toUpperCase() + k.slice(1));
-    showHeader    = true;
+    showHeader = true;
   } else {
-    columnKeys    = ["date", "time", "description", "locations", "tags"];
+    columnKeys = ["date", "time", "description", "locations", "tags"];
     columnHeaders = ["Date", "Time", "Description", "Locations", "Tags"];
-    showHeader    = true;
+    showHeader = true;
   }
 
   // Percent-based widths derived from PDF widths (keeps columns aligned; HTML-only)
@@ -81,10 +96,10 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
 
     const headerHtml = (showHeader && columnHeaders.length)
       ? `<tr>${columnHeaders.map((h, i) => {
-          const w = htmlWidths[i];
-          const widthAttr = Number.isFinite(w) ? ` style="width:${w.toFixed(4)}%"` : "";
-          return `<th${widthAttr}>${escapeHtml(h)}</th>`;
-        }).join("")}</tr>`
+        const w = htmlWidths[i];
+        const widthAttr = Number.isFinite(w) ? ` style="width:${w.toFixed(4)}%"` : "";
+        return `<th${widthAttr}>${escapeHtml(h)}</th>`;
+      }).join("")}</tr>`
       : "";
 
     const rowsHtml = rows.map(r => {
@@ -128,7 +143,7 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
   const html = tpl
     .replaceAll("{{CSS}}", css)
     .replaceAll("{{TITLE}}", escapeHtml(title))
-    .replaceAll("{{SUBTITLE}}", escapeHtml(jsonInput?.document?.subtitle || ""))
+    .replaceAll("{{SUBTITLE}}", subtitleBlock)
     .replaceAll("{{DOWNLOAD}}", downloadBlock)
     .replaceAll("{{DEBUG}}", debugBlock)
     .replaceAll("{{GROUPS}}", groupsHtml)

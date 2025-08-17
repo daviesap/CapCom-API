@@ -51,9 +51,9 @@ function makePublicUrl(objectPath, bucket) {
   // Prod mapping using your custom domain structure snapshots/<safeAppName>/<filename>
   const m = objectPath.match(/^(snapshots)\/([^/]+)\/(.+)$/);
   if (m) {
-    const [, folder, safeAppName, safeName] = m;
+    const [, safeAppName, safeName] = m;
     console.log("🎯 Using snapshots path only:", objectPath);
-    return `https://storage.flair.london/${folder}/${safeAppName}/${safeName}`;
+    return `https://snapshots.capcom.london/${safeAppName}/${safeName}`;
   }
   // Fallback to native GCS URL (shouldn't be used in normal flow)
   return `https://storage.googleapis.com/${bucket.name}/${objectPath}`;
