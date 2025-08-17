@@ -9,7 +9,7 @@ import fetch from 'node-fetch';
 import { readFileSync } from 'node:fs';
 import { getFormattedTimestamp } from './utils/timestamp.mjs';
 import { cleanJson } from './utils/cleanJSON.mjs';
-import { filterJson } from './utils/filterJSON.mjs';
+//import { filterJson } from './utils/filterJSON.mjs';
 import { sanitiseText } from './utils/sanitiseText.mjs';
 
 
@@ -67,7 +67,7 @@ export const generatePdfBuffer = async (jsonInput = null) => {
     const localJson = await readFile(path.resolve('./local.json'), 'utf8');
     jsonData = cleanJson(localJson);
   }
-  jsonData = filterJson(jsonData);
+  //jsonData = filterJson(jsonData);
   const debug = jsonData.debug === true;
   const styles = jsonData.styles || {};
   const bottomPageThreshold = jsonData.document.bottomPageThreshold ?? 0;
