@@ -49,9 +49,9 @@ function makePublicUrl(objectPath, bucket) {
     return `http://127.0.0.1:9199/v0/b/${bucket.name}/o/${encoded}?alt=media`;
   }
   // Prod mapping using your custom domain structure snapshots/<safeAppName>/<filename>
-  const m = objectPath.match(/^(snapshots)\/([^/]+)\/(.+)$/);
+  const m = objectPath.match(/^snapshots\/([^/]+)\/(.+)$/);
   if (m) {
-    const [, safeAppName, safeName] = m;
+    const [, safeAppName, safeName] = m; // groups: 1 = app, 2 = filename/path
     console.log("🎯 Using snapshots path only:", objectPath);
     return `https://snapshots.capcom.london/${safeAppName}/${safeName}`;
   }
