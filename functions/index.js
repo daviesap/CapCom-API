@@ -113,7 +113,11 @@ async function generateSnapshotOutputs(jsonInput, safeAppName, bucket, startTime
   // Names
   const pdfDate = formatYYYYMMDD();
   const safePdfName = sanitiseUrl(`schedule-${pdfDate}.pdf`);
-  const safeHtmlName = "schedule.html"; // fixed HTML
+  // Derive HTML filename from document.filename (fallback "schedule")
+  const rawHtmlBase = (jsonInput?.document?.filename || "schedule").toString();
+  // strip any existing extension, then sanitise (handles spaces etc.), then append .html
+  const safeHtmlBase = sanitiseUrl(rawHtmlBase.replace(/\.[a-zA-Z0-9]+$/, ""));
+  const safeHtmlName = `${safeHtmlBase}.html`;
 
   // 2) Save PDF (immutable caching)
   if (runningEmulated) {
