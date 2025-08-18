@@ -29,6 +29,21 @@ function formatValue(v) {
   return String(v);
 }
 
+function renderLogo(logo = {}) {
+  const url = logo?.url;
+  if (!url) return ""; // nothing to render
+
+  // Avoid breaking the attribute if quotes exist in the URL
+  const safeUrl = String(url).replace(/"/g, "%22");
+
+  // onerror hides the container so no broken icon or gap is shown
+  return `
+    <img src="${safeUrl}" alt=""
+         decoding="async" referrerpolicy="no-referrer"
+         onerror="this.closest('div').style.display='none'">
+  `;
+}
+
 export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
   const title = jsonInput?.document?.title || jsonInput?.eventName || "Schedule";
 
@@ -43,6 +58,17 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
 
   // Combine (skip empties), preserving <br/> between parts
   const subtitleBlock = [subtitleEsc, headerTextHtml].filter(Boolean).join("<br/>");
+
+  // Optional right-aligned external logo (disappears if URL fails)
+  const logoHtml = renderLogo(jsonInput?.document?.header?.logo);
+
+  // Wrap subtitle/header text (left) with logo (right) as a single block
+  const subtitleWithLogo = `
+    <div style="display:flex; align-items:center; gap:12px;">
+      <div style="min-width:0; flex:1 1 auto;">${subtitleBlock}</div>
+      <div class="header-logo">${logoHtml}</div>
+    </div>
+  `;
 
   const groups = Array.isArray(jsonInput.groups) ? jsonInput.groups : [];
 
@@ -143,7 +169,7 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
   const html = tpl
     .replaceAll("{{CSS}}", css)
     .replaceAll("{{TITLE}}", escapeHtml(title))
-    .replaceAll("{{SUBTITLE}}", subtitleBlock)
+    .replaceAll("{{SUBTITLE}}", subtitleWithLogo)
     .replaceAll("{{DOWNLOAD}}", downloadBlock)
     .replaceAll("{{DEBUG}}", debugBlock)
     .replaceAll("{{GROUPS}}", groupsHtml)

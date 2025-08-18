@@ -1,0 +1,5392 @@
+{
+  "debug": false,
+  "glideAppName": "VS Creative",
+  "eventName": "Bloomberg Day 2025",
+  "api_key": "Sausages2025!!",
+  "userId": "JwAOVyJUSwGKh1mD8Z1ovg",
+  "userEmail": "andrew@flair.london",
+  "profileId": "fjyqJKXswl",
+  "document": {
+    "filename": "Bloomberg 2025 - HCP Schedule",
+    "header": {
+      "text": [
+        "Bloomberg Day 2025 HCP schedule",
+        "Hampton Court Palace",
+        "28th September 2025"
+      ]
+    },
+    "footer": "Bloomberg 2025 - HCP Schedule"
+  },
+  "filters": {
+    "tagIds": [
+      "DonIXlE.SeqzQAe5V0GXLA"
+    ],
+    "locationIds": []
+  },
+  "groups": [
+    {
+      "title": "Thursday, 25 September 2025",
+      "entries": [
+        {
+          "fields": {
+            "date": "Thursday, 25 September 2025",
+            "time": "09:00 - 16:00",
+            "description": "HCP install barriers around statues x 13",
+            "tags": [
+              "HCP"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "DonIXlE.SeqzQAe5V0GXLA"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Thursday, 25 September 2025",
+            "time": "10:00-16:00",
+            "description": "Amber - Hampton Court Palace Event Planner Onsite",
+            "tags": [
+              "HCP"
+            ],
+            "locations": [
+              "ALL of Palace"
+            ],
+            "tagIds": [
+              "DonIXlE.SeqzQAe5V0GXLA"
+            ],
+            "locationIds": [
+              "WndxCJoyQ.SwnfUN88EeFg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Thursday, 25 September 2025",
+            "time": "10:00-16:00",
+            "description": "Kitty Caisley - Hampton Court Palace Event Planner Onsite",
+            "tags": [
+              "HCP"
+            ],
+            "locations": [
+              "ALL of Palace"
+            ],
+            "tagIds": [
+              "DonIXlE.SeqzQAe5V0GXLA"
+            ],
+            "locationIds": [
+              "WndxCJoyQ.SwnfUN88EeFg"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "title": "Friday, 26 September 2025",
+      "metadata": "Install day 1",
+      "entries": [
+        {
+          "fields": {
+            "date": "Friday, 26 September 2025",
+            "time": "08:30 - TBC",
+            "description": "Kitty Caisley - Hampton Court Palace Event Planner Onsite",
+            "tags": [
+              "HCP"
+            ],
+            "locations": [
+              "Tennis Court lane"
+            ],
+            "tagIds": [
+              "DonIXlE.SeqzQAe5V0GXLA"
+            ],
+            "locationIds": [
+              "wa2tC2s3S0GTJi1eSYlsOg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Friday, 26 September 2025",
+            "time": "08:30 - TBC",
+            "description": "Amber - Hampton Court Palace Events Manager Onsite",
+            "tags": [
+              "HCP"
+            ],
+            "locations": [
+              "Tennis Court lane"
+            ],
+            "tagIds": [
+              "DonIXlE.SeqzQAe5V0GXLA"
+            ],
+            "locationIds": [
+              "wa2tC2s3S0GTJi1eSYlsOg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Friday, 26 September 2025",
+            "time": "08:30-09:00",
+            "description": "Delivery of Golf Buggies and Trailers",
+            "tags": [
+              "OBH Buggy Hire"
+            ],
+            "locations": [
+              "Tennis Court lane"
+            ],
+            "tagIds": [
+              "WOjWnWsRRO24ocE7GkPFTA"
+            ],
+            "locationIds": [
+              "wa2tC2s3S0GTJi1eSYlsOg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Friday, 26 September 2025",
+            "time": "09:00-10:00",
+            "description": "HCP to install drinking water to Tennis Court Lane",
+            "tags": [
+              "HCP"
+            ],
+            "locations": [
+              "Tennis Court lane"
+            ],
+            "tagIds": [
+              "DonIXlE.SeqzQAe5V0GXLA"
+            ],
+            "locationIds": [
+              "wa2tC2s3S0GTJi1eSYlsOg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Friday, 26 September 2025",
+            "time": "12:00",
+            "description": "VS Creative team walkaround & site orientation prior to 18:00 ACCESS",
+            "tags": [
+              "VS Creative"
+            ],
+            "locations": [
+              "Tennis Court lane"
+            ],
+            "tagIds": [
+              "2vyf4cICQt-Nh35ALy0KbA"
+            ],
+            "locationIds": [
+              "wa2tC2s3S0GTJi1eSYlsOg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Friday, 26 September 2025",
+            "time": "14.15",
+            "description": "EEP Security On site from now on until 17:00 Monday 23rd.",
+            "tags": [
+              "EEP Security"
+            ],
+            "locations": [
+              "Tennis Court lane"
+            ],
+            "tagIds": [
+              "2ZI6vFm.Qly3z.9b6VLMZw"
+            ],
+            "locationIds": [
+              "wa2tC2s3S0GTJi1eSYlsOg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Friday, 26 September 2025",
+            "time": "15:00 - 20:00",
+            "description": "Chris Burke and Mark Pearson ( Rock Safely H&S) on site.",
+            "tags": [
+              "Rock Safely"
+            ],
+            "locations": [
+              "Tennis Court lane"
+            ],
+            "tagIds": [
+              "KUmb6RrWQlu94e844gom4A"
+            ],
+            "locationIds": [
+              "wa2tC2s3S0GTJi1eSYlsOg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Friday, 26 September 2025",
+            "time": "16:00",
+            "description": "Graphics Van 1 - Kingston Gate to Cart Gate - Install of Signage in the Park for Truck Wayfinding - Karl Finney - YD67 GFU",
+            "tags": [
+              "Bloomberg"
+            ],
+            "locations": [
+              "HCP Home Park"
+            ],
+            "tagIds": [
+              "1L6LKPbJRsS4epdntVpwtg"
+            ],
+            "locationIds": [
+              "gMLEotaySbO6n3souIRTGw"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Friday, 26 September 2025",
+            "time": "17:30",
+            "description": "Forklift driver x 1 on site (4 hours)",
+            "tags": [
+              "MP Squares"
+            ],
+            "locations": [
+              "Tennis Court lane"
+            ],
+            "tagIds": [
+              "ra8Z47n-QwCffoTVDR19nw"
+            ],
+            "locationIds": [
+              "wa2tC2s3S0GTJi1eSYlsOg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Friday, 26 September 2025",
+            "time": "17.30-20.15",
+            "description": "EEP Security",
+            "tags": [
+              "EEP Security"
+            ],
+            "locations": [
+              "Tennis Court lane"
+            ],
+            "tagIds": [
+              "2ZI6vFm.Qly3z.9b6VLMZw"
+            ],
+            "locationIds": [
+              "wa2tC2s3S0GTJi1eSYlsOg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Friday, 26 September 2025",
+            "time": "18:00",
+            "description": "Graham Carsey - Generators / cable / distro delivered 2 / 3",
+            "tags": [
+              "AAC Power"
+            ],
+            "locations": [
+              "Cart Track Gate"
+            ],
+            "tagIds": [
+              "Xi8rOuVnRs-ihhFiHGv8kg"
+            ],
+            "locationIds": [
+              "avDh6Lx0QwG941DZ.ed0Og"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Friday, 26 September 2025",
+            "time": "18:00",
+            "description": "Graphics vans 3, 4, 5 (Insite) drop onto East Lawn. Cheese 1",
+            "tags": [
+              "Bloomberg"
+            ],
+            "locations": [
+              "Cart Track Gate"
+            ],
+            "tagIds": [
+              "1L6LKPbJRsS4epdntVpwtg"
+            ],
+            "locationIds": [
+              "avDh6Lx0QwG941DZ.ed0Og"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Friday, 26 September 2025",
+            "time": "18:00",
+            "description": "Focus Luton van delivers: Prod / Site kit (PA Kit, VSC flight case, Scrim, giveaways, Tarps etc) into Production/Site Office & Clore Centre.  ",
+            "tags": [
+              "Focus"
+            ],
+            "locations": [
+              "Tennis Court lane"
+            ],
+            "tagIds": [
+              "uBVDp08WRuedIwvSxRCn7w"
+            ],
+            "locationIds": [
+              "wa2tC2s3S0GTJi1eSYlsOg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Friday, 26 September 2025",
+            "time": "18:00",
+            "description": "Garden Catering pre-delivery & set-up (Tennis CL)",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "Tennis Court lane"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "wa2tC2s3S0GTJi1eSYlsOg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Friday, 26 September 2025",
+            "time": "18:00",
+            "description": "Tower Lights & Forklifts delivered",
+            "tags": [
+              "Charles Wilson"
+            ],
+            "locations": [
+              "Cart Track Gate"
+            ],
+            "tagIds": [
+              "cS4Ig7XyQaGQJeHy5LVd1Q"
+            ],
+            "locationIds": [
+              "avDh6Lx0QwG941DZ.ed0Og"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Friday, 26 September 2025",
+            "time": "18:00",
+            "description": "KERB Bars delivered (HIAB)",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "Cart Track Gate"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "avDh6Lx0QwG941DZ.ed0Og"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Friday, 26 September 2025",
+            "time": "18:00",
+            "description": "Fencing delivered",
+            "tags": [
+              "Charles Wilson"
+            ],
+            "locations": [
+              "Cart Track Gate"
+            ],
+            "tagIds": [
+              "cS4Ig7XyQaGQJeHy5LVd1Q"
+            ],
+            "locationIds": [
+              "avDh6Lx0QwG941DZ.ed0Og"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Friday, 26 September 2025",
+            "time": "18:00",
+            "description": "Kerb deliver Trikes (6) & Gazebos (11) (Pre-deliveries). Gazebos Mrs Neales Yard for Storage",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "Mrs Neales Yard"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "pk5s0iFQQqiuDO01uGxmSA"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Friday, 26 September 2025",
+            "time": "18:00",
+            "description": "Graphics van 2 - drop Graphics into Clore Centre - TBC",
+            "tags": [
+              "Bloomberg"
+            ],
+            "locations": [
+              "Trophy Gate"
+            ],
+            "tagIds": [
+              "1L6LKPbJRsS4epdntVpwtg"
+            ],
+            "locationIds": [
+              "KHWNal9JQy6EJLD9mjcMxg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Friday, 26 September 2025",
+            "time": "18:00",
+            "description": "Graham Carsey - Generators / cable / distro delivered 1 / 3",
+            "tags": [
+              "AAC Power"
+            ],
+            "locations": [
+              "Cart Track Gate"
+            ],
+            "tagIds": [
+              "Xi8rOuVnRs-ihhFiHGv8kg"
+            ],
+            "locationIds": [
+              "avDh6Lx0QwG941DZ.ed0Og"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Friday, 26 September 2025",
+            "time": "18:00",
+            "description": "Graham Carsey - Cable / distro delivered 3 / 3",
+            "tags": [
+              "AAC Power"
+            ],
+            "locations": [
+              "Cart Track Gate"
+            ],
+            "tagIds": [
+              "Xi8rOuVnRs-ihhFiHGv8kg"
+            ],
+            "locationIds": [
+              "avDh6Lx0QwG941DZ.ed0Og"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Friday, 26 September 2025",
+            "time": "18:00",
+            "description": "HCP move Bus Stop signs to accessible location",
+            "tags": [
+              "HCP"
+            ],
+            "locations": [
+              "ALL of Palace"
+            ],
+            "tagIds": [
+              "DonIXlE.SeqzQAe5V0GXLA"
+            ],
+            "locationIds": [
+              "WndxCJoyQ.SwnfUN88EeFg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Friday, 26 September 2025",
+            "time": "18:00 - 20:00",
+            "description": "Victoria, Janet, Kelly, Kerry, Charlie, Louis and Chris on site to check deliveries (No local crew).  Use golf buggies.",
+            "tags": [
+              "VS Creative"
+            ],
+            "locations": [
+              "Tennis Court lane"
+            ],
+            "tagIds": [
+              "2vyf4cICQt-Nh35ALy0KbA"
+            ],
+            "locationIds": [
+              "wa2tC2s3S0GTJi1eSYlsOg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Friday, 26 September 2025",
+            "time": "18:00 - 20:00",
+            "description": "ACCESS TO THE EAST FRONT GARDENS - Boneyard at Cart Track Gate end. ",
+            "tags": [
+              "HCP"
+            ],
+            "locations": [
+              "Cart Track Gate"
+            ],
+            "tagIds": [
+              "DonIXlE.SeqzQAe5V0GXLA"
+            ],
+            "locationIds": [
+              "avDh6Lx0QwG941DZ.ed0Og"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Friday, 26 September 2025",
+            "time": "18:00 - 20:00",
+            "description": "ACCESS TO TENNIS COURT LANE for crew catering set up",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "Tennis Court lane"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "wa2tC2s3S0GTJi1eSYlsOg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Friday, 26 September 2025",
+            "time": "18:00 - 20:00",
+            "description": "ACCESS TO CLORE CENTRE (Signage store), RND (Production Office), APT 15 (Site Office), MRS NEAL'S GARDEN",
+            "tags": [
+              "HCP",
+              "VS Creative",
+              "Bloomberg"
+            ],
+            "locations": [
+              "Trophy Gate"
+            ],
+            "tagIds": [
+              "1L6LKPbJRsS4epdntVpwtg",
+              "DonIXlE.SeqzQAe5V0GXLA",
+              "2vyf4cICQt-Nh35ALy0KbA"
+            ],
+            "locationIds": [
+              "KHWNal9JQy6EJLD9mjcMxg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Friday, 26 September 2025",
+            "time": "18:10",
+            "description": "Radios set up in Apt 15 (Site Office) - Charlie Brings to Site",
+            "tags": [
+              "VS Creative"
+            ],
+            "locations": [
+              "Apartment 15 / Site Office"
+            ],
+            "tagIds": [
+              "2vyf4cICQt-Nh35ALy0KbA"
+            ],
+            "locationIds": [
+              "fgAjF3huSEmWJG533DZmEg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Friday, 26 September 2025",
+            "time": "18:30",
+            "description": "Set up Production & Site office",
+            "tags": [
+              "VS Creative"
+            ],
+            "locations": [
+              "Apartment 15 / Site Office"
+            ],
+            "tagIds": [
+              "2vyf4cICQt-Nh35ALy0KbA"
+            ],
+            "locationIds": [
+              "fgAjF3huSEmWJG533DZmEg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Friday, 26 September 2025",
+            "time": "18:53",
+            "description": "Sunset - Checked on Metcheck",
+            "tags": [],
+            "locations": [],
+            "tagIds": [],
+            "locationIds": []
+          }
+        },
+        {
+          "fields": {
+            "date": "Friday, 26 September 2025",
+            "time": "19:00",
+            "description": "Focas Luton van relocates to deliver Site items to Boneyard (Fencing scrim, tarps etc)",
+            "tags": [
+              "Focus"
+            ],
+            "locations": [
+              "Cart Track Gate"
+            ],
+            "tagIds": [
+              "uBVDp08WRuedIwvSxRCn7w"
+            ],
+            "locationIds": [
+              "avDh6Lx0QwG941DZ.ed0Og"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Friday, 26 September 2025",
+            "time": "22:00",
+            "description": "Clear of site",
+            "tags": [
+              "VS Creative"
+            ],
+            "locations": [
+              "Tennis Court lane"
+            ],
+            "tagIds": [
+              "2vyf4cICQt-Nh35ALy0KbA"
+            ],
+            "locationIds": [
+              "wa2tC2s3S0GTJi1eSYlsOg"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "title": "Saturday, 27 September 2025",
+      "metadata": "Install day 2",
+      "entries": [
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "06:55",
+            "description": "Sunrise - confirmed on Metcheck",
+            "tags": [],
+            "locations": [],
+            "tagIds": [],
+            "locationIds": []
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "07:30 - 20:00",
+            "description": "Traffic Marshalls on site",
+            "tags": [],
+            "locations": [],
+            "tagIds": [],
+            "locationIds": []
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "07:45 - 20:00",
+            "description": "Chris Burke ( Rock Safely H&S) on site.",
+            "tags": [],
+            "locations": [],
+            "tagIds": [],
+            "locationIds": []
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "08:00",
+            "description": "Graphics van 4 delivers (Menu signs and tools) - stay on site",
+            "tags": [
+              "Bloomberg"
+            ],
+            "locations": [],
+            "tagIds": [
+              "1L6LKPbJRsS4epdntVpwtg"
+            ],
+            "locationIds": []
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "08:00",
+            "description": "REPLACEMENT FOR THIS YEAR 2025 - OPTION - Dining Bus arrives (Tennis Court Lane) - 20minute set up",
+            "tags": [],
+            "locations": [],
+            "tagIds": [],
+            "locationIds": []
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "08:00",
+            "description": "HCP Maintainance to install power  (Tennis Court Lane)",
+            "tags": [
+              "HCP"
+            ],
+            "locations": [],
+            "tagIds": [
+              "DonIXlE.SeqzQAe5V0GXLA"
+            ],
+            "locationIds": []
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "08:00",
+            "description": "Crew position and build - PED, Heras and x11 3m Gazebos from KERB",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "ALL of Palace"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "WndxCJoyQ.SwnfUN88EeFg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "08:00",
+            "description": "Garden Catering onsite to set up (Tennis Court Lane)",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "Tennis Court lane"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "wa2tC2s3S0GTJi1eSYlsOg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "08:00",
+            "description": "Wristbands and Crew Catering Tickets distributed to crew at reception",
+            "tags": [
+              "VS Creative"
+            ],
+            "locations": [
+              "Tennis Court lane"
+            ],
+            "tagIds": [
+              "2vyf4cICQt-Nh35ALy0KbA"
+            ],
+            "locationIds": [
+              "wa2tC2s3S0GTJi1eSYlsOg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "08:00 - 12:00",
+            "description": "Compactor / containers delivered",
+            "tags": [
+              "Falcon waste"
+            ],
+            "locations": [
+              "Flower Pot Gate"
+            ],
+            "tagIds": [
+              "9EuTqFF2Ty-Gm.jEoXW9SA"
+            ],
+            "locationIds": [
+              "Ko4msj1HS2aCTlQg0iiZPA"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "08:00 - 12:00",
+            "description": "Bins delivered",
+            "tags": [
+              "Falcon waste"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "9EuTqFF2Ty-Gm.jEoXW9SA"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "08:00 - 20:00",
+            "description": "ACCESS TO EAST FRONT GARDEN ",
+            "tags": [
+              "HCP"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "DonIXlE.SeqzQAe5V0GXLA"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "08:00 - 20:00",
+            "description": "Local Crew x 12 on site - including 2 x forklift drivers",
+            "tags": [
+              "MP Squares"
+            ],
+            "locations": [],
+            "tagIds": [
+              "ra8Z47n-QwCffoTVDR19nw"
+            ],
+            "locationIds": []
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "08:00 - 20:00",
+            "description": "ACCESS TO - Apt 14, Apt 15 Lunchrooms, Barrack Block Lunchrooms, Buttery Lunchrooms, Clore Centre, Community Room, RND",
+            "tags": [
+              "VS Creative"
+            ],
+            "locations": [
+              "Apartment 15 / Site Office"
+            ],
+            "tagIds": [
+              "2vyf4cICQt-Nh35ALy0KbA"
+            ],
+            "locationIds": [
+              "fgAjF3huSEmWJG533DZmEg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "08:00 - 20:00",
+            "description": "Amber - Hampton Court Palace Events Manager Onsite",
+            "tags": [
+              "HCP"
+            ],
+            "locations": [
+              "ALL of Palace"
+            ],
+            "tagIds": [
+              "DonIXlE.SeqzQAe5V0GXLA"
+            ],
+            "locationIds": [
+              "WndxCJoyQ.SwnfUN88EeFg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "08:00 - 20:00",
+            "description": "Kitty Caisley Hampton Court Palace Event Planner Onsite",
+            "tags": [
+              "HCP"
+            ],
+            "locations": [
+              "ALL of Palace"
+            ],
+            "tagIds": [
+              "DonIXlE.SeqzQAe5V0GXLA"
+            ],
+            "locationIds": [
+              "WndxCJoyQ.SwnfUN88EeFg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "08:00 - 20:00",
+            "description": "Site Crew x 4 on site - 12 hours ",
+            "tags": [
+              "Old Skool"
+            ],
+            "locations": [],
+            "tagIds": [
+              "XCCIvS3bRweSmHjWAx3JVQ"
+            ],
+            "locationIds": []
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "08:01",
+            "description": "Install Ped Barrier in front of Palace",
+            "tags": [
+              "MP Squares"
+            ],
+            "locations": [],
+            "tagIds": [
+              "ra8Z47n-QwCffoTVDR19nw"
+            ],
+            "locationIds": []
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "08:01",
+            "description": "Install Heras behind traders before they arrive",
+            "tags": [
+              "MP Squares"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "ra8Z47n-QwCffoTVDR19nw"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "08:15",
+            "description": "Focus Luton van delivers remaining items to site (Giveaways/Shopping/Dress Up items) to Production/Site Office & Clore Centre.\nTBC May keep on site to use as production delivery/storage vehicle.",
+            "tags": [
+              "Focus"
+            ],
+            "locations": [
+              "Apartment 15 / Site Office"
+            ],
+            "tagIds": [
+              "uBVDp08WRuedIwvSxRCn7w"
+            ],
+            "locationIds": [
+              "fgAjF3huSEmWJG533DZmEg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "08:30",
+            "description": "Install power to crew catering (Tennis Court Lane) with HCP electricians",
+            "tags": [
+              "AAC Power"
+            ],
+            "locations": [
+              "Tennis Court lane"
+            ],
+            "tagIds": [
+              "Xi8rOuVnRs-ihhFiHGv8kg"
+            ],
+            "locationIds": [
+              "wa2tC2s3S0GTJi1eSYlsOg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "08:30 - 20:00",
+            "description": "TBC IF USING THIS YEAR 2025 - Crew Base open (Bus in Tennis Court Lane)",
+            "tags": [
+              "AAC Power"
+            ],
+            "locations": [
+              "Tennis Court lane"
+            ],
+            "tagIds": [
+              "Xi8rOuVnRs-ihhFiHGv8kg"
+            ],
+            "locationIds": [
+              "wa2tC2s3S0GTJi1eSYlsOg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "09:00",
+            "description": "Toilets batch 1 of 3 delivered (4 / 5 units)",
+            "tags": [
+              "Just Loos"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "wHm3sTOmTQaqfcNZK1Qdyg"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "09:00",
+            "description": "Sunbrella deliver and set up Sunbrellas, Party tents & Colonials on East Front Gardens.",
+            "tags": [
+              "Sunbrella"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "RxuewxyFQNWP8ywMe2sg2g"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "09:00",
+            "description": "Bloomberg Delivering Chocolate Coins - Clore Room ",
+            "tags": [
+              "Bloomberg"
+            ],
+            "locations": [
+              "Trophy Gate"
+            ],
+            "tagIds": [
+              "1L6LKPbJRsS4epdntVpwtg"
+            ],
+            "locationIds": [
+              "KHWNal9JQy6EJLD9mjcMxg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "09:00 - 19:00",
+            "description": "Crew Tea & Coffee available (Tennis Court Lane)",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "Trophy Gate"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "KHWNal9JQy6EJLD9mjcMxg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "09:00 - 19:00",
+            "description": "Client Tea & Coffee set up (Production Office)",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "Apartment 15 / Site Office"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "fgAjF3huSEmWJG533DZmEg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "09:00-18:00",
+            "description": "Information Team arrive on site.",
+            "tags": [
+              "VS Creative"
+            ],
+            "locations": [
+              "West Front of Palace"
+            ],
+            "tagIds": [
+              "2vyf4cICQt-Nh35ALy0KbA"
+            ],
+            "locationIds": [
+              "fNQ9WhVdRle3iqLvJ4Wpiw"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "09:30",
+            "description": "Bobby delivers forklift for stock movement",
+            "tags": [],
+            "locations": [],
+            "tagIds": [],
+            "locationIds": []
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "09:30",
+            "description": "KERB Event Hire deliver",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "ALL of Palace"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "WndxCJoyQ.SwnfUN88EeFg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "10:00",
+            "description": "Get Lost and Found arrive x 1 - Rob Wilson",
+            "tags": [
+              "VS Creative"
+            ],
+            "locations": [],
+            "tagIds": [
+              "2vyf4cICQt-Nh35ALy0KbA"
+            ],
+            "locationIds": []
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "10:00",
+            "description": "Kerb deliver fridges into Kerb Boneyard",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "Flower Pot Gate"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "Ko4msj1HS2aCTlQg0iiZPA"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "10:00",
+            "description": "KERB warehouse delivery",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "Flower Pot Gate"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "Ko4msj1HS2aCTlQg0iiZPA"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "10:00",
+            "description": "Stage Manager & Show Caller Site Familiarisation",
+            "tags": [
+              "VS Creative"
+            ],
+            "locations": [
+              "Cheese 4 - Gardens"
+            ],
+            "tagIds": [
+              "2vyf4cICQt-Nh35ALy0KbA"
+            ],
+            "locationIds": [
+              "sJwYUzY.RXmdwTyDhG2.Qg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "10:00",
+            "description": "Bandstand delivered",
+            "tags": [
+              "Victorian Bandstands Ltd"
+            ],
+            "locations": [
+              "Cheese 4 - Gardens"
+            ],
+            "tagIds": [
+              "fJNbTt16QlCzszJua0jVOQ"
+            ],
+            "locationIds": [
+              "sJwYUzY.RXmdwTyDhG2.Qg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "10:00 - 17:00",
+            "description": "Palace open to the public",
+            "tags": [
+              "HCP"
+            ],
+            "locations": [
+              "ALL of Palace"
+            ],
+            "tagIds": [
+              "DonIXlE.SeqzQAe5V0GXLA"
+            ],
+            "locationIds": [
+              "WndxCJoyQ.SwnfUN88EeFg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "10:00 - 18:00",
+            "description": "History Riot x 26 on site",
+            "tags": [
+              "History Riot"
+            ],
+            "locations": [
+              "ALL of Palace"
+            ],
+            "tagIds": [
+              "fT-WmsejRmCle0.nvbVmvw"
+            ],
+            "locationIds": [
+              "WndxCJoyQ.SwnfUN88EeFg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "10:30",
+            "description": "KERB: OMD 4+5 (containers x2) load in",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "Flower Pot Gate"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "Ko4msj1HS2aCTlQg0iiZPA"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "10:30",
+            "description": "Delivery of Crew Lunch (Tennis Court Lane), Small Van.",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "Tennis Court lane"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "wa2tC2s3S0GTJi1eSYlsOg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "11:00",
+            "description": "Focus deliver AV and staging",
+            "tags": [
+              "Focus"
+            ],
+            "locations": [
+              "Cheese 4 - Gardens"
+            ],
+            "tagIds": [
+              "uBVDp08WRuedIwvSxRCn7w"
+            ],
+            "locationIds": [
+              "sJwYUzY.RXmdwTyDhG2.Qg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "11:00",
+            "description": "Eco Furniture deliver furniture 1/3 ARTIC - confirm vehicle",
+            "tags": [
+              "Eco Furniture"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "J3ZQqxaaSXiZl0M8Wu5IcQ"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "11:00",
+            "description": "Eco Furniture deliver furniture 2/3 (7.5T)",
+            "tags": [
+              "Eco Furniture"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "J3ZQqxaaSXiZl0M8Wu5IcQ"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "11:00",
+            "description": "Baked Bird 2 (container) load in",
+            "tags": [
+              "Baked Bird"
+            ],
+            "locations": [
+              "Flower Pot Gate"
+            ],
+            "tagIds": [
+              "UNYWBFxfQzmIYHraXe8CuA"
+            ],
+            "locationIds": [
+              "Ko4msj1HS2aCTlQg0iiZPA"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "11:00",
+            "description": "Tattoo tents and AV tent delivered ",
+            "tags": [
+              "Ancient Armouries"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "bIXegsdoQEaNvahG-ttlaA"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "11:00",
+            "description": "Crew Lunch Bags Available (Tennis Court Lane)",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "Tennis Court lane"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "wa2tC2s3S0GTJi1eSYlsOg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "11:00",
+            "description": "Eco Furniture deliver furniture 3/3 (3.5T)",
+            "tags": [
+              "Eco Furniture"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "J3ZQqxaaSXiZl0M8Wu5IcQ"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "11:00",
+            "description": "Baked Bird 1 (Horsebox) load in",
+            "tags": [
+              "Baked Bird"
+            ],
+            "locations": [
+              "Flower Pot Gate"
+            ],
+            "tagIds": [
+              "UNYWBFxfQzmIYHraXe8CuA"
+            ],
+            "locationIds": [
+              "Ko4msj1HS2aCTlQg0iiZPA"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "11:00 - 14:00",
+            "description": "Crew Lunch IN SHIFTS (Tennis Court Lane)",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "Tennis Court lane"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "wa2tC2s3S0GTJi1eSYlsOg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "11:30",
+            "description": "Only Jerkin 3+4 (gazebos) load in",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "Cart Track Gate"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "avDh6Lx0QwG941DZ.ed0Og"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "11:30",
+            "description": "Only Jerkin 1 (van) load in",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "Cart Track Gate"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "avDh6Lx0QwG941DZ.ed0Og"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "11:30",
+            "description": "Barney & the Pizza (container) load in",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "Cart Track Gate"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "avDh6Lx0QwG941DZ.ed0Og"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "11:30",
+            "description": "OMD 3 (milkfloat) load in",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "Cart Track Gate"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "avDh6Lx0QwG941DZ.ed0Og"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "11:40 - 17:00",
+            "description": "Kerry to oversee furniture installation across site",
+            "tags": [
+              "Eco Furniture",
+              "Old Skool"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "J3ZQqxaaSXiZl0M8Wu5IcQ",
+              "XCCIvS3bRweSmHjWAx3JVQ"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "12:00",
+            "description": "AV Setup on bandstand",
+            "tags": [
+              "Focus"
+            ],
+            "locations": [
+              "Cheese 4 - Gardens"
+            ],
+            "tagIds": [
+              "uBVDp08WRuedIwvSxRCn7w"
+            ],
+            "locationIds": [
+              "sJwYUzY.RXmdwTyDhG2.Qg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "12:00",
+            "description": "Deliver and install flags/boxes and bunting on shepherds crooks.",
+            "tags": [
+              "Event Flag Hire"
+            ],
+            "locations": [],
+            "tagIds": [
+              "yJ7dfj2NQc-Rl65szqrp6g"
+            ],
+            "locationIds": []
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "12:00",
+            "description": "Mandala 2+3 (gazebos) load in",
+            "tags": [
+              "Ancient Armouries"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "bIXegsdoQEaNvahG-ttlaA"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "12:00",
+            "description": "Mandala 1 (van) load in",
+            "tags": [
+              "Ancient Armouries"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "bIXegsdoQEaNvahG-ttlaA"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "12:00",
+            "description": "Well Kneaded (van) load in",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "12:00",
+            "description": "Bian Dang 1 (airstream) load in",
+            "tags": [],
+            "locations": [],
+            "tagIds": [],
+            "locationIds": []
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "12:00",
+            "description": "GJS FURNITURE DELIVERY",
+            "tags": [
+              "GJS"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "3wVZufekRG2owppu2BaWoQ"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "12:00",
+            "description": "KERB warehouse delivery",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "12:00",
+            "description": "Band Stage:  Show Caller Briefing",
+            "tags": [
+              "VS Creative"
+            ],
+            "locations": [
+              "Cheese 4 - Gardens"
+            ],
+            "tagIds": [
+              "2vyf4cICQt-Nh35ALy0KbA"
+            ],
+            "locationIds": [
+              "sJwYUzY.RXmdwTyDhG2.Qg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "12:00",
+            "description": "Only Jerkin 2 (van) load in",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "12:00 - 16:00",
+            "description": "Tattoo Stations - call time for Team Leader - Jordan",
+            "tags": [],
+            "locations": [],
+            "tagIds": [],
+            "locationIds": []
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "12:00 - 20:00",
+            "description": "Falcon Waste Cleaners x 3 on site inc SUPERVISOR",
+            "tags": [
+              "Falcon waste"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "9EuTqFF2Ty-Gm.jEoXW9SA"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "12:00 (approx)",
+            "description": "Toilets batch 2 of 3 delivered (2 / 3 units)",
+            "tags": [
+              "Just Loos"
+            ],
+            "locations": [
+              "Flower Pot Gate"
+            ],
+            "tagIds": [
+              "wHm3sTOmTQaqfcNZK1Qdyg"
+            ],
+            "locationIds": [
+              "Ko4msj1HS2aCTlQg0iiZPA"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "12:00-20:00",
+            "description": "KERB: Ice cream tubs delivered",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "12:15",
+            "description": "Mother Flipper 2+3 (gazebos) load in",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "12:30",
+            "description": "450 Degrees 2 (gazebo) load in",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "13:00",
+            "description": "Bian Dang 2 (gazebo) load in",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "14:00",
+            "description": "Swing boats delivered",
+            "tags": [
+              "Irvin Leisure"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "m0PZbGp4QNySZ1icC6oc9g"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "14:00",
+            "description": "Fair ground stalls delivered",
+            "tags": [
+              "Irvin Leisure"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "m0PZbGp4QNySZ1icC6oc9g"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "14:00",
+            "description": "Signage: KERB Catering menus handed over to KERB to instal",
+            "tags": [
+              "Bloomberg"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "1L6LKPbJRsS4epdntVpwtg"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "14:00",
+            "description": "Born & Raised 1+2 (both a truck/gazebo combo) load in ",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "14:00",
+            "description": "Position Bunting & Shepherd's hooks - liaise with HCP re: sprinkler system",
+            "tags": [
+              "VS Creative"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "2vyf4cICQt-Nh35ALy0KbA"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "14:00",
+            "description": "OMD 2 (van) load in",
+            "tags": [],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "14:00",
+            "description": "Position bunting",
+            "tags": [
+              "VS Creative"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "2vyf4cICQt-Nh35ALy0KbA"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "14:00",
+            "description": "Falcon & Kitty Caisley meet for cleaning walk through.",
+            "tags": [
+              "Falcon waste"
+            ],
+            "locations": [
+              "ALL of Palace"
+            ],
+            "tagIds": [
+              "9EuTqFF2Ty-Gm.jEoXW9SA"
+            ],
+            "locationIds": [
+              "WndxCJoyQ.SwnfUN88EeFg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "15:00",
+            "description": "Disco bus arrives",
+            "tags": [
+              "The Bug Club"
+            ],
+            "locations": [
+              "Cheese 2 - Gardens"
+            ],
+            "tagIds": [
+              "7fVY8Wi3RTijUV1.xYqh9g"
+            ],
+            "locationIds": [
+              "a.f2JTYupQhWQdNm9W3tWwg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "15:00",
+            "description": "KERB warehouse delivery",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "15:00 (approx)",
+            "description": "Toilets batch 3 of 3 delivered (2 / 3 units)",
+            "tags": [
+              "Just Loos"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "wHm3sTOmTQaqfcNZK1Qdyg"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "15:00 tbc",
+            "description": "4 chairs to Garden Catering from Furniture delivery",
+            "tags": [
+              "Eco Furniture"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "J3ZQqxaaSXiZl0M8Wu5IcQ"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "15:30",
+            "description": "KERB signage handed over to KERB to install",
+            "tags": [
+              "Bloomberg"
+            ],
+            "locations": [
+              "ALL of Palace"
+            ],
+            "tagIds": [
+              "1L6LKPbJRsS4epdntVpwtg"
+            ],
+            "locationIds": [
+              "WndxCJoyQ.SwnfUN88EeFg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "15:30 tbc",
+            "description": "Kids Lunch Box Gazebo installed",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "16:00 - 17:00",
+            "description": "Call KERRY Rent Event/driver Kevin - deliver giant draughts, skittles, putting game ",
+            "tags": [
+              "Old Skool"
+            ],
+            "locations": [
+              "Cheese 1 - Gardens"
+            ],
+            "tagIds": [
+              "XCCIvS3bRweSmHjWAx3JVQ"
+            ],
+            "locationIds": [
+              "b1nU5k-1QDSHm9nSSvUdag"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "16:30",
+            "description": "Crew Dinner Deliver (Tennis Court Lane)",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "16:30",
+            "description": "TEAM BRIEFING WITH VSC & BLOOMBERG",
+            "tags": [
+              "VS Creative"
+            ],
+            "locations": [
+              "Apartment 15 / Site Office"
+            ],
+            "tagIds": [
+              "2vyf4cICQt-Nh35ALy0KbA"
+            ],
+            "locationIds": [
+              "fgAjF3huSEmWJG533DZmEg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "17:00",
+            "description": "Band Stage:  HOD meeting",
+            "tags": [
+              "VS Creative"
+            ],
+            "locations": [
+              "Cheese 4 - Gardens"
+            ],
+            "tagIds": [
+              "2vyf4cICQt-Nh35ALy0KbA"
+            ],
+            "locationIds": [
+              "sJwYUzY.RXmdwTyDhG2.Qg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "17:30",
+            "description": "MP Squares reposition barrier from front of palace to queuing area (West Front Entrance)",
+            "tags": [
+              "MP Squares"
+            ],
+            "locations": [
+              "West Front of Palace"
+            ],
+            "tagIds": [
+              "ra8Z47n-QwCffoTVDR19nw"
+            ],
+            "locationIds": [
+              "fNQ9WhVdRle3iqLvJ4Wpiw"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "17:30",
+            "description": "Band Stage:  Technical rehearsals",
+            "tags": [
+              "Focus"
+            ],
+            "locations": [
+              "Cheese 4 - Gardens"
+            ],
+            "tagIds": [
+              "uBVDp08WRuedIwvSxRCn7w"
+            ],
+            "locationIds": [
+              "sJwYUzY.RXmdwTyDhG2.Qg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "17:30 - 19:00",
+            "description": "Crew Dinner IN SHIFTS (Tennis Court Lane)",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "Tennis Court lane"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "wa2tC2s3S0GTJi1eSYlsOg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "17:30 - 20:00",
+            "description": "Sunbrella set up 1 x Colonial in Base Court (Info Point 1), 2 x 3m Sunbrellas for Team Challenges in Wilderness & Maze.",
+            "tags": [
+              "Sunbrella"
+            ],
+            "locations": [
+              "ALL of Palace"
+            ],
+            "tagIds": [
+              "RxuewxyFQNWP8ywMe2sg2g"
+            ],
+            "locationIds": [
+              "WndxCJoyQ.SwnfUN88EeFg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "18:00",
+            "description": "Feminine Products positioned in all loos",
+            "tags": [
+              "VS Creative"
+            ],
+            "locations": [
+              "ALL of Palace"
+            ],
+            "tagIds": [
+              "2vyf4cICQt-Nh35ALy0KbA"
+            ],
+            "locationIds": [
+              "WndxCJoyQ.SwnfUN88EeFg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "18:00",
+            "description": "Insite to access Palace Courtyards via Van",
+            "tags": [
+              "InSite"
+            ],
+            "locations": [
+              "Tennis Court lane"
+            ],
+            "tagIds": [
+              "unC3zBAMQy-pLki5bgQdmA"
+            ],
+            "locationIds": [
+              "wa2tC2s3S0GTJi1eSYlsOg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "18:00",
+            "description": "Graphic Van 5 - Access via Adams Gate for install in Wilderness",
+            "tags": [
+              "Bloomberg"
+            ],
+            "locations": [
+              "Adams Gate"
+            ],
+            "tagIds": [
+              "1L6LKPbJRsS4epdntVpwtg"
+            ],
+            "locationIds": [
+              "rfWMwhqyQZeGYkkW.NXLZQ"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "18:00 - 19:00",
+            "description": "Chocolate Dino delivery",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "Trophy Gate"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "KHWNal9JQy6EJLD9mjcMxg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "18:00 – 20:00",
+            "description": "Access to Base Court, Clock Court and Fountain Court to set up Info Point 1 (sunbrella) and Guest arrival areas.",
+            "tags": [
+              "HCP"
+            ],
+            "locations": [
+              "ALL of Palace"
+            ],
+            "tagIds": [
+              "DonIXlE.SeqzQAe5V0GXLA"
+            ],
+            "locationIds": [
+              "WndxCJoyQ.SwnfUN88EeFg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "18:00 tbc",
+            "description": "Feminine Products set out in relevant loos ",
+            "tags": [
+              "VS Creative"
+            ],
+            "locations": [
+              "ALL of Palace"
+            ],
+            "tagIds": [
+              "2vyf4cICQt-Nh35ALy0KbA"
+            ],
+            "locationIds": [
+              "WndxCJoyQ.SwnfUN88EeFg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "18:51",
+            "description": "Sunset - confirmed on Metcheck",
+            "tags": [],
+            "locations": [],
+            "tagIds": [],
+            "locationIds": []
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "20:00",
+            "description": "Crew Catering: CONFIRM IF BEING USED THIS YEAR - Dining Bus leaves (Tennis Court Lane). KRM Marshall (Banksman) to oversee departure.",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": []
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "20:00",
+            "description": "By end of day - all Loos positioned, powered and checked.",
+            "tags": [
+              "Just Loos"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "wHm3sTOmTQaqfcNZK1Qdyg"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "20:00",
+            "description": "END OF DAY - ALL CREW & SUPPLIERS OFF SITE",
+            "tags": [
+              "VS Creative"
+            ],
+            "locations": [
+              "ALL of Palace"
+            ],
+            "tagIds": [
+              "2vyf4cICQt-Nh35ALy0KbA"
+            ],
+            "locationIds": [
+              "WndxCJoyQ.SwnfUN88EeFg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Saturday, 27 September 2025",
+            "time": "TBC",
+            "description": "Sunbrella Van 3 dellivers",
+            "tags": [
+              "Sunbrella"
+            ],
+            "locations": [
+              "ALL of Palace"
+            ],
+            "tagIds": [
+              "RxuewxyFQNWP8ywMe2sg2g"
+            ],
+            "locationIds": [
+              "WndxCJoyQ.SwnfUN88EeFg"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "title": "Sunday, 28 September 2025",
+      "metadata": "Live day",
+      "entries": [
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "05:30 - 12:00",
+            "description": "Traffic Marshalls on site",
+            "tags": [
+              "KRM"
+            ],
+            "locations": [
+              "ALL of Palace"
+            ],
+            "tagIds": [
+              "uooQQ5HWTN6NBJXL6tDNKA"
+            ],
+            "locationIds": [
+              "WndxCJoyQ.SwnfUN88EeFg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "05:30 - 23:00",
+            "description": "Traffic Marshalls on site",
+            "tags": [
+              "KRM"
+            ],
+            "locations": [
+              "ALL of Palace"
+            ],
+            "tagIds": [
+              "uooQQ5HWTN6NBJXL6tDNKA"
+            ],
+            "locationIds": [
+              "WndxCJoyQ.SwnfUN88EeFg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "06:00",
+            "description": "Garden Catering Onsite to set up (Tennis Court Lane) + Deliver Breakfast",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "Tennis Court lane"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "wa2tC2s3S0GTJi1eSYlsOg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "06:00",
+            "description": "Graphics Van 6 - Access via Trophy Gate to install Entrance Walkway and West Gate Wristband",
+            "tags": [
+              "Bloomberg"
+            ],
+            "locations": [
+              "Trophy Gate"
+            ],
+            "tagIds": [
+              "1L6LKPbJRsS4epdntVpwtg"
+            ],
+            "locationIds": [
+              "KHWNal9JQy6EJLD9mjcMxg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "06:00 - 12:00",
+            "description": "Local Crew x 8 on site - 6 hours",
+            "tags": [
+              "MP Squares"
+            ],
+            "locations": [
+              "Tennis Court lane"
+            ],
+            "tagIds": [
+              "ra8Z47n-QwCffoTVDR19nw"
+            ],
+            "locationIds": [
+              "wa2tC2s3S0GTJi1eSYlsOg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "06:00 - 22:00",
+            "description": "ACCESS TO THE WEST FRONT & EAST FRONT GARDENS.",
+            "tags": [
+              "HCP"
+            ],
+            "locations": [
+              "ALL of Palace"
+            ],
+            "tagIds": [
+              "DonIXlE.SeqzQAe5V0GXLA"
+            ],
+            "locationIds": [
+              "WndxCJoyQ.SwnfUN88EeFg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "06:00 - 22:00",
+            "description": "ACCESS TO - Apt 14, Apt 15 Lunchrooms, Barrack Block Lunchrooms, Buttery Lunchrooms, Clore Centre, Community Room, RND, Member's Room, Privy Cafe Seating",
+            "tags": [
+              "VS Creative"
+            ],
+            "locations": [
+              "Apartment 15 / Site Office"
+            ],
+            "tagIds": [
+              "2vyf4cICQt-Nh35ALy0KbA"
+            ],
+            "locationIds": [
+              "fgAjF3huSEmWJG533DZmEg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "06:00 - 22:00",
+            "description": "Chris Burke and Mark Pearson ( Rock Safely H&S) on site.",
+            "tags": [
+              "Rock Safely"
+            ],
+            "locations": [
+              "ALL of Palace"
+            ],
+            "tagIds": [
+              "KUmb6RrWQlu94e844gom4A"
+            ],
+            "locationIds": [
+              "WndxCJoyQ.SwnfUN88EeFg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "06:00 - 22:00",
+            "description": "Crew Base available (Privy Kitchen)",
+            "tags": [
+              "HCP"
+            ],
+            "locations": [],
+            "tagIds": [
+              "DonIXlE.SeqzQAe5V0GXLA"
+            ],
+            "locationIds": []
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "06:00 - 22:00",
+            "description": "Amber - Hampton Court Palace Events Manager Onsite",
+            "tags": [
+              "HCP"
+            ],
+            "locations": [
+              "ALL of Palace"
+            ],
+            "tagIds": [
+              "DonIXlE.SeqzQAe5V0GXLA"
+            ],
+            "locationIds": [
+              "WndxCJoyQ.SwnfUN88EeFg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "06:00 - 22:00",
+            "description": "Kitty Caisley Hampton Court Palace Event Planner Onsite",
+            "tags": [
+              "HCP"
+            ],
+            "locations": [
+              "ALL of Palace"
+            ],
+            "tagIds": [
+              "DonIXlE.SeqzQAe5V0GXLA"
+            ],
+            "locationIds": [
+              "WndxCJoyQ.SwnfUN88EeFg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "06:00 - 22:00",
+            "description": "Site Crew x 4 on site",
+            "tags": [
+              "Old Skool"
+            ],
+            "locations": [
+              "Tennis Court lane"
+            ],
+            "tagIds": [
+              "XCCIvS3bRweSmHjWAx3JVQ"
+            ],
+            "locationIds": [
+              "wa2tC2s3S0GTJi1eSYlsOg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "06:00-08:00",
+            "description": "Louis to set up West Front guest arrival area with 4. xMP Squares. Liaise with Caroline re layout.",
+            "tags": [
+              "2024",
+              "VS Creative"
+            ],
+            "locations": [
+              "West Front of Palace"
+            ],
+            "tagIds": [
+              "TVzTqAp4SgWPyRCyRPWISw",
+              "2vyf4cICQt-Nh35ALy0KbA"
+            ],
+            "locationIds": [
+              "fNQ9WhVdRle3iqLvJ4Wpiw"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "06:57",
+            "description": "Sunrise - confirmed on Metcheck",
+            "tags": [],
+            "locations": [],
+            "tagIds": [],
+            "locationIds": []
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "07.00",
+            "description": "Event Prop Hire - Prop delivery for East Front Gardens ",
+            "tags": [
+              "Old Skool",
+              "Event Prop Hire"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "YtBCpOTlR2m2X-EHh0fP6g",
+              "XCCIvS3bRweSmHjWAx3JVQ"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "07:00",
+            "description": "OMD 1 (gazebo) load in",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": []
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "07:00",
+            "description": "Delivery of Selfie Props (all cheeses) and Giant Draughts for lawn between flowerpot and cheese 1 - call KERRY",
+            "tags": [
+              "Old Skool"
+            ],
+            "locations": [
+              "Trophy Gate"
+            ],
+            "tagIds": [
+              "XCCIvS3bRweSmHjWAx3JVQ"
+            ],
+            "locationIds": [
+              "KHWNal9JQy6EJLD9mjcMxg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "07:00 - 09:00",
+            "description": "Crew breakfast (Tennis Court Lane)",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "Tennis Court lane"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "wa2tC2s3S0GTJi1eSYlsOg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "07:00 - 10:00",
+            "description": "KERB trader food delivery window",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "ALL of Palace"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "WndxCJoyQ.SwnfUN88EeFg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "07:00 - 21:00",
+            "description": "Client Tea & Coffee set up (Production Office)",
+            "tags": [
+              "VS Creative"
+            ],
+            "locations": [
+              "Apartment 15 / Site Office"
+            ],
+            "tagIds": [
+              "2vyf4cICQt-Nh35ALy0KbA"
+            ],
+            "locationIds": [
+              "fgAjF3huSEmWJG533DZmEg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "07:00-21:00",
+            "description": "Crew Tea & Coffee available (Tennis Court Lane)",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "Tennis Court lane"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "wa2tC2s3S0GTJi1eSYlsOg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "07:00-21:00",
+            "description": "BB Security Tea, Coffee & Snacks available (Wren Apt, Clore)",
+            "tags": [
+              "Bloomberg Security"
+            ],
+            "locations": [
+              "Trophy Gate"
+            ],
+            "tagIds": [
+              "UFT3IwWBTa2qkK9pKncYLg"
+            ],
+            "locationIds": [
+              "KHWNal9JQy6EJLD9mjcMxg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "07:30",
+            "description": "Props for banquet table team arrives to set out props - Call Roz on arrival",
+            "tags": [],
+            "locations": [
+              "Cheese 3 - Gardens"
+            ],
+            "tagIds": [],
+            "locationIds": [
+              "c6mfO5jWQhGEZTXO-IQzkA"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "07:30",
+            "description": "Delivery (driver Robert Moss of Medieval Banquet Table and Props)",
+            "tags": [],
+            "locations": [
+              "Cheese 3 - Gardens"
+            ],
+            "tagIds": [],
+            "locationIds": [
+              "c6mfO5jWQhGEZTXO-IQzkA"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "07:30",
+            "description": "Event Prop Hire crew arrive Trophy gate to meet truck in East Front Gardens ",
+            "tags": [
+              "Event Prop Hire"
+            ],
+            "locations": [
+              "Trophy Gate"
+            ],
+            "tagIds": [
+              "YtBCpOTlR2m2X-EHh0fP6g"
+            ],
+            "locationIds": [
+              "KHWNal9JQy6EJLD9mjcMxg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "08:00",
+            "description": "Adams Gate - Traditional Fete Games company deliver",
+            "tags": [],
+            "locations": [
+              "Adams Gate"
+            ],
+            "tagIds": [],
+            "locationIds": [
+              "rfWMwhqyQZeGYkkW.NXLZQ"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "08:00",
+            "description": "Mother Flipper 1 (gazebo) load in",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "08:00",
+            "description": "Band Stage - Call time:  MC/DJ, Luke Manchester",
+            "tags": [
+              "Focus"
+            ],
+            "locations": [
+              "Cheese 4 - Gardens"
+            ],
+            "tagIds": [
+              "uBVDp08WRuedIwvSxRCn7w"
+            ],
+            "locationIds": [
+              "sJwYUzY.RXmdwTyDhG2.Qg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "08:00",
+            "description": "450 Degrees 1 (van) load in",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "08:00 - 08:30",
+            "description": "In readiness for soundchecks (1st at 8.30am)",
+            "tags": [
+              "Focus"
+            ],
+            "locations": [
+              "Cheese 4 - Gardens"
+            ],
+            "tagIds": [
+              "uBVDp08WRuedIwvSxRCn7w"
+            ],
+            "locationIds": [
+              "sJwYUzY.RXmdwTyDhG2.Qg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "08:00 - 11:50",
+            "description": "Band Stage sound checks",
+            "tags": [
+              "Focus"
+            ],
+            "locations": [
+              "Cheese 4 - Gardens"
+            ],
+            "tagIds": [
+              "uBVDp08WRuedIwvSxRCn7w"
+            ],
+            "locationIds": [
+              "sJwYUzY.RXmdwTyDhG2.Qg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "08:00 - 20:00",
+            "description": "ACCESS TO THE PALACE & ANCILIARY AREAS.",
+            "tags": [
+              "HCP"
+            ],
+            "locations": [
+              "ALL of Palace"
+            ],
+            "tagIds": [
+              "DonIXlE.SeqzQAe5V0GXLA"
+            ],
+            "locationIds": [
+              "WndxCJoyQ.SwnfUN88EeFg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "08:00-08:30",
+            "description": "Collect Eco-Furniture Wooden bar for Tiltyard Information 3 - Fork from East Garden to Tiltyard",
+            "tags": [
+              "Eco Furniture"
+            ],
+            "locations": [
+              "Tiltyard"
+            ],
+            "tagIds": [
+              "J3ZQqxaaSXiZl0M8Wu5IcQ"
+            ],
+            "locationIds": [
+              "COHsc-VZRWqGTuT9BR136A"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "08:00-12:00",
+            "description": "Charlie & 4 x MP Squares on stand by to assist Sandra/Roz/Stage Management. East Garden",
+            "tags": [
+              "VS Creative"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "2vyf4cICQt-Nh35ALy0KbA"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "08:00-12:00",
+            "description": "Louis & 4 x MP Squares on stand by to assist Sandra/Roz/Stage Management. West Front inc Tiltyard, Maze etc",
+            "tags": [
+              "VS Creative"
+            ],
+            "locations": [
+              "West Front of Palace"
+            ],
+            "tagIds": [
+              "2vyf4cICQt-Nh35ALy0KbA"
+            ],
+            "locationIds": [
+              "fNQ9WhVdRle3iqLvJ4Wpiw"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "08:01",
+            "description": "Sunbrella set up 1 x 6m Party tent (with 2 walls) at West Front Entrance for Guest Wristband issue & 1 x 3m Sunbrella for Info Point 3 at Tiltyard Cafe intersection.",
+            "tags": [
+              "Sunbrella"
+            ],
+            "locations": [
+              "West Front of Palace"
+            ],
+            "tagIds": [
+              "RxuewxyFQNWP8ywMe2sg2g"
+            ],
+            "locationIds": [
+              "fNQ9WhVdRle3iqLvJ4Wpiw"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "08:15",
+            "description": "Band Stage - Call time:  Mary Sho & band (+ 3)",
+            "tags": [
+              "Focus"
+            ],
+            "locations": [
+              "Cheese 4 - Gardens"
+            ],
+            "tagIds": [
+              "uBVDp08WRuedIwvSxRCn7w"
+            ],
+            "locationIds": [
+              "sJwYUzY.RXmdwTyDhG2.Qg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "08:30",
+            "description": "Band Stage - Call time:  Doella & Band (+2)",
+            "tags": [
+              "Focus"
+            ],
+            "locations": [
+              "Cheese 4 - Gardens"
+            ],
+            "tagIds": [
+              "uBVDp08WRuedIwvSxRCn7w"
+            ],
+            "locationIds": [
+              "sJwYUzY.RXmdwTyDhG2.Qg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "08:30",
+            "description": "Fruit placed into Green Rooms for Artist",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": []
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "8:30",
+            "description": "Band Stage - Call time:  Doella",
+            "tags": [
+              "Focus"
+            ],
+            "locations": [
+              "Cheese 4 - Gardens"
+            ],
+            "tagIds": [
+              "uBVDp08WRuedIwvSxRCn7w"
+            ],
+            "locationIds": [
+              "sJwYUzY.RXmdwTyDhG2.Qg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "08:45",
+            "description": "Performers and costumes delivery - call Sandra when in place ",
+            "tags": [],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "08:55",
+            "description": "Puppets delivered - call Roz when in place",
+            "tags": [
+              "Puppets with Guts"
+            ],
+            "locations": [
+              "Flower Pot Gate"
+            ],
+            "tagIds": [
+              "8K0G7BhyTi-q1AhDTMAZDw"
+            ],
+            "locationIds": [
+              "Ko4msj1HS2aCTlQg0iiZPA"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "09:00",
+            "description": "Install power to outside Traders in Tilt Yard cafe",
+            "tags": [
+              "AAC Power"
+            ],
+            "locations": [
+              "Tiltyard"
+            ],
+            "tagIds": [
+              "Xi8rOuVnRs-ihhFiHGv8kg"
+            ],
+            "locationIds": [
+              "COHsc-VZRWqGTuT9BR136A"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "09:00",
+            "description": "Kids Packed lunches delivered. -refrigerated Luton x2 TBC",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "09:00",
+            "description": "Kosher food delivery (Cart track/Privy Garden)",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "09:00",
+            "description": "Etherlive cable tie WiFi mast to Sunbrella tent leg.",
+            "tags": [
+              "Etherlive"
+            ],
+            "locations": [
+              "ALL of Palace"
+            ],
+            "tagIds": [
+              "LM1aMfe3SJWqFzsxPa9QAA"
+            ],
+            "locationIds": [
+              "WndxCJoyQ.SwnfUN88EeFg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "09:00",
+            "description": "Owl puppet and performers arrive - call Sandra when in place ",
+            "tags": [],
+            "locations": [
+              "Flower Pot Gate"
+            ],
+            "tagIds": [],
+            "locationIds": [
+              "Ko4msj1HS2aCTlQg0iiZPA"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "09:00",
+            "description": "Fruit to green rooms",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": []
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "09:00",
+            "description": "History Riot Performers Call ",
+            "tags": [
+              "Entertainment waifs and strays"
+            ],
+            "locations": [
+              "ALL of Palace"
+            ],
+            "tagIds": [
+              "B1V.KWFSSOKhxRchTnChHg"
+            ],
+            "locationIds": [
+              "WndxCJoyQ.SwnfUN88EeFg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "09:00",
+            "description": "Get Lost & Found team onsite",
+            "tags": [
+              "Get Lost & Found"
+            ],
+            "locations": [
+              "ALL of Palace"
+            ],
+            "tagIds": [
+              "BhNN4ujqRNyry2vk1FHrFA"
+            ],
+            "locationIds": [
+              "WndxCJoyQ.SwnfUN88EeFg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "09:00 - 22:00",
+            "description": "Falcon Waste Cleaners x 9 on site inc SUPERVISOR",
+            "tags": [
+              "Falcon waste"
+            ],
+            "locations": [
+              "ALL of Palace"
+            ],
+            "tagIds": [
+              "9EuTqFF2Ty-Gm.jEoXW9SA"
+            ],
+            "locationIds": [
+              "WndxCJoyQ.SwnfUN88EeFg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "09:00-11.30AM",
+            "description": "Performers and Entertainers arrive as per supplier list ",
+            "tags": [],
+            "locations": [
+              "Tennis Court lane"
+            ],
+            "tagIds": [],
+            "locationIds": [
+              "wa2tC2s3S0GTJi1eSYlsOg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "09:15",
+            "description": "Band Stage - Call time:  BAC Beatboxers",
+            "tags": [
+              "Focus"
+            ],
+            "locations": [],
+            "tagIds": [
+              "uBVDp08WRuedIwvSxRCn7w"
+            ],
+            "locationIds": []
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "09:45",
+            "description": "Adams Gate - Call Sandra - Deliver soft play",
+            "tags": [
+              "1st Soft Play"
+            ],
+            "locations": [
+              "Tiltyard"
+            ],
+            "tagIds": [
+              "AeDQtRY6Q42DMrBQQY4AOw"
+            ],
+            "locationIds": [
+              "COHsc-VZRWqGTuT9BR136A"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "09.00AM",
+            "description": "Call Sandra - AI Digital Selfie Activity",
+            "tags": [],
+            "locations": [],
+            "tagIds": [],
+            "locationIds": []
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "10:00",
+            "description": "Charlie and x4 MP Square remove barriers from statues in East Front Gardens x 13",
+            "tags": [
+              "MP Squares"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "ra8Z47n-QwCffoTVDR19nw"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "10:00",
+            "description": "Delivery of Crew Lunch",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "Tennis Court lane"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "wa2tC2s3S0GTJi1eSYlsOg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "10:00",
+            "description": "DEADLINE - NO FORK MOVEMENT",
+            "tags": [],
+            "locations": [
+              "ALL of Palace"
+            ],
+            "tagIds": [],
+            "locationIds": [
+              "WndxCJoyQ.SwnfUN88EeFg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "10:00",
+            "description": "Band Stage - Call time:  The WIVES (plus choreographer, wardrobe & agent)",
+            "tags": [
+              "Focus"
+            ],
+            "locations": [
+              "Cheese 4 - Gardens"
+            ],
+            "tagIds": [
+              "uBVDp08WRuedIwvSxRCn7w"
+            ],
+            "locationIds": [
+              "sJwYUzY.RXmdwTyDhG2.Qg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "10:00",
+            "description": "KERB / VSC site walk around to check all units/venue sites - Kelly, Victoria, Charlie, Toby",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "ALL of Palace"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "WndxCJoyQ.SwnfUN88EeFg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "10:20",
+            "description": "Band Stage - Call time:  Chloe",
+            "tags": [
+              "Focus"
+            ],
+            "locations": [
+              "Cheese 4 - Gardens"
+            ],
+            "tagIds": [
+              "uBVDp08WRuedIwvSxRCn7w"
+            ],
+            "locationIds": [
+              "sJwYUzY.RXmdwTyDhG2.Qg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "10:30",
+            "description": "Crew Lunch Bags Available (Privy Kitchen)",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": []
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "10:30",
+            "description": "Tattoo Hosts - call time",
+            "tags": [],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "10:30 - 15:00",
+            "description": "Crew Catering: Lunch Bags available (Tennis Court Lane)",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "Tennis Court lane"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "wa2tC2s3S0GTJi1eSYlsOg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "10:30 - 19:00",
+            "description": "Bloomberg Security on site",
+            "tags": [
+              "Bloomberg Security"
+            ],
+            "locations": [
+              "ALL of Palace"
+            ],
+            "tagIds": [
+              "UFT3IwWBTa2qkK9pKncYLg"
+            ],
+            "locationIds": [
+              "WndxCJoyQ.SwnfUN88EeFg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "10:30 - 19:30",
+            "description": "Medic on site (x 3 total)",
+            "tags": [
+              "LMS"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "pqdL.E0CS6-yuDEBde-VLA"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "10:45",
+            "description": "Kerry directs furniture to First Aid tent.",
+            "tags": [
+              "Old Skool"
+            ],
+            "locations": [],
+            "tagIds": [
+              "XCCIvS3bRweSmHjWAx3JVQ"
+            ],
+            "locationIds": []
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "10:45",
+            "description": "Band Stage - Call time:  DJ Kofi & Dr T (+2 support, Abi & Bid)",
+            "tags": [
+              "Focus"
+            ],
+            "locations": [
+              "Cheese 4 - Gardens"
+            ],
+            "tagIds": [
+              "uBVDp08WRuedIwvSxRCn7w"
+            ],
+            "locationIds": [
+              "sJwYUzY.RXmdwTyDhG2.Qg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "10.30",
+            "description": "Artist's Lunch Bags to be distributed to Green Rooms.",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "ALL of Palace"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "WndxCJoyQ.SwnfUN88EeFg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "11:00",
+            "description": "ALL TO BE SHOW READY",
+            "tags": [],
+            "locations": [
+              "ALL of Palace"
+            ],
+            "tagIds": [],
+            "locationIds": [
+              "WndxCJoyQ.SwnfUN88EeFg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "11:00 - 15:00",
+            "description": "Crew Lunch IN SHIFTS (Tennis Court Lane)",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "Tennis Court lane"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "wa2tC2s3S0GTJi1eSYlsOg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "11:00 - 19:00",
+            "description": "Toilet attendants x 4, Stand by crew x 1 on site",
+            "tags": [
+              "Falcon waste"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "9EuTqFF2Ty-Gm.jEoXW9SA"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "11:00 - 22:00",
+            "description": "Falcon Waste Cleaners x 4 on site inc SUPERVISOR",
+            "tags": [
+              "Falcon waste"
+            ],
+            "locations": [
+              "ALL of Palace"
+            ],
+            "tagIds": [
+              "9EuTqFF2Ty-Gm.jEoXW9SA"
+            ],
+            "locationIds": [
+              "WndxCJoyQ.SwnfUN88EeFg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "11:45 - 18:00",
+            "description": "Swingboats, Fairground stalls and games operating",
+            "tags": [
+              "Irvin Leisure"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "m0PZbGp4QNySZ1icC6oc9g"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "12:00",
+            "description": "Crew for Event Prop Hire breakdown arrive via Trophy Gate",
+            "tags": [
+              "Old Skool"
+            ],
+            "locations": [],
+            "tagIds": [
+              "XCCIvS3bRweSmHjWAx3JVQ"
+            ],
+            "locationIds": []
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "12:00 - 18:00",
+            "description": "Local Crew x 4 on site - 6 hours (no fork lift drivers)",
+            "tags": [
+              "MP Squares"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "ra8Z47n-QwCffoTVDR19nw"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "12:00-12:30",
+            "description": "Trayed Food Service & Hawkers live for initial rush (30m)",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "ALL of Palace"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "WndxCJoyQ.SwnfUN88EeFg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "12:00-18:00",
+            "description": "EVENT LIVE - Guest arrivals",
+            "tags": [],
+            "locations": [
+              "ALL of Palace"
+            ],
+            "tagIds": [],
+            "locationIds": [
+              "WndxCJoyQ.SwnfUN88EeFg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "12:00-18:00",
+            "description": "NO VEHICLE MOVEMENTS IN HOME PARK ",
+            "tags": [],
+            "locations": [
+              "HCP Home Park"
+            ],
+            "tagIds": [],
+            "locationIds": [
+              "gMLEotaySbO6n3souIRTGw"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "15:30-20:00",
+            "description": "Entertainers, Musicians and Performers depart ",
+            "tags": [],
+            "locations": [
+              "ALL of Palace"
+            ],
+            "tagIds": [],
+            "locationIds": [
+              "WndxCJoyQ.SwnfUN88EeFg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "16:00",
+            "description": "BBG Security Lunchbags x29 (Wren Apartment, Clore)",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": []
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "16:00 - 22:00",
+            "description": "Charlie Jenkins Hampton Court Palace Event Team Onsite",
+            "tags": [
+              "HCP"
+            ],
+            "locations": [
+              "ALL of Palace"
+            ],
+            "tagIds": [
+              "DonIXlE.SeqzQAe5V0GXLA"
+            ],
+            "locationIds": [
+              "WndxCJoyQ.SwnfUN88EeFg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "18:00",
+            "description": "Crew Dinner Delivery (Tennis Court Lane)",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "Tennis Court lane"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "wa2tC2s3S0GTJi1eSYlsOg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "18:00 - 22:00",
+            "description": "Traffic Marshalls on site",
+            "tags": [
+              "KRM"
+            ],
+            "locations": [
+              "ALL of Palace"
+            ],
+            "tagIds": [
+              "uooQQ5HWTN6NBJXL6tDNKA"
+            ],
+            "locationIds": [
+              "WndxCJoyQ.SwnfUN88EeFg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "18:00 -22:00",
+            "description": "Local Crew x 4, Crew Chief x1 & Forklift drivers x2 on site - 4 hours",
+            "tags": [
+              "MP Squares"
+            ],
+            "locations": [],
+            "tagIds": [
+              "ra8Z47n-QwCffoTVDR19nw"
+            ],
+            "locationIds": []
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "18:00-18:30",
+            "description": "EVENT END - Guest departures",
+            "tags": [
+              "VS Creative"
+            ],
+            "locations": [
+              "ALL of Palace"
+            ],
+            "tagIds": [
+              "2vyf4cICQt-Nh35ALy0KbA"
+            ],
+            "locationIds": [
+              "WndxCJoyQ.SwnfUN88EeFg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "18:30",
+            "description": "Call Sandra - Collection soft play ",
+            "tags": [
+              "1st Soft Play"
+            ],
+            "locations": [
+              "Adams Gate"
+            ],
+            "tagIds": [
+              "AeDQtRY6Q42DMrBQQY4AOw"
+            ],
+            "locationIds": [
+              "rfWMwhqyQZeGYkkW.NXLZQ"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "18:30",
+            "description": "Security sweep - HCP and Bloomberg to confirm complete - ALL GUESTS DEPARTED",
+            "tags": [
+              "Bloomberg"
+            ],
+            "locations": [
+              "ALL of Palace"
+            ],
+            "tagIds": [
+              "1L6LKPbJRsS4epdntVpwtg"
+            ],
+            "locationIds": [
+              "WndxCJoyQ.SwnfUN88EeFg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "18:30",
+            "description": "Puppets vehicle departs - call Roz",
+            "tags": [],
+            "locations": [
+              "Flower Pot Gate"
+            ],
+            "tagIds": [],
+            "locationIds": [
+              "Ko4msj1HS2aCTlQg0iiZPA"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "18:30",
+            "description": "Call Sandra - AI Digital Selfie Activity",
+            "tags": [],
+            "locations": [],
+            "tagIds": [],
+            "locationIds": []
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "18:31",
+            "description": "Charlie and MP Square - Install protective barriers from statues in East Front Gardens x 13",
+            "tags": [
+              "MP Squares"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "ra8Z47n-QwCffoTVDR19nw"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "18:31",
+            "description": "Focus pack up all AV from Bandstand",
+            "tags": [
+              "Focus"
+            ],
+            "locations": [
+              "Cheese 4 - Gardens"
+            ],
+            "tagIds": [
+              "uBVDp08WRuedIwvSxRCn7w"
+            ],
+            "locationIds": [
+              "sJwYUzY.RXmdwTyDhG2.Qg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "18:31",
+            "description": "Feminine Products cleared from loos",
+            "tags": [
+              "Just Loos"
+            ],
+            "locations": [
+              "ALL of Palace"
+            ],
+            "tagIds": [
+              "wHm3sTOmTQaqfcNZK1Qdyg"
+            ],
+            "locationIds": [
+              "WndxCJoyQ.SwnfUN88EeFg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "18:31 - 22:00",
+            "description": "All traders depart (except bar and OMD containers) - ALL ARRIVE THROUGH CART TRACK (apart from Tilt Yard x2 traders) - LEAVE FLOWERPOT GATE",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "Cart Track Gate"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "avDh6Lx0QwG941DZ.ed0Og"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "18:31-19:30",
+            "description": "Louis and MP Squares collect wooden bar from Tiltyard, Info Point 3 with forks take to East Garden for Eco Funriture collection",
+            "tags": [
+              "MP Squares"
+            ],
+            "locations": [
+              "Tiltyard"
+            ],
+            "tagIds": [
+              "ra8Z47n-QwCffoTVDR19nw"
+            ],
+            "locationIds": [
+              "COHsc-VZRWqGTuT9BR136A"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "18:48",
+            "description": "Sunset - confirmed on Metcheck",
+            "tags": [],
+            "locations": [],
+            "tagIds": [],
+            "locationIds": []
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "19:00",
+            "description": "2 x toilet units depart",
+            "tags": [
+              "Just Loos"
+            ],
+            "locations": [
+              "Cart Track Gate"
+            ],
+            "tagIds": [
+              "wHm3sTOmTQaqfcNZK1Qdyg"
+            ],
+            "locationIds": [
+              "avDh6Lx0QwG941DZ.ed0Og"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "19:00",
+            "description": "Performers and costumes leave - call Sandra ",
+            "tags": [],
+            "locations": [
+              "ALL of Palace"
+            ],
+            "tagIds": [],
+            "locationIds": [
+              "WndxCJoyQ.SwnfUN88EeFg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "19:00",
+            "description": "Owl puppet leaves - call Sandra",
+            "tags": [],
+            "locations": [
+              "Flower Pot Gate"
+            ],
+            "tagIds": [],
+            "locationIds": [
+              "Ko4msj1HS2aCTlQg0iiZPA"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "19:00",
+            "description": "De-rig/load out/depart of Medieval banquet photo-op table",
+            "tags": [],
+            "locations": [
+              "Cart Track Gate"
+            ],
+            "tagIds": [],
+            "locationIds": [
+              "avDh6Lx0QwG941DZ.ed0Og"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "19:00",
+            "description": "Etherlive remove WiFi mast from Sunbrella tent leg.",
+            "tags": [
+              "Etherlive"
+            ],
+            "locations": [
+              "West Front of Palace"
+            ],
+            "tagIds": [
+              "LM1aMfe3SJWqFzsxPa9QAA"
+            ],
+            "locationIds": [
+              "fNQ9WhVdRle3iqLvJ4Wpiw"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "19:00",
+            "description": "Collect giant games from Tiltyard Lawn.",
+            "tags": [],
+            "locations": [
+              "Adams Gate"
+            ],
+            "tagIds": [],
+            "locationIds": [
+              "rfWMwhqyQZeGYkkW.NXLZQ"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "19:00-20:30",
+            "description": "Crew dinner IN SHIFTS (Tennis Court Lane)",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "Tennis Court lane"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "wa2tC2s3S0GTJi1eSYlsOg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "19:15",
+            "description": "De-rig team return - Banquet table pack up and leave- Call Roz on arrival",
+            "tags": [],
+            "locations": [
+              "Cart Track Gate"
+            ],
+            "tagIds": [],
+            "locationIds": [
+              "avDh6Lx0QwG941DZ.ed0Og"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "19:30",
+            "description": "Medic - LMS bring in vehicle to load up and depart",
+            "tags": [
+              "LMS"
+            ],
+            "locations": [
+              "Cart Track Gate"
+            ],
+            "tagIds": [
+              "pqdL.E0CS6-yuDEBde-VLA"
+            ],
+            "locationIds": [
+              "avDh6Lx0QwG941DZ.ed0Og"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "19:30-21:00",
+            "description": "Louis to dismantle West Front guest arrival area with 4 x MP Squares. Liaise with Caroline re pack up.",
+            "tags": [
+              "MP Squares"
+            ],
+            "locations": [
+              "West Front of Palace"
+            ],
+            "tagIds": [
+              "ra8Z47n-QwCffoTVDR19nw"
+            ],
+            "locationIds": [
+              "fNQ9WhVdRle3iqLvJ4Wpiw"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "21:59",
+            "description": "Focus depart with all AV",
+            "tags": [
+              "Focus"
+            ],
+            "locations": [
+              "Cart Track Gate"
+            ],
+            "tagIds": [
+              "uBVDp08WRuedIwvSxRCn7w"
+            ],
+            "locationIds": [
+              "avDh6Lx0QwG941DZ.ed0Og"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Sunday, 28 September 2025",
+            "time": "22:00",
+            "description": "END OF DAY - ALL CREW & SUPPLIERS OFF SITE",
+            "tags": [
+              "VS Creative"
+            ],
+            "locations": [
+              "ALL of Palace"
+            ],
+            "tagIds": [
+              "2vyf4cICQt-Nh35ALy0KbA"
+            ],
+            "locationIds": [
+              "WndxCJoyQ.SwnfUN88EeFg"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "title": "Monday, 29 September 2025",
+      "metadata": "Derig",
+      "entries": [
+        {
+          "fields": {
+            "date": "Monday, 29 September 2025",
+            "time": "06:59",
+            "description": "Sunrise - confirmed on Metcheck",
+            "tags": [],
+            "locations": [],
+            "tagIds": [],
+            "locationIds": []
+          }
+        },
+        {
+          "fields": {
+            "date": "Monday, 29 September 2025",
+            "time": "07:00 - 17:00",
+            "description": "Falcon Waste Cleaners x 4 on site inc SUPERVISOR",
+            "tags": [
+              "Falcon waste"
+            ],
+            "locations": [
+              "ALL of Palace"
+            ],
+            "tagIds": [
+              "9EuTqFF2Ty-Gm.jEoXW9SA"
+            ],
+            "locationIds": [
+              "WndxCJoyQ.SwnfUN88EeFg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Monday, 29 September 2025",
+            "time": "08:00",
+            "description": "Kerb Catering Onsite to set up crew catering (Tennis Court Lane)",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "Tennis Court lane"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "wa2tC2s3S0GTJi1eSYlsOg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Monday, 29 September 2025",
+            "time": "08:00 - 17:00",
+            "description": "Jen Williamson Hampton Court Palace Event Team Onsite",
+            "tags": [
+              "HCP"
+            ],
+            "locations": [],
+            "tagIds": [
+              "DonIXlE.SeqzQAe5V0GXLA"
+            ],
+            "locationIds": []
+          }
+        },
+        {
+          "fields": {
+            "date": "Monday, 29 September 2025",
+            "time": "08:30 - 17:00",
+            "description": "Traffic Marshalls on site",
+            "tags": [
+              "KRM"
+            ],
+            "locations": [
+              "ALL of Palace"
+            ],
+            "tagIds": [
+              "uooQQ5HWTN6NBJXL6tDNKA"
+            ],
+            "locationIds": [
+              "WndxCJoyQ.SwnfUN88EeFg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Monday, 29 September 2025",
+            "time": "08:30 - 17:00",
+            "description": "Chris Burke and Mark Pearson ( Rock Safely H&S) on site.",
+            "tags": [
+              "Rock Safely"
+            ],
+            "locations": [
+              "ALL of Palace"
+            ],
+            "tagIds": [
+              "KUmb6RrWQlu94e844gom4A"
+            ],
+            "locationIds": [
+              "WndxCJoyQ.SwnfUN88EeFg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Monday, 29 September 2025",
+            "time": "09:00",
+            "description": "Van X collects",
+            "tags": [],
+            "locations": [],
+            "tagIds": [],
+            "locationIds": []
+          }
+        },
+        {
+          "fields": {
+            "date": "Monday, 29 September 2025",
+            "time": "09:00",
+            "description": "Ancient Armouries collect medieval tents.",
+            "tags": [
+              "Ancient Armouries"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "bIXegsdoQEaNvahG-ttlaA"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Monday, 29 September 2025",
+            "time": "09:00",
+            "description": "Graphics Vans to Flower Pot Gate, Adams Gate, Trophy Gate for De-rigg.",
+            "tags": [
+              "Bloomberg"
+            ],
+            "locations": [
+              "ALL of Palace"
+            ],
+            "tagIds": [
+              "1L6LKPbJRsS4epdntVpwtg"
+            ],
+            "locationIds": [
+              "WndxCJoyQ.SwnfUN88EeFg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Monday, 29 September 2025",
+            "time": "09:00 - 17:00",
+            "description": "ACCESS TO ALL AREAS - PALACE CLOSED TO THE PUBLIC (No barrier line in front of palace required)",
+            "tags": [],
+            "locations": [],
+            "tagIds": [],
+            "locationIds": []
+          }
+        },
+        {
+          "fields": {
+            "date": "Monday, 29 September 2025",
+            "time": "09:00 - 17:00",
+            "description": "Site Crew x 4 on site",
+            "tags": [
+              "Old Skool"
+            ],
+            "locations": [
+              "ALL of Palace"
+            ],
+            "tagIds": [
+              "XCCIvS3bRweSmHjWAx3JVQ"
+            ],
+            "locationIds": [
+              "WndxCJoyQ.SwnfUN88EeFg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Monday, 29 September 2025",
+            "time": "09:00 - 17:00",
+            "description": "ACCESS - to Apt 14, Apt 15 Lunchrooms, Barrack Block Lunchrooms, Buttery Lunchrooms, Clore Centre, Community Room, RND, Member's Room, Privy Cafe Seating",
+            "tags": [],
+            "locations": [
+              "ALL of Palace"
+            ],
+            "tagIds": [],
+            "locationIds": [
+              "WndxCJoyQ.SwnfUN88EeFg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Monday, 29 September 2025",
+            "time": "09:00 - 17:00",
+            "description": "Kitty Caisley Hampton Court Palace Event Planner Onsite",
+            "tags": [
+              "HCP"
+            ],
+            "locations": [
+              "ALL of Palace"
+            ],
+            "tagIds": [
+              "DonIXlE.SeqzQAe5V0GXLA"
+            ],
+            "locationIds": [
+              "WndxCJoyQ.SwnfUN88EeFg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Monday, 29 September 2025",
+            "time": "09:00 - 1700",
+            "description": "Local Crew x 12 on site - 8 hours  (Inc 2 x fork lift drivers)",
+            "tags": [
+              "MP Squares"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "ra8Z47n-QwCffoTVDR19nw"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Monday, 29 September 2025",
+            "time": "09:00-11:00",
+            "description": "Bandstand dismantled and loaded out.",
+            "tags": [
+              "Victorian Bandstands Ltd"
+            ],
+            "locations": [
+              "Cart Track Gate"
+            ],
+            "tagIds": [
+              "fJNbTt16QlCzszJua0jVOQ"
+            ],
+            "locationIds": [
+              "avDh6Lx0QwG941DZ.ed0Og"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Monday, 29 September 2025",
+            "time": "09:00-17:00",
+            "description": "Crew Tea & Coffee (Tennis Court Lane)",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "Tennis Court lane"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "wa2tC2s3S0GTJi1eSYlsOg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Monday, 29 September 2025",
+            "time": "09:01 - 12:00",
+            "description": "Event flag hire collect flags, boxes, bunting, shepherd's crooks.",
+            "tags": [
+              "Old Skool",
+              "Event Flag Hire"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "yJ7dfj2NQc-Rl65szqrp6g",
+              "XCCIvS3bRweSmHjWAx3JVQ"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Monday, 29 September 2025",
+            "time": "09:30",
+            "description": "HCP FIRE ALARM TEST",
+            "tags": [
+              "HCP"
+            ],
+            "locations": [
+              "ALL of Palace"
+            ],
+            "tagIds": [
+              "DonIXlE.SeqzQAe5V0GXLA"
+            ],
+            "locationIds": [
+              "WndxCJoyQ.SwnfUN88EeFg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Monday, 29 September 2025",
+            "time": "10:00",
+            "description": "Swing Boats collected",
+            "tags": [
+              "Irvin Leisure"
+            ],
+            "locations": [
+              "Cart Track Gate"
+            ],
+            "tagIds": [
+              "m0PZbGp4QNySZ1icC6oc9g"
+            ],
+            "locationIds": [
+              "avDh6Lx0QwG941DZ.ed0Og"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Monday, 29 September 2025",
+            "time": "10:00",
+            "description": "Fairground stalls collected",
+            "tags": [
+              "Irvin Leisure"
+            ],
+            "locations": [
+              "Cheese 4 - Gardens"
+            ],
+            "tagIds": [
+              "m0PZbGp4QNySZ1icC6oc9g"
+            ],
+            "locationIds": [
+              "sJwYUzY.RXmdwTyDhG2.Qg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Monday, 29 September 2025",
+            "time": "10:00",
+            "description": "OMD Containers collected (Hyab)",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Monday, 29 September 2025",
+            "time": "10:00",
+            "description": "Eco collect furniture 1/3 - Confirm Vehicle - Not Arctic Truck",
+            "tags": [
+              "Eco Furniture"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "J3ZQqxaaSXiZl0M8Wu5IcQ"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Monday, 29 September 2025",
+            "time": "10:00",
+            "description": "Eco Furniture collect furniture 3/3",
+            "tags": [
+              "Eco Furniture"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "J3ZQqxaaSXiZl0M8Wu5IcQ"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Monday, 29 September 2025",
+            "time": "10:00",
+            "description": "Eco Furniture collect furniture 2/3. Eco provide their own de-rig team",
+            "tags": [
+              "Eco Furniture"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "J3ZQqxaaSXiZl0M8Wu5IcQ"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Monday, 29 September 2025",
+            "time": "10:00",
+            "description": "Sunbrella load out - Van 1, 2, 3",
+            "tags": [
+              "Sunbrella"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "RxuewxyFQNWP8ywMe2sg2g"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Monday, 29 September 2025",
+            "time": "10:00",
+            "description": "GJS Storage collect Bloomberg Furniture",
+            "tags": [
+              "GJS"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "3wVZufekRG2owppu2BaWoQ"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Monday, 29 September 2025",
+            "time": "10:00",
+            "description": "Disco bus departs",
+            "tags": [
+              "The Bug Club"
+            ],
+            "locations": [
+              "Cheese 3 - Gardens"
+            ],
+            "tagIds": [
+              "7fVY8Wi3RTijUV1.xYqh9g"
+            ],
+            "locationIds": [
+              "c6mfO5jWQhGEZTXO-IQzkA"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Monday, 29 September 2025",
+            "time": "10:00",
+            "description": "GJS Collection",
+            "tags": [
+              "GJS"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "3wVZufekRG2owppu2BaWoQ"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Monday, 29 September 2025",
+            "time": "11:00",
+            "description": "Crew Lunch Delivery (Tennis Court Lane)",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "Tennis Court lane"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "wa2tC2s3S0GTJi1eSYlsOg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Monday, 29 September 2025",
+            "time": "11:00",
+            "description": "Locals to pack up x11 KERB 3x3m gazebos with sides and store in Mrs Neals",
+            "tags": [
+              "Old Skool"
+            ],
+            "locations": [
+              "Mrs Neales Yard"
+            ],
+            "tagIds": [
+              "XCCIvS3bRweSmHjWAx3JVQ"
+            ],
+            "locationIds": [
+              "pk5s0iFQQqiuDO01uGxmSA"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Monday, 29 September 2025",
+            "time": "12:00",
+            "description": "Collection of Giant Draughts and selfie props from lawns - Call KERRY",
+            "tags": [
+              "Old Skool"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "XCCIvS3bRweSmHjWAx3JVQ"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Monday, 29 September 2025",
+            "time": "12:00",
+            "description": "Bins, Compactor & Skip collected (full) - Before Noon",
+            "tags": [
+              "Falcon waste"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "9EuTqFF2Ty-Gm.jEoXW9SA"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Monday, 29 September 2025",
+            "time": "12:00",
+            "description": "Call Sandra - Rent Event collect - driver Kevin",
+            "tags": [
+              "Rent Event"
+            ],
+            "locations": [],
+            "tagIds": [
+              "VfsVkJyvTRKz4ixqK-L0CQ"
+            ],
+            "locationIds": []
+          }
+        },
+        {
+          "fields": {
+            "date": "Monday, 29 September 2025",
+            "time": "12:00",
+            "description": "Prop collection from selfie area (Cheese lane 2-3). Refer to Sandra/Kelly",
+            "tags": [],
+            "locations": [
+              "Cheese 3 - Gardens"
+            ],
+            "tagIds": [],
+            "locationIds": [
+              "c6mfO5jWQhGEZTXO-IQzkA"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Monday, 29 September 2025",
+            "time": "12:00 - 14:00",
+            "description": "Crew Lunch (Tennis Court Lane)",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "Tennis Court lane"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "wa2tC2s3S0GTJi1eSYlsOg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Monday, 29 September 2025",
+            "time": "13:00",
+            "description": "Toilets collected",
+            "tags": [
+              "Just Loos"
+            ],
+            "locations": [
+              "Cart Track Gate"
+            ],
+            "tagIds": [
+              "wHm3sTOmTQaqfcNZK1Qdyg"
+            ],
+            "locationIds": [
+              "avDh6Lx0QwG941DZ.ed0Og"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Monday, 29 September 2025",
+            "time": "13:00",
+            "description": "Generators / cable / distro collected 3 / 3",
+            "tags": [
+              "AAC Power"
+            ],
+            "locations": [
+              "Cart Track Gate"
+            ],
+            "tagIds": [
+              "Xi8rOuVnRs-ihhFiHGv8kg"
+            ],
+            "locationIds": [
+              "avDh6Lx0QwG941DZ.ed0Og"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Monday, 29 September 2025",
+            "time": "13:00",
+            "description": "KERB warehouse collection #1",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Monday, 29 September 2025",
+            "time": "13:00",
+            "description": "KERB warehouse collection #2",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Monday, 29 September 2025",
+            "time": "14:00",
+            "description": "Container bars collected (Hiab)",
+            "tags": [
+              "KERB"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "a.A-QALuWT46KS8nX8kh8wg"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Monday, 29 September 2025",
+            "time": "14:00",
+            "description": "Van X collects",
+            "tags": [],
+            "locations": [],
+            "tagIds": [],
+            "locationIds": []
+          }
+        },
+        {
+          "fields": {
+            "date": "Monday, 29 September 2025",
+            "time": "14:00",
+            "description": "Generators / cable / distro collected 2 / 3",
+            "tags": [
+              "AAC Power"
+            ],
+            "locations": [],
+            "tagIds": [
+              "Xi8rOuVnRs-ihhFiHGv8kg"
+            ],
+            "locationIds": []
+          }
+        },
+        {
+          "fields": {
+            "date": "Monday, 29 September 2025",
+            "time": "14:00",
+            "description": "Generators / cable / distro collected 1 / 3",
+            "tags": [
+              "AAC Power"
+            ],
+            "locations": [],
+            "tagIds": [
+              "Xi8rOuVnRs-ihhFiHGv8kg"
+            ],
+            "locationIds": []
+          }
+        },
+        {
+          "fields": {
+            "date": "Monday, 29 September 2025",
+            "time": "15:00",
+            "description": "Toilets collected",
+            "tags": [
+              "Just Loos"
+            ],
+            "locations": [
+              "Cart Track Gate"
+            ],
+            "tagIds": [
+              "wHm3sTOmTQaqfcNZK1Qdyg"
+            ],
+            "locationIds": [
+              "avDh6Lx0QwG941DZ.ed0Og"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Monday, 29 September 2025",
+            "time": "15:00",
+            "description": "Focus Luton van on site for load out of Production items from Production/Site offices, plus Clore Centre.  Park and wait on site.",
+            "tags": [
+              "Focus"
+            ],
+            "locations": [
+              "Tennis Court lane"
+            ],
+            "tagIds": [
+              "uBVDp08WRuedIwvSxRCn7w"
+            ],
+            "locationIds": [
+              "wa2tC2s3S0GTJi1eSYlsOg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Monday, 29 September 2025",
+            "time": "16:00",
+            "description": "Buggies collected",
+            "tags": [
+              "OBH Buggy Hire"
+            ],
+            "locations": [
+              "Tennis Court lane"
+            ],
+            "tagIds": [
+              "WOjWnWsRRO24ocE7GkPFTA"
+            ],
+            "locationIds": [
+              "wa2tC2s3S0GTJi1eSYlsOg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Monday, 29 September 2025",
+            "time": "16:00",
+            "description": "Charle Wilson collect fencing",
+            "tags": [
+              "Charles Wilson"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "cS4Ig7XyQaGQJeHy5LVd1Q"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Monday, 29 September 2025",
+            "time": "17:00",
+            "description": "Charles Wilson collect forks",
+            "tags": [
+              "Charles Wilson"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "cS4Ig7XyQaGQJeHy5LVd1Q"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Monday, 29 September 2025",
+            "time": "17:00",
+            "description": "Focus Luton van departs site.",
+            "tags": [
+              "Focus"
+            ],
+            "locations": [
+              "Trophy Gate"
+            ],
+            "tagIds": [
+              "uBVDp08WRuedIwvSxRCn7w"
+            ],
+            "locationIds": [
+              "KHWNal9JQy6EJLD9mjcMxg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Monday, 29 September 2025",
+            "time": "17:30",
+            "description": "Final Delapse Checks - Kitty and Charlie",
+            "tags": [
+              "HCP"
+            ],
+            "locations": [
+              "East Front Palace Gardens"
+            ],
+            "tagIds": [
+              "DonIXlE.SeqzQAe5V0GXLA"
+            ],
+            "locationIds": [
+              "BCSTWTmNQjuZfZGD7goaIg"
+            ]
+          }
+        },
+        {
+          "fields": {
+            "date": "Monday, 29 September 2025",
+            "time": "18:00",
+            "description": "V.S.Creative Off Site - Charlie",
+            "tags": [
+              "VS Creative"
+            ],
+            "locations": [],
+            "tagIds": [
+              "2vyf4cICQt-Nh35ALy0KbA"
+            ],
+            "locationIds": []
+          }
+        },
+        {
+          "fields": {
+            "date": "Monday, 29 September 2025",
+            "time": "18:46",
+            "description": "Sunset - confirmed on Metcheck",
+            "tags": [],
+            "locations": [],
+            "tagIds": [],
+            "locationIds": []
+          }
+        }
+      ]
+    }
+  ]
+}
