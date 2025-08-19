@@ -66,7 +66,7 @@
         {
           "fields": {
             "date": "Sunday, 12 April 2026",
-            "description": "Test",
+            "description": "Highlight Test",
             "tags": [],
             "locations": " ",
             "tagIds": [],
@@ -88,7 +88,7 @@
               "AVS",
               "Tenancy"
             ],
-            "locations": "Wailea Haleakala Ballroom",
+            "locations": "NEW item",
             "tagIds": [
               "uCTLNpKsSuencYzskshkmQ",
               "CDul-z88Rp2xFAxC5OGegA"
@@ -97,13 +97,14 @@
               "MzYNJJMTTiuA0oIby3gybQ",
               "nzIQoxVXZlt48I6vecS7"
             ]
-          }
+          },
+          "format": "new"
         },
         {
           "fields": {
             "date": "Monday, 13 April 2026",
             "time": "08:00 - 18:00",
-            "description": "Circle Lounge Install Day 2/2",
+            "description": "NEW - Circle Lounge Install Day 2/2",
             "tags": [],
             "locations": "Wailea Hibiscus (Circle Lounge)",
             "tagIds": [],
@@ -111,7 +112,8 @@
               "MzYNJJMTTiuA0oIby3gybQ",
               "PzaCV8lFEIaqUkipIvHk"
             ]
-          }
+          },
+          "format": "new"
         }
       ]
     },
@@ -123,7 +125,7 @@
           "fields": {
             "date": "Tuesday, 14 April 2026",
             "time": "00:01",
-            "description": "Access to Haleakala 1,4,5",
+            "description": "PAST - Access to Haleakala 1,4,5",
             "tags": [
               "Tenancy"
             ],
@@ -135,13 +137,14 @@
               "MzYNJJMTTiuA0oIby3gybQ",
               "nzIQoxVXZlt48I6vecS7"
             ]
-          }
+          },
+          "format": "past"
         },
         {
           "fields": {
             "date": "Tuesday, 14 April 2026",
             "time": "08:00",
-            "description": "Carpenters from on stage arrive on site ",
+            "description": "IMPORTANT - Carpenters from on stage arrive on site ",
             "tags": [
               "OnStage"
             ],
@@ -150,7 +153,8 @@
               "8gHYYqGJQjOBBoOCns1UhQ"
             ],
             "locationIds": []
-          }
+          },
+          "format": "important"
         },
         {
           "fields": {
@@ -202,7 +206,7 @@
           "fields": {
             "date": "Wednesday, 15 April 2026",
             "time": "08:00",
-            "description": "12 x Local Hands",
+            "description": "IMPORTANT 12 x Local Hands",
             "tags": [
               "Locals",
               "Encore"
@@ -216,7 +220,8 @@
               "MzYNJJMTTiuA0oIby3gybQ",
               "nzIQoxVXZlt48I6vecS7"
             ]
-          }
+          },
+          "format": "important"
         },
         {
           "fields": {

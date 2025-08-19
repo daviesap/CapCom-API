@@ -185,11 +185,10 @@ export const generatePdfBuffer = async (jsonInput = null) => {
     }
 
     for (const entry of group.entries) {
-      //const styleKey = entry.style || 'default'; OLD LINE
-      const styleKey = entry.format || 'default';
-      //const rowStyle = jsonData.styles?.entries?.[styleKey] || defaultStyle; OLD LINE
-      const rowStyle = jsonData.styles?.row?.[styleKey] || defaultStyle;
-      const { lineHeight: rLH, fontSize: rFS, font: rF, color: rC } = resolveStyle(rowStyle, boldFont, regularFont, italicFont, boldItalicFont, lineSpacing);
+      // PDFs: ignore per-row `format` (used for HTML only). Always use default row style.
+      const rowStyle = defaultStyle;
+      const { lineHeight: rLH, fontSize: rFS, font: rF, color: rC } =
+        resolveStyle(rowStyle, boldFont, regularFont, italicFont, boldItalicFont, lineSpacing);
 
       const wrapped = columns.map(col => {
         let txt = entry.fields[col.field];

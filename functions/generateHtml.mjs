@@ -130,13 +130,31 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
 
     const rowsHtml = rows.map(r => {
       const data = (r && typeof r === "object") ? (r.fields ?? r.rows ?? r) : {};
+
+      // Determine row class from format/status
+      const fmtRaw = r && (r.format ?? r.style ?? r.status);
+      const fmt = typeof fmtRaw === 'string' ? fmtRaw.toLowerCase() : 'default';
+      const classMap = {
+        default: 'row-default',
+        new: 'row-new',
+        important: 'row-important',
+        past: 'row-past',
+      };
+      const rowClassName = classMap[fmt] || 'row-default';
+
+      // Build cells; append NEW pill to description when row is "new"
       const cells = columnKeys.map((k, i) => {
         const w = htmlWidths[i];
         const widthAttr = Number.isFinite(w) ? ` style="width:${w.toFixed(4)}%"` : "";
-        return `<td${widthAttr}>${escapeHtml(formatValue(data?.[k]))}</td>`;
+        const value = formatValue(data?.[k]);
+        const safe = escapeHtml(value);
+        const withBadge = (rowClassName === 'row-new' && k === 'description')
+          ? `${safe} <span class="badge">NEW</span>`
+          : safe;
+        return `<td${widthAttr}>${withBadge}</td>`;
       }).join("");
-      const rowClass = r && r.format === "highlight" ? ' class="row-highlight"' : "";
-      return `<tr${rowClass}>${cells}</tr>`;
+
+      return `<tr class="${rowClassName}">${cells}</tr>`;
     }).join("");
 
     return `
