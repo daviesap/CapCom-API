@@ -135,7 +135,8 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
         const widthAttr = Number.isFinite(w) ? ` style="width:${w.toFixed(4)}%"` : "";
         return `<td${widthAttr}>${escapeHtml(formatValue(data?.[k]))}</td>`;
       }).join("");
-      return `<tr>${cells}</tr>`;
+      const rowClass = r && r.format === "highlight" ? ' class="row-highlight"' : "";
+      return `<tr${rowClass}>${cells}</tr>`;
     }).join("");
 
     return `

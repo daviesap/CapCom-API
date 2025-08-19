@@ -214,12 +214,7 @@ export const generatePdfBuffer = async (jsonInput = null) => {
       const rowH = Math.max(...wrapped.map(w => w.length)) * rLH;
       checkBreak(rowH);
 
-      if (rowStyle.backgroundColour) {
-        const bg = rgbHex(rowStyle.backgroundColour);
-        const totalW = columns.reduce((sum, c) => sum + (c.width || DEFAULT_COLUMN_WIDTH), 0);
-        const rectY = y - rowH - 3;
-        currentPage.drawRectangle({ x: leftMargin, y: rectY, width: totalW, height: rowH, color: bg });
-      }
+      // Row background highlighting intentionally disabled (was drawn behind row text if `rowStyle.backgroundColour`)
 
       let xStart = leftMargin;
       for (const lines of wrapped) {
