@@ -99,7 +99,7 @@ export default function StyleSection({ sectionKey, sectionData, onSave }) {
       },
     };
 
-    const base = `row.${variantKey}`;
+    const base = `${variantKey}`;
 
     return (
       <div key={variantKey} className="border rounded p-4 bg-gray-50 space-y-4">
@@ -232,7 +232,7 @@ export default function StyleSection({ sectionKey, sectionData, onSave }) {
               type="number"
               className="border rounded px-2 py-1 w-28"
               value={localData.lineSpacing ?? 2}
-              onChange={(e) => handleChange("row.lineSpacing".replace("row.", "lineSpacing"), number(e.target.value, 2))}
+              onChange={(e) => handleChange("lineSpacing", number(e.target.value, 2))}
             />
           </div>
 
