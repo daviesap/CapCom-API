@@ -39,22 +39,46 @@
         "fontSize": 10,
         "fontStyle": "italic",
         "backgroundColour": "#FFFFFF",
-        "fontColour": "#000000"
+        "fontColour": "#000000",
+        "underline": {
+          "enabled": true,
+          "width": 50,
+          "thickness": 0.75,
+          "colour": "#000000"
+        }
       },
       "important": {
         "fontSize": 10,
         "fontStyle": "italic",
-        "fontColour": "red"
+        "fontColour": "#FF0000",
+        "underline": {
+          "enabled": true,
+          "width": 50,
+          "thickness": 0.75,
+          "colour": "#FF0000"
+        }
       },
       "new": {
         "fontSize": 10,
         "fontStyle": "normal",
-        "fontColour": "green"
+        "fontColour": "#008000",
+        "underline": {
+          "enabled": true,
+          "width": 50,
+          "thickness": 0.75,
+          "colour": "#008000"
+        }
       },
       "past": {
         "fontSize": 10,
         "fontStyle": "normal",
-        "fontColour": "blue"
+        "fontColour": "#0000FF",
+        "underline": {
+          "enabled": true,
+          "width": 50,
+          "thickness": 0.75,
+          "colour": "#0000FF"
+        }
       }
     }
   },
@@ -104,6 +128,3 @@
     }
   ]
 }
-
-
-
