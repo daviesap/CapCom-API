@@ -20,13 +20,29 @@ const DEFAULT_COLUMN_WIDTH = 100;
 // Right-side padding inside each cell to prevent text touching the cell edge (points)
 const CELL_PADDING = 5;
 
-function rgbHex(hex) {
-  const bigint = parseInt(hex.replace('#', ''), 16);
+function rgbHex(input) {
+  if (!input || typeof input !== 'string') return rgb(0, 0, 0);
+  let v = input.trim();
+  if (!v.startsWith('#')) return rgb(0, 0, 0);
+  // Support #RGB by expanding to #RRGGBB
+  if (v.length === 4) {
+    v = `#${v[1]}${v[1]}${v[2]}${v[2]}${v[3]}${v[3]}`;
+  }
+  if (v.length !== 7) return rgb(0, 0, 0);
+  const bigint = parseInt(v.slice(1), 16);
+  if (Number.isNaN(bigint)) return rgb(0, 0, 0);
   return rgb(
     ((bigint >> 16) & 255) / 255,
     ((bigint >> 8) & 255) / 255,
     (bigint & 255) / 255
   );
+}
+function resolveRowStyle(entry, styles) {
+  const variant = (entry?.format || entry?.style || entry?.status || 'default').toString().toLowerCase();
+  const base = styles?.row?.default || {};
+  const over = styles?.row?.[variant] || {};
+  // Shallow merge: over overrides base
+  return { ...base, ...over };
 }
 
 function resolveStyle(style, boldFont, regularFont, italicFont, boldItalicFont, lineSpacing = 2) {
@@ -101,7 +117,7 @@ export const generatePdfBuffer = async (jsonInput = null) => {
     }
   }
 
-  const defaultStyle = jsonData.styles?.row?.default || {};
+  //const defaultStyle = jsonData.styles?.row?.default || {};
   const labelRowStyle = jsonData.styles?.labelRow || {};
   const groupTitleStyle = jsonData.styles?.groupTitle || {};
   const groupMetaStyle = jsonData.styles?.groupMetadata || {};
@@ -185,23 +201,40 @@ export const generatePdfBuffer = async (jsonInput = null) => {
     }
 
     for (const entry of group.entries) {
-      // PDFs: ignore per-row `format` (used for HTML only). Always use default row style.
-      const rowStyle = defaultStyle;
+      // Resolve per-row style from JSON (default / important / new / past ...)
+      const rowStyle = resolveRowStyle(entry, styles);
       const { lineHeight: rLH, fontSize: rFS, font: rF, color: rC } =
         resolveStyle(rowStyle, boldFont, regularFont, italicFont, boldItalicFont, lineSpacing);
 
-      const wrapped = columns.map(col => {
+      // Build wrapped lines per column, with optional icon/badge on description
+      const wrapped = columns.map((col, colIdx) => {
         let txt = entry.fields[col.field];
         if (Array.isArray(txt)) txt = txt.join(', ');
         if (txt == null) txt = '';
+
+        // Optional icon/badge support if provided in styles JSON
+        if (col.field === 'description') {
+          if (rowStyle.icon && rowStyle.icon.enabled && rowStyle.icon.text) {
+            txt = `${rowStyle.icon.text} ${txt}`.trim();
+          }
+          if (rowStyle.badge && rowStyle.badge.enabled && rowStyle.badge.text) {
+            txt = `${txt} ${rowStyle.badge.text}`.trim();
+          }
+        }
+
         txt = sanitiseText(txt);
         const maxW = (col.width || DEFAULT_COLUMN_WIDTH) - CELL_PADDING; // right-side padding only
-        const words = txt.split(' ');
+        let effectiveMaxW = maxW;
+        if (colIdx === 0) {
+          const gutterProbe = regularFont.widthOfTextAtSize('| ', rFS);
+          effectiveMaxW = Math.max(1, maxW - gutterProbe);
+        }
+        const words = String(txt).split(' ');
         const lines = [];
         let ln = '';
         for (const w of words) {
           const test = ln ? `${ln} ${w}` : w;
-          if (rF.widthOfTextAtSize(test, rFS) > maxW) {
+          if (rF.widthOfTextAtSize(test, rFS) > effectiveMaxW) {
             if (ln) lines.push(ln);
             ln = w;
           } else ln = test;
@@ -210,21 +243,74 @@ export const generatePdfBuffer = async (jsonInput = null) => {
         return lines;
       });
 
-      const rowH = Math.max(...wrapped.map(w => w.length)) * rLH;
+      const rowH = Math.max(1, ...wrapped.map(w => w.length)) * rLH;
       checkBreak(rowH);
 
-      // Row background highlighting intentionally disabled (was drawn behind row text if `rowStyle.backgroundColour`)
 
+      // Draw the row text
       let xStart = leftMargin;
-      for (const lines of wrapped) {
+      for (let c = 0; c < wrapped.length; c++) {
+        const lines = wrapped[c];
         let ly = y;
-        for (const txt of lines) {
-          // left-side padding removed: draw at xStart exactly
-          currentPage.drawText(txt, { x: xStart, y: ly, size: rFS, font: rF, color: rC });
+        for (let li = 0; li < lines.length; li++) {
+          const txt = lines[li];
+          if (c === 0 && li === 0) {
+            // Draw non-italic gutter in configured colour, then the first-line text shifted right
+            // Prefer the resolved row style's gutterColour; fallback to global default, then black
+            const gutterHex = (rowStyle?.gutterColour) || (styles?.row?.default?.gutterColour) || '#000000';
+            const gutterColor = rgbHex(gutterHex);
+            const gutterWidth = regularFont.widthOfTextAtSize('| ', rFS);
+
+            // Gutter (always non-italic)
+            currentPage.drawText('| ', {
+              x: xStart,
+              y: ly,
+              size: rFS,
+              font: regularFont,
+              color: gutterColor,
+            });
+
+            // Row text, shifted to the right by the gutter width
+            currentPage.drawText(txt, {
+              x: xStart + gutterWidth,
+              y: ly,
+              size: rFS,
+              font: rF,
+              color: rC,
+            });
+          } else {
+            // Normal lines
+            currentPage.drawText(txt, { x: xStart, y: ly, size: rFS, font: rF, color: rC });
+          }
           ly -= rLH;
         }
-        xStart += columns[wrapped.indexOf(lines)].width || DEFAULT_COLUMN_WIDTH;
+        xStart += columns[c].width || DEFAULT_COLUMN_WIDTH;
       }
+
+      // Optional underline (left-anchored). Supports length (width), thickness, and colour from JSON.
+      if (rowStyle.underline && rowStyle.underline.enabled === true) {
+        const colourHex = rowStyle.underline.colour || rowStyle.fontColour || '#000000';
+        const lineColor = rgbHex(colourHex);
+        const thickness = (typeof rowStyle.underline.thickness === 'number' && rowStyle.underline.thickness > 0)
+          ? rowStyle.underline.thickness
+          : 1;
+        // Length of the underline in points; default to full content width if not provided
+        const fullContentWidth = (pageWidth - leftMargin - rightMargin);
+        let length = (typeof rowStyle.underline.width === 'number' && rowStyle.underline.width > 0)
+          ? rowStyle.underline.width
+          : fullContentWidth;
+        // Clamp the length to available area
+        length = Math.min(Math.max(1, length), fullContentWidth);
+        // Draw a line slightly below the current row block top for a tidy underline
+        const uy = y - 2; // keep previous visual baseline
+        currentPage.drawLine({
+          start: { x: leftMargin, y: uy },
+          end:   { x: leftMargin + length, y: uy },
+          thickness,
+          color: lineColor,
+        });
+      }
+
       y -= rowH;
     }
 

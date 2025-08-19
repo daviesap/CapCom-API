@@ -1,24 +1,22 @@
 /* functions/htmlutils/schedule.css
-   Base styles for the offline HTML schedule (inlined into the template) */
+   Cleaned + ordered: base, layout, groups, table, rows, badges, footer, print */
 
 :root {
   --font-sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI",
     Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
   --text: #111;
-  --muted: orange;
+  --muted: orange; /* project-specific accent used for metadata */
   --border: #e5e7eb;
   --header: #111;
   --bg: #fff;
   --row-alt: #fafafa;
-  --accent: #2563eb;
+  --accent: #2563eb; /* links */
 }
 
-* {
-  box-sizing: border-box;
-}
+/* ---------- Base / Reset ---------- */
+* { box-sizing: border-box; }
 
-html,
-body {
+html, body {
   margin: 0;
   padding: 0;
   background: var(--bg);
@@ -29,97 +27,18 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-body {
-  font-size: 15px;
-  padding: 24px;
-}
+body { font-size: 15px; padding: 24px; }
 
-table td {
-  font-size: 15px;
-}
+/* ---------- Header / Meta / Download ---------- */
+header { margin-bottom: 16px; }
 
-header {
-  margin-bottom: 16px;
-}
+h1 { font-size: 20px; margin: 0 0 8px 0; color: var(--header); }
 
-h1 {
-  font-size: 20px;
-  margin: 0 0 8px 0;
-  color: var(--header);
-}
+.meta { font-size: 11px; color: var(--muted); margin-bottom: 16px; }
 
-.meta {
-  font-size: 11px;
-  color: var(--muted);
-  margin-bottom: 16px;
-}
-
-.download {
-  margin: 12px 0 0;
-}
-
-.download a {
-  color: var(--accent);
-  text-decoration: none;
-  word-break: break-all;
-}
-
-.download a:hover {
-  text-decoration: underline;
-}
-
-/* Groups */
-.group {
-  margin: 18px 0 22px;
-}
-
-.group-title {
-  font-weight: 700;
-  /*border-bottom: 1px solid var(--border);*/
-  margin: 12px 0 8px;
-  padding-bottom: 4px;
-}
-
-.group-metadata {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--muted);
-  margin-bottom: 6px;
-}
-
-/* Table */
-table {
-  border-collapse: collapse;
-  width: 100%;
-  table-layout: fixed;
-  /* ensures the column widths (from % in th/td) hold */
-}
-
-th,
-td {
-  border: 1px solid var(--border);
-  padding: 6px;
-  vertical-align: top;
-  /* keep long strings from blowing out layout */
-  word-break: break-word;
-  overflow-wrap: anywhere;
-}
-
-th {
-  font-weight: 700;
-  background: #f8fafc;
-}
-
-tbody tr:nth-child(2n) td {
-  background: var(--row-alt);
-}
-
-/* Footer */
-.footer {
-  margin-top: 16px;
-  font-size: 11px;
-  color: var(--muted);
-}
+.download { margin: 12px 0 0; }
+.download a { color: var(--accent); text-decoration: none; word-break: break-all; }
+.download a:hover { text-decoration: underline; }
 
 .header-text {
   font-size: 18px;
@@ -128,85 +47,76 @@ tbody tr:nth-child(2n) td {
   margin-bottom: 8px;
 }
 
-.header-logo {
-  flex: 0 0 auto;
-  margin-left: auto;
-  padding-right: 50px;
+.header-logo { flex: 0 0 auto; margin-left: auto; padding-right: 50px; }
+.header-logo img { max-height: 100px; max-width: 100px; height: auto; width: auto; display: block; }
+
+/* ---------- Groups ---------- */
+.group { margin: 18px 0 22px; }
+.group-title { font-weight: 700; margin: 12px 0 8px; padding-bottom: 4px; }
+.group-metadata { font-size: 14px; font-weight: 700; color: var(--muted); margin-bottom: 6px; }
+
+/* ---------- Table ---------- */
+table { border-collapse: collapse; width: 100%; table-layout: fixed; }
+
+th, td {
+  border: 1px solid var(--border);
+  padding: 6px;
+  vertical-align: top;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
-.header-logo img {
-  max-height:100px;
-  max-width: 100px;
-  height: auto;
-  width: auto;
-  display: block;
-}
+th { font-weight: 700; background: #f8fafc; }
 
+table td { font-size: 15px; }
 
-/* Print tweaks (optional) */
-@media print {
-  body {
-    padding: 0;
-  }
+tbody tr:nth-child(2n) td { background: var(--row-alt); }
 
-  .download,
-  .meta {
-    display: none;
-  }
-}
+/* ---------- Row Formatting ---------- */
+.row-default, .row-new, .row-important, .row-past { position: relative; }
 
-.row-highlight {
-  background-color: #fffa9e; /* or your preferred highlight color */
-}
-
-/* Row formatting */
-/* Base row look */
-.row-default,
-.row-new,
-.row-important,
-.row-past {
-  /* keep your table’s own padding/borders; these are visual cues only */
-  position: relative;
-}
-
-/* Left gutter bar drawn inside the first cell (works reliably on tables) */
+/* Left gutter inside first cell for reliable table rendering */
 .row-default > td:first-child,
 .row-new > td:first-child,
 .row-important > td:first-child,
-.row-past > td:first-child {
-  position: relative;           /* anchor for the pseudo-element */
-  padding-left: 14px;           /* make room for the gutter */
-}
+.row-past > td:first-child { position: relative; padding-left: 14px; }
 
-/* Base gutter visuals */
 .row-default > td:first-child::before,
 .row-new > td:first-child::before,
 .row-important > td:first-child::before,
 .row-past > td:first-child::before {
   content: "";
   position: absolute;
-  left: 6px;                    /* inset slightly from the cell edge */
+  left: 6px;
   top: 50%;
   transform: translateY(-50%);
-  width: 4px;                   /* gutter thickness */
-  height: 70%;                  /* avoid touching row separators */
+  width: 4px;
+  height: 70%;
   border-radius: 2px;
-  background: transparent;      /* overridden per style below */
+  background: transparent; /* overridden below */
 }
 
-/* Per-style gutter colors */
+/* Gutter colours per style */
 .row-default > td:first-child::before { background: #000000; }
 .row-new > td:first-child::before { background: #1A73E8; }
 .row-important > td:first-child::before { background: #D93025; }
 .row-past > td:first-child::before { background: #AAAAAA; }
 
-/* Default – neutral */
+/* Default */
 .row-default td { color: #333333; }
 
-/* New – blue bar + optional NEW token (same text styling as default) */
+/* New */
 .row-new td { color: #333333; }
 
-/* If your HTML generator adds a badge element, this styles it nicely */
+/* Important */
+.row-important td { font-weight: 700; }
+.row-important td:nth-child(2)::before { content: "★ "; margin-right: 4px; color: #D93025; font-size: 12px; }
+
+/* Past */
+.row-past td { color: #777777; }
+.row-past td:nth-child(2) { font-style: italic; }
+
+/* NEW pill */
 .row-new .badge {
   display: inline-block;
   margin-left: 8px;
@@ -214,24 +124,16 @@ tbody tr:nth-child(2n) td {
   font-size: 7px;
   font-weight: 700;
   color: #F0F8FF;
-  border: 1px solid rgba(255,255,255,0.6); /* softer */
+  border: 1px solid rgba(255,255,255,0.6);
   border-radius: 999px;
   background: #1A73E8;
 }
 
-/* Important – red bar + bold + underline across the row */
-.row-important td {
-  font-weight: 700;
-  /*border-bottom: 2px solid #D93025; /* thick underline cue */
-}
+/* ---------- Footer ---------- */
+.footer { margin-top: 16px; font-size: 11px; color: var(--muted); }
 
-/* Past – grey bar + muted, optionally italic description only */
-.row-past td { color: #777777; }
-.row-past td:nth-child(2) { font-style: italic; } /* description column only */
-
-.row-important td:nth-child(2)::before {
-  content: "★ ";
-  margin-right: 4px;
-  color: #D93025;
-  font-size: 12px;
+/* ---------- Print Tweaks ---------- */
+@media print {
+  body { padding: 0; }
+  .download, .meta { display: none; }
 }

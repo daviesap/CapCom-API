@@ -1,4 +1,5 @@
 {
+  "styleTemplateVersion":"v1",
   "styles": {
     "groupTitle": {
       "fontSize": 12,
@@ -40,17 +41,20 @@
         "backgroundColour": "#FFFFFF",
         "fontColour": "#000000"
       },
-      "highlight": {
+      "important": {
         "fontSize": 10,
         "fontStyle": "italic",
-        "backgroundColour": "#FFFF00",
-        "fontColour": "#000000"
+        "fontColour": "red"
       },
-      "lowlight": {
+      "new": {
         "fontSize": 10,
         "fontStyle": "normal",
-        "backgroundColour": "#FFFFFF",
-        "fontColour": "#000000"
+        "fontColour": "green"
+      },
+      "past": {
+        "fontSize": 10,
+        "fontStyle": "normal",
+        "fontColour": "blue"
       }
     }
   },

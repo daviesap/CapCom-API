@@ -5,7 +5,7 @@
   "api_key": "Sausages2025!!",
   "userId": "JwAOVyJUSwGKh1mD8Z1ovg",
   "userEmail": "andrew@flair.london",
-  "profileId": "PR45vscqih",
+  "profileId": "6-9S92REEL",
   "document": {
     "filename": "Full schedule",
     "header": {
@@ -66,13 +66,13 @@
         {
           "fields": {
             "date": "Sunday, 12 April 2026",
-            "description": "Highlight Test",
+            "description": "Default Test",
             "tags": [],
             "locations": " ",
             "tagIds": [],
             "locationIds": []
           },
-          "format": "highlight"
+          "format": "default"
         }
       ]
     },
@@ -83,7 +83,7 @@
           "fields": {
             "date": "Monday, 13 April 2026",
             "time": "00:01",
-            "description": "Access to Haleakala 1",
+            "description": "New Access to Haleakala 1",
             "tags": [
               "AVS",
               "Tenancy"
