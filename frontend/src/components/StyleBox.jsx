@@ -1,26 +1,33 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 
 export default function StyleBox({ styleKey, styleData, pathArray, editingStyle, onEdit, onSave }) {
-  const isEditing =
-    editingStyle &&
-    JSON.stringify(styleData) === JSON.stringify(editingStyle);
+  const isEditing = Array.isArray(editingStyle) && Array.isArray(pathArray)
+    ? JSON.stringify(editingStyle) === JSON.stringify(pathArray)
+    : false;
 
   const [draft, setDraft] = useState(styleData);
 
+  const wasEditingRef = useRef(isEditing);
   useEffect(() => {
-    if (isEditing) setDraft(styleData);
-  }, [isEditing, styleData]);
+    // Only reset draft when we transition into editing
+    if (!wasEditingRef.current && isEditing) {
+      setDraft(styleData);
+    }
+    wasEditingRef.current = isEditing;
+  }, [isEditing]);
+
+  const previewSource = isEditing ? draft : styleData;
 
   const sampleStyle = {
-    backgroundColor: styleData.backgroundColour || "#fff",
-    color: styleData.fontColour || styleData.colour || "#000",
-    fontSize: `${styleData.fontSize || 12}px`,
-    ...(styleData.fontStyle?.toLowerCase().includes("italic")
+    backgroundColor: previewSource.backgroundColour || "#fff",
+    color: previewSource.fontColour || previewSource.colour || "#000",
+    fontSize: `${previewSource.fontSize || 12}px`,
+    ...(previewSource.fontStyle?.toLowerCase().includes("italic")
       ? { fontStyle: "italic" }
       : { fontStyle: "normal" }),
-    ...(styleData.fontStyle?.toLowerCase().includes("bold")
+    ...(previewSource.fontStyle?.toLowerCase().includes("bold")
       ? { fontWeight: "bold" }
       : { fontWeight: "normal" }),
   };
@@ -36,7 +43,7 @@ export default function StyleBox({ styleKey, styleData, pathArray, editingStyle,
       <div className="mb-2">
         <strong className="block text-lg mb-1">{styleKey}</strong>
         <pre className="whitespace-pre-wrap break-words text-sm text-gray-700 p-2 rounded">
-          {Object.entries(styleData)
+          {Object.entries(isEditing ? draft : styleData)
             .map(([k, v]) => `${k}: ${v}`)
             .join("\n")}
         </pre>
@@ -97,8 +104,8 @@ export default function StyleBox({ styleKey, styleData, pathArray, editingStyle,
                         type="number"
                         value={value}
                         onChange={(e) => {
-                          const num = parseInt(e.target.value, 10);
-                          setDraft({ ...draft, [key]: isNaN(num) ? 0 : num });
+                          const n = Number(e.target.value);
+                          setDraft({ ...draft, [key]: Number.isFinite(n) ? n : draft[key] });
                         }}
                         className="mt-1 block w-full border border-gray-300 rounded px-2 py-1"
                       />
@@ -120,8 +127,23 @@ export default function StyleBox({ styleKey, styleData, pathArray, editingStyle,
             <div className="flex gap-4 mt-4">
               <button
                 onClick={() => {
-                  onSave(draft);
-                  toast.success("Style saved!");
+                  try {
+                    // Provide both args: parents that only accept one will ignore the extra.
+                    onSave(pathArray, draft);
+                    toast.success("Style saved!");
+                    onEdit(null);
+                  } catch (e) {
+                    // Fallback for parents that expect a single argument
+                    try {
+                      onSave(draft);
+                      toast.success("Style saved!");
+                      onEdit(null);
+                    } catch (_) {
+                      toast.error("Save failed. Check console.");
+                      // eslint-disable-next-line no-console
+                      console.error("Save handler threw:", e);
+                    }
+                  }
                 }}
                 className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
               >

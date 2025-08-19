@@ -1,5 +1,5 @@
 {
-  "styleTemplateVersion":"v1",
+  "styleTemplateVersion": "v1",
   "styles": {
     "groupTitle": {
       "fontSize": 12,
@@ -22,71 +22,57 @@
       "fontColour": "#000000"
     },
     "header": {
-        "fontSize": 10,
-        "fontStyle": "normal",
-        "fontColour": "#000000",
-        "paddingBottom":20
-      },
+      "fontSize": 10,
+      "fontStyle": "normal",
+      "fontColour": "#000000",
+      "paddingBottom": 20
+    },
     "footer": {
-        "fontSize": 10,
-        "fontStyle": "normal",
-        "fontColour": "#000000",
-        "paddingTop": 20
-      },
+      "fontSize": 10,
+      "fontStyle": "normal",
+      "fontColour": "#000000",
+      "paddingTop": 20
+    },
     "row": {
-      "lineSpacing":2,
+      "lineSpacing": 2,
       "default": {
         "fontSize": 10,
-        "fontStyle": "italic",
+        "fontStyle": "normal",
         "backgroundColour": "#FFFFFF",
         "fontColour": "#000000",
-        "underline": {
-          "enabled": true,
-          "width": 50,
-          "thickness": 0.75,
-          "colour": "#000000"
-        }
+        "gutterColour": "#000000",
+        "underline": { "enabled": true, "width": 50, "thickness": 0.75, "colour": "#000000" },
+        "badge": { "enabled": false, "text": "" }
       },
       "important": {
         "fontSize": 10,
-        "fontStyle": "italic",
+        "fontStyle": "bold",
         "fontColour": "#FF0000",
-        "underline": {
-          "enabled": true,
-          "width": 50,
-          "thickness": 0.75,
-          "colour": "#FF0000"
-        }
+        "gutterColour": "#FF0000",
+        "underline": { "enabled": true, "width": 50, "thickness": 0.75, "colour": "#FF0000" },
+        "icon":  { "enabled": true, "text": "!!" },
+        "badge": { "enabled": false, "text": "" }
       },
       "new": {
         "fontSize": 10,
         "fontStyle": "normal",
         "fontColour": "#008000",
-        "underline": {
-          "enabled": true,
-          "width": 50,
-          "thickness": 0.75,
-          "colour": "#008000"
-        }
+        "gutterColour": "#008000",
+        "underline": { "enabled": true, "width": 50, "thickness": 0.75, "colour": "#008000" },
+        "badge": { "enabled": true, "text": "NEW" }
       },
       "past": {
         "fontSize": 10,
-        "fontStyle": "normal",
+        "fontStyle": "italic",
         "fontColour": "#0000FF",
-        "underline": {
-          "enabled": true,
-          "width": 50,
-          "thickness": 0.75,
-          "colour": "#0000FF"
-        }
+        "gutterColour": "#0000FF",
+        "underline": { "enabled": true, "width": 50, "thickness": 0.75, "colour": "#0000FF" },
+        "badge": { "enabled": false, "text": "" }
       }
     }
   },
   "document": {
-    "pageSize": {
-      "height": 595,
-      "width": 842
-    },
+    "pageSize": { "height": 595, "width": 842 },
     "leftMargin": 50,
     "rightMargin": 50,
     "topMargin": 30,
@@ -100,31 +86,5 @@
         "height": 36
       }
     }
-  },
-  "columns": [
-    {
-      "field": "Column 1",
-      "label": "Label 1",
-      "width": 50,
-      "showLabel": true
-    },
-    {
-      "field": "Column 2",
-      "label": "Label 2",
-      "width": 50,
-      "showLabel": true
-    },
-    {
-      "field": "Column 3",
-      "label": "Label 3",
-      "width": 50,
-      "showLabel": true
-    },
-    {
-      "field": "Column 4",
-      "label": "Label 4",
-      "width": 50,
-      "showLabel": true
-    }
-  ]
+  }
 }
