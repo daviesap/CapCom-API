@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 
+const FONT_STYLE_OPTIONS = ["normal", "bold", "italic", "bold-italic"];
+
 // This editor supports both simple style sections (header, footer, etc.)
 // and the special `row` section with nested variants + structured fields.
 // For `row` we enforce order: Default, Important, New, Past and expose:
@@ -64,6 +66,18 @@ export default function StyleSection({ sectionKey, sectionData, onSave }) {
               onChange={(e) => handleChange(field, e.target.value)}
               className="w-16 h-10"
             />
+          ) : field === "fontStyle" ? (
+            <select
+              value={value || "normal"}
+              onChange={(e) => handleChange(field, e.target.value)}
+              className="border rounded px-2 py-1 w-44"
+            >
+              {FONT_STYLE_OPTIONS.map((opt) => (
+                <option key={opt} value={opt}>
+                  {opt === "bold-italic" ? "Bold-italic" : opt.charAt(0).toUpperCase() + opt.slice(1)}
+                </option>
+              ))}
+            </select>
           ) : (
             <input
               type="text"
@@ -125,6 +139,7 @@ export default function StyleSection({ sectionKey, sectionData, onSave }) {
               <option value="normal">Normal</option>
               <option value="bold">Bold</option>
               <option value="italic">Italic</option>
+              <option value="bold-italic">Italic & Bold</option>
             </select>
           </label>
         </div>
