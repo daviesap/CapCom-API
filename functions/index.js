@@ -13,6 +13,7 @@ import { generatePdfBuffer } from "./generatepdf.mjs";
 import { sanitiseUrl } from "./utils/sanitiseUrl.mjs";
 import { filterJson } from "./utils/filterJSON.mjs";
 import { sanitiseText } from "./utils/sanitiseText.mjs";
+import { deriveDetectedFieldsFromGroups } from "./utils/detectFields.mjs";
 
 initializeApp({
   credential: applicationDefault(),
@@ -188,11 +189,11 @@ async function generateSnapshotOutputs(jsonInput, safeAppName, bucket, startTime
       executionTimeSeconds,
       ...(jsonInput?.debug === true
         ? {
-            debug: {
-              mergedJson: jsonInput,
-              debugDumpPath: jsonInput.__debugDumpPath || null,
-            },
-          }
+          debug: {
+            mergedJson: jsonInput,
+            debugDumpPath: jsonInput.__debugDumpPath || null,
+          },
+        }
         : {}),
     },
   };
@@ -285,6 +286,7 @@ export const generatePdf = onRequest({ region: "europe-west2" }, async (req, res
           jsonInput = filterJson(jsonInput);
           sanitiseJsonFields(jsonInput);
 
+
           if (runningEmulated || jsonInput.debug === true) {
             try {
               const appNameForDump = jsonInput.glideAppName || "Flair PDF Generator";
@@ -305,6 +307,40 @@ export const generatePdf = onRequest({ region: "europe-west2" }, async (req, res
         console.error("🔥 Error fetching Firestore profile:", err);
       }
     }
+
+    // Auto-refresh detectedFields for this profile based on the filtered groups
+    try {
+      if (profileId && Array.isArray(jsonInput?.groups) && jsonInput.groups.length) {
+        const detected = deriveDetectedFieldsFromGroups(jsonInput.groups);
+        if (detected && detected.length) {
+          const ref = db.collection("styleProfiles").doc(jsonInput.profileId || profileId);
+          const snap = await ref.get();
+          const prev = (snap.exists && Array.isArray(snap.data().detectedFields))
+            ? snap.data().detectedFields
+            : [];
+
+          // Order-sensitive comparison to avoid unnecessary writes
+          const changed =
+            detected.length !== prev.length ||
+            detected.some((k, i) => k !== prev[i]);
+
+          if (changed) {
+            await ref.update({
+              detectedFields: detected,
+              fieldsLastUpdated: new Date().toISOString(),
+            });
+            if (jsonInput?.debug === true) console.log("🔄 detectedFields updated:", detected);
+          } else if (jsonInput?.debug === true) {
+            console.log("ℹ️ detectedFields unchanged");
+          }
+        } else if (jsonInput?.debug === true) {
+          console.log("ℹ️ No detected fields derived from groups.");
+        }
+      }
+    } catch (e) {
+      console.warn("⚠️ Failed to update detectedFields:", e?.message || e);
+    }
+
 
     const appName = jsonInput.glideAppName || "Flair PDF Generator";
     const safeAppName = sanitiseUrl(appName);
