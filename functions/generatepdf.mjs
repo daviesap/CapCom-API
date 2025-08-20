@@ -139,7 +139,7 @@ export const generatePdfBuffer = async (jsonInput = null) => {
     if (header?.text?.length || embeddedLogo) {
       const { lineHeight } = resolveStyle(styles.header || {}, boldFont, regularFont, italicFont, boldItalicFont, lineSpacing);
       const headerTextHeight = (header?.text?.length || 0) * lineHeight;
-      const logoHeight = header.logo?.height || embeddedLogo?.height || 0;
+      const logoHeight = header?.logo?.height || embeddedLogo?.height || 0;
       const maxHeaderBlockHeight = Math.max(headerTextHeight, logoHeight);
       y -= maxHeaderBlockHeight + headerPaddingBottom;
     }
@@ -179,13 +179,16 @@ export const generatePdfBuffer = async (jsonInput = null) => {
     const labelInfo = resolveStyle(labelRowStyle, boldFont, regularFont, italicFont, boldItalicFont, lineSpacing);
     const hasLabels = columns.some(c => c.showLabel);
 
-    const introHeight = tLH + mLH + mPB + (hasLabels ? labelInfo.lineHeight : 0);
+    const hasMeta = !!(group.metadata && String(group.metadata).trim());
+    const introHeight = tLH + (hasMeta ? (mLH + mPB) : 0) + (hasLabels ? labelInfo.lineHeight : 0);
     checkBreak(introHeight);
 
     currentPage.drawText(sanitiseText(group.title), { x: leftMargin, y, size: tFS, font: tF, color: tC });
     y -= tLH;
-    currentPage.drawText(sanitiseText(group.metadata), { x: leftMargin, y, size: mFS, font: mF, color: mC });
-    y -= mLH + mPB;
+    if(hasMeta) {
+      currentPage.drawText(sanitiseText(group.metadata), { x: leftMargin, y, size: mFS, font: mF, color: mC });
+      y -= mLH + mPB;
+    }
 
     if (hasLabels) {
       let x = leftMargin;
@@ -305,7 +308,7 @@ export const generatePdfBuffer = async (jsonInput = null) => {
         const uy = y - 2; // keep previous visual baseline
         currentPage.drawLine({
           start: { x: leftMargin, y: uy },
-          end:   { x: leftMargin + length, y: uy },
+          end: { x: leftMargin + length, y: uy },
           thickness,
           color: lineColor,
         });
@@ -325,7 +328,7 @@ export const generatePdfBuffer = async (jsonInput = null) => {
       const { lineHeight: hLH, fontSize: hFS, font: hF, color: hC } = resolveStyle(styles.header || {}, boldFont, regularFont, italicFont, boldItalicFont, lineSpacing);
       const headerStyle = resolveStyle(styles.header || {}, boldFont, regularFont, italicFont, boldItalicFont, lineSpacing);
       const headerTextHeight = (header?.text?.length || 0) * headerStyle.lineHeight;
-      const logoHeight = header.logo?.height || embeddedLogo?.height || 0;
+      const logoHeight = header?.logo?.height || embeddedLogo?.height || 0;
       const maxHeaderBlockHeight = Math.max(headerTextHeight, logoHeight);
 
       let hy = pageHeight - topMargin - (maxHeaderBlockHeight - headerTextHeight);
@@ -464,30 +467,30 @@ export const generatePdfBuffer = async (jsonInput = null) => {
       }
 
       // === DEBUG LEGEND (first page only) ===
- if (i === 0) {
-  const keyLines = [
-    { text: 'Red: Top of footer block', color: rgb(1, 0, 0) },
-    { text: 'Blue: Bottom margin baseline', color: rgb(0, 0, 1) },
-    { text: 'Orange: Bottom page threshold', color: rgb(1, 0.5, 0) },
-    { text: 'Green: Bottom of header block', color: rgb(0, 0.6, 0) },
-    { text: 'Purple: Top margin baseline', color: rgb(0.5, 0, 0.5) },
-  ];
-  const keyStyle = resolveStyle(styles.labelRow || {}, boldFont, regularFont, italicFont, boldItalicFont, lineSpacing);
-  let yKey = pageHeight / 2;
+      if (i === 0) {
+        const keyLines = [
+          { text: 'Red: Top of footer block', color: rgb(1, 0, 0) },
+          { text: 'Blue: Bottom margin baseline', color: rgb(0, 0, 1) },
+          { text: 'Orange: Bottom page threshold', color: rgb(1, 0.5, 0) },
+          { text: 'Green: Bottom of header block', color: rgb(0, 0.6, 0) },
+          { text: 'Purple: Top margin baseline', color: rgb(0.5, 0, 0.5) },
+        ];
+        const keyStyle = resolveStyle(styles.labelRow || {}, boldFont, regularFont, italicFont, boldItalicFont, lineSpacing);
+        let yKey = pageHeight / 2;
 
 
-  // ✅ Draw the text
-  for (const { text, color } of keyLines) {
-    pg.drawText(text, {
-      x: leftMargin,
-      y: yKey,
-      size: keyStyle.fontSize,
-      font: keyStyle.font,
-      color,
-    });
-    yKey -= keyStyle.lineHeight;
-  }
-}
+        // ✅ Draw the text
+        for (const { text, color } of keyLines) {
+          pg.drawText(text, {
+            x: leftMargin,
+            y: yKey,
+            size: keyStyle.fontSize,
+            font: keyStyle.font,
+            color,
+          });
+          yKey -= keyStyle.lineHeight;
+        }
+      }
     }
   }
 
