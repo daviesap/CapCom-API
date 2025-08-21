@@ -16,7 +16,7 @@ export default function StyleBox({ styleKey, styleData, pathArray, editingStyle,
       setDraft(styleData);
     }
     wasEditingRef.current = isEditing;
-  }, [isEditing]);
+  }, [isEditing, styleData]);
 
   const previewSource = isEditing ? draft : styleData;
 
@@ -138,10 +138,9 @@ export default function StyleBox({ styleKey, styleData, pathArray, editingStyle,
                       onSave(draft);
                       toast.success("Style saved!");
                       onEdit(null);
-                    } catch (_) {
+                    } catch (err2) {
                       toast.error("Save failed. Check console.");
-                      // eslint-disable-next-line no-console
-                      console.error("Save handler threw:", e);
+                      console.error("Save handler threw on primary:", e, "and fallback also failed:", err2);
                     }
                   }
                 }}

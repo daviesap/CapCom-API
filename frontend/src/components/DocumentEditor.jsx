@@ -26,6 +26,13 @@ export default function DocumentStylesEditor({ documentData, onSave, onChange })
     if (onChange) onChange(updated);
   };
 
+  // Allow empty while typing; coerce to number only when not empty
+  const toEmptyOrNumber = (raw) => {
+    if (raw === "") return "";
+    const n = parseFloat(raw);
+    return Number.isFinite(n) ? n : "";
+  };
+
   return (
     <div className="mb-6">
       <h3 className="text-xl font-semibold mb-4">Document Styles</h3>
@@ -46,8 +53,9 @@ export default function DocumentStylesEditor({ documentData, onSave, onChange })
               <td className="border border-gray-300 px-4 py-2">
                 <input
                   type="number"
-                  value={draft.pageSize?.width || 0}
-                  onChange={(e) => updateValue("pageSize", "width", parseFloat(e.target.value) || 0)}
+                  value={draft.pageSize?.width ?? ""}
+                  min="0"
+                  onChange={(e) => updateValue("pageSize", "width", toEmptyOrNumber(e.target.value))}
                   className="w-full border border-gray-300 rounded px-2 py-1"
                 />
               </td>
@@ -57,8 +65,9 @@ export default function DocumentStylesEditor({ documentData, onSave, onChange })
               <td className="border border-gray-300 px-4 py-2">
                 <input
                   type="number"
-                  value={draft.pageSize?.height || 0}
-                  onChange={(e) => updateValue("pageSize", "height", parseFloat(e.target.value) || 0)}
+                  value={draft.pageSize?.height ?? ""}
+                  min="0"
+                  onChange={(e) => updateValue("pageSize", "height", toEmptyOrNumber(e.target.value))}
                   className="w-full border border-gray-300 rounded px-2 py-1"
                 />
               </td>
@@ -74,9 +83,10 @@ export default function DocumentStylesEditor({ documentData, onSave, onChange })
                 <td className="border border-gray-300 px-4 py-2">
                   <input
                     type="number"
-                    value={draft[`${pos.toLowerCase()}Margin`] || 0}
+                    value={draft[`${pos.toLowerCase()}Margin`] ?? ""}
+                    min="0"
                     onChange={(e) =>
-                      updateValue(`${pos.toLowerCase()}Margin`, null, parseFloat(e.target.value) || 0)
+                      updateValue(`${pos.toLowerCase()}Margin`, null, toEmptyOrNumber(e.target.value))
                     }
                     className="w-full border border-gray-300 rounded px-2 py-1"
                   />
@@ -91,8 +101,9 @@ export default function DocumentStylesEditor({ documentData, onSave, onChange })
               <td className="border border-gray-300 px-4 py-2">
                 <input
                   type="number"
-                  value={draft.groupPaddingBottom || 0}
-                  onChange={(e) => updateValue("groupPaddingBottom", null, parseFloat(e.target.value) || 0)}
+                  value={draft.groupPaddingBottom ?? ""}
+                  min="0"
+                  onChange={(e) => updateValue("groupPaddingBottom", null, toEmptyOrNumber(e.target.value))}
                   className="w-full border border-gray-300 rounded px-2 py-1"
                 />
               </td>
@@ -102,8 +113,9 @@ export default function DocumentStylesEditor({ documentData, onSave, onChange })
               <td className="border border-gray-300 px-4 py-2">
                 <input
                   type="number"
-                  value={draft.bottomPageThreshold || 0}
-                  onChange={(e) => updateValue("bottomPageThreshold", null, parseFloat(e.target.value) || 0)}
+                  value={draft.bottomPageThreshold ?? ""}
+                  min="0"
+                  onChange={(e) => updateValue("bottomPageThreshold", null, toEmptyOrNumber(e.target.value))}
                   className="w-full border border-gray-300 rounded px-2 py-1"
                 />
               </td>

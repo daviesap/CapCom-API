@@ -3,12 +3,39 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { formatDistanceToNow } from 'date-fns';
 
-export default function ColumnsEditor({ columnsData, detectedFields = [], fieldsLastUpdated = null, onSave, onChange }) {
+export default function ColumnsEditor({ columnsData, detectedFields = [], fieldsLastUpdated = null, onSave, onChange, pageWidth = 842, leftMargin = 50, rightMargin = 50, documentConfig = null }) {
   const [draft, setDraft] = useState(columnsData || []);
 
   useEffect(() => {
     setDraft(columnsData || []);
   }, [columnsData]);
+
+  // Prefer dimensions from the provided JSON document (profile.document), fall back to props/defaults
+  const resolvedPageWidth = Number(
+    (documentConfig && documentConfig.pageSize && documentConfig.pageSize.width) != null
+      ? documentConfig.pageSize.width
+      : pageWidth
+  ) || 0;
+  const resolvedLeftMargin = Number(
+    (documentConfig && documentConfig.leftMargin) != null
+      ? documentConfig.leftMargin
+      : leftMargin
+  ) || 0;
+  const resolvedRightMargin = Number(
+    (documentConfig && documentConfig.rightMargin) != null
+      ? documentConfig.rightMargin
+      : rightMargin
+  ) || 0;
+  const availableWidth = Math.max(0, resolvedPageWidth - resolvedLeftMargin - resolvedRightMargin);
+
+  // Live totals for current draft columns
+  const totalColumnWidth = (draft || []).reduce((sum, c) => {
+    const w = Number(c?.width);
+    return sum + (Number.isFinite(w) ? w : 0);
+  }, 0);
+  const widthOverBy = Math.max(0, totalColumnWidth - availableWidth);
+  const widthRemaining = Math.max(0, availableWidth - totalColumnWidth);
+  const isOver = totalColumnWidth > availableWidth;
 
   const handleChange = (index, key, value) => {
     const updated = [...draft];
@@ -45,20 +72,20 @@ export default function ColumnsEditor({ columnsData, detectedFields = [], fields
 
 
       {fieldsLastUpdated && (
-        <p className="text-m text-black mb-2">
-          Available fields:{" "}
-          {detectedFields
-            .slice()                         // make shallow copy so we don’t mutate original
-            .sort((a, b) => a.localeCompare(b))  // sort alphabetically
-            .map(field => field.charAt(0).toUpperCase() + field.slice(1)) // capitalise first letter
-            .join(", ")}
-
-
-          {fieldsLastUpdated && (
-            <p className="text-sm text-gray-500 mb-4">
-              Last PDF was generated and field names updated{" "}{formatDistanceToNow(new Date(fieldsLastUpdated), { addSuffix: true })}
-            </p>
-          )}</p>
+        <div className="mb-4">
+          <p className="text-m text-black mb-2">
+            Available fields:{" "}
+            {detectedFields
+              .slice() // make shallow copy so we don’t mutate original
+              .sort((a, b) => a.localeCompare(b)) // sort alphabetically
+              .map(field => field.charAt(0).toUpperCase() + field.slice(1)) // capitalise first letter
+              .join(", ")}
+          </p>
+          <p className="text-sm text-gray-500">
+            Last PDF was generated and field names updated{" "}
+            {formatDistanceToNow(new Date(fieldsLastUpdated), { addSuffix: true })}
+          </p>
+        </div>
       )}
 
 
@@ -101,10 +128,12 @@ export default function ColumnsEditor({ columnsData, detectedFields = [], fields
             <span className="text-sm font-medium">Width</span>
             <input
               type="number"
-              value={col.width}
-              onChange={(e) =>
-                handleChange(i, "width", parseInt(e.target.value, 10) || 0)
-              }
+              min="0"
+              value={col.width ?? ""}
+              onChange={(e) => {
+                const val = e.target.value;
+                handleChange(i, "width", val === "" ? "" : parseInt(val, 10));
+              }}
               className="mt-1 px-3 py-1 border border-gray-300 rounded"
             />
           </label>
@@ -127,6 +156,24 @@ export default function ColumnsEditor({ columnsData, detectedFields = [], fields
           </button>
         </div>
       ))}
+
+      <div className="mt-4 text-sm text-gray-700">
+        <span className="font-medium">Available width:</span> {availableWidth} pt
+        <span className="ml-2 text-gray-500">
+          (page {resolvedPageWidth}pt − left margin {resolvedLeftMargin}pt − right margin {resolvedRightMargin}pt)
+        </span>
+      </div>
+      <div className="mt-1 text-sm">
+        <span className="font-medium">Total columns:</span>{" "}
+        <span className={isOver ? "text-red-600 font-semibold" : "text-gray-800"}>
+          {totalColumnWidth} pt
+        </span>
+        {!isOver ? (
+          <span className="ml-2 text-gray-600">({widthRemaining} pt remaining)</span>
+        ) : (
+          <span className="ml-2 text-red-600">({widthOverBy} pt over)</span>
+        )}
+      </div>
 
       <div className="flex gap-4 mt-4">
         <button

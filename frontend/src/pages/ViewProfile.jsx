@@ -125,6 +125,7 @@ export default function ViewProfile({ profileId }) {
                 columnsData={profile.columns}
                 detectedFields={profile.detectedFields || []}
                 fieldsLastUpdated={profile.fieldsLastUpdated || null}
+                documentConfig={profile.document}
                 onChange={(updated) => {
                   setProfile((prev) => ({ ...prev, columns: updated }));
                 }}
