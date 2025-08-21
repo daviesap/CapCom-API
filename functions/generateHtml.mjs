@@ -96,12 +96,17 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
   let columnHeaders = [];
   let showHeader = true;
 
-  if (Array.isArray(jsonInput.columns) && jsonInput.columns.length) {
-    const cols = jsonInput.columns;
-    columnKeys = cols.map(c => (c.field ?? c.key)).filter(Boolean);
-    columnHeaders = cols.map(c => (c.label ?? c.title ?? c.field ?? c.key ?? ""));
-    showHeader = cols.some(c => c?.showLabel !== false);
-  } else if (Array.isArray(jsonInput.detectedFields) && jsonInput.detectedFields.length) {
+if (Array.isArray(jsonInput.columns) && jsonInput.columns.length) {
+  const cols = jsonInput.columns;
+  columnKeys = cols.map(c => (c.field ?? c.key)).filter(Boolean);
+  columnHeaders = cols.map(c => (c.label ?? c.title ?? c.field ?? c.key ?? ""));
+  // Track per-column "showLabel" strictly as true; anything else = hidden
+  const columnShow = cols.map(c => c?.showLabel === true);
+  // Only render the header row if at least one column explicitly wants a label
+  showHeader = columnShow.some(Boolean);
+  // Persist per-column flags for later when building thead cells
+  var __columnShowFlags = columnShow;
+} else if (Array.isArray(jsonInput.detectedFields) && jsonInput.detectedFields.length) {
     // Only used when profile columns are absent
     columnKeys = jsonInput.detectedFields.slice();
     columnHeaders = jsonInput.detectedFields.map(k => k.charAt(0).toUpperCase() + k.slice(1));
@@ -124,7 +129,9 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
       ? `<tr>${columnHeaders.map((h, i) => {
         const w = htmlWidths[i];
         const widthAttr = Number.isFinite(w) ? ` style="width:${w.toFixed(4)}%"` : "";
-        return `<th${widthAttr}>${escapeHtml(h)}</th>`;
+        const showThis = (typeof __columnShowFlags !== "undefined") ? __columnShowFlags[i] : true;
+        const cellText = showThis ? escapeHtml(h) : "";
+        return `<th${widthAttr}>${cellText}</th>`;
       }).join("")}</tr>`
       : "";
 

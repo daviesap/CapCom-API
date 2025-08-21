@@ -60,9 +60,10 @@ function makePublicUrl(objectPath, bucket) {
   return `https://storage.googleapis.com/${bucket.name}/${objectPath}`;
 }
 
-async function logPdfEvent({ timestamp, filename, url, userEmail, profileId, success, errorMessage }) {
+async function logPdfEvent({ timestamp, glideAppName, filename, url, userEmail, profileId, success, errorMessage }) {
   const logData = {
     timestamp,
+    glideAppName,
     filename,
     url,
     userEmail,
@@ -123,6 +124,9 @@ async function generateSnapshotOutputs(jsonInput, safeAppName, bucket, startTime
   // strip any existing extension, then sanitise (handles spaces etc.), then append .html
   const safeHtmlBase = sanitiseUrl(rawHtmlBase.replace(/\.[a-zA-Z0-9]+$/, ""));
   const safeHtmlName = `${safeHtmlBase}.html`;
+  // Get Glide app name
+  const glideAppName = jsonInput.glideAppName || "Glide App Name Missing";
+  
 
   // 2) Save PDF (immutable caching)
   if (runningEmulated) {
@@ -174,7 +178,7 @@ async function generateSnapshotOutputs(jsonInput, safeAppName, bucket, startTime
 
   // 5) Log + response
   const executionTimeSeconds = (Date.now() - startTime) / 1000;
-  await logPdfEvent({ timestamp, filename: safePdfName, url: pdfUrl, userEmail, profileId, success: true });
+  await logPdfEvent({ timestamp, glideAppName, filename: safePdfName, url: pdfUrl, userEmail, profileId, success: true });
 
   return {
     status: 200,
@@ -251,7 +255,6 @@ export const generatePdf = onRequest({ region: "europe-west2" }, async (req, res
   }
 
   // Shared metadata
-  const userId = req.body.userId || "unknown userId";
   const userEmail = req.body.userEmail || "unknown email";
   const profileId = req.body.profileId || "unknown profileId";
 
@@ -265,6 +268,7 @@ export const generatePdf = onRequest({ region: "europe-west2" }, async (req, res
       const raw = await readFile(samplePath, "utf-8");
       jsonInput = JSON.parse(raw);
     }
+    const glideAppName = jsonInput.glideAppName || "No Glide app name defined";
 
     // Optional profile merge from Firestore
     let profileData = {};
@@ -300,7 +304,7 @@ export const generatePdf = onRequest({ region: "europe-west2" }, async (req, res
         } else {
           const msg = `⚠️ No Firestore profile found for profileId "${jsonInput.profileId}"`;
           console.warn(msg);
-          await logPdfEvent({ timestamp, filename: "not generated", url: "", userEmail, profileId, success: false, errorMessage: msg });
+          await logPdfEvent({ timestamp, glideAppName, filename: "not generated", url: "", userEmail, profileId, success: false, errorMessage: msg });
           return res.status(404).json({ success: false, message: msg });
         }
       } catch (err) {
@@ -341,9 +345,7 @@ export const generatePdf = onRequest({ region: "europe-west2" }, async (req, res
       console.warn("⚠️ Failed to update detectedFields:", e?.message || e);
     }
 
-
-    const appName = jsonInput.glideAppName || "Flair PDF Generator";
-    const safeAppName = sanitiseUrl(appName);
+    const safeAppName = sanitiseUrl(glideAppName);
     const bucket = getStorage().bucket();
 
     // ALWAYS generate both (HTML + PDF) for either action
@@ -359,9 +361,9 @@ export const generatePdf = onRequest({ region: "europe-west2" }, async (req, res
     console.error("❌ Cloud Function error:", err);
     await logPdfEvent({
       timestamp,
+      glideAppName: (req.body?.glideAppName || "Missing Glide App Name"),
       filename: "not generated",
       url: "",
-      userId,
       userEmail,
       profileId,
       success: false,
