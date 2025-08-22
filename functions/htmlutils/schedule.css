@@ -129,6 +129,11 @@ tbody tr:nth-child(2n) td { background: var(--row-alt); }
   background: #1A73E8;
 }
 
+.asAtDate {
+  color: var(--muted);
+  font-style: italic;
+  font-size: 18px;
+}
 /* ---------- Footer ---------- */
 .footer { margin-top: 16px; font-size: 11px; color: var(--muted); }
 

@@ -2,6 +2,9 @@
 import { readFile } from "fs/promises";
 import path from "path";
 import process from "node:process";
+import { formatPrettyDate } from "./utils/prettyDate.mjs";
+
+const prettyTimestamp = formatPrettyDate(new Date().toISOString());
 
 function escapeHtml(s) {
   return String(s ?? "")
@@ -57,7 +60,8 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
   const subtitleEsc = subtitleRaw ? escapeHtml(subtitleRaw) : "";
 
   // Combine (skip empties), preserving <br/> between parts
-  const subtitleBlock = [subtitleEsc, headerTextHtml].filter(Boolean).join("<br/>");
+  var subtitleBlock = [subtitleEsc, headerTextHtml].filter(Boolean).join("<br/>");
+  subtitleBlock = subtitleBlock + `<br/><span class="asAtDate">As at ${prettyTimestamp}</span>`;
 
   // Optional right-aligned external logo (disappears if URL fails)
   const logoHtml = renderLogo(jsonInput?.document?.header?.logo);

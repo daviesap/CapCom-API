@@ -148,7 +148,7 @@ async function generateSnapshotOutputs(jsonInput, safeAppName, bucket, startTime
   let htmlString;
   try {
     const { generateHtmlString } = await import("./generateHtml.mjs");
-    const htmlResult = await generateHtmlString(jsonInput, { pdfUrl });
+    const htmlResult = await generateHtmlString(jsonInput, { pdfUrl});
     htmlString = htmlResult.htmlString;
   } catch (importErr) {
     console.error("⚠️ generateHtml.mjs not available:", importErr);
