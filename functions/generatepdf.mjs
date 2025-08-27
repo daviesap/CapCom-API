@@ -163,6 +163,50 @@ export const generatePdfBuffer = async (jsonInput = null) => {
     }
   };
 
+  // === Key Info box (optional) ===
+  if (jsonData.keyInfo) {
+    // Resolve styles with defaults; can be overridden via styles.keyInfo in profile JSON
+    // No title for Key info box
+    const titleStyle = null;
+    const textStyle = resolveStyle(
+      (styles.keyInfo?.text) || { fontSize: 10, fontStyle: 'normal', fontColour: '#000000' },
+      boldFont, regularFont, italicFont, boldItalicFont,
+      lineSpacing
+    );
+    const boxStyle = styles.keyInfo?.box || {
+      backgroundColour: '#F7F7F7',
+      borderColour: '#CCCCCC',
+      padding: 10,
+      marginBottom: 16,
+    };
+
+    const lines = normaliseKeyInfoToLines(jsonData.keyInfo);
+
+    // Estimate height and page-break cleanly if needed
+    const innerWidth = Math.max(1, (pageWidth - leftMargin - rightMargin) - (boxStyle.padding ?? 10) * 2);
+    const wrappedProbe = wrapLinesForWidth(lines, textStyle.font, textStyle.fontSize, innerWidth);
+    const neededHeight =
+      (boxStyle.padding ?? 10) +
+      (wrappedProbe.length * textStyle.lineHeight) +
+      (boxStyle.padding ?? 10) +
+      (boxStyle.marginBottom ?? 16);
+
+    checkBreak(neededHeight);
+
+    // Draw and advance the Y cursor
+    y = drawKeyInfoBox({
+      page: currentPage,
+      pageWidth,
+      leftMargin,
+      rightMargin,
+      currentY: y,
+      titleStyle,
+      textStyle,
+      boxStyle,
+      contentLines: lines,
+    });
+  }
+
   for (const group of jsonData.groups) {
     if (debug) {
       drawThresholdLine(currentPage, bottomPageThreshold, pageWidth);
@@ -518,4 +562,105 @@ function drawThresholdLine(page, bottomPageThreshold, pageWidth) {
       opacity: 0.5,
     });
   }
+}
+
+function stripInlineMd(s) {
+  if (!s) return '';
+  let out = String(s);
+  // links: [text](url) -> text
+  out = out.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '$1');
+  // images: ![alt](url) -> alt
+  out = out.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '$1');
+  // bold/italic/code/strike markers: **text**, __text__, *text*, _text_, ~~text~~, `code`
+  out = out.replace(/\*\*(.*?)\*\*/g, '$1');
+  out = out.replace(/__(.*?)__/g, '$1');
+  out = out.replace(/\*(.*?)\*/g, '$1');
+  out = out.replace(/_(.*?)_/g, '$1');
+  out = out.replace(/~~(.*?)~~/g, '$1');
+  out = out.replace(/`([^`]+)`/g, '$1');
+  // collapse extra spaces created by stripping
+  out = out.replace(/\s{2,}/g, ' ').trim();
+  return out;
+}
+
+function normaliseKeyInfoToLines(src) {
+  if (!src) return [];
+  const rawLines = String(src).replace(/\r\n/g, '\n').split('\n');
+  return rawLines.map(l => {
+    const t = l.trim();
+    if (!t) return ''; // blank line separator
+    // bullets
+    if (t.startsWith('* ') || t.startsWith('- ')) return '• ' + stripInlineMd(t.slice(2));
+    // strip simple markdown headings
+    const noHead = t.replace(/^#{1,6}\s+/, '');
+    return stripInlineMd(noHead);
+  });
+}
+
+function wrapLinesForWidth(lines, font, fontSize, maxWidth) {
+  const wrapped = [];
+  for (const line of lines) {
+    if (line === '') { wrapped.push(''); continue; }
+    const words = line.split(' ');
+    let cur = '';
+    for (const w of words) {
+      const test = cur ? `${cur} ${w}` : w;
+      if (font.widthOfTextAtSize(test, fontSize) > maxWidth) {
+        if (cur) wrapped.push(cur);
+        cur = w;
+      } else {
+        cur = test;
+      }
+    }
+    if (cur) wrapped.push(cur);
+  }
+  return wrapped;
+}
+
+function drawKeyInfoBox(opts) {
+  const {
+    page, pageWidth, leftMargin, rightMargin, currentY, textStyle, boxStyle, contentLines
+  } = opts;
+
+  const pad = (boxStyle?.padding ?? 10);
+  const bg = rgbHex(boxStyle?.backgroundColour || '#F7F7F7');
+  const border = rgbHex(boxStyle?.borderColour || '#CCCCCC');
+  const marginBottom = (boxStyle?.marginBottom ?? 16);
+  const width = pageWidth - leftMargin - rightMargin;
+
+  const wrapped = wrapLinesForWidth(
+    contentLines,
+    textStyle.font,
+    textStyle.fontSize,
+    Math.max(1, width - pad * 2)
+  );
+
+  const textH = wrapped.length * textStyle.lineHeight;
+  const boxHeight = pad + textH + pad;
+
+  const rectY = currentY - boxHeight;
+  page.drawRectangle({
+    x: leftMargin,
+    y: rectY,
+    width,
+    height: boxHeight,
+    color: bg,
+    borderColor: border,
+    borderWidth: 0.5,
+  });
+
+  let yCursor = currentY - pad;
+
+  for (const ln of wrapped) {
+    page.drawText(ln, {
+      x: leftMargin + pad,
+      y: yCursor - (textStyle.lineHeight - textStyle.fontSize),
+      size: textStyle.fontSize,
+      font: textStyle.font,
+      color: textStyle.color,
+    });
+    yCursor -= textStyle.lineHeight;
+  }
+
+  return currentY - boxHeight - marginBottom;
 }
