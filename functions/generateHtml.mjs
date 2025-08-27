@@ -2,14 +2,11 @@
 import { readFile } from "fs/promises";
 import path from "path";
 import process from "node:process";
-<<<<<<< HEAD
+import { formatPrettyDate } from "./utils/prettyDate.mjs";
 import { marked } from "marked";
 import sanitizeHtml from "sanitize-html";
-=======
-import { formatPrettyDate } from "./utils/prettyDate.mjs";
 
 const prettyTimestamp = formatPrettyDate(new Date().toISOString());
->>>>>>> 6e2bba7 (Added "As at" date to HTML)
 
 function escapeHtml(s) {
   return String(s ?? "")
@@ -65,7 +62,8 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
   const subtitleEsc = subtitleRaw ? escapeHtml(subtitleRaw) : "";
 
   // Combine (skip empties), preserving <br/> between parts
-  var subtitleBlock = [subtitleEsc, headerTextHtml].filter(Boolean).join("<br/>");
+  //const subtitleBlock = [subtitleEsc, headerTextHtml].filter(Boolean).join("<br/>");
+    var subtitleBlock = [subtitleEsc, headerTextHtml].filter(Boolean).join("<br/>");
   subtitleBlock = subtitleBlock + `<br/><span class="asAtDate">As at ${prettyTimestamp}</span>`;
 
   // Optional right-aligned external logo (disappears if URL fails)
