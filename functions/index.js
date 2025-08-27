@@ -34,12 +34,18 @@ const ACTIONS = {
 
 // ---------- helpers ----------
 function formatYYYYMMDD(d = new Date()) {
-  // Europe/London local date (simple local interpretation)
-  const yyyy = d.getFullYear();
-  const mm = String(d.getMonth() + 1).padStart(2, "0");
-  const dd = String(d.getDate()).padStart(2, "0");
-  const hh = String(d.getHours()).padStart(2, "0");
-  const min = String(d.getMinutes()).padStart(2, "0");
+  // Europe/London time (handles BST/GMT automatically)
+  const fmt = new Intl.DateTimeFormat('en-GB', {
+    year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', hour12: false,
+    timeZone: 'Europe/London'
+  });
+  const parts = Object.fromEntries(fmt.formatToParts(d).map(p => [p.type, p.value]));
+  const yyyy = parts.year;
+  const mm = parts.month;
+  const dd = parts.day;
+  const hh = parts.hour;
+  const min = parts.minute;
   return `${yyyy}${mm}${dd}-${hh}${min}`;
 }
 
@@ -126,7 +132,7 @@ async function generateSnapshotOutputs(jsonInput, safeAppName, bucket, startTime
   const safeHtmlName = `${safeHtmlBase}.html`;
   // Get Glide app name
   const glideAppName = jsonInput.glideAppName || "Glide App Name Missing";
-  
+
 
   // 2) Save PDF (immutable caching)
   if (runningEmulated) {
@@ -148,7 +154,7 @@ async function generateSnapshotOutputs(jsonInput, safeAppName, bucket, startTime
   let htmlString;
   try {
     const { generateHtmlString } = await import("./generateHtml.mjs");
-    const htmlResult = await generateHtmlString(jsonInput, { pdfUrl});
+    const htmlResult = await generateHtmlString(jsonInput, { pdfUrl });
     htmlString = htmlResult.htmlString;
   } catch (importErr) {
     console.error("⚠️ generateHtml.mjs not available:", importErr);

@@ -2,11 +2,31 @@
 import { readFile } from "fs/promises";
 import path from "path";
 import process from "node:process";
-import { formatPrettyDate } from "./utils/prettyDate.mjs";
 import { marked } from "marked";
 import sanitizeHtml from "sanitize-html";
 
-const prettyTimestamp = formatPrettyDate(new Date().toISOString());
+// Fancy London timestamp like: Wednesday 27th August 2025 at 6.17pm
+(function(){
+  const now = new Date();
+  const parts = new Intl.DateTimeFormat('en-GB', {
+    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
+    hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'Europe/London'
+  }).formatToParts(now);
+  const get = (t) => (parts.find(p => p.type === t)?.value || '').trim();
+  const dayNum = Number(get('day'));
+  const suffix = (n => {
+    const v = n % 100; if (v >= 11 && v <= 13) return 'th';
+    switch (n % 10) { case 1: return 'st'; case 2: return 'nd'; case 3: return 'rd'; default: return 'th'; }
+  })(dayNum);
+  const weekday = get('weekday');
+  const month = get('month');
+  const year = get('year');
+  const hour = get('hour');
+  const minute = get('minute');
+  const period = get('dayPeriod').toLowerCase().replace(/\./g, '').replace(/\s+/g, ''); // pm/am
+  globalThis.__PRETTY_LONDON_TS__ = `${weekday} ${dayNum}${suffix} ${month} ${year} at ${hour}.${minute}${period}`;
+})();
+const prettyTimestamp = globalThis.__PRETTY_LONDON_TS__;
 
 function escapeHtml(s) {
   return String(s ?? "")

@@ -137,8 +137,17 @@ export const generatePdfBuffer = async (jsonInput = null) => {
 
   const reserveHeader = () => {
     if (header?.text?.length || embeddedLogo) {
-      const { lineHeight } = resolveStyle(styles.header || {}, boldFont, regularFont, italicFont, boldItalicFont, lineSpacing);
-      const headerTextHeight = (header?.text?.length || 0) * lineHeight;
+      const { lineHeight } = resolveStyle(
+        styles.header || {},
+        boldFont,
+        regularFont,
+        italicFont,
+        boldItalicFont,
+        lineSpacing
+      );
+      // Reserve for existing header lines + 1 extra line for "As at …"
+      const lineCount = (header?.text?.length || 0) + 1;
+      const headerTextHeight = lineCount * lineHeight;
       const logoHeight = header?.logo?.height || embeddedLogo?.height || 0;
       const maxHeaderBlockHeight = Math.max(headerTextHeight, logoHeight);
       y -= maxHeaderBlockHeight + headerPaddingBottom;
@@ -369,17 +378,38 @@ export const generatePdfBuffer = async (jsonInput = null) => {
   for (let i = 0; i < total; i++) {
     const pg = pages[i];
     if (header?.text) {
-      const { lineHeight: hLH, fontSize: hFS, font: hF, color: hC } = resolveStyle(styles.header || {}, boldFont, regularFont, italicFont, boldItalicFont, lineSpacing);
-      const headerStyle = resolveStyle(styles.header || {}, boldFont, regularFont, italicFont, boldItalicFont, lineSpacing);
-      const headerTextHeight = (header?.text?.length || 0) * headerStyle.lineHeight;
+      const { lineHeight: hLH, fontSize: hFS, font: hF, color: hC } = resolveStyle(
+        styles.header || {},
+        boldFont,
+        regularFont,
+        italicFont,
+        boldItalicFont,
+        lineSpacing
+      );
+      const headerStyle = resolveStyle(
+        styles.header || {},
+        boldFont,
+        regularFont,
+        italicFont,
+        boldItalicFont,
+        lineSpacing
+      );
+      // Account for existing header lines + 1 extra line for "As at …"
+      const lineCount = (header?.text?.length || 0) + 1;
+      const headerTextHeight = lineCount * headerStyle.lineHeight;
       const logoHeight = header?.logo?.height || embeddedLogo?.height || 0;
       const maxHeaderBlockHeight = Math.max(headerTextHeight, logoHeight);
 
       let hy = pageHeight - topMargin - (maxHeaderBlockHeight - headerTextHeight);
+      // Draw existing header lines first
       for (const ln of header.text) {
         pg.drawText(sanitiseText(ln), { x: leftMargin, y: hy, size: hFS, font: hF, color: hC });
         hy -= hLH;
       }
+      // Draw the new "As at …" line using the same header style
+      const asAtText = `As at ${ts}`;
+      pg.drawText(sanitiseText(asAtText), { x: leftMargin, y: hy, size: hFS, font: hF, color: hC });
+      hy -= hLH;
     }
     if (header?.logo && embeddedLogo) {
       pg.drawImage(embeddedLogo, {
