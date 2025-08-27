@@ -2,9 +2,8 @@
 import { readFile } from "fs/promises";
 import path from "path";
 import process from "node:process";
-import { formatPrettyDate } from "./utils/prettyDate.mjs";
-
-const prettyTimestamp = formatPrettyDate(new Date().toISOString());
+import { marked } from "marked";
+import sanitizeHtml from "sanitize-html";
 
 function escapeHtml(s) {
   return String(s ?? "")
@@ -60,8 +59,7 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
   const subtitleEsc = subtitleRaw ? escapeHtml(subtitleRaw) : "";
 
   // Combine (skip empties), preserving <br/> between parts
-  var subtitleBlock = [subtitleEsc, headerTextHtml].filter(Boolean).join("<br/>");
-  subtitleBlock = subtitleBlock + `<br/><span class="asAtDate">As at ${prettyTimestamp}</span>`;
+  const subtitleBlock = [subtitleEsc, headerTextHtml].filter(Boolean).join("<br/>");
 
   // Optional right-aligned external logo (disappears if URL fails)
   const logoHtml = renderLogo(jsonInput?.document?.header?.logo);
@@ -73,6 +71,40 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
       <div class="header-logo">${logoHtml}</div>
     </div>
   `;
+
+  // Optional Markdown "keyInfo" block to show below the header and above groups
+  const keyInfoMd =
+    (jsonInput?.document?.keyInfo && typeof jsonInput.document.keyInfo === "string")
+      ? jsonInput.document.keyInfo
+      : (typeof jsonInput?.keyInfo === "string" ? jsonInput.keyInfo : "");
+
+  let keyInfoBlock = "";
+  if (keyInfoMd) {
+    const rawHtml = marked.parse(keyInfoMd, { mangle: false, headerIds: false });
+    const safeHtml = sanitizeHtml(rawHtml, {
+      allowedTags: [
+        "h1","h2","h3","h4","h5","h6",
+        "p","strong","em","ul","ol","li",
+        "blockquote","code","pre","br","hr","a","span"
+      ],
+      allowedAttributes: {
+        a: ["href","title","target","rel"],
+        span: ["class"]
+      },
+      transformTags: {
+        a: (tagName, attribs) => ({
+          tagName: "a",
+          attribs: {
+            ...attribs,
+            target: "_blank",
+            rel: "noopener"
+          }
+        })
+      }
+    });
+
+    keyInfoBlock = `<section class="markdown key-info">${safeHtml}</section>`;
+  }
 
   const groups = Array.isArray(jsonInput.groups) ? jsonInput.groups : [];
 
@@ -180,6 +212,8 @@ if (Array.isArray(jsonInput.columns) && jsonInput.columns.length) {
     `;
   }).join("");
 
+  const groupsHtmlFinal = keyInfoBlock ? `${keyInfoBlock}\n${groupsHtml}` : groupsHtml;
+
   // Optional debug panel
   let debugBlock = "";
   if (jsonInput.debug === true) {
@@ -202,7 +236,7 @@ if (Array.isArray(jsonInput.columns) && jsonInput.columns.length) {
     .replaceAll("{{SUBTITLE}}", subtitleWithLogo)
     .replaceAll("{{DOWNLOAD}}", downloadBlock)
     .replaceAll("{{DEBUG}}", debugBlock)
-    .replaceAll("{{GROUPS}}", groupsHtml)
+    .replaceAll("{{GROUPS}}", groupsHtmlFinal)
     .replaceAll("{{FOOTER}}", escapeHtml(footerText));
 
   const baseName = jsonInput?.document?.filename || jsonInput?.eventName || title || "schedule";

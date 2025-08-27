@@ -142,3 +142,42 @@ tbody tr:nth-child(2n) td { background: var(--row-alt); }
   body { padding: 0; }
   .download, .meta { display: none; }
 }
+
+/* Markdown block at top */
+.markdown.key-info {
+  margin: 16px 0 20px;
+  padding: 12px 14px;
+  background: var(--surface, #fafafa);
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: 8px;
+  line-height: 1.5;
+}
+
+/* Basic Markdown typography */
+.markdown h1, .markdown h2, .markdown h3,
+.markdown h4, .markdown h5, .markdown h6 {
+  margin: 0.2em 0 0.4em;
+  line-height: 1.25;
+}
+
+.markdown p { margin: 0.5em 0; }
+
+.markdown ul, .markdown ol {
+  margin: 0.5em 0 0.5em 1.25em;
+  padding-left: 1em;
+}
+
+.markdown li { margin: 0.25em 0; }
+
+.markdown a {
+  text-decoration: underline;
+  color: inherit;
+}
+
+.markdown code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.95em;
+  background: rgba(0,0,0,0.05);
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+}
