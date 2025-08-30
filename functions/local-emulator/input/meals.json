@@ -1,0 +1,281 @@
+{
+  "eventName": "GWC 2025 Maui",
+  "api_key": "Sausages2025!!",
+  "dates": [
+    {
+      "date": "2026-04-18T00:00:00.000Z",
+      "description": "Wave 2 - Arrivals / Welcome Reception"
+    },
+    {
+      "date": "2026-04-13T00:00:00.000Z"
+    },
+    {
+      "date": "2026-04-20T00:00:00.000Z",
+      "description": "Wave 2 Gala Dinner"
+    },
+    {
+      "date": "2026-04-23T00:00:00.000Z"
+    },
+    {
+      "date": "2026-04-16T00:00:00.000Z",
+      "description": "Wave 1 - Kick off and Theme Party"
+    },
+    {
+      "date": "2026-04-11T00:00:00.000Z"
+    },
+    {
+      "date": "2026-04-12T00:00:00.000Z",
+      "description": "Build starts"
+    },
+    {
+      "date": "2026-04-24T00:00:00.000Z"
+    },
+    {
+      "date": "2026-04-19T00:00:00.000Z",
+      "description": "Wave 2 - Kick off and Theme Party"
+    },
+    {
+      "date": "2026-04-22T00:00:00.000Z"
+    },
+    {
+      "date": "2026-04-14T00:00:00.000Z",
+      "description": "Wave 1 - GC Arrivals"
+    },
+    {
+      "date": "2026-04-21T00:00:00.000Z",
+      "description": "Departures / Load out"
+    },
+    {
+      "date": "2026-04-15T00:00:00.000Z",
+      "description": "Wave 1 - Arrivals / Welcome Reception"
+    },
+    {
+      "date": "2026-04-17T00:00:00.000Z",
+      "description": "Wave 1 Gala Dinner.  Wave 2 GC Arrivals"
+    },
+    {
+      "date": "2026-04-10T00:00:00.000Z",
+      "description": "Pre con meeting? / UK Crew land?"
+    },
+    {
+      "date": "2026-04-08T00:00:00.000Z"
+    },
+    {
+      "date": "2026-04-09T00:00:00.000Z",
+      "description": "UK PMs Land?"
+    }
+  ],
+  "slots": [
+    {
+      "slot": 1,
+      "name": "Breakfast",
+      "abb": "B",
+      "location": "Room 1",
+      "checked": true
+    },
+    {
+      "slot": 2,
+      "name": "Lunch",
+      "abb": "L",
+      "location": "Room 2",
+      "checked": true
+    },
+    {
+      "slot": 3,
+      "name": "Dinner",
+      "abb": "D",
+      "location": "Room 3",
+      "checked": true
+    },
+    {
+      "slot": 4,
+      "name": "Overnight",
+      "abb": "O",
+      "location": "Room 4",
+      "checked": false
+    },
+    {
+      "slot": 5,
+      "name": "Tea / Coffee",
+      "abb": "TC",
+      "location": "Room 5",
+      "checked": false
+    },
+    {
+      "slot": 6,
+      "name": "Spare",
+      "abb": "S1",
+      "checked": false
+    }
+  ],
+  "tags": [
+    {
+      "id": "uCTLNpKsSuencYzskshkmQ",
+      "name": "AVS",
+      "company": "AV Supplier"
+    },
+    {
+      "id": "q3hoGGIKTA6OLAEFy6Ip5w",
+      "name": "Locals",
+      "company": "Local Crew"
+    },
+    {
+      "id": "8gHYYqGJQjOBBoOCns1UhQ",
+      "name": "OnStage",
+      "company": "Role"
+    }
+  ],
+  "names": [
+    {
+      "id": "sqhyBGaUQJuO8kWi-6pybA",
+      "name": "Barry Roberts",
+      "role": "Lighting Designer",
+      "company": "AVS"
+    },
+    {
+      "id": "wFhBSLMuQlS2k08ECNlhhw",
+      "name": "Katie Foster",
+      "role": "Room Tech",
+      "company": "AVS"
+    },
+    {
+      "id": "K0NzZqe2RHu7JyT8F8uS9w",
+      "name": "Liam Carter",
+      "role": "Carpenter",
+      "company": "AVS"
+    },
+    {
+      "id": "IL-VnxFBQWyrJK-WjXNI.A",
+      "name": "Grace Turner",
+      "role": "Digital",
+      "company": "AVS"
+    },
+    {
+      "id": "8.-ru-jMSemPzMo3KLX6FQ",
+      "name": "Mia Brown",
+      "role": "Carpenter",
+      "company": "AVS"
+    },
+    {
+      "id": "FsnalWZgQP2c03Jvl1bWqg",
+      "name": "Bob Brown",
+      "role": "Audio",
+      "company": "AVS"
+    }
+  ],
+  "data": [
+    {
+      "Date": "2026-04-11T00:00:00.000Z",
+      "accommodated": true,
+      "name": "IL-VnxFBQWyrJK-WjXNI.A",
+      "slot1": 1,
+      "slot2": 1,
+      "slot3": 1
+    },
+    {
+      "Date": "2026-04-12T00:00:00.000Z",
+      "accommodated": true,
+      "name": "IL-VnxFBQWyrJK-WjXNI.A"
+    },
+    {
+      "Date": "2026-04-13T00:00:00.000Z",
+      "accommodated": true,
+      "name": "IL-VnxFBQWyrJK-WjXNI.A"
+    },
+    {
+      "Date": "2026-04-14T00:00:00.000Z",
+      "accommodated": true,
+      "name": "IL-VnxFBQWyrJK-WjXNI.A",
+      "slot1": 1
+    },
+    {
+      "Date": "2026-04-11T00:00:00.000Z",
+      "accommodated": false,
+      "name": "q3hoGGIKTA6OLAEFy6Ip5w",
+      "slot1": 20,
+      "slot2": 20
+    },
+    {
+      "Date": "2026-04-11T00:00:00.000Z",
+      "accommodated": true,
+      "name": "K0NzZqe2RHu7JyT8F8uS9w",
+      "slot2": 1
+    },
+    {
+      "Date": "2026-04-12T00:00:00.000Z",
+      "accommodated": true,
+      "name": "K0NzZqe2RHu7JyT8F8uS9w"
+    },
+    {
+      "Date": "2026-04-13T00:00:00.000Z",
+      "accommodated": true,
+      "name": "K0NzZqe2RHu7JyT8F8uS9w"
+    },
+    {
+      "Date": "2026-04-14T00:00:00.000Z",
+      "accommodated": true,
+      "name": "K0NzZqe2RHu7JyT8F8uS9w"
+    },
+    {
+      "Date": "2026-04-15T00:00:00.000Z",
+      "accommodated": true,
+      "name": "K0NzZqe2RHu7JyT8F8uS9w"
+    },
+    {
+      "Date": "2026-04-16T00:00:00.000Z",
+      "accommodated": true,
+      "name": "K0NzZqe2RHu7JyT8F8uS9w"
+    },
+    {
+      "Date": "2026-04-17T00:00:00.000Z",
+      "accommodated": true,
+      "name": "K0NzZqe2RHu7JyT8F8uS9w"
+    },
+    {
+      "Date": "2026-04-18T00:00:00.000Z",
+      "accommodated": true,
+      "name": "K0NzZqe2RHu7JyT8F8uS9w"
+    },
+    {
+      "Date": "2026-04-19T00:00:00.000Z",
+      "accommodated": true,
+      "name": "K0NzZqe2RHu7JyT8F8uS9w"
+    },
+    {
+      "Date": "2026-04-20T00:00:00.000Z",
+      "accommodated": true,
+      "name": "K0NzZqe2RHu7JyT8F8uS9w"
+    },
+    {
+      "Date": "2026-04-21T00:00:00.000Z",
+      "accommodated": true,
+      "name": "K0NzZqe2RHu7JyT8F8uS9w"
+    },
+    {
+      "Date": "2026-04-22T00:00:00.000Z",
+      "accommodated": true,
+      "name": "K0NzZqe2RHu7JyT8F8uS9w"
+    },
+    {
+      "Date": "2026-04-23T00:00:00.000Z",
+      "accommodated": true,
+      "name": "K0NzZqe2RHu7JyT8F8uS9w"
+    },
+    {
+      "Date": "2026-04-24T00:00:00.000Z",
+      "accommodated": true,
+      "name": "K0NzZqe2RHu7JyT8F8uS9w"
+    },
+    {
+      "Date": "2026-04-11T00:00:00.000Z",
+      "accommodated": true,
+      "name": "FsnalWZgQP2c03Jvl1bWqg",
+      "slot2": 1
+    },
+    {
+      "Date": "2026-04-12T00:00:00.000Z",
+      "accommodated": true,
+      "name": "FsnalWZgQP2c03Jvl1bWqg"
+    }
+  ]
+}

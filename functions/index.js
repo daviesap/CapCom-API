@@ -15,6 +15,8 @@ import { sanitiseUrl } from "./utils/sanitiseUrl.mjs";
 import { filterJson } from "./utils/filterJSON.mjs";
 import { sanitiseText } from "./utils/sanitiseText.mjs";
 import { deriveDetectedFieldsFromGroups } from "./utils/detectFields.mjs";
+import { updateDatesHandler } from "./updateDates/updateDates.js";
+import { mealsPivotHandler } from "./pivotTable/mealsPivot.js";
 
 initializeApp({
   credential: applicationDefault(),
@@ -31,6 +33,8 @@ const ACTIONS = {
   GET_PROFILE_IDS: "getProfileIds",
   VERSION: "version",
   GENERATE_SNAPSHOT: "generateScheduleSnapshot",
+  UPDATE_DATES: "updateDates",
+  MEALS_PIVOT: "mealsPivot",
   GENERATE_PDF: "generatePdf", // now behaves the same as GENERATE_SNAPSHOT
 };
 
@@ -283,6 +287,16 @@ export const generatePdf = onRequest({ region: "europe-west2" }, async (req, res
       return res.status(500).json({ success: false, message: "Failed to fetch profile IDs", error: err.message, timestamp });
     }
   }
+
+  // UPDATE_DATES
+  if (action === ACTIONS.UPDATE_DATES) {
+    return await updateDatesHandler(req, res, db);
+  }
+
+  //Meals Pivot table
+        if (action === ACTIONS.MEALS_PIVOT) {
+        return await mealsPivotHandler(req, res);
+      }
 
   // Shared metadata
   const userEmail = req.body.userEmail || "unknown email";
