@@ -7,7 +7,8 @@
   },
   "scripts": {
     "serve": "firebase emulators:start --only functions",
-    "deploy": "gcloud functions deploy generatePdf --gen2 --region europe-west2 --runtime nodejs20 --entry-point generatePdf --source=. --service-account generatepdf@flair-pdf-generator.iam.gserviceaccount.com --project flair-pdf-generator"
+    "deploy": "gcloud functions deploy generatePdf --gen2 --region europe-west2 --runtime nodejs20 --entry-point generatePdf --source=. --service-account generatepdf@flair-pdf-generator.iam.gserviceaccount.com --project flair-pdf-generator",
+    "deploy:pdfgen": "cd functions && npm run deploy"
   },
   "dependencies": {
     "@google-cloud/secret-manager": "^6.1.0",
@@ -17,5 +18,6 @@
     "marked": "^16.2.1",
     "pdf-lib": "^1.17.1",
     "sanitize-html": "^2.17.0"
-  }
+  },
+  "version": "1.0.0"
 }
