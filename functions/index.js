@@ -6,6 +6,7 @@ import { SecretManagerServiceClient } from "@google-cloud/secret-manager";
 import { readFile } from "fs/promises";
 import fs from "fs";
 import path from "path";
+import { fileURLToPath } from "url";
 import process from "process";
 import { Buffer } from "node:buffer";
 import { merge } from "lodash-es";
@@ -28,6 +29,7 @@ const runningEmulated = !!process.env.FUNCTIONS_EMULATOR || !!process.env.FIREBA
 
 const ACTIONS = {
   GET_PROFILE_IDS: "getProfileIds",
+  VERSION: "version",
   GENERATE_SNAPSHOT: "generateScheduleSnapshot",
   GENERATE_PDF: "generatePdf", // now behaves the same as GENERATE_SNAPSHOT
 };
@@ -209,6 +211,18 @@ async function generateSnapshotOutputs(jsonInput, safeAppName, bucket, startTime
   };
 }
 
+//Get Package version from package.json or default to 0.0.0
+async function getPkgVersion() {
+  try {
+    const pkgPath = path.resolve(__dirname, "package.json");
+    const data = await readFile(pkgPath, "utf8");
+    return JSON.parse(data).version || "0.0.0";
+  } catch {
+    return "0.0.0";
+  }
+}
+
+
 // ---------- main handler ----------
 export const generatePdf = onRequest({ region: "europe-west2" }, async (req, res) => {
   const startTime = Date.now();
@@ -221,6 +235,16 @@ export const generatePdf = onRequest({ region: "europe-west2" }, async (req, res
     return res.status(400).json({
       success: false,
       message: `Unknown or missing action. Use one of: ${[...allowed].join(", ")}`,
+      timestamp,
+    });
+  }
+  // VERSION endpoint (safe, public)
+  if (action === 'version') {
+    const version = await getPkgVersion();
+    return res.status(200).json({
+      success: true,
+      message: '👋 Hello Big \'Un! From Capcom API #UTB',
+      version,
       timestamp,
     });
   }
@@ -378,3 +402,6 @@ export const generatePdf = onRequest({ region: "europe-west2" }, async (req, res
     return res.status(500).json({ success: false, message: `Operation failed: ${err.message}`, executionTimeSeconds });
   }
 });
+// ESM replacements for __filename and __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
