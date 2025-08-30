@@ -243,7 +243,7 @@ export const generatePdf = onRequest({ region: "europe-west2" }, async (req, res
     const version = await getPkgVersion();
     return res.status(200).json({
       success: true,
-      message: '👋 Hello Big \'Un! From Capcom API #UTB',
+      message: '👋 Hello Big \'Un! From Capcom API #UTB.  Available Actions = ' + [...allowed].join(", "),
       version,
       timestamp,
     });
