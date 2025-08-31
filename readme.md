@@ -9,6 +9,16 @@ firebase emulators:start --only functions
   -H "Content-Type: application/json" \
   --data-binary "@/Users/apndavies/Coding/flair-pdf-generator/functions/local-emulator/input/schedule-sample.json"
 
+## Curl to test deployed version
+curl -X POST "https://api.capcom.london/generatePdf?action=generateScheduleSnapshot" \
+  -H "Content-Type: application/json" \
+  --data-binary "@/Users/apndavies/Coding/flair-pdf-generator/functions/local-emulator/input/schedule-sample.json"
+
+  ## Curl to test deployed version UPDATE DATES
+curl -X POST "https://api.capcom.london/generatePdf?action=updateDates" \
+  -H "Content-Type: application/json" \
+  --data-binary "@/Users/apndavies/Coding/flair-pdf-generator/functions/local-emulator/input/updateDates.json"
+
 
 ## Change action as neccessary to 
 generatePdf

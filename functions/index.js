@@ -2,7 +2,6 @@ import { onRequest } from "firebase-functions/v2/https";
 import { initializeApp, applicationDefault } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
 import { getStorage } from "firebase-admin/storage";
-import { SecretManagerServiceClient } from "@google-cloud/secret-manager";
 import { readFile } from "fs/promises";
 import fs from "fs";
 import path from "path";
@@ -24,7 +23,6 @@ initializeApp({
 });
 
 const db = getFirestore();
-const secretClient = new SecretManagerServiceClient();
 
 const LOCAL_OUTPUT_DIR = path.join(process.cwd(), "local-emulator", "output");
 const runningEmulated = !!process.env.FUNCTIONS_EMULATOR || !!process.env.FIREBASE_EMULATOR_HUB;
@@ -253,20 +251,15 @@ export const generatePdf = onRequest({ region: "europe-west2" }, async (req, res
     });
   }
 
-  // API key
-  let expectedKey;
-  if (runningEmulated) {
-    expectedKey = process.env.LOCAL_API_KEY || "dev-key";
-  } else {
-    try {
-      const [version] = await secretClient.accessSecretVersion({
-        name: process.env.API_KEY_SECRET_NAME,
-      });
-      expectedKey = version.payload.data.toString("utf8").trim();
-    } catch (err) {
-      console.error("❌ Failed to access API key secret:", err);
-      return res.status(500).json({ success: false, message: "Internal error retrieving API key" });
-    }
+  // API key — now injected as a secret value into process.env.API_KEY at deploy time.
+  // When running locally/emulated, allow LOCAL_API_KEY override; otherwise use API_KEY.
+  const expectedKey = runningEmulated
+    ? (process.env.LOCAL_API_KEY || "dev-key")
+    : (process.env.API_KEY || "");
+
+  if (!expectedKey) {
+    console.error("❌ Missing API_KEY environment value in production.");
+    return res.status(500).json({ success: false, message: "Server missing API_KEY configuration" });
   }
 
   if (!req.body?.api_key || req.body.api_key !== expectedKey) {
