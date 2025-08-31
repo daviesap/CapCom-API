@@ -226,7 +226,7 @@ async function getPkgVersion() {
 
 
 // ---------- main handler ----------
-export const generatePdf = onRequest({ region: "europe-west2" }, async (req, res) => {
+export const v2 = onRequest({ region: "europe-west2" }, async (req, res) => {
   const startTime = Date.now();
   const timestamp = new Date().toISOString();
 

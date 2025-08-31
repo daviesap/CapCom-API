@@ -7,34 +7,35 @@
   "firestore": {
     "rules": "firestore.rules"
   },
-  "hosting": {
-    "public": "frontend/dist",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ],
-    "rewrites": [
-      {
-        "source": "/generatePdf",
-        "function": {
-          "functionId": "generatePdf",
-          "region": "europe-west2"
+  "hosting": [
+    {
+      "site": "flair-pdf-generator",
+      "public": "frontend/dist",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
         }
-      },
-      {
-        "source": "/generatePdf/**",
-        "function": {
-          "functionId": "generatePdf",
-          "region": "europe-west2"
+      ]
+    },
+    {
+      "site": "api-capcom-london",
+      "rewrites": [
+        {
+          "source": "/**",
+          "function": {
+            "functionId": "v2",
+            "region": "europe-west2"
+          }
         }
-      },
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
-    ]
-  },
+      ]
+    }
+  ],
   "emulators": {
     "functions": {
       "port": 5001
