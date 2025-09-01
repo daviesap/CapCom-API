@@ -274,7 +274,7 @@ export const v2 = onRequest({ region: "europe-west2" }, async (req, res) => {
         profileId: doc.id,
         name: doc.data()?.name || "(Unnamed)",
       }));
-      return res.status(200).json({ success: true, count: ids.length, profiles: ids, timestamp });
+      return res.status(200).json({ success: true, message:"✅ Success", count: ids.length, profiles: ids, timestamp });
     } catch (err) {
       console.error("❌ Error fetching profile IDs:", err);
       return res.status(500).json({ success: false, message: "Failed to fetch profile IDs", error: err.message, timestamp });
