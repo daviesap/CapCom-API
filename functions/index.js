@@ -1,3 +1,8 @@
+import { defineSecret } from "firebase-functions/params";
+// declare the secret names as they exist in Secret Manager
+const API_KEY = defineSecret("api_key");
+const GLIDE_API_KEY = defineSecret("glideApiKey");
+
 import { onRequest } from "firebase-functions/v2/https";
 import { initializeApp, applicationDefault } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
@@ -23,6 +28,7 @@ const db = getFirestore();
 
 const LOCAL_OUTPUT_DIR = path.join(process.cwd(), "local-emulator", "output");
 const runningEmulated = !!process.env.FUNCTIONS_EMULATOR || !!process.env.FIREBASE_EMULATOR_HUB;
+
 
 const ACTIONS = {
   GET_PROFILE_IDS: "getProfileIds",
@@ -224,7 +230,14 @@ async function getPkgVersion() {
 
 
 // ---------- main handler ----------
-export const v2 = onRequest({ region: "europe-west2" }, async (req, res) => {
+export const v2 = onRequest({
+  region: "europe-west2",
+  //minInstances: 1,    // keep one warm
+  //memory: "1GiB",     // PDF/Excel need headroom
+  //cpu: 2,             // faster processing
+  //concurrency: 10     // handle multiple requests per instance
+  secrets: [API_KEY, GLIDE_API_KEY],
+}, async (req, res) => {
   const startTime = Date.now();
   const timestamp = new Date().toISOString();
 
@@ -253,7 +266,7 @@ export const v2 = onRequest({ region: "europe-west2" }, async (req, res) => {
   // When running locally/emulated, allow LOCAL_API_KEY override; otherwise use API_KEY.
   const expectedKey = runningEmulated
     ? (process.env.LOCAL_API_KEY || "dev-key")
-    : (process.env.API_KEY || "");
+    : API_KEY.value();
 
   if (!expectedKey) {
     console.error("❌ Missing API_KEY environment value in production.");
