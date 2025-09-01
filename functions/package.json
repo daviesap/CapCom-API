@@ -8,7 +8,7 @@
   "scripts": {
     "serve": "firebase emulators:start --only functions",
     "deploy": "gcloud functions deploy v2 --gen2 --region europe-west2 --runtime nodejs20 --entry-point v2 --source=. --trigger-http --allow-unauthenticated --service-account generatepdf@flair-pdf-generator.iam.gserviceaccount.com --project flair-pdf-generator --set-secrets=API_KEY=projects/flair-pdf-generator/secrets/api_key:latest,GLIDE_API_KEY=projects/flair-pdf-generator/secrets/glideApiKey:latest --remove-env-vars=API_KEY_SECRET_NAME",
-    "deploy:functions": "cd /Users/apndavies/Coding/flair-pdf-generator/functions && npm run deploy",
+    "deploy:functions": "npm --prefix functions run deploy",
     "verify": "gcloud functions describe v2 --region=europe-west2 --format='json(serviceConfig.secretEnvironmentVariables,serviceConfig.environmentVariables)'"
   },
   "dependencies": {

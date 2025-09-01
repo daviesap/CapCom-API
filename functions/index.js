@@ -9,13 +9,10 @@ import { fileURLToPath } from "url";
 import process from "process";
 import { Buffer } from "node:buffer";
 import { merge } from "lodash-es";
-import { generatePdfBuffer } from "./generatepdf.mjs";
 import { sanitiseUrl } from "./utils/sanitiseUrl.mjs";
 import { filterJson } from "./utils/filterJSON.mjs";
 import { sanitiseText } from "./utils/sanitiseText.mjs";
 import { deriveDetectedFieldsFromGroups } from "./utils/detectFields.mjs";
-import { updateDatesHandler } from "./updateDates/updateDates.js";
-import { mealsPivotHandler } from "./pivotTable/mealsPivot.js";
 
 initializeApp({
   credential: applicationDefault(),
@@ -120,6 +117,7 @@ function sanitiseJsonFields(jsonData) {
 // Shared routine: generate PDF (date-stamped) + HTML (fixed), return both URLs
 async function generateSnapshotOutputs(jsonInput, safeAppName, bucket, startTime, timestamp, userEmail, profileId) {
   // 1) Generate PDF bytes
+  const { generatePdfBuffer } = await import("./generatepdf.mjs");
   const { bytes } = await generatePdfBuffer(jsonInput);
 
   // Names
@@ -283,13 +281,15 @@ export const v2 = onRequest({ region: "europe-west2" }, async (req, res) => {
 
   // UPDATE_DATES
   if (action === ACTIONS.UPDATE_DATES) {
+    const { updateDatesHandler } = await import("./updateDates/updateDates.js");
     return await updateDatesHandler(req, res, db);
   }
 
   //Meals Pivot table
-        if (action === ACTIONS.MEALS_PIVOT) {
-        return await mealsPivotHandler(req, res);
-      }
+  if (action === ACTIONS.MEALS_PIVOT) {
+    const { mealsPivotHandler } = await import("./pivotTable/mealsPivot.js");
+    return await mealsPivotHandler(req, res);
+  }
 
   // Shared metadata
   const userEmail = req.body.userEmail || "unknown email";

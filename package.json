@@ -2,11 +2,11 @@
   "name": "flair-pdf-project",
   "private": true,
   "scripts": {
-    "deploy:frontend": "cd /Users/apndavies/Coding/flair-pdf-generator/frontend && npm run build && firebase deploy --only hosting --project flair-pdf-generator",
-    "deploy:functions": "cd /Users/apndavies/Coding/flair-pdf-generator/functions && npm run deploy",
+    "deploy:frontend": "npm --prefix frontend run build && firebase deploy --only hosting --project flair-pdf-generator",
+    "deploy:functions": "npm --prefix functions run deploy",
     "deploy:all": "npm run deploy:frontend && npm run deploy:functions && firebase deploy --only firestore:rules --project flair-pdf-generator",
     "preversion": "echo \"❌ Don't run 'npm version' in the repo root. Use 'npm run version:functions -- <patch|minor|major>'\" && exit 1",
-    "version:functions": "cd functions && npm version"
+    "version:functions": "npm --prefix functions version"
   },
   "devDependencies": {
     "@eslint/js": "^9.26.0",
