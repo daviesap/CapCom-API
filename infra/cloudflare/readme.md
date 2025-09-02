@@ -1,0 +1,4 @@
+- Routes:
+  - vox.capcom.london/*      → worker-vox-snapshots.js
+  - snapshots.capcom.london/*→ worker-vox-snapshots.js
+- Origin bucket: flair-pdf-generator.firebasestorage.app

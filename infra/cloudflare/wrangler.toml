@@ -1,0 +1,12 @@
+name = "capcom-worker"
+main = "worker-vox-snapshots.js"
+compatibility_date = "2025-09-02"   # or today’s date
+workers_dev = false
+
+# Replace with your Cloudflare account ID
+account_id = "8b3fed5dd481b67a898081122010dc37"
+
+routes = [
+  { pattern = "vox.capcom.london/*", script = "capcom-worker" },
+  { pattern = "snapshots.capcom.london/*", script = "capcom-worker" }
+]
