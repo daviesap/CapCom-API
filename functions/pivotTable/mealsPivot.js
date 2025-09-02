@@ -116,7 +116,9 @@ export async function mealsPivotHandler(req, res) {
 
     // --- Filenames and environment ---
     const stamp = format(new Date(), "yyyyMMdd_HHmmss");
-    const safeEvent = String(eventName).replace(/[^A-Za-z0-9-_ ]+/g, "").trim().replace(/\s+/g, "_");
+    // Use sanitized slugs prepared in index.js; fall back to defaults if missing
+    const safeApp = (req.body?.appName ?? "App").toString();
+    const safeEvent = (req.body?.eventName ?? "Event").toString();
     const xlsxFileName = `${safeEvent}_Catering_${stamp}.xlsx`;
     const localHtmlFileName = `${safeEvent}_Catering_local.html`; // fixed local name for browser refresh
     const cloudHtmlFileName = `${safeEvent}_Catering_${stamp}.html`; // versioned for cloud
@@ -162,7 +164,7 @@ export async function mealsPivotHandler(req, res) {
       // --- Upload Excel if in cloud to obtain a public URL ---
       if (!isRunningLocally) {
         const bucket = getStorage().bucket();
-        const xlsxDest = `meals/${xlsxFileName}`;
+        const xlsxDest = `public/${safeApp}/${safeEvent}/${xlsxFileName}`;
         await bucket.upload(localXlsxPath, {
           destination: xlsxDest,
           metadata: { 
@@ -170,8 +172,8 @@ export async function mealsPivotHandler(req, res) {
             cacheControl: 'no-cache, max-age=0'
           }
         });
-        await bucket.file(xlsxDest).makePublic();
-        excelUrl = `https://storage.googleapis.com/${bucket.name}/${xlsxDest}`;
+        await bucket.file(xlsxDest);
+        excelUrl = `https://vox.capcom.london/${safeApp}/${safeEvent}/${xlsxFileName}`; // branded URL via Worker
         excelHrefForHtml = excelUrl;
       } else {
         excelHrefForHtml = xlsxFileName; // relative link next to HTML for local preview
@@ -221,13 +223,13 @@ export async function mealsPivotHandler(req, res) {
       let htmlUrl = null;
       if (doHtml) {
         const bucket = getStorage().bucket();
-        const htmlDest = `meals/${cloudHtmlFileName}`;
+        const htmlDest = `public/${safeApp}/${safeEvent}/${cloudHtmlFileName}`;
         await bucket.upload(localHtmlPath, {
           destination: htmlDest,
-          metadata: { contentType: 'text/html', cacheControl: 'no-cache, max-age=0' }
+          metadata: { contentType: 'text/html; charset=utf-8', cacheControl: 'public, max-age=0, must-revalidate' }
         });
-        await bucket.file(htmlDest).makePublic();
-        htmlUrl = `https://storage.googleapis.com/${bucket.name}/${htmlDest}`;
+        await bucket.file(htmlDest);
+        htmlUrl = `https://vox.capcom.london/${safeApp}/${safeEvent}/${cloudHtmlFileName}`; // branded URL via Worker
       }
       const totalMs = Math.round(nsToMs(nowNs() - totalStart));
       const finishedAt = new Date().toISOString();

@@ -62,12 +62,17 @@ function makePublicUrl(objectPath, bucket) {
     // Storage emulator REST endpoint
     return `http://127.0.0.1:9199/v0/b/${bucket.name}/o/${encoded}?alt=media`;
   }
-  // Prod mapping using your custom domain structure snapshots/<safeAppName>/<filename>
-  const m = objectPath.match(/^snapshots\/([^/]+)\/(.+)$/);
+  // New mapping: public/<app>/<event>/<rest> -> vox.capcom.london/<app>/<event>/<rest>
+  let m = objectPath.match(/^public\/([^/]+)\/([^/]+)\/(.+)$/);
   if (m) {
-    const [, safeAppName, safeName] = m; // groups: 1 = app, 2 = filename/path
-    console.log("🎯 Using snapshots path only:", objectPath);
-    return `https://snapshots.capcom.london/${safeAppName}/${safeName}`;
+    const [, app, event, rest] = m;
+    return `https://vox.capcom.london/${app}/${event}/${rest}`;
+  }
+  // Back-compat: snapshots/<app>/<rest> -> snapshots.capcom.london/<app>/<rest>
+  m = objectPath.match(/^snapshots\/([^/]+)\/(.+)$/);
+  if (m) {
+    const [, app, rest] = m;
+    return `https://snapshots.capcom.london/${app}/${rest}`;
   }
   // Fallback to native GCS URL (shouldn't be used in normal flow)
   return `https://storage.googleapis.com/${bucket.name}/${objectPath}`;
@@ -121,7 +126,7 @@ function sanitiseJsonFields(jsonData) {
 }
 
 // Shared routine: generate PDF (date-stamped) + HTML (fixed), return both URLs
-async function generateSnapshotOutputs(jsonInput, safeAppName, bucket, startTime, timestamp, userEmail, profileId) {
+async function generateSnapshotOutputs(jsonInput, safeAppName, safeEventName, bucket, startTime, timestamp, userEmail, profileId) {
   // 1) Generate PDF bytes
   const { generatePdfBuffer } = await import("./generatepdf.mjs");
   const { bytes } = await generatePdfBuffer(jsonInput);
@@ -144,11 +149,11 @@ async function generateSnapshotOutputs(jsonInput, safeAppName, bucket, startTime
 
   // 2) Save PDF (immutable caching)
   if (runningEmulated) {
-    const pdfDir = path.join(LOCAL_OUTPUT_DIR, "snapshots", safeAppName);
+    const pdfDir = path.join(LOCAL_OUTPUT_DIR, "public", safeAppName, safeEventName);
     fs.mkdirSync(pdfDir, { recursive: true });
     fs.writeFileSync(path.join(pdfDir, safePdfName), bytes);
   } else {
-    const pdfFile = bucket.file(`snapshots/${safeAppName}/${safePdfName}`);
+    const pdfFile = bucket.file(`public/${safeAppName}/${safeEventName}/${safePdfName}`);
     await pdfFile.save(bytes, {
       metadata: {
         contentType: "application/pdf",
@@ -156,7 +161,7 @@ async function generateSnapshotOutputs(jsonInput, safeAppName, bucket, startTime
       },
     });
   }
-  const pdfUrl = makePublicUrl(`snapshots/${safeAppName}/${safePdfName}`, bucket);
+  const pdfUrl = makePublicUrl(`public/${safeAppName}/${safeEventName}/${safePdfName}`, bucket);
 
   // 3) Build HTML with link to THIS run’s PDF
   let htmlString;
@@ -179,16 +184,16 @@ async function generateSnapshotOutputs(jsonInput, safeAppName, bucket, startTime
 
   // 4) Save HTML (revalidate on each load)
   if (runningEmulated) {
-    const htmlDir = path.join(LOCAL_OUTPUT_DIR, "snapshots", safeAppName);
+    const htmlDir = path.join(LOCAL_OUTPUT_DIR, "public", safeAppName, safeEventName);
     fs.mkdirSync(htmlDir, { recursive: true });
     fs.writeFileSync(path.join(htmlDir, safeHtmlName), Buffer.from(htmlString, "utf8"));
   } else {
-    const htmlFile = bucket.file(`snapshots/${safeAppName}/${safeHtmlName}`);
+    const htmlFile = bucket.file(`public/${safeAppName}/${safeEventName}/${safeHtmlName}`);
     await htmlFile.save(Buffer.from(htmlString, "utf8"), {
-      metadata: { contentType: "text/html; charset=utf-8", cacheControl: "no-cache, must-revalidate" },
+      metadata: { contentType: "text/html; charset=utf-8", cacheControl: "public, max-age=0, must-revalidate" },
     });
   }
-  const htmlUrl = makePublicUrl(`snapshots/${safeAppName}/${safeHtmlName}`, bucket);
+  const htmlUrl = makePublicUrl(`public/${safeAppName}/${safeEventName}/${safeHtmlName}`, bucket);
 
   // 5) Log + response
   const executionTimeSeconds = (Date.now() - startTime) / 1000;
@@ -276,6 +281,21 @@ export const v2 = onRequest({
   if (!req.body?.api_key || req.body.api_key !== expectedKey) {
     return res.status(403).json({ success: false, message: "Invalid or missing API key" });
   }
+
+  // --- Normalise identifiers once for all actions ---
+  const rawAppName = (req.body?.glideAppName ?? "").toString();
+  const rawEventName = (req.body?.eventName ?? "").toString();
+
+  const safeAppNameBody = sanitiseUrl(rawAppName || "App");
+  const safeEventNameBody = sanitiseUrl(rawEventName || "Event");
+
+  // Keep originals for logs/UI, overwrite body for downstream use
+  req.body.appNameRaw = rawAppName;
+  req.body.eventNameRaw = rawEventName;
+  req.body.appName = safeAppNameBody;
+  req.body.eventName = safeEventNameBody;
+
+
 
   // GET_PROFILE_IDS
   if (action === ACTIONS.GET_PROFILE_IDS) {
@@ -395,12 +415,22 @@ export const v2 = onRequest({
       console.warn("⚠️ Failed to update detectedFields:", e?.message || e);
     }
 
-    const safeAppName = sanitiseUrl(glideAppName);
+    const safeAppName = sanitiseUrl(req.body?.appName || glideAppName);
     const bucket = getStorage().bucket();
 
     // ALWAYS generate both (HTML + PDF) for either action
     if (action === ACTIONS.GENERATE_SNAPSHOT || action === ACTIONS.GENERATE_PDF) {
-      const result = await generateSnapshotOutputs(jsonInput, safeAppName, bucket, startTime, timestamp, userEmail, profileId);
+      const safeEventName = req.body?.eventName; // already sanitized earlier
+      const result = await generateSnapshotOutputs(
+        jsonInput,
+        safeAppName,
+        safeEventName,
+        bucket,
+        startTime,
+        timestamp,
+        userEmail,
+        profileId
+      );
       return res.status(result.status).json(result.body);
     }
 

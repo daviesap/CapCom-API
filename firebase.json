@@ -25,9 +25,22 @@
     },
     {
       "site": "api-capcom-london",
+      "public": "api-public",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
       "rewrites": [
         {
-          "source": "/**",
+          "source": "/v2",
+          "function": {
+            "functionId": "v2",
+            "region": "europe-west2"
+          }
+        },
+        {
+          "source": "/v2/**",
           "function": {
             "functionId": "v2",
             "region": "europe-west2"
