@@ -282,6 +282,21 @@ export const v2 = onRequest({
     return res.status(403).json({ success: false, message: "Invalid or missing API key" });
   }
 
+  // --- Glide API key (Secret Manager) ---
+  // In production (Gen 2), use the bound secret "glideApiKey".
+  // When running locally/emulated, allow LOCAL_GLIDE_API_KEY or an existing GLIDE_API_KEY.
+  const glideKey = runningEmulated
+    ? (process.env.LOCAL_GLIDE_API_KEY || process.env.GLIDE_API_KEY || "")
+    : GLIDE_API_KEY.value();
+
+  if (!glideKey) {
+    console.error("❌ Missing Glide API key: ensure Secret Manager secret 'glideApiKey' is set and bound, or set LOCAL_GLIDE_API_KEY for emulator.");
+    return res.status(500).json({ success: false, message: "Server missing glideApiKey configuration" });
+  }
+
+  // Normalise for legacy code paths that expect process.env.GLIDE_API_KEY
+  process.env.GLIDE_API_KEY = glideKey;
+
   // --- Normalise identifiers once for all actions ---
   const rawAppName = (req.body?.glideAppName ?? "").toString();
   const rawEventName = (req.body?.eventName ?? "").toString();

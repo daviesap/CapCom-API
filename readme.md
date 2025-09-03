@@ -268,3 +268,8 @@ npm run cf:deploy
 ```
 
 **Jot future tweaks** in a simple `FUTURE_TWEAKS.md` instead of touching code.
+
+
+
+## Running local emulator
+LOCAL_API_KEY="my-local-api-key" LOCAL_GLIDE_API_KEY="my-local-glide-key" firebase emulators:start --only functions
