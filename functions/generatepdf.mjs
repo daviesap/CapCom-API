@@ -358,7 +358,8 @@ export const generatePdfBuffer = async (jsonInput = null) => {
         // Clamp the length to available area
         length = Math.min(Math.max(1, length), fullContentWidth);
         // Draw a line slightly below the current row block top for a tidy underline
-        const uy = y - 2; // keep previous visual baseline
+        //const uy = y - 2; // keep previous visual baseline
+        const uy = y + 12; // move it up
         currentPage.drawLine({
           start: { x: leftMargin, y: uy },
           end: { x: leftMargin + length, y: uy },
