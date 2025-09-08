@@ -20,6 +20,10 @@ const DEFAULT_COLUMN_WIDTH = 100;
 // Right-side padding inside each cell to prevent text touching the cell edge (points)
 const CELL_PADDING = 5;
 
+// Fixed line spacing (points) for the Key Info box text. This ignores JSON lineSpacing.
+const KEYINFO_LINE_SPACING = 4;
+
+
 function rgbHex(input) {
   if (!input || typeof input !== 'string') return rgb(0, 0, 0);
   let v = input.trim();
@@ -180,8 +184,9 @@ export const generatePdfBuffer = async (jsonInput = null) => {
     const textStyle = resolveStyle(
       (styles.keyInfo?.text) || { fontSize: 10, fontStyle: 'normal', fontColour: '#000000' },
       boldFont, regularFont, italicFont, boldItalicFont,
-      lineSpacing
+            KEYINFO_LINE_SPACING
     );
+    
     const boxStyle = styles.keyInfo?.box || {
       backgroundColour: '#F7F7F7',
       borderColour: '#CCCCCC',
@@ -357,10 +362,9 @@ export const generatePdfBuffer = async (jsonInput = null) => {
           : fullContentWidth;
         // Clamp the length to available area
         length = Math.min(Math.max(1, length), fullContentWidth);
-        // Draw a line slightly below the current row block top for a tidy underline
-        //const uy = y - 2; // keep previous visual baseline
-        const uy = y + 12; // move it up
-        currentPage.drawLine({
+        // Draw a line at the bottom of the current row block for a tidy underline
+        const uy = y - rowH + 12; // place separator at the bottom of the current row
+              currentPage.drawLine({
           start: { x: leftMargin, y: uy },
           end: { x: leftMargin + length, y: uy },
           thickness,
