@@ -255,6 +255,39 @@ export const generatePdfBuffer = async (jsonInput = null) => {
     const labelInfo = resolveStyle(labelRowStyle, boldFont, regularFont, italicFont, boldItalicFont, DEFAULT_LINE_SPACING);
     const hasLabels = columns.some(c => c.showLabel);
 
+    // Page-break helper that is aware of the current group and can print a
+    // "continued…" banner and re-draw labels on the new page when breaking mid-group.
+    const checkBreakForGroup = (neededHeight, { showContinued = false, repeatLabels = false } = {}) => {
+      if (y - neededHeight < footerYLimit) {
+        // New page
+        currentPage = pdfDoc.addPage([pageWidth, pageHeight]);
+        pages.push(currentPage);
+        y = pageHeight - topMargin;
+        reserveHeader();
+
+        // Optional continued banner
+        if (showContinued) {
+          const contStyle = resolveStyle(groupTitleStyle, boldFont, regularFont, italicFont, boldItalicFont, DEFAULT_LINE_SPACING);
+          const contText = `${sanitiseText(group.title)} (Continued…)`;
+          currentPage.drawText(contText, { x: leftMargin, y, size: contStyle.fontSize, font: contStyle.font, color: contStyle.color });
+          y -= contStyle.lineHeight;
+        }
+
+        // Optional label re-draw for context
+        if (repeatLabels && hasLabels) {
+          const { fontSize: rlFS, font: rlF, color: rlC, lineHeight: rlLH } = labelInfo;
+          let rx = leftMargin;
+          for (const col of columns) {
+            if (col.showLabel) {
+              currentPage.drawText(sanitiseText(col.label), { x: rx, y, size: rlFS, font: rlF, color: rlC });
+            }
+            rx += col.width || DEFAULT_COLUMN_WIDTH;
+          }
+          y -= rlLH;
+        }
+      }
+    };
+
     const hasMeta = !!(group.metadata && String(group.metadata).trim());
     const introHeight = tLH + (hasMeta ? (mLH + mPB) : 0) + (hasLabels ? labelInfo.lineHeight : 0);
     checkBreak(introHeight);
@@ -269,7 +302,7 @@ export const generatePdfBuffer = async (jsonInput = null) => {
     if (hasLabels) {
       let x = leftMargin;
       const { fontSize: lFS, font: lF, color: lC, lineHeight: lLH } = labelInfo;
-      checkBreak(lLH);
+      checkBreakForGroup(lLH, { showContinued: true, repeatLabels: true });
       for (const col of columns) {
         if (col.showLabel) {
           currentPage.drawText(sanitiseText(col.label), { x, y, size: lFS, font: lF, color: lC });
@@ -323,7 +356,7 @@ export const generatePdfBuffer = async (jsonInput = null) => {
       });
 
       const rowH = Math.max(1, ...wrapped.map(w => w.length)) * rLH;
-      checkBreak(rowH);
+      checkBreakForGroup(rowH, { showContinued: true, repeatLabels: true });
 
 
       // Draw the row text
