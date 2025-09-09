@@ -1,12 +1,18 @@
 # CapCom Project — Developer Guide (Git + Deploy + Ops)
 
-This single document merges and replaces previous docs:
-- **git cheat sheet.md**
-- **readme.md**
+## RUNNING LOCAL EMULATOR
+To start the emulator
+cd /Users/apndavies/Coding/flair-pdf-generator
+LOCAL_API_KEY='Sausages2025!!' LOCAL_GLIDE_API_KEY="my-local-glide-key" firebase emulators:start --only functions
 
-It adds: first-time setup on a new machine, a safe day-to-day Git workflow (branches → PR/merge → cleanup), deploy steps for Firebase & Cloudflare Workers, and quick verification with `curl`.
+## Curl commands
+To test
+curl "http://127.0.0.1:5001/flair-pdf-generator/europe-west2/v2?action=version"
 
----
+To send schedule-sample.json and generate a snapshot
+curl -X POST \
+  -H "Content-Type: application/json" -H --data-binary @/Users/apndavies/Coding/flair-pdf-generator/functions/local-emulator/input/schedule-sample.json "http://127.0.0.1:5001/flair-pdf-generator/europe-west2/v2?action=generateScheduleSnapshot"
+
 
 ## 0) Prerequisites
 
@@ -269,5 +275,3 @@ npm run cf:deploy
 
 **Jot future tweaks** in a simple `FUTURE_TWEAKS.md` instead of touching code.
 
-## Running local emulator
-LOCAL_API_KEY="Sausages2025!!" LOCAL_GLIDE_API_KEY="my-local-glide-key" firebase emulators:start --only functions

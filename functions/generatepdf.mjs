@@ -20,8 +20,10 @@ const DEFAULT_COLUMN_WIDTH = 100;
 // Right-side padding inside each cell to prevent text touching the cell edge (points)
 const CELL_PADDING = 5;
 
-// Fixed line spacing (points) for the Key Info box text. This ignores JSON lineSpacing.
-const KEYINFO_LINE_SPACING = 4;
+// Default line spacing (points) for headers, labels, metadata, footer, etc.
+const DEFAULT_LINE_SPACING = 2;
+
+
 
 
 function rgbHex(input) {
@@ -147,7 +149,7 @@ export const generatePdfBuffer = async (jsonInput = null) => {
         regularFont,
         italicFont,
         boldItalicFont,
-        lineSpacing
+        DEFAULT_LINE_SPACING
       );
       // Reserve for existing header lines + 1 extra line for "As at …"
       const lineCount = (header?.text?.length || 0) + 1;
@@ -163,7 +165,7 @@ export const generatePdfBuffer = async (jsonInput = null) => {
   //const footerYLimit = bottomMargin + footerPaddingTop;
   //Have made the footer two lines - readjusting code to calulate footer height
   const footerLines = 2;
-  const resolvedFooterStyle = resolveStyle(styles.footer || {}, regularFont, regularFont, italicFont, boldItalicFont, lineSpacing);
+  const resolvedFooterStyle = resolveStyle(styles.footer || {}, regularFont, regularFont, italicFont, boldItalicFont, DEFAULT_LINE_SPACING);
   const footerYLimit = bottomMargin + resolvedFooterStyle.lineHeight * footerLines;
 
   const checkBreak = (neededHeight) => {
@@ -184,7 +186,7 @@ export const generatePdfBuffer = async (jsonInput = null) => {
     const textStyle = resolveStyle(
       (styles.keyInfo?.text) || { fontSize: 10, fontStyle: 'normal', fontColour: '#000000' },
       boldFont, regularFont, italicFont, boldItalicFont,
-            KEYINFO_LINE_SPACING
+            DEFAULT_LINE_SPACING
     );
     
     const boxStyle = styles.keyInfo?.box || {
@@ -221,7 +223,24 @@ export const generatePdfBuffer = async (jsonInput = null) => {
     });
   }
 
+  // — Group pagination rules —
+  // If there is a Key Info box, push the first group to page 2; otherwise let groups flow.
+  const hasKeyInfo = !!jsonData.keyInfo;
+  let isFirstGroup = true;
+
   for (const group of jsonData.groups) {
+    // If there is a Key Info box, push the first group to page 2; otherwise let groups flow.
+    if (isFirstGroup) {
+      if (hasKeyInfo) {
+        currentPage = pdfDoc.addPage([pageWidth, pageHeight]);
+        pages.push(currentPage);
+        y = pageHeight - topMargin;
+        reserveHeader();
+      }
+      isFirstGroup = false;
+    }
+
+    // Visual threshold guide and bottom-page guard (optional)
     if (debug) {
       drawThresholdLine(currentPage, bottomPageThreshold, pageWidth);
     }
@@ -230,11 +249,10 @@ export const generatePdfBuffer = async (jsonInput = null) => {
       pages.push(currentPage);
       y = pageHeight - topMargin;
       reserveHeader();
-
     }
-    const { lineHeight: tLH, fontSize: tFS, font: tF, color: tC } = resolveStyle(groupTitleStyle, boldFont, regularFont, italicFont, boldItalicFont, lineSpacing);
-    const { lineHeight: mLH, fontSize: mFS, font: mF, color: mC, paddingBottom: mPB } = resolveStyle(groupMetaStyle, boldFont, regularFont, italicFont, boldItalicFont, lineSpacing);
-    const labelInfo = resolveStyle(labelRowStyle, boldFont, regularFont, italicFont, boldItalicFont, lineSpacing);
+    const { lineHeight: tLH, fontSize: tFS, font: tF, color: tC } = resolveStyle(groupTitleStyle, boldFont, regularFont, italicFont, boldItalicFont, DEFAULT_LINE_SPACING);
+    const { lineHeight: mLH, fontSize: mFS, font: mF, color: mC, paddingBottom: mPB } = resolveStyle(groupMetaStyle, boldFont, regularFont, italicFont, boldItalicFont, DEFAULT_LINE_SPACING);
+    const labelInfo = resolveStyle(labelRowStyle, boldFont, regularFont, italicFont, boldItalicFont, DEFAULT_LINE_SPACING);
     const hasLabels = columns.some(c => c.showLabel);
 
     const hasMeta = !!(group.metadata && String(group.metadata).trim());
@@ -389,7 +407,7 @@ export const generatePdfBuffer = async (jsonInput = null) => {
         regularFont,
         italicFont,
         boldItalicFont,
-        lineSpacing
+        DEFAULT_LINE_SPACING
       );
       const headerStyle = resolveStyle(
         styles.header || {},
@@ -397,7 +415,7 @@ export const generatePdfBuffer = async (jsonInput = null) => {
         regularFont,
         italicFont,
         boldItalicFont,
-        lineSpacing
+        DEFAULT_LINE_SPACING
       );
       // Account for existing header lines + 1 extra line for "As at …"
       const lineCount = (header?.text?.length || 0) + 1;
@@ -436,7 +454,7 @@ export const generatePdfBuffer = async (jsonInput = null) => {
         regularFont,
         italicFont,
         boldItalicFont,
-        lineSpacing
+        DEFAULT_LINE_SPACING
       );
 
       const fyMain = bottomMargin + fLH;  // Line 1 (footer, page number, timestamp)
@@ -487,7 +505,7 @@ export const generatePdfBuffer = async (jsonInput = null) => {
     // 🔍 DEBUG LINES — header, margin, footer, threshold, plus legend on page 1
     if (debug) {
       // === TOP MARGIN + HEADER ===
-      const headerStyle = resolveStyle(styles.header || {}, boldFont, regularFont, italicFont, boldItalicFont, lineSpacing);
+      const headerStyle = resolveStyle(styles.header || {}, boldFont, regularFont, italicFont, boldItalicFont, DEFAULT_LINE_SPACING);
       const headerLineHeight = headerStyle.lineHeight;
       const headerHeight = (header?.text?.length || 0) * headerLineHeight + headerPaddingBottom;
 
@@ -513,7 +531,7 @@ export const generatePdfBuffer = async (jsonInput = null) => {
       });
 
       // === FOOTER AREA ===
-      const footerStyle = resolveStyle(styles.footer || {}, regularFont, regularFont, italicFont, boldItalicFont, lineSpacing);
+      const footerStyle = resolveStyle(styles.footer || {}, regularFont, regularFont, italicFont, boldItalicFont, DEFAULT_LINE_SPACING);
       const footerBlockTopY = bottomMargin + footerStyle.lineHeight * 2;
 
       // 🔴 Top of reserved footer area
@@ -554,7 +572,7 @@ export const generatePdfBuffer = async (jsonInput = null) => {
           { text: 'Green: Bottom of header block', color: rgb(0, 0.6, 0) },
           { text: 'Purple: Top margin baseline', color: rgb(0.5, 0, 0.5) },
         ];
-        const keyStyle = resolveStyle(styles.labelRow || {}, boldFont, regularFont, italicFont, boldItalicFont, lineSpacing);
+        const keyStyle = resolveStyle(styles.labelRow || {}, boldFont, regularFont, italicFont, boldItalicFont, DEFAULT_LINE_SPACING);
         let yKey = pageHeight / 2;
 
 
