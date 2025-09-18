@@ -141,9 +141,28 @@ export async function generateHome({
     ).join("")
   : `<h1>${escapeHtml(jsonInput.eventName || "Event")}</h1>`;
 
-  // Resolve logo URL based on snapshot profileId or jsonInput.profileId
-  //const logoProfileId = (snapshots.length && snapshots[0].profileId) || jsonInput.profileId || "";
-  const logoUrl = jsonInput.logoUrl;
+  // Resolve logo for header with sensible fallbacks:
+  // 1) jsonInput.logoUrl (explicit)
+  // 2) jsonInput.document.header.logo.url
+  // 3) derived from profileId -> logos/{profileId}_logotype-footer.png
+  const bucketRef = getStorage().bucket();
+  const explicitLogoUrl =
+    (typeof jsonInput.logoUrl === "string" && jsonInput.logoUrl.trim())
+      ? jsonInput.logoUrl.trim()
+      : (typeof jsonInput?.document?.header?.logo?.url === "string" && jsonInput.document.header.logo.url.trim())
+        ? jsonInput.document.header.logo.url.trim()
+        : "";
+
+  const profileIdForLogo =
+    (snapshots.find(s => s.profileId)?.profileId) ||
+    jsonInput.profileId ||
+    "";
+
+  const derivedLogoUrl = profileIdForLogo
+    ? makePublicUrl(`logos/${profileIdForLogo}_logotype-footer.png`, bucketRef)
+    : "";
+
+  const logoUrl = explicitLogoUrl || derivedLogoUrl;
 
   const html = `<!doctype html>
 <html lang="en">
