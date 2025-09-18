@@ -18,6 +18,7 @@ import { sanitiseUrl } from "./utils/sanitiseUrl.mjs";
 import { filterJson } from "./utils/filterJSON.mjs";
 import { sanitiseText } from "./utils/sanitiseText.mjs";
 import { deriveDetectedFieldsFromGroups } from "./utils/detectFields.mjs";
+import { generateHome } from "./handlers/generateHome.mjs";
 
 initializeApp({
   credential: applicationDefault(),
@@ -37,6 +38,7 @@ const ACTIONS = {
   UPDATE_DATES: "updateDates",
   MEALS_PIVOT: "mealsPivot",
   GENERATE_PDF: "generatePdf", // now behaves the same as GENERATE_SNAPSHOT
+  GENERATE_HOME: "generateHome" // New action to generate home page (not implemented yet)
 };
 
 // ---------- helpers ----------
@@ -320,7 +322,7 @@ export const v2 = onRequest({
         profileId: doc.id,
         name: doc.data()?.name || "(Unnamed)",
       }));
-      return res.status(200).json({ success: true, message:"✅ Success", count: ids.length, profiles: ids, timestamp });
+      return res.status(200).json({ success: true, message: "✅ Success", count: ids.length, profiles: ids, timestamp });
     } catch (err) {
       console.error("❌ Error fetching profile IDs:", err);
       return res.status(500).json({ success: false, message: "Failed to fetch profile IDs", error: err.message, timestamp });
@@ -446,6 +448,23 @@ export const v2 = onRequest({
         userEmail,
         profileId
       );
+      return res.status(result.status).json(result.body);
+    }
+
+    if (action === ACTIONS.GENERATE_HOME) {
+      const result = await generateHome({
+        jsonInput,
+        makePublicUrl,             // pass the existing helper
+        runningEmulated,
+        LOCAL_OUTPUT_DIR,
+        startTime,
+        timestamp,
+        userEmail,
+        profileId,
+        glideAppName,
+        req,
+        logPdfEvent               // pass your existing logger
+      });
       return res.status(result.status).json(result.body);
     }
 

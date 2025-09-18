@@ -1,0 +1,326 @@
+// functions/handlers/generateHome.mjs
+import { getStorage } from "firebase-admin/storage";
+import fs from "fs";
+import path from "path";
+import { Buffer } from "node:buffer";
+import { sanitiseUrl } from "../utils/sanitiseUrl.mjs";
+//import { sanitiseText } from "../utils/sanitiseText.mjs";
+
+import { marked } from "marked";
+import sanitizeHtml from "sanitize-html";
+
+function escapeHtml(text = "") {
+  return text.replace(/[&<>"']/g, (match) => {
+    switch (match) {
+      case "&": return "&amp;";
+      case "<": return "&lt;";
+      case ">": return "&gt;";
+      case '"': return "&quot;";
+      case "'": return "&#39;";
+      default: return match;
+    }
+  });
+}
+
+
+// We keep using index.js's makePublicUrl via a param to avoid moving that util right now.
+// If you prefer, later extract makePublicUrl into utils and import it here instead.
+export async function generateHome({
+  jsonInput,
+  makePublicUrl,
+  runningEmulated,
+  LOCAL_OUTPUT_DIR,
+  startTime,
+  timestamp,
+  userEmail,
+  profileId,
+  glideAppName,
+  req,
+  logPdfEvent
+}) {
+  const safeAppName = sanitiseUrl(req.body?.appName || jsonInput.glideAppName || "App");
+  const safeEventName = sanitiseUrl(req.body?.eventName || jsonInput.eventName || "Event");
+  const bucket = getStorage().bucket();
+
+  // Sort snapshots by sortOrder (missing sortOrder => Infinity)
+  const snapshots = Array.isArray(jsonInput.snapshots) ? [...jsonInput.snapshots] : [];
+  snapshots.sort((a, b) => {
+    const ao = (typeof a.sortOrder === "number") ? a.sortOrder : Number.POSITIVE_INFINITY;
+    const bo = (typeof b.sortOrder === "number") ? b.sortOrder : Number.POSITIVE_INFINITY;
+    if (ao !== bo) return ao - bo;
+    const at = (a.type || "").toString().toLowerCase();
+    const bt = (b.type || "").toString().toLowerCase();
+    if (at !== bt) return at.localeCompare(bt);
+    const af = (a.filename || "").toString().toLowerCase();
+    const bf = (b.filename || "").toString().toLowerCase();
+    return af.localeCompare(bf);
+  });
+
+  // Group snapshots by `type` (category) in the current sorted order
+  const groups = [];
+  let currentType = null;
+  let currentItems = [];
+  for (const s of snapshots) {
+    const t = (s.type || "").toString();
+    if (t !== currentType) {
+      if (currentItems.length) groups.push({ type: currentType, items: currentItems });
+      currentType = t;
+      currentItems = [];
+    }
+    currentItems.push(s);
+  }
+  if (currentItems.length) groups.push({ type: currentType, items: currentItems });
+
+  const groupsHtml = groups.map(g => {
+    const head = g.type ? `<div class="group-head">${escapeHtml(g.type)}</div>` : "";
+    const items = g.items.map(s => {
+      const labelRaw = (s.filename || "Snapshot").toString();
+      const label = escapeHtml(labelRaw);
+      const safeBase = sanitiseUrl(labelRaw.replace(/\.[a-zA-Z0-9]+$/, ""));
+      const targetUrl = makePublicUrl(`public/${safeAppName}/${safeEventName}/${safeBase}.html`, bucket);
+      return `
+        <a class="snap-btn" href="${targetUrl}">
+          <div class="left">
+            <div class="snap-label">${label}</div>
+          </div>
+          <svg class="chevron" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="20" height="20" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+        </a>
+      `;
+    }).join("\n");
+    return `
+      <section class="group">
+        ${head}
+        <div class="grid">
+          ${items}
+        </div>
+      </section>
+    `;
+  }).join("\n");
+
+  // Header/meta
+  const title = `${jsonInput.eventName || "Event"} – Home`;
+  //const venue = jsonInput.eventVenue ? `<div class="sub">${escapeHtml(jsonInput.eventVenue)}</div>` : "";
+  //const dates = jsonInput.eventDates ? `<div class="sub">${escapeHtml(jsonInput.eventDates)}</div>` : "";
+  // Build Key Info using marked + sanitize-html (to match schedule rendering)
+  const keyInfoMd =
+    (jsonInput?.document?.keyInfo && typeof jsonInput.document.keyInfo === "string")
+      ? jsonInput.document.keyInfo
+      : (typeof jsonInput?.keyInfo === "string" ? jsonInput.keyInfo : "");
+
+  let keyInfoSection = "";
+  if (keyInfoMd) {
+    const rawHtml = marked.parse(keyInfoMd, { mangle: false, headerIds: false });
+    const safeHtml = sanitizeHtml(rawHtml, {
+      allowedTags: [
+        "h1","h2","h3","h4","h5","h6",
+        "p","strong","em","ul","ol","li",
+        "blockquote","code","pre","br","hr","a","span"
+      ],
+      allowedAttributes: {
+        a: ["href","title","target","rel"],
+        span: ["class"]
+      },
+      transformTags: {
+        a: (tagName, attribs) => ({
+          tagName: "a",
+          attribs: { ...attribs, target: "_blank", rel: "noopener" }
+        })
+      }
+    });
+    keyInfoSection = `<section class="markdown key-info">${safeHtml}</section>`;
+  }
+
+  // Support document.header.text for header left content
+  const headerLeftHtml = Array.isArray(jsonInput.header)
+  ? jsonInput.header.map((line, i) =>
+      i === 0
+        ? `<h1>${escapeHtml(line)}</h1>`   // first line big
+        : `<div class="sub">${escapeHtml(line)}</div>` // others smaller
+    ).join("")
+  : `<h1>${escapeHtml(jsonInput.eventName || "Event")}</h1>`;
+
+  // Resolve logo URL based on snapshot profileId or jsonInput.profileId
+  //const logoProfileId = (snapshots.length && snapshots[0].profileId) || jsonInput.profileId || "";
+  const logoUrl = jsonInput.logoUrl;
+
+  const html = `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${title}</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --ink: #111;
+    --muted: #6b7280;
+    --accent: #ef4444;
+    --ring: rgba(239,68,68,.25);
+    --card: #fafafa;
+  }
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    color: var(--ink);
+    background: var(--bg);
+  }
+  .wrap {
+    width: 100%;
+    margin: 0;
+    padding: 16px;
+  }
+  header { padding: 8px 0 16px; }
+  .header-row { display: flex; align-items: flex-start; gap: 12px; }
+  .header-col { min-width: 0; flex: 1 1 auto; }
+  .header-logo { flex: 0 0 auto; margin-left: auto; }
+  .header-logo img { max-height: 80px; height: auto; width: auto; display: block; }
+  h1 {
+    margin: 0 0 4px;
+    font-size: 1.5rem;
+    line-height: 1.2;
+  }
+  .sub {
+    color: var(--muted);
+    font-size: .95rem;
+  }
+  .key-info {
+    background: var(--card);
+    border: 1px solid #eee;
+    border-radius: 12px;
+    padding: 16px;
+    margin: 16px 0 20px;
+  }
+  .key-info p {
+    margin: .5em 0;
+  }
+  /* Markdown basics */
+  .markdown h1,.markdown h2,.markdown h3,.markdown h4,.markdown h5,.markdown h6{margin:.2em 0 .4em; line-height:1.25}
+  .markdown p{margin:.5em 0}
+  .markdown ul,.markdown ol{margin:.5em 0 .5em 1.25em; padding-left:1em}
+  .markdown li{margin:.25em 0}
+  .markdown a{text-decoration:underline; color:inherit}
+  /* Group headings (category blocks) */
+  .group{margin: 18px 0 22px;}
+  .group-head{
+    display:flex; align-items:center; gap:10px;
+    font-size:12px; font-weight:700; letter-spacing:.04em;
+    color: var(--muted); text-transform: uppercase;
+    margin: 6px 0 10px;
+  }
+  .group-head::after{
+    content:""; flex:1 1 auto; height:1px; background:#e5e7eb;
+  }
+  /* Buttons grid */
+  .grid{display:grid; grid-template-columns:1fr; gap:12px}
+  @media(min-width:560px){ .grid{grid-template-columns:repeat(2,1fr)} }
+  @media(min-width:900px){ .grid{grid-template-columns:repeat(3,1fr)} }
+  .snap-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    text-decoration: none;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 1px 1px rgba(0,0,0,.03);
+    transition: transform .06s ease, box-shadow .15s ease, border-color .15s ease;
+    color: var(--ink);
+  }
+  .snap-btn .left{display:flex; align-items:center; gap:0; min-width:0}
+  .snap-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(0,0,0,.06);
+    border-color: #e5e7eb;
+  }
+  .snap-label {
+    font-weight: 600;
+  }
+  .subtitle {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-left: 8px;
+    flex-grow: 1;
+  }
+  .chevron {
+    flex-shrink: 0;
+    color: var(--accent);
+  }
+  footer {
+    color: var(--muted);
+    font-size: .85rem;
+    padding: 16px 0 8px;
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+<header>
+  <div class="header-row">
+    <div class="header-col">
+      ${headerLeftHtml}
+    </div>
+    <div class="header-logo">
+      ${logoUrl
+        ? `<img src="${logoUrl}" alt="" decoding="async" referrerpolicy="no-referrer"
+               onerror="this.closest('div').style.display='none'">`
+        : ""}
+    </div>
+  </div>
+</header>
+
+    ${keyInfoSection || ""}
+
+    <section>
+      ${groupsHtml || '<div class="sub">No snapshots defined.</div>'}
+    </section>
+
+    <footer>
+      <div>Generated ${new Date().toLocaleString("en-GB", { timeZone: "Europe/London" })}</div>
+    </footer>
+  </div>
+</body>
+</html>`;
+
+  // Write to Storage
+  const safeHomeName = "home.html";
+  if (runningEmulated) {
+    const htmlDir = path.join(LOCAL_OUTPUT_DIR, "public", safeAppName, safeEventName);
+    fs.mkdirSync(htmlDir, { recursive: true });
+    fs.writeFileSync(path.join(htmlDir, safeHomeName), Buffer.from(html, "utf8"));
+  } else {
+    const htmlFile = bucket.file(`public/${safeAppName}/${safeEventName}/${safeHomeName}`);
+    await htmlFile.save(Buffer.from(html, "utf8"), {
+      metadata: { contentType: "text/html; charset=utf-8", cacheControl: "public, max-age=0, must-revalidate" },
+    });
+  }
+  const homeUrl = makePublicUrl(`public/${safeAppName}/${safeEventName}/${safeHomeName}`, bucket);
+
+  const executionTimeSeconds = (Date.now() - startTime) / 1000;
+  await logPdfEvent({
+    timestamp,
+    glideAppName,
+    filename: safeHomeName,
+    url: homeUrl,
+    userEmail,
+    profileId,
+    success: true
+  });
+
+  return {
+    status: 200,
+    body: {
+      success: true,
+      message: "✅ Home page generated",
+      url: homeUrl,
+      htmlUrl: homeUrl,
+      timestamp,
+      executionTimeSeconds
+    }
+  };
+}

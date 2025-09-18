@@ -11,7 +11,16 @@ curl "http://127.0.0.1:5001/flair-pdf-generator/europe-west2/v2?action=version"
 
 To send schedule-sample.json and generate a snapshot
 curl -X POST \
-  -H "Content-Type: application/json" -H --data-binary @/Users/apndavies/Coding/flair-pdf-generator/functions/local-emulator/input/schedule-sample.json "http://127.0.0.1:5001/flair-pdf-generator/europe-west2/v2?action=generateScheduleSnapshot"
+  -H "Content-Type: application/json" \
+  --data-binary @/Users/apndavies/Coding/flair-pdf-generator/functions/local-emulator/input/schedule-sample.json \
+  "http://127.0.0.1:5001/flair-pdf-generator/europe-west2/v2?action=generateScheduleSnapshot"
+
+
+## To generate home
+curl -X POST \
+  -H "Content-Type: application/json" \
+  --data-binary @/Users/apndavies/Coding/flair-pdf-generator/functions/local-emulator/input/generateHome.json \
+  "http://127.0.0.1:5001/flair-pdf-generator/europe-west2/v2?action=generateHome"
 
 
 ## 0) Prerequisites
