@@ -280,9 +280,33 @@ export const v2 = onRequest({
     return res.status(500).json({ success: false, message: "Server missing API_KEY configuration" });
   }
 
+  // --- Accept JSON sent as a *string* (e.g., when Glide binds a JSON column)
+  if (typeof req.body === "string") {
+    try {
+      req.body = JSON.parse(req.body);
+    } catch {
+      return res.status(400).json({
+        success: false,
+        message: "Body was a string but not valid JSON. Ensure Glide sends raw JSON or valid JSON text."
+      });
+    }
+  }
+
+
+
   if (!req.body?.api_key || req.body.api_key !== expectedKey) {
     return res.status(403).json({ success: false, message: "Invalid or missing API key" });
   }
+
+
+  console.log(
+    `[v2] probe action=${action} ` +
+    `ctype=${req.get("content-type") || "n/a"} ` +
+    `typeof.body=${typeof req.body} ` +
+    `keys=[${Object.keys(req.body || {}).slice(0, 12).join(",")}] ` +
+    `has.document=${req.body && typeof req.body.document === "object"} ` +
+    `snapshots.len=${Array.isArray(req.body?.snapshots) ? req.body.snapshots.length : "n/a"}`
+  );
 
   // --- Glide API key (Secret Manager) ---
   // In production (Gen 2), use the bound secret "glideApiKey".

@@ -1,119 +1,141 @@
 {
   "api_key": "Sausages2025!!",
   "debug": false,
+  "document": {},
+  "logoUrl": "https://firebasestorage.googleapis.com/v0/b/flair-pdf-generator.firebasestorage.app/o/logos%2FDzhLnf64Vv_logotype-footer.png?alt=media&token=19313b2d-a76e-40d2-80ac-f3939131c4c5",
   "glideAppName": "VS Creative",
   "UserId": "JwAOVyJUSwGKh1mD8Z1ovg",
   "userEmail": "andrew@flair.london",
   "eventName": "Bloomberg Day 2025",
   "eventVenue": "Hampton Court Palace",
-  "logoUrl": "https://firebasestorage.googleapis.com/v0/b/flair-pdf-generator.firebasestorage.app/o/logos%2FDzhLnf64Vv_logotype-footer.png?alt=media&token=19313b2d-a76e-40d2-80ac-f3939131c4c5",
-  "document": {},
   "eventDates": "Sunday, 28 September 2025 - Sunday, 28 September 2025",
   "header": [
     "Bloomberg Day 2025",
     "Hampton Court Palace",
     "Sunday, 28 September 2025 - Sunday, 28 September 2025"
   ],
-  "keyInfo": "**Venue -** **Hampton Court Palace**, East Molesey, Surrey, KT8 9AU (Main entrance to Hampton Court)\n\n**Crew Check-in (on foot)** - **via Trophy Gate _\\-_** [<mark><strong>https://w3w.co/settle.blows.alert </strong></mark>](https://w3w.co/settle.blows.alert) \\- Check in at Reception [<mark>https://w3w.co/shin.beams.mutual</mark>](https://w3w.co/shin.beams.mutual)\n\n<br>\n\n\\*\\*Delivery Address (Trucks < 7.5T) - Flowerpot Gate\\*\\* - A308 (South Side), Opp. Clarence Lodge, Hampton Ct.Road [<mark>https://w3w.co/visual.talent.spoke</mark>](https://w3w.co/slam.rank.apples)\n\n**Delivery Address (Trucks > 7.5T)** - **Cart Track Gate** [<mark>https://w3w.co/rushed.design.fortunate </mark> **\\-**](https://w3w.co/rushed.design.fortunate) Via Home Park Terrace, Off A308 (South Side) Hampton Ct Rd [<mark>https://w3w.co/gentle.visits.cover</mark>](https://w3w.co/gentle.visits.cover)\n\n**Delivery Address (Trucks <  7.5T)**  - **for Tiltyard & Wilderness areas**  -  **Adam's Gate**, Hampton Court Palace, East Molesey, Surrey, KT8 9DD  \n\n[<mark>https://w3w.co/luck.castle.wages</mark>](https://w3w.co/luck.castle.wages)\n\n<br>\n\n**VS Creative Site Contacts (for crew / deliveries etc)**\n\nCharlie Webster 07913 516001 | Andrew Davies 07725 191913 | Chris Brown 07958 710901 | Louis Souyave 07904 276704",
+  "keyInfo": "**Hampton Court Palace**, East Molesey, Surrey, KT8 9AU (Main entrance to Hampton Court)\n\n**Crew Check-in (on foot) - via Trophy Gate**  \n[<mark>https://w3w.co/settle.blows.alert</mark>](https://w3w.co/settle.blows.alert)  \nCheck in at Reception [<mark>https://w3w.co/shin.beams.mutual</mark>](https://w3w.co/shin.beams.mutual)\n\n\\*\\*Delivery Address (Trucks < 7.5T) - Flowerpot Gate\\*\\*  \nA308 (South Side), Opp. Clarence Lodge, Hampton Ct.Road [<mark>https://w3w.co/visual.talent.spoke</mark>](https://w3w.co/slam.rank.apples)\n\n**Delivery Address (Trucks > 7.5T)** - **Cart Track Gate**  \n[<mark>https://w3w.co/rushed.design.fortunate </mark> **\\-**](https://w3w.co/rushed.design.fortunate) Via Home Park Terrace, Off A308 (South Side) Hampton Ct Rd [<mark>https://w3w.co/gentle.visits.cover</mark>](https://w3w.co/gentle.visits.cover)\n\n\\*\\*Delivery Address (Trucks <  7.5T)\\*\\* - \\*\\*Adam's Gate. (Tiltyard & Wilderness areas\\*\\*)  \nHampton Court Palace, East Molesey, Surrey, KT8 9DD    \n[<mark>https://w3w.co/luck.castle.wages</mark>](https://w3w.co/luck.castle.wages)\n\n**VS Creative Site Contacts (for crew / deliveries etc)**\n\n*   Charlie Webster 07913 516001\n    \n*   Andrew Davies 07725 191913\n    \n*   Chris Brown 07958 710901\n    \n*   Louis Souyave 07904 276704",
   "snapshots": [
     {
       "filename": "Full schedule",
       "header": "Bloomberg Day 2025,Hampton Court Palace 28th September 2025, Full schedule",
-      "type": "Master",
-      "sortOrder": 1,
+      "type": "",
+      "sortOrder": false,
       "groupBy": "Dates",
-      "profileId": "DzhLnf64Vv"
+      "profileId": "DzhLnf64Vv",
+      "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/Fullschedule.html",
+      "isFiltered": false
     },
     {
       "filename": "MP Squares schedule",
       "header": "Bloomberg Day 2025,Hampton Court Palace 28th September 2025, MP Squares schedule",
-      "type": "Supplier",
-      "sortOrder": 10,
+      "type": "By supplier",
+      "sortOrder": true,
       "tagsFilter": "ra8Z47n-QwCffoTVDR19nw",
       "groupBy": "Dates",
-      "profileId": "DzhLnf64Vv"
+      "profileId": "DzhLnf64Vv",
+      "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/MPSquaresschedule.html",
+      "isFiltered": true
     },
     {
       "filename": "HCP schedule",
       "header": "Bloomberg Day 2025,Hampton Court Palace 28th September 2025, HCP schedule",
       "type": "Venue",
-      "sortOrder": 8,
+      "sortOrder": true,
       "tagsFilter": "DonIXlE.SeqzQAe5V0GXLA",
       "groupBy": "Dates",
-      "profileId": "DzhLnf64Vv"
+      "profileId": "DzhLnf64Vv",
+      "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/HCPschedule.html",
+      "isFiltered": true
     },
     {
       "filename": "Kerb schedule",
       "header": "Bloomberg Day 2025,Hampton Court Palace 28th September 2025, Kerb schedule",
-      "type": "Supplier",
-      "sortOrder": 10,
+      "type": "By supplier",
+      "sortOrder": true,
       "tagsFilter": "a.A-QALuWT46KS8nX8kh8wg",
       "groupBy": "Dates",
-      "profileId": "DzhLnf64Vv"
+      "profileId": "DzhLnf64Vv",
+      "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/Kerbschedule.html",
+      "isFiltered": true
     },
     {
       "filename": "Insite schedule",
       "header": "Bloomberg Day 2025,Hampton Court Palace 28th September 2025, Insite schedule",
-      "type": "Supplier",
-      "sortOrder": 10,
+      "type": "By supplier",
+      "sortOrder": true,
       "tagsFilter": "unC3zBAMQy-pLki5bgQdmA",
       "groupBy": "Dates",
-      "profileId": "DzhLnf64Vv"
+      "profileId": "DzhLnf64Vv",
+      "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/Insiteschedule.html",
+      "isFiltered": true
     },
     {
       "filename": "AAC Power schedule",
       "header": "Bloomberg Day 2025,Hampton Court Palace 28th September 2025, AAC Power schedule",
-      "type": "Supplier",
-      "sortOrder": 10,
+      "type": "By supplier",
+      "sortOrder": true,
       "tagsFilter": "Xi8rOuVnRs-ihhFiHGv8kg",
       "groupBy": "Dates",
-      "profileId": "DzhLnf64Vv"
+      "profileId": "DzhLnf64Vv",
+      "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/AACPowerschedule.html",
+      "isFiltered": true
     },
     {
       "filename": "Deliveries - All gates",
       "header": "Bloomberg Day 2025,Hampton Court Palace 28th September 2025, Deliveries - All gates",
       "type": "Deliveries",
-      "sortOrder": 20,
+      "sortOrder": true,
       "tagsFilter": "TAtz-oeITKeLO4-uxu.DPw",
       "groupBy": "Dates",
-      "profileId": "DzhLnf64Vv"
+      "profileId": "DzhLnf64Vv",
+      "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/Deliveries-Allgates.html",
+      "isFiltered": true
     },
     {
       "filename": "Garden Catering",
       "header": "Bloomberg Day 2025,Hampton Court Palace 28th September 2025, Garden Catering",
-      "type": "Supplier",
-      "sortOrder": 10,
+      "type": "By supplier",
+      "sortOrder": true,
       "tagsFilter": "c6D39RzGRmq.aMahe-g-yQ",
       "groupBy": "Dates",
-      "profileId": "DzhLnf64Vv"
+      "profileId": "DzhLnf64Vv",
+      "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/GardenCatering.html",
+      "isFiltered": true
     },
     {
       "filename": "Deliveries - Cart Track Gate",
       "header": "Bloomberg Day 2025,Hampton Court Palace 28th September 2025, Deliveries - Cart Track Gate",
       "type": "Deliveries",
-      "sortOrder": 20,
+      "sortOrder": true,
       "tagsFilter": "TAtz-oeITKeLO4-uxu.DPw",
       "locationFilter": "avDh6Lx0QwG941DZ.ed0Og",
       "groupBy": "Dates",
-      "profileId": "DzhLnf64Vv"
+      "profileId": "DzhLnf64Vv",
+      "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/Deliveries-CartTrackGate.html",
+      "isFiltered": true
     },
     {
       "filename": "Deliveries - Flower Pot Gate",
       "header": "Bloomberg Day 2025,Hampton Court Palace 28th September 2025, Deliveries - Flower Pot Gate",
       "type": "Deliveries",
-      "sortOrder": 20,
+      "sortOrder": true,
       "locationFilter": "Ko4msj1HS2aCTlQg0iiZPA",
       "groupBy": "Dates",
-      "profileId": "DzhLnf64Vv"
+      "profileId": "DzhLnf64Vv",
+      "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/Deliveries-FlowerPotGate.html",
+      "isFiltered": true
     },
     {
       "filename": "Deliveries - Adams Gate",
       "header": "Bloomberg Day 2025,Hampton Court Palace 28th September 2025, Deliveries - Adams Gate",
       "type": "Deliveries",
-      "sortOrder": 20,
+      "sortOrder": true,
       "locationFilter": "rfWMwhqyQZeGYkkW.NXLZQ",
       "groupBy": "Dates",
-      "profileId": "DzhLnf64Vv"
+      "profileId": "DzhLnf64Vv",
+      "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/Deliveries-AdamsGate.html",
+      "isFiltered": true
     }
   ],
   "dicts": {
@@ -21302,20 +21324,6 @@
       "format": "default"
     },
     {
-      "date": "2025-09-26T00:00:00.000Z",
-      "time": "18:01",
-      "description": "Bloomberg Luton Van Delivery of Swag - Old Skool",
-      "tagIds": [
-        "3wVZufekRG2owppu2BaWoQ",
-        "TAtz-oeITKeLO4-uxu.DPw"
-      ],
-      "locationIds": [
-        "KHWNal9JQy6EJLD9mjcMxg"
-      ],
-      "subLocationIds": [],
-      "format": "default"
-    },
-    {
       "date": "2025-09-27T00:00:00.000Z",
       "time": "07:00",
       "description": "Collect breakfast for Kelly Blackshaw and delivery to production office",
@@ -21327,7 +21335,7 @@
       "locationIds": [],
       "subLocationIds": [],
       "notes": "Selection of all items",
-      "format": "new"
+      "format": "default"
     },
     {
       "date": "2025-09-28T00:00:00.000Z",
@@ -21341,7 +21349,7 @@
       "locationIds": [],
       "subLocationIds": [],
       "notes": "Selection of all items",
-      "format": "new"
+      "format": "default"
     },
     {
       "date": "2025-09-28T00:00:00.000Z",
@@ -21356,7 +21364,7 @@
       ],
       "subLocationIds": [],
       "notes": "Selection of all items",
-      "format": "new"
+      "format": "default"
     },
     {
       "date": "2025-09-27T00:00:00.000Z",
@@ -21369,7 +21377,7 @@
       "locationIds": [],
       "subLocationIds": [],
       "notes": "Delivery first to East Front (Help!)\nThen Adam's Gate - Tiltyard Gardens (Help!), Wilderness (Volunteering Check-in), \nThen Trophy Drive - West Front (Scanners), Clock Court (Help!)\n",
-      "format": "new"
+      "format": "default"
     },
     {
       "date": "2025-09-28T00:00:00.000Z",
@@ -21383,7 +21391,7 @@
       ],
       "subLocationIds": [],
       "notes": "Collect via Adam's Gate - Tiltyard Gardens (Help!), Wilderness (Volunteering Check-in), \nThen Trophy Drive - West Front (Scanners), Clock Court (Help!)\nThen East Front (Help!)\nTBC remove all vinyls first!!!\n",
-      "format": "new"
+      "format": "default"
     },
     {
       "date": "2025-09-28T00:00:00.000Z",
@@ -21392,7 +21400,7 @@
       "tagIds": [],
       "locationIds": [],
       "subLocationIds": [],
-      "format": "new"
+      "format": "default"
     },
     {
       "date": "2025-09-28T00:00:00.000Z",
@@ -21404,7 +21412,7 @@
       "locationIds": [],
       "subLocationIds": [],
       "notes": "CLOCK COURT A PRIORITY - TENANCY ONLY TILL 20:00",
-      "format": "new"
+      "format": "default"
     },
     {
       "date": "2025-09-28T00:00:00.000Z",
@@ -21418,7 +21426,7 @@
       ],
       "subLocationIds": [],
       "notes": "Collect via Adam's Gate - Tiltyard Gardens (Help!), Wilderness (Volunteering Check-in), \nThen Trophy Drive - West Front (Scanners), Clock Court (Help!)\nThen East Front (Help!)\nTBC remove all vinyls first!!!\n",
-      "format": "new"
+      "format": "default"
     },
     {
       "date": "2025-09-26T00:00:00.000Z",
@@ -21434,7 +21442,7 @@
       ],
       "subLocationIds": [],
       "notes": "Victoria Swift, Sandra Ewart, Kelly Graves, Charlie Webster, Louis Souyave, Chris Brown, Chris Burke, Andrew Davies, Janet Noles, Kerry Stewart, Isaac Stephenson, Anya Watson, Roz England, Ian Lamb, Gigi De Courcey Swoffer, Gary Collins",
-      "format": "new"
+      "format": "default"
     },
     {
       "date": "2025-09-26T00:00:00.000Z",
@@ -21448,7 +21456,7 @@
       ],
       "subLocationIds": [],
       "notes": "Set up 2 x Gazebo's in Smoking Garden, 4 x Mrs Neal's- from KERB",
-      "format": "new"
+      "format": "default"
     },
     {
       "date": "2025-09-27T00:00:00.000Z",
@@ -21462,7 +21470,7 @@
       ],
       "subLocationIds": [],
       "notes": "Bags can be left in Mrs Neal's yard.\nWork with Kerry re: furniture / props deliveries.",
-      "format": "new"
+      "format": "default"
     },
     {
       "date": "2025-09-26T00:00:00.000Z",
@@ -21475,7 +21483,7 @@
         "BCSTWTmNQjuZfZGD7goaIg"
       ],
       "subLocationIds": [],
-      "format": "new"
+      "format": "default"
     },
     {
       "date": "2025-09-26T00:00:00.000Z",
@@ -21488,7 +21496,7 @@
         "WndxCJoyQ.SwnfUN88EeFg"
       ],
       "subLocationIds": [],
-      "format": "new"
+      "format": "default"
     },
     {
       "date": "2025-09-26T00:00:00.000Z",
@@ -21504,7 +21512,7 @@
       ],
       "subLocationIds": [],
       "notes": "Prod / Site kit (PA Kit, VSC flight case, Scrim, Tarps etc) into Production/Site Office & Clore Centre.  \n\nCollects from Focus during the day (Luton van). On standby from 17:30 to enter via Trophy Gate. Focus driver assist with unloading.",
-      "format": "new"
+      "format": "default"
     },
     {
       "date": "2025-09-26T00:00:00.000Z",
@@ -21519,7 +21527,7 @@
         "KHWNal9JQy6EJLD9mjcMxg"
       ],
       "subLocationIds": [],
-      "format": "new"
+      "format": "default"
     },
     {
       "date": "2025-09-26T00:00:00.000Z",
@@ -21535,7 +21543,7 @@
       ],
       "subLocationIds": [],
       "notes": "Victoria Swift, Sandra Ewart, Kelly Graves, Charlie Webster, Louis Souyave, Chris Brown, Chris Burke, Andrew Davies, Janet Noles, Kerry Stewart, Isaac Stephenson, Anya Watson, Roz England, Ian Lamb, Gigi De Courcey Swoffer, Gary Collins",
-      "format": "new"
+      "format": "default"
     },
     {
       "date": "2025-09-26T00:00:00.000Z",
@@ -21551,7 +21559,7 @@
       ],
       "subLocationIds": [],
       "notes": "Prod / Site kit (PA Kit, VSC flight case, Scrim, Tarps etc) into Production/Site Office & Clore Centre.  \n\nCollects from Focus during the day (Luton van). On standby from 17:30 to enter via Trophy Gate. Focus driver assist with unloading.",
-      "format": "new"
+      "format": "default"
     },
     {
       "date": "2025-09-26T00:00:00.000Z",
@@ -21566,7 +21574,7 @@
       ],
       "subLocationIds": [],
       "notes": "Fencing scrim, tarps etc",
-      "format": "new"
+      "format": "default"
     },
     {
       "date": "2025-09-27T00:00:00.000Z",
@@ -21581,7 +21589,7 @@
       ],
       "subLocationIds": [],
       "notes": "See Furniture Plan",
-      "format": "new"
+      "format": "default"
     },
     {
       "date": "2025-09-26T00:00:00.000Z",
@@ -21597,7 +21605,7 @@
       ],
       "subLocationIds": [],
       "notes": "Prod / Site kit (PA Kit, VSC flight case, Scrim, Tarps etc) into Production/Site Office.  \n\nCollects from Focus during the day (Luton van). On standby from 17:30 to enter via Trophy Gate. Focus driver assist with unloading.\nDriver departs 21:00 & leaves van with keys with VSC Site Mgmt.",
-      "format": "new"
+      "format": "default"
     },
     {
       "date": "2025-09-26T00:00:00.000Z",
@@ -21612,7 +21620,7 @@
       ],
       "subLocationIds": [],
       "notes": "Prod / Site kit (PA Kit, VSC flight case, Scrim, Tarps etc) into Production/Site Office.  \n\nCollects from Focus during the day (Luton van). On standby from 17:30 to enter via Trophy Gate. Focus driver assist with unloading.\nDriver departs 21:00 & leaves van with keys with VSC Site Mgmt.",
-      "format": "new"
+      "format": "default"
     },
     {
       "date": "2025-09-26T00:00:00.000Z",
@@ -21626,7 +21634,7 @@
       ],
       "subLocationIds": [],
       "notes": "Driver departs 18:00 & leaves van with keys with VSC Site Mgmt.",
-      "format": "new"
+      "format": "default"
     },
     {
       "date": "2025-09-27T00:00:00.000Z",
@@ -21640,7 +21648,7 @@
       ],
       "subLocationIds": [],
       "notes": "Driver departs 18:00 & leaves van with keys with VSC Site Mgmt.",
-      "format": "new"
+      "format": "default"
     },
     {
       "date": "2025-09-27T00:00:00.000Z",
@@ -21654,7 +21662,7 @@
       ],
       "subLocationIds": [],
       "notes": "Driver departs 18:00 & leaves van with keys with VSC Site Mgmt.",
-      "format": "new"
+      "format": "default"
     },
     {
       "date": "2025-09-27T00:00:00.000Z",
@@ -21668,7 +21676,7 @@
       ],
       "subLocationIds": [],
       "notes": "Driver departs 18:00 & leaves van with keys with VSC Site Mgmt.",
-      "format": "new"
+      "format": "default"
     },
     {
       "date": "2025-09-28T00:00:00.000Z",
@@ -21682,7 +21690,7 @@
       ],
       "subLocationIds": [],
       "notes": "Driver departs 19:00 & leaves van with keys with VSC Site Mgmt.",
-      "format": "new"
+      "format": "default"
     },
     {
       "date": "2025-09-28T00:00:00.000Z",
@@ -21696,7 +21704,7 @@
       ],
       "subLocationIds": [],
       "notes": "Driver departs 19:00 & leaves van with keys with VSC Site Mgmt.",
-      "format": "new"
+      "format": "default"
     },
     {
       "date": "2025-09-29T00:00:00.000Z",
@@ -21709,7 +21717,7 @@
         "KHWNal9JQy6EJLD9mjcMxg"
       ],
       "subLocationIds": [],
-      "format": "new"
+      "format": "default"
     },
     {
       "date": "2025-09-29T00:00:00.000Z",
@@ -21722,7 +21730,7 @@
         "KHWNal9JQy6EJLD9mjcMxg"
       ],
       "subLocationIds": [],
-      "format": "new"
+      "format": "default"
     },
     {
       "date": "2025-09-28T00:00:00.000Z",
@@ -21736,7 +21744,7 @@
       ],
       "subLocationIds": [],
       "notes": "Clear grass (geese issue) for Games, Team Challenges etc",
-      "format": "new"
+      "format": "default"
     },
     {
       "date": "2025-09-28T00:00:00.000Z",
@@ -21750,7 +21758,7 @@
       ],
       "subLocationIds": [],
       "notes": "Clear grass (geese issue) for Games, Team Challenges etc",
-      "format": "new"
+      "format": "default"
     },
     {
       "date": "2025-09-26T00:00:00.000Z",
@@ -21764,7 +21772,7 @@
       ],
       "subLocationIds": [],
       "notes": "Clear grass (geese issue) ",
-      "format": "new"
+      "format": "default"
     },
     {
       "date": "2025-09-26T00:00:00.000Z",
@@ -21778,7 +21786,7 @@
       ],
       "subLocationIds": [],
       "notes": "Clear grass (geese issue) ",
-      "format": "new"
+      "format": "default"
     },
     {
       "date": "2025-09-26T00:00:00.000Z",
@@ -21792,7 +21800,7 @@
       ],
       "subLocationIds": [],
       "notes": "Clear grass (geese issue) ",
-      "format": "new"
+      "format": "default"
     },
     {
       "date": "2025-09-26T00:00:00.000Z",
@@ -21806,7 +21814,7 @@
       ],
       "subLocationIds": [],
       "notes": "Clear grass (geese issue) ",
-      "format": "new"
+      "format": "default"
     },
     {
       "date": "2025-09-26T00:00:00.000Z",
@@ -21820,7 +21828,7 @@
       ],
       "subLocationIds": [],
       "notes": "Clear grass (geese issue) ",
-      "format": "new"
+      "format": "default"
     },
     {
       "date": "2025-09-27T00:00:00.000Z",
@@ -21834,7 +21842,7 @@
       ],
       "subLocationIds": [],
       "notes": "Clear grass (geese issue) ",
-      "format": "new"
+      "format": "default"
     },
     {
       "date": "2025-09-27T00:00:00.000Z",
@@ -21847,7 +21855,7 @@
         "WndxCJoyQ.SwnfUN88EeFg"
       ],
       "subLocationIds": [],
-      "format": "new"
+      "format": "default"
     },
     {
       "date": "2025-09-27T00:00:00.000Z",
@@ -21860,7 +21868,7 @@
         "BCSTWTmNQjuZfZGD7goaIg"
       ],
       "subLocationIds": [],
-      "format": "new"
+      "format": "default"
     },
     {
       "date": "2025-09-28T00:00:00.000Z",
@@ -21877,7 +21885,7 @@
         "WndxCJoyQ.SwnfUN88EeFg"
       ],
       "subLocationIds": [],
-      "format": "new"
+      "format": "default"
     },
     {
       "date": "2025-09-28T00:00:00.000Z",
@@ -21895,7 +21903,7 @@
       ],
       "subLocationIds": [],
       "notes": "Guest Exit through Wilderness via Rose Garden - can exit via West Front on cue from Bloomberg Security (subject to guest numbers)",
-      "format": "new"
+      "format": "default"
     },
     {
       "date": "2025-09-28T00:00:00.000Z",
@@ -21909,7 +21917,7 @@
       ],
       "subLocationIds": [],
       "notes": "\n",
-      "format": "new"
+      "format": "default"
     },
     {
       "date": "2025-09-28T00:00:00.000Z",
@@ -21921,7 +21929,7 @@
       "locationIds": [],
       "subLocationIds": [],
       "notes": "Any cars remaining - alert HCP Control ",
-      "format": "new"
+      "format": "default"
     },
     {
       "date": "2025-09-27T00:00:00.000Z",
@@ -21935,7 +21943,7 @@
       ],
       "subLocationIds": [],
       "notes": "Flower Pot, Cart Track, Kingston Gates and East Front Gardens x 2 marshalling.\nRefer to separate Carbonite Schedule for details.",
-      "format": "new"
+      "format": "default"
     },
     {
       "date": "2025-09-28T00:00:00.000Z",
@@ -21949,7 +21957,7 @@
       ],
       "subLocationIds": [],
       "notes": "Flower Pot, Cart Track Gates and East Front Gardens x 2 marshalling.\nRefer to separate Carbonite Schedule for details.",
-      "format": "new"
+      "format": "default"
     },
     {
       "date": "2025-09-28T00:00:00.000Z",
@@ -21960,7 +21968,7 @@
       ],
       "locationIds": [],
       "subLocationIds": [],
-      "format": "new"
+      "format": "default"
     },
     {
       "date": "2025-09-28T00:00:00.000Z",
@@ -21972,7 +21980,7 @@
       "locationIds": [],
       "subLocationIds": [],
       "notes": "05:30 Mark out Green Car Park leaving 150 Production spaces at HCP end.",
-      "format": "new"
+      "format": "default"
     },
     {
       "date": "2025-09-26T00:00:00.000Z",
@@ -21988,7 +21996,7 @@
       ],
       "subLocationIds": [],
       "notes": "Victoria Swift, Sandra Ewart, Kelly Graves, Charlie Webster, Louis Souyave, Chris Brown, Chris Burke, Andrew Davies, Janet Noles, Kerry Stewart, Isaac Stephenson, Anya Watson, Roz England, Ian Lamb, Gigi De Courcey Swoffer, Gary Collins",
-      "format": "new"
+      "format": "default"
     },
     {
       "date": "2025-09-28T00:00:00.000Z",
@@ -22003,6 +22011,180 @@
       ],
       "subLocationIds": [],
       "notes": "Pastries in the room and then we can call in a bacon roll/rolls when she gets here? \n",
+      "format": "new"
+    },
+    {
+      "date": "2025-09-27T00:00:00.000Z",
+      "time": "14:00",
+      "description": "Komex Kitchen 1 load in",
+      "tagIds": [
+        "a.A-QALuWT46KS8nX8kh8wg",
+        "TAtz-oeITKeLO4-uxu.DPw"
+      ],
+      "locationIds": [
+        "avDh6Lx0QwG941DZ.ed0Og"
+      ],
+      "subLocationIds": [],
+      "notes": "Run 2\nvehicle has trailer",
+      "format": "new"
+    },
+    {
+      "date": "2025-09-27T00:00:00.000Z",
+      "time": "12:00",
+      "description": "KERB Trader stock delivery",
+      "tagIds": [
+        "a.A-QALuWT46KS8nX8kh8wg",
+        "TAtz-oeITKeLO4-uxu.DPw"
+      ],
+      "locationIds": [
+        "Ko4msj1HS2aCTlQg0iiZPA"
+      ],
+      "subLocationIds": [],
+      "notes": "Crowbond delivering to multiple traders",
+      "format": "new"
+    },
+    {
+      "date": "2025-09-26T00:00:00.000Z",
+      "time": "19:00",
+      "description": "KERB deliver Trikes (6) & Gazebos (12) ",
+      "tagIds": [
+        "a.A-QALuWT46KS8nX8kh8wg",
+        "TAtz-oeITKeLO4-uxu.DPw"
+      ],
+      "locationIds": [
+        "pk5s0iFQQqiuDO01uGxmSA"
+      ],
+      "subLocationIds": [],
+      "notes": "2 x lutons\n\nLoad into Mrs Neal's Garden 6-10pm\nx4           Mrs Neal's Garden - Entertainers\nx2           Smoking Gdn - VSC Crew\n\nKERB to put up:\nx2           Mrs Neal's Garden - KERB Crew\nx1           East Gdn - Kids Packed Lunch\nx1           Flowerpot - Kosher Tent\nx2.         KERB BOH",
+      "format": "new"
+    },
+    {
+      "date": "2025-09-26T00:00:00.000Z",
+      "time": "20:00",
+      "description": "Set up Crew Base in Smoking Garden",
+      "tagIds": [
+        "XCCIvS3bRweSmHjWAx3JVQ"
+      ],
+      "locationIds": [
+        "pk5s0iFQQqiuDO01uGxmSA"
+      ],
+      "subLocationIds": [],
+      "notes": "Set up 2 x Gazebo's in Smoking Garden",
+      "format": "new"
+    },
+    {
+      "date": "2025-09-27T00:00:00.000Z",
+      "time": "08:00-09:00",
+      "description": "Set up Gazebo's for Artists in Mrs Neal's Yard",
+      "tagIds": [
+        "XCCIvS3bRweSmHjWAx3JVQ"
+      ],
+      "locationIds": [
+        "pk5s0iFQQqiuDO01uGxmSA"
+      ],
+      "subLocationIds": [],
+      "notes": "4 x Gazebo's in Mrs Neal's- from KERB",
+      "format": "new"
+    },
+    {
+      "date": "2025-09-27T00:00:00.000Z",
+      "time": "07:00-08:00",
+      "description": "Set up 4 x Gazebos in Mrs Neal's Garden for Artists",
+      "tagIds": [
+        "ra8Z47n-QwCffoTVDR19nw"
+      ],
+      "locationIds": [
+        "pk5s0iFQQqiuDO01uGxmSA"
+      ],
+      "subLocationIds": [],
+      "notes": "Mrs Neals Garden x 4 - from KERB",
+      "format": "new"
+    },
+    {
+      "date": "2025-09-26T00:00:00.000Z",
+      "time": "20:00",
+      "description": "Set up Crew Base in Smoking Garden",
+      "tagIds": [
+        "XCCIvS3bRweSmHjWAx3JVQ"
+      ],
+      "locationIds": [
+        "pk5s0iFQQqiuDO01uGxmSA"
+      ],
+      "subLocationIds": [],
+      "notes": "Set up 2 x Gazebo's in Smoking Garden",
+      "format": "new"
+    },
+    {
+      "date": "2025-09-29T00:00:00.000Z",
+      "time": "11:00",
+      "description": "Local crew to pack up x11 KERB 3x3m gazebos with sides and store in Mrs Neal's Garden",
+      "tagIds": [
+        "ra8Z47n-QwCffoTVDR19nw"
+      ],
+      "locationIds": [
+        "pk5s0iFQQqiuDO01uGxmSA"
+      ],
+      "subLocationIds": [],
+      "format": "new"
+    },
+    {
+      "date": "2025-09-26T00:00:00.000Z",
+      "time": "18:01",
+      "description": "Bloomberg deliver Aladdin's counter, giveaways, swag etc - store in RND (Production office)",
+      "tagIds": [
+        "1L6LKPbJRsS4epdntVpwtg",
+        "TAtz-oeITKeLO4-uxu.DPw"
+      ],
+      "locationIds": [
+        "KHWNal9JQy6EJLD9mjcMxg"
+      ],
+      "subLocationIds": [],
+      "notes": "Consumables and equipment for team challenges / office supplies etc\nStore Aladdin's counter in Clore\nDelivery through Tennis CL",
+      "format": "new"
+    },
+    {
+      "date": "2025-09-27T00:00:00.000Z",
+      "time": "08:00-20:00",
+      "description": "ACCESS TO GARDEN ROOM - via Adams Gate",
+      "tagIds": [
+        "DonIXlE.SeqzQAe5V0GXLA",
+        "2vyf4cICQt-Nh35ALy0KbA"
+      ],
+      "locationIds": [
+        "30T66.yHQ1-pwYuN7cwqCA"
+      ],
+      "subLocationIds": [],
+      "notes": "Storage for furniture inc Aladdin's counter",
+      "format": "new"
+    },
+    {
+      "date": "2025-09-26T00:00:00.000Z",
+      "time": "18:01",
+      "description": "Bloomberg Luton delivers Aladdin's counter, giveaways, swag etc - store in RND (Production office)",
+      "tagIds": [
+        "1L6LKPbJRsS4epdntVpwtg",
+        "TAtz-oeITKeLO4-uxu.DPw"
+      ],
+      "locationIds": [
+        "KHWNal9JQy6EJLD9mjcMxg"
+      ],
+      "subLocationIds": [],
+      "notes": "Consumables and equipment for team challenges / office supplies etc\nStore Aladdin's counter in Clore\nDelivery through Tennis CL",
+      "format": "new"
+    },
+    {
+      "date": "2025-09-26T00:00:00.000Z",
+      "time": "18:01",
+      "description": "Bloomberg Luton delivers Aladdin's counter, giveaways, swag etc ",
+      "tagIds": [
+        "1L6LKPbJRsS4epdntVpwtg",
+        "TAtz-oeITKeLO4-uxu.DPw"
+      ],
+      "locationIds": [
+        "KHWNal9JQy6EJLD9mjcMxg"
+      ],
+      "subLocationIds": [],
+      "notes": "Consumables and equipment for team challenges / office supplies etc\nStore in RND (Production office)\nStore Aladdin's counter in Clore\nDelivery through Tennis CL",
       "format": "new"
     }
   ]

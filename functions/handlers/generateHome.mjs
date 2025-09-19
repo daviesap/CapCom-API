@@ -56,48 +56,68 @@ export async function generateHome({
     return af.localeCompare(bf);
   });
 
-  // Group snapshots by `type` (category) in the current sorted order
-  const groups = [];
-  let currentType = null;
-  let currentItems = [];
-  for (const s of snapshots) {
-    const t = (s.type || "").toString();
-    if (t !== currentType) {
-      if (currentItems.length) groups.push({ type: currentType, items: currentItems });
-      currentType = t;
-      currentItems = [];
-    }
-    currentItems.push(s);
-  }
-  if (currentItems.length) groups.push({ type: currentType, items: currentItems });
+  // Split into unfiltered (Master) and filtered views.
+  const isFilteredFn = (s) => {
+    if (typeof s.isFiltered === "boolean") return s.isFiltered;
+    const t = (s.type || "").toString().trim().toLowerCase();
+    return t !== "master"; // default inference
+  };
+  const unfiltered = snapshots.filter(s => !isFilteredFn(s));
+  const filtered = snapshots.filter(s => isFilteredFn(s));
 
-  const groupsHtml = groups.map(g => {
-    const head = g.type ? `<div class="group-head">${escapeHtml(g.type)}</div>` : "";
-    const items = g.items.map(s => {
-      const labelRaw = (s.filename || "Snapshot").toString();
-      const label = escapeHtml(labelRaw);
-      const safeBase = sanitiseUrl(labelRaw.replace(/\.[a-zA-Z0-9]+$/, ""));
-      const targetUrl = makePublicUrl(`public/${safeAppName}/${safeEventName}/${safeBase}.html`, bucket);
+  // Helper: group a list of snapshots by type in current order
+  function groupByType(list) {
+    const out = [];
+    let currentType = null;
+    let currentItems = [];
+    for (const s of list) {
+      const t = (s.type || "").toString();
+      if (t !== currentType) {
+        if (currentItems.length) out.push({ type: currentType, items: currentItems });
+        currentType = t;
+        currentItems = [];
+      }
+      currentItems.push(s);
+    }
+    if (currentItems.length) out.push({ type: currentType, items: currentItems });
+    return out;
+  }
+
+  // Helper: render groups -> HTML sections with buttons
+  function renderGroupsHtml(groupsArr) {
+    return groupsArr.map(g => {
+      const head = g.type ? `<div class="group-head">${escapeHtml(g.type)}</div>` : "";
+      const items = g.items.map(s => {
+        const labelRaw = (s.filename || "Snapshot").toString();
+        const label = escapeHtml(labelRaw);
+        const targetUrl = (typeof s.urlTemp === "string" && s.urlTemp.trim())
+          ? s.urlTemp.trim()
+          : "";
+        const hrefAttr = targetUrl ? ` href="${targetUrl}"` : "";
+        return `
+          <a class="snap-btn"${hrefAttr}>
+            <div class="left">
+              <div class="snap-label">${label}</div>
+            </div>
+            <svg class="chevron" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="20" height="20" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </a>
+        `;
+      }).join("\n");
       return `
-        <a class="snap-btn" href="${targetUrl}">
-          <div class="left">
-            <div class="snap-label">${label}</div>
+        <section class="group">
+          ${head}
+          <div class="grid">
+            ${items}
           </div>
-          <svg class="chevron" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="20" height="20" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-          </svg>
-        </a>
+        </section>
       `;
     }).join("\n");
-    return `
-      <section class="group">
-        ${head}
-        <div class="grid">
-          ${items}
-        </div>
-      </section>
-    `;
-  }).join("\n");
+  }
+
+  const unfilteredGroupsHtml = renderGroupsHtml(groupByType(unfiltered));
+  const filteredGroupsHtml = renderGroupsHtml(groupByType(filtered));
 
   // Header/meta
   const title = `${jsonInput.eventName || "Event"} – Home`;
@@ -129,7 +149,18 @@ export async function generateHome({
         })
       }
     });
-    keyInfoSection = `<section class="markdown key-info">${safeHtml}</section>`;
+    keyInfoSection = `
+    <details class="accordion key-info">
+      <summary>
+        <span>Key info</span>
+        <svg class="acc-chevron" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="18" height="18" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+        </svg>
+      </summary>
+      <div class="acc-body markdown">
+        ${safeHtml}
+      </div>
+    </details>`;
   }
 
   // Support document.header.text for header left content
@@ -217,6 +248,113 @@ export async function generateHome({
   .key-info p {
     margin: .5em 0;
   }
+  /* Accordion treatment for key info */
+  .accordion.key-info {
+    background: var(--card);
+    border: 1px solid #eee;
+    border-radius: 12px;
+    margin: 16px 0 20px;
+    padding: 0; /* we pad summary/body instead */
+    overflow: hidden;
+  }
+  .accordion.key-info summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    cursor: pointer;
+    list-style: none;
+    padding: 12px 16px;
+    font-weight: 700;
+  }
+  .accordion.key-info summary::-webkit-details-marker { display: none; }
+  .accordion.key-info .acc-body {
+    padding: 12px 16px;
+    border-top: 1px solid #eee;
+  }
+  .accordion.key-info .acc-chevron {
+    flex: 0 0 auto;
+    color: var(--muted);
+    transition: transform .18s ease;
+  }
+  .accordion.key-info[open] .acc-chevron {
+    transform: rotate(90deg);
+  }
+  /* Key info readability tweaks (works for both inline block and accordion body) */
+  .markdown.key-info,
+  .accordion.key-info .acc-body {
+    line-height: 1.6;
+    font-size: 0.98rem;
+  }
+  .markdown.key-info h1,
+  .markdown.key-info h2,
+  .markdown.key-info h3,
+  .accordion.key-info .acc-body h1,
+  .accordion.key-info .acc-body h2,
+  .accordion.key-info .acc-body h3 {
+    margin-top: 0.6em;
+    margin-bottom: 0.35em;
+    font-weight: 700;
+  }
+  .markdown.key-info h4,
+  .markdown.key-info h5,
+  .markdown.key-info h6,
+  .accordion.key-info .acc-body h4,
+  .accordion.key-info .acc-body h5,
+  .accordion.key-info .acc-body h6 {
+    margin-top: 0.6em;
+    margin-bottom: 0.35em;
+    font-weight: 600;
+  }
+  .markdown.key-info ul,
+  .markdown.key-info ol,
+  .accordion.key-info .acc-body ul,
+  .accordion.key-info .acc-body ol {
+    margin: 0.4em 0 0.8em 1.25em;
+  }
+  .markdown.key-info li,
+  .accordion.key-info .acc-body li {
+    margin: 0.25em 0;
+  }
+  .markdown.key-info strong,
+  .accordion.key-info .acc-body strong {
+    font-weight: 700;
+  }
+  /* Make links readable and consistent */
+  .markdown.key-info a,
+  .accordion.key-info .acc-body a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .markdown.key-info a:hover,
+  .accordion.key-info .acc-body a:hover {
+    text-decoration-thickness: 2px;
+  }
+  /* Special styling for what3words links without requiring authors to add classes */
+  .markdown.key-info a[href*="w3w.co"],
+  .accordion.key-info .acc-body a[href*="w3w.co"] {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    background: rgba(59,130,246,0.10); /* blue tint */
+    border: 1px solid rgba(59,130,246,0.25);
+    border-radius: 6px;
+    padding: 0.08em 0.35em;
+    text-decoration: none; /* pill looks cleaner */
+    white-space: nowrap;
+  }
+  .markdown.key-info a[href*="w3w.co"]:hover,
+  .accordion.key-info .acc-body a[href*="w3w.co"]:hover {
+    background: rgba(59,130,246,0.16);
+    border-color: rgba(59,130,246,0.35);
+  }
+  /* Compact horizontal rule for visual breaks users may add */
+  .markdown.key-info hr,
+  .accordion.key-info .acc-body hr {
+    border: 0;
+    height: 1px;
+    background: #e5e7eb;
+    margin: 12px 0;
+  }
   /* Markdown basics */
   .markdown h1,.markdown h2,.markdown h3,.markdown h4,.markdown h5,.markdown h6{margin:.2em 0 .4em; line-height:1.25}
   .markdown p{margin:.5em 0}
@@ -234,6 +372,35 @@ export async function generateHome({
   .group-head::after{
     content:""; flex:1 1 auto; height:1px; background:#e5e7eb;
   }
+/* Master (full schedule) */
+.master-box {
+  background: #EFF6FF;   /* subtle blue highlight */
+  border-radius: 12px;
+  padding: 16px;
+  margin: 8px 0 20px;
+}
+
+.master-box .group-head {
+  color: #3B82F6;        /* accent blue for the section heading */
+  font-weight: 600;
+}
+  .section-title{
+    font-size:12px; font-weight:700; letter-spacing:.04em;
+    color: var(--muted); text-transform: uppercase;
+    margin: 16px 0 6px;
+  }
+  .filtered-box{
+    border:1px solid #FDE68A;  /* amber-300 */
+    border-radius:12px;
+    background:#FFFBEB;        /* amber-50 */
+    padding:16px;
+    box-shadow: 0 2px 6px rgba(0,0,0,.04);
+  }
+  .filtered-box .group-head{
+    color:#92400E;             /* amber-800 for title */
+    font-weight:600;
+  }
+  .filtered-box .group{ margin:12px 0 0; }
   /* Buttons grid */
   .grid{display:grid; grid-template-columns:1fr; gap:12px}
   @media(min-width:560px){ .grid{grid-template-columns:repeat(2,1fr)} }
@@ -296,7 +463,15 @@ export async function generateHome({
     ${keyInfoSection || ""}
 
     <section>
-      ${groupsHtml || '<div class="sub">No snapshots defined.</div>'}
+      ${unfilteredGroupsHtml ? `<div class="master-box">${unfilteredGroupsHtml}</div>` : ""}
+      ${filtered.length
+        ? `
+        <div class="section-title">Filtered Views</div>
+        <div class="filtered-box">
+          ${filteredGroupsHtml}
+        </div>`
+        : (unfilteredGroupsHtml ? "" : '<div class="sub">No snapshots defined.</div>')
+      }
     </section>
 
     <footer>
