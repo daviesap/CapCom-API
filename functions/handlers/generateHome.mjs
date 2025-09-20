@@ -482,7 +482,7 @@ export async function generateHome({
 </html>`;
 
   // Write to Storage
-  const safeHomeName = "home.html";
+  const safeHomeName = "mom.html";
   if (runningEmulated) {
     const htmlDir = path.join(LOCAL_OUTPUT_DIR, "public", safeAppName, safeEventName);
     fs.mkdirSync(htmlDir, { recursive: true });
@@ -510,7 +510,7 @@ export async function generateHome({
     status: 200,
     body: {
       success: true,
-      message: "✅ Home page generated",
+      message: "✅ MOM page generated",
       url: homeUrl,
       htmlUrl: homeUrl,
       timestamp,
