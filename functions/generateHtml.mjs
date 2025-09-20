@@ -1,4 +1,4 @@
-/* eslint-env node */
+/ * eslint-env node */
 import { readFile } from "fs/promises";
 import path from "path";
 import process from "node:process";
@@ -128,7 +128,18 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
       }
     });
 
-    keyInfoBlock = `<section class="markdown key-info">${safeHtml}</section>`;
+    keyInfoBlock = `
+      <details class="accordion key-info">
+        <summary>
+          <span>Key info</span>
+          <svg class="acc-chevron" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="18" height="18" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+        </summary>
+        <div class="acc-body markdown">
+          ${safeHtml}
+        </div>
+      </details>`;
   }
 
   const groups = Array.isArray(jsonInput.groups) ? jsonInput.groups : [];
@@ -140,6 +151,64 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
     readFile(cssPath, "utf-8"),
     readFile(tplPath, "utf-8"),
   ]);
+  const cssExtra = `
+  /* --- Key Info Accordion (injected by generateHtml.mjs) --- */
+  .accordion.key-info{
+    background: var(--card, #fafafa);
+    border: 1px solid #d1d5db; /* subtle grey border (slate-300) */
+    border-radius: 8px; /* softer corners */
+    margin: 16px 0 20px;
+    padding: 0;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08); /* subtle shadow */
+  }
+  .accordion.key-info summary{
+    display:flex; align-items:center; justify-content:space-between;
+    gap:8px; cursor:pointer; list-style:none;
+    padding:12px 16px; font-weight:700;
+    font-size: .95rem;
+    color:#1F2937;                 /* neutral dark text */
+    background:#E0F2FE;            /* stronger blue tint (sky-100) */
+    border-bottom:1px solid #93C5FD;/* sky-300 */
+  }
+  .accordion.key-info summary::-webkit-details-marker{ display:none; }
+  .accordion.key-info .acc-body{ padding:12px 16px; border-top:1px solid #eee; }
+  .accordion.key-info[open] .acc-body{
+    background:#F8FAFC;             /* slate-50 */
+    box-shadow: inset 3px 0 0 #3B82F6; /* left accent bar */
+  }
+  .accordion.key-info .acc-chevron{
+    flex:0 0 auto; color:#3B82F6;   /* match accent */
+    transition: transform .18s ease;
+  }
+  .accordion.key-info .acc-body{ line-height:1.6; font-size:.98rem; }
+  .accordion.key-info .acc-body h1,
+  .accordion.key-info .acc-body h2,
+  .accordion.key-info .acc-body h3{ margin-top:.6em; margin-bottom:.35em; font-weight:700; }
+  .accordion.key-info .acc-body h4,
+  .accordion.key-info .acc-body h5,
+  .accordion.key-info .acc-body h6{ margin-top:.6em; margin-bottom:.35em; font-weight:600; }
+  .accordion.key-info .acc-body ul,
+  .accordion.key-info .acc-body ol{ margin:.4em 0 .8em 1.25em; }
+  .accordion.key-info .acc-body li{ margin:.25em 0; }
+  .accordion.key-info .acc-body a{ color:inherit; text-decoration:underline; text-underline-offset:2px; }
+  .accordion.key-info .acc-body a[href*="w3w.co"]{
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    background: rgba(59,130,246,0.10);
+    border: 1px solid rgba(59,130,246,0.25);
+    border-radius: 6px;
+    padding: 0.08em 0.35em;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .accordion.key-info .acc-body a[href*="w3w.co"]:hover{
+    background: rgba(59,130,246,0.16);
+    border-color: rgba(59,130,246,0.35);
+  }
+  .accordion.key-info .acc-body hr{
+    border:0; height:1px; background:#e5e7eb; margin:12px 0;
+  }
+  `;
 
   // Footer may be a string or { footer: { text } }
   const footerText = (typeof jsonInput?.document?.footer === "string")
@@ -256,7 +325,7 @@ if (Array.isArray(jsonInput.columns) && jsonInput.columns.length) {
 
   // Fill template placeholders (kept simple & explicit)
   const html = tpl
-    .replaceAll("{{CSS}}", css)
+    .replaceAll("{{CSS}}", css + "\n" + cssExtra)
     .replaceAll("{{TITLE}}", escapeHtml(title))
     .replaceAll("{{SUBTITLE}}", subtitleWithLogo)
     .replaceAll("{{DOWNLOAD}}", downloadBlock)

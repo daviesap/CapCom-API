@@ -5,7 +5,7 @@
   --font-sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI",
     Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
   --text: #111;
-  --muted: orange; /* project-specific accent used for metadata */
+  --muted: #2563EB; /* project-specific accent used for metadata */
   --border: #e5e7eb;
   --header: #111;
   --bg: #fff;
