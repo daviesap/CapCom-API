@@ -4,7 +4,6 @@ import fs from "fs";
 import path from "path";
 import { Buffer } from "node:buffer";
 import { sanitiseUrl } from "../utils/sanitiseUrl.mjs";
-//import { sanitiseText } from "../utils/sanitiseText.mjs";
 
 import { marked } from "marked";
 import sanitizeHtml from "sanitize-html";
@@ -121,8 +120,6 @@ export async function generateHome({
 
   // Header/meta
   const title = `${jsonInput.eventName || "Event"} – Home`;
-  //const venue = jsonInput.eventVenue ? `<div class="sub">${escapeHtml(jsonInput.eventVenue)}</div>` : "";
-  //const dates = jsonInput.eventDates ? `<div class="sub">${escapeHtml(jsonInput.eventDates)}</div>` : "";
   // Build Key Info using marked + sanitize-html (to match schedule rendering)
   const keyInfoMd =
     (jsonInput?.document?.keyInfo && typeof jsonInput.document.keyInfo === "string")
