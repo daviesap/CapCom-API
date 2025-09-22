@@ -18,7 +18,7 @@ import { sanitiseUrl } from "./utils/sanitiseUrl.mjs";
 import { filterJson } from "./utils/filterJSON.mjs";
 import { sanitiseText } from "./utils/sanitiseText.mjs";
 import { deriveDetectedFieldsFromGroups } from "./utils/detectFields.mjs";
-import { generateHome } from "./handlers/generateHome.mjs";
+import { generateHome } from "./generateSchedules/generateHome.mjs";
 
 initializeApp({
   credential: applicationDefault(),
@@ -328,13 +328,13 @@ export const v2 = onRequest({
   const rawEventName = (req.body?.eventName ?? "").toString();
 
   const safeAppNameBody = sanitiseUrl(rawAppName || "App");
-  const safeEventNameBody = sanitiseUrl(rawEventName || "Event");
+  const safeEventName = sanitiseUrl(rawEventName || "Event");
 
   // Keep originals for logs/UI, overwrite body for downstream use
   req.body.appNameRaw = rawAppName;
   req.body.eventNameRaw = rawEventName;
   req.body.appName = safeAppNameBody;
-  req.body.eventName = safeEventNameBody;
+  req.body.eventName = safeEventName;
 
 
 
@@ -474,7 +474,6 @@ export const v2 = onRequest({
 
     // ALWAYS generate both (HTML + PDF) for either action
     if (action === ACTIONS.GENERATE_SNAPSHOT || action === ACTIONS.GENERATE_PDF) {
-      const safeEventName = req.body?.eventName; // already sanitized earlier
       const result = await generateSnapshotOutputs(
         jsonInput,
         safeAppName,
@@ -490,7 +489,6 @@ export const v2 = onRequest({
 
     //Generate all snapshots and mom page.
     if (action === ACTIONS.GENERATE_HOME) {
-      const safeEventName = req.body?.eventName; // you already have this sanitized earlier
       const result = await generateHome({
         jsonInput,
         makePublicUrl,
