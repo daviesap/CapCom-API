@@ -19,6 +19,7 @@ import { filterJson } from "./utils/filterJSON.mjs";
 import { sanitiseText } from "./utils/sanitiseText.mjs";
 import { deriveDetectedFieldsFromGroups } from "./utils/detectFields.mjs";
 import { generateHome } from "./generateSchedules/generateHome.mjs";
+import { groupAndSortJSON } from "./generateSchedules/prepareJSON.mjs";
 
 initializeApp({
   credential: applicationDefault(),
@@ -487,8 +488,31 @@ export const v2 = onRequest({
       return res.status(result.status).json(result.body);
     }
 
-    //Generate all snapshots and mom page.
+    //////////////////////////////////////////////////////////////////////////////////////
+    //Generate all snapshots and mom page/////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////
     if (action === ACTIONS.GENERATE_HOME) {
+
+      const jsonDataRaw = req.body.data;
+      const groupBy = req.body.snapshots[0].groupBy;
+      const processedJSON = groupAndSortJSON ({
+        jsonDataRaw,
+        groupBy
+      });
+
+      //Write the output to a file
+      if (runningEmulated) {
+        try {
+          const appNameForDump = jsonInput.glideAppName || "Flair PDF Generator";
+          const dumpPath = writeDebugJson(processedJSON, appNameForDump, "groupedJSON");
+          if (dumpPath) console.log("📝 Wrote debug JSON to", dumpPath);
+          if (dumpPath) jsonInput.__debugDumpPath = dumpPath;
+        } catch (e) {
+          console.warn("⚠️ Unable to write debug JSON:", e?.message || e);
+        }
+      }
+
+
       const result = await generateHome({
         jsonInput,
         makePublicUrl,
@@ -501,7 +525,6 @@ export const v2 = onRequest({
         glideAppName,
         req,
         logPdfEvent,
-        // NEW:
         bucket,
         safeAppName,
         safeEventName
