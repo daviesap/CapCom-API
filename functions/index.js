@@ -494,119 +494,143 @@ export const v2 = onRequest({
     //////////////////////////////////////////////////////////////////////////////////////
     if (action === ACTIONS.GENERATE_HOME) {
 
-      const jsonDataRaw = req.body.data;
-      //************************ */
+      // Process ALL snapshots sequentially so we don't overload the instance and to preserve order.
+      const snapshots = Array.isArray(req.body.snapshots) ? req.body.snapshots : [];
+      const jsonDataRaw = Array.isArray(req.body.data) ? req.body.data : [];
 
-      // Grab filter arrays from request or snapshot definition.
-      // The `|| []` ensures they are always arrays, never undefined.
-      const filterTagIds = req.body.snapshots[0].filterTagIds || [];
-      const filterLocationIds = req.body.snapshots[0].filterLocationIds || [];
-      const filterSubLocationIds = req.body.snapshots[0].filterSubLocationIds || [];
+      console.log(`🧩 GENERATE_HOME: processing ${snapshots.length} snapshot(s) sequentially...`);
 
+      for (let idx = 0; idx < snapshots.length; idx++) {
+        const snap = snapshots[idx];
+        const label = snap.filename || `(unnamed #${idx + 1})`;
+        console.log(`▶️  Starting snapshot ${idx + 1}/${snapshots.length}: ${label}`);
 
-      // Debug/logging
-      console.log("📊 Un-filtered entries count:", jsonDataRaw.length);
-      // Run the filter
-      const filteredData = filterJSON({
-        data: jsonDataRaw,
-        filterTagIds,
-        filterLocationIds,
-        filterSubLocationIds,
-      });
+        // Per-snapshot filters (empty array means "no filter" for that dimension)
+        const filterTagIds = snap.filterTagIds || [];
+        const filterLocationIds = snap.filterLocationIds || [];
+        const filterSubLocationIds = snap.filterSubLocationIds || [];
 
-      // Debug/logging
-      console.log("📊 Filtered entries count:", filteredData.length);
-      //************************ */
+        // 1) Filter
+        const filteredData = filterJSON({
+          data: jsonDataRaw,
+          filterTagIds,
+          filterLocationIds,
+          filterSubLocationIds,
+        });
+        console.log(`   • Filtered entries: ${filteredData.length}`);
 
+        // 2) Group + sort
+        const groupBy = snap.groupBy || "date";
+        const sortOrder = Array.isArray(snap.sortOrder) ? snap.sortOrder : [];
+        const processedJSON = groupAndSortJSON({
+          jsonDataRaw: filteredData,
+          groupBy,
+          sortOrder,
+        });
 
-      const groupBy = req.body.snapshots[0].groupBy;
-      const processedJSON = groupAndSortJSON({
-        jsonDataRaw: filteredData,
-        groupBy
-      });
+        const groupsCount = Array.isArray(processedJSON?.groups) ? processedJSON.groups.length : 0;
+        console.log(`   • Groups built: ${groupsCount} (groupBy=${groupBy})`);
 
-      /********************************************* */
-      const snap = req.body.snapshots[0];
-      console.log(`▶️ Starting snapshot: ${snap.filename || "(unnamed)"}`);
+        // 3) Resolve and merge profile
+        const effectiveProfileId = snap.profileId || jsonInput.profileId;
+        let profileDoc = {};
+        if (effectiveProfileId) {
+          try {
+            const ref = db.collection("styleProfiles").doc(effectiveProfileId);
+            const profileSnap = await ref.get();
+            if (profileSnap.exists) profileDoc = profileSnap.data();
+          } catch (e) {
+            console.warn(`   • ⚠️ Failed to load profile "${effectiveProfileId}":`, e?.message || e);
+          }
+        }
 
-      // 1) Decide which profile to use for THIS snapshot
-      const effectiveProfileId = snap.profileId || jsonInput.profileId;
+        // 4) Build prepared JSON for renderer (HTML/PDF)
+        const prepared = {
+          ...jsonInput, // retain event meta (glideAppName, eventName, etc.)
+          groups: processedJSON.groups,
+          styles: merge({}, profileDoc.styles || {}, jsonInput.styles || {}),
+          document: merge(
+            {},
+            profileDoc.document || {},
+            jsonInput.document || {},
+            { filename: snap.filename || (jsonInput.document?.filename || "schedule") }
+          ),
+          columns: profileDoc.columns || jsonInput.columns || [],
+          // Header will always be an array at root; append filename for this snapshot
+          header: [...jsonInput.header, snap.filename].filter(Boolean),
+          profileId: effectiveProfileId,
+        };
 
-      // 2) Fetch the style profile
-      let profileDoc = {};
-      if (effectiveProfileId) {
-        const ref = db.collection("styleProfiles").doc(effectiveProfileId);
-        const snapDoc = await ref.get();
-        if (snapDoc.exists) profileDoc = snapDoc.data();
+        // 4a) Ensure document.header for v2 renderers
+        prepared.document = prepared.document || {};
+        prepared.document.header = {
+          textLines: prepared.header,
+          text: prepared.header.join("\n"),
+        };
+
+        // 4b) Pass through a logo if present at root (keeps v2 renderers simple)
+        if (jsonInput.logoUrl && !prepared.document?.header?.logo?.url) {
+          prepared.document.header.logo = {
+            url: jsonInput.logoUrl,
+          };
+        }
+
+        // Optional debug dump per snapshot when emulated
+        if (runningEmulated || jsonInput.debug === true) {
+          try {
+            const appNameForDump = jsonInput.glideAppName || "Flair PDF Generator";
+            const dumpPath = writeDebugJson(
+              { prepared },
+              appNameForDump,
+              `prepared-${idx + 1}-${sanitiseUrl(label)}`
+            );
+            if (dumpPath) console.log(`   • 📝 Wrote prepared JSON to ${dumpPath}`);
+          } catch (e) {
+            console.warn("   • ⚠️ Unable to write prepared JSON:", e?.message || e);
+          }
+        }
+
+        // 5) Render snapshot (v2 paths)
+        const { pdfUrl, htmlUrl } = await generateSnapshotOutputsv2({
+          jsonInput: prepared,
+          safeAppName,
+          safeEventName,
+          bucket,
+          runningEmulated,
+          LOCAL_OUTPUT_DIR,
+          startTime,
+          timestamp,
+          userEmail,
+          profileId: effectiveProfileId,
+          makePublicUrl,
+          logPdfEvent,
+          extraSubdir: "v2",
+        });
+
+        console.log(`   • Done HTML: ${htmlUrl}`);
+        console.log(`   • Done  PDF: ${pdfUrl}`);
+        console.log(`✅ Done snapshot ${idx + 1}/${snapshots.length}: ${label}`);
+
+        // 6) Attach real URLs back to the snapshot for the home page
+        snap.realHtmlUrl = htmlUrl;
+        snap.realPdfUrl = pdfUrl;
       }
 
-      // 3) Build the prepared JSON that HTML/PDF expect
-      const prepared = {
-        ...jsonInput,                     // keep event meta, etc.
-        groups: processedJSON.groups,     // <- from your grouping
-        // merge styles/document/columns (profile -> incoming -> snapshot overrides)
-        styles: merge({}, profileDoc.styles || {}, jsonInput.styles || {}),
-        document: merge(
-          {},
-          profileDoc.document || {},
-          jsonInput.document || {},
-          { filename: snap.filename || (jsonInput.document?.filename || "schedule") }
-        ),
-        columns: profileDoc.columns || jsonInput.columns || [],
-        // optional: header line handling
-        header: Array.isArray(jsonInput.header)
-          ? jsonInput.header
-          : (typeof snap.header === "string" ? snap.header.split(",") : jsonInput.header),
-        profileId: effectiveProfileId,    // keep for logging
-      };
-
-      // 4) Now render with the fully prepared JSON
-      const { pdfUrl, htmlUrl } = await generateSnapshotOutputsv2({
-        jsonInput: prepared,
-        safeAppName,
-        safeEventName,
-        bucket,
-        runningEmulated,
-        LOCAL_OUTPUT_DIR,
-        startTime,
-        timestamp,
-        userEmail,
-        profileId: effectiveProfileId,
-        makePublicUrl,
-        logPdfEvent,
-        extraSubdir: "v2", // your safety sandbox
-      });
-
-      console.log(`PDF URL = ${pdfUrl} and HTML url = ${htmlUrl}`);
-      console.log(`✅ Done snapshot: ${snap.filename || "(unnamed)"} — HTML: ${htmlUrl} | PDF: ${pdfUrl}`);
-
-      // Attach real URLs back onto the snapshot so home page can use actual links
-      snap.realPdfUrl = pdfUrl;
-      snap.realHtmlUrl = htmlUrl;
-
-      // Keep the top-level JSON in sync with the mutated request body snapshots
+      // Keep top-level JSON in sync
       if (Array.isArray(req.body.snapshots)) {
         jsonInput.snapshots = req.body.snapshots;
       }
 
-//console.log("Snapshot JSON =", JSON.stringify(jsonInput.snapshots, null, 2));
-
-
-
-      /********************************************* */
-
-      //Write the output to a file
-      if (runningEmulated) {
+      // Optional: write a loop summary when emulated
+      if (runningEmulated || jsonInput.debug === true) {
         try {
           const appNameForDump = jsonInput.glideAppName || "Flair PDF Generator";
-          const dumpPath = writeDebugJson(processedJSON, appNameForDump, "groupedJSON");
-          if (dumpPath) console.log("📝 Wrote debug JSON to", dumpPath);
-          if (dumpPath) jsonInput.__debugDumpPath = dumpPath;
+          const dumpPath = writeDebugJson(jsonInput, appNameForDump, "generateHome-after-loop");
+          if (dumpPath) console.log(`📝 Wrote post-loop JSON to ${dumpPath}`);
         } catch (e) {
-          console.warn("⚠️ Unable to write debug JSON:", e?.message || e);
+          console.warn("⚠️ Unable to write post-loop JSON:", e?.message || e);
         }
       }
-
 
       const result = await generateHome({
         jsonInput,

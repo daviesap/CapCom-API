@@ -5,6 +5,18 @@ import fetch from 'node-fetch';
 import { formatFriendlyDateTime } from '../utils/prettyDate.mjs';
 import { sanitiseText } from '../utils/sanitiseText.mjs';
 
+// pdf-lib's built-in StandardFonts (Helvetica, etc.) only support WinAnsi.
+// Replace any non‑WinAnsi characters (e.g., emojis) with a safe fallback so
+// width calculations and drawing do not throw "WinAnsi cannot encode" errors.
+function toWinAnsi(str) {
+  if (str == null) return '';
+  const s = String(str);
+  // Replace anything outside the basic Latin + common punctuation range.
+  // (You can refine the allowlist as needed.)
+  return s.replace(/[^\x20-\x7E]/g, ''); // drop unsupported chars
+  // If you prefer to visualise removals, swap '' for '□' or '?'.
+}
+
 // === Layout constants ===
 const DEFAULT_COLUMN_WIDTH = 100;
 const CELL_PADDING = 5;
@@ -90,7 +102,8 @@ function wrapLinesForWidth(lines, font, fontSize, maxWidth) {
   const wrapped = [];
   for (const line of lines) {
     if (line === '') { wrapped.push(''); continue; }
-    const words = line.split(' ');
+    const safeLine = toWinAnsi(line);
+    const words = safeLine.split(' ');
     let cur = '';
     for (const w of words) {
       const test = cur ? `${cur} ${w}` : w;
@@ -123,7 +136,7 @@ function drawKeyInfoBox({ page, pageWidth, leftMargin, rightMargin, currentY, te
 
   let yCursor = currentY - pad;
   for (const ln of wrapped) {
-    page.drawText(ln, {
+    page.drawText(toWinAnsi(ln), {
       x: leftMargin + pad,
       y: yCursor - (textStyle.lineHeight - textStyle.fontSize),
       size: textStyle.fontSize,
@@ -287,14 +300,14 @@ export const generatePdfBuffer = async (jsonInput) => {
 
         if (showContinued) {
           const contText = `${sanitiseText(group.title)} (Continued…)`;
-          currentPage.drawText(contText, { x: leftMargin, y, size: tFS, font: tF, color: tC });
+          currentPage.drawText(toWinAnsi(contText), { x: leftMargin, y, size: tFS, font: tF, color: tC });
           y -= tLH;
         }
         if (repeatLabels && hasLabels) {
           let rx = leftMargin;
           for (const col of columns) {
             if (col.showLabel) {
-              currentPage.drawText(sanitiseText(col.label), { x: rx, y, size: labelInfo.fontSize, font: labelInfo.font, color: labelInfo.color });
+              currentPage.drawText(toWinAnsi(sanitiseText(col.label)), { x: rx, y, size: labelInfo.fontSize, font: labelInfo.font, color: labelInfo.color });
             }
             rx += col.width || DEFAULT_COLUMN_WIDTH;
           }
@@ -307,11 +320,11 @@ export const generatePdfBuffer = async (jsonInput) => {
     const introHeight = tLH + (hasMeta ? (mLH + mPB) : 0) + (hasLabels ? labelInfo.lineHeight : 0);
     checkBreak(introHeight);
 
-    currentPage.drawText(sanitiseText(group.title), { x: leftMargin, y, size: tFS, font: tF, color: tC });
+    currentPage.drawText(toWinAnsi(sanitiseText(group.title)), { x: leftMargin, y, size: tFS, font: tF, color: tC });
     y -= tLH;
 
     if (hasMeta) {
-      currentPage.drawText(sanitiseText(group.metadata), { x: leftMargin, y, size: mFS, font: mF, color: mC });
+      currentPage.drawText(toWinAnsi(sanitiseText(group.metadata)), { x: leftMargin, y, size: mFS, font: mF, color: mC });
       y -= mLH + mPB;
     }
 
@@ -319,7 +332,7 @@ export const generatePdfBuffer = async (jsonInput) => {
       let x = leftMargin;
       checkBreakForGroup(labelInfo.lineHeight, { showContinued: true, repeatLabels: true });
       for (const col of columns) {
-        if (col.showLabel) currentPage.drawText(sanitiseText(col.label), { x, y, size: labelInfo.fontSize, font: labelInfo.font, color: labelInfo.color });
+        if (col.showLabel) currentPage.drawText(toWinAnsi(sanitiseText(col.label)), { x, y, size: labelInfo.fontSize, font: labelInfo.font, color: labelInfo.color });
         x += col.width || DEFAULT_COLUMN_WIDTH;
       }
       y -= labelInfo.lineHeight;
@@ -341,6 +354,7 @@ export const generatePdfBuffer = async (jsonInput) => {
         }
 
         txt = sanitiseText(txt);
+        txt = toWinAnsi(txt);
         const maxW = (col.width || DEFAULT_COLUMN_WIDTH) - CELL_PADDING;
         let effectiveMaxW = maxW;
         if (colIdx === 0) {
@@ -378,7 +392,7 @@ export const generatePdfBuffer = async (jsonInput) => {
             currentPage.drawText('| ', { x: xStart, y: ly, size: rFS, font: regularFont, color: gutterColor });
             currentPage.drawText(txt,   { x: xStart + gutterWidth, y: ly, size: rFS, font: rF, color: rC });
           } else {
-            currentPage.drawText(txt, { x: xStart, y: ly, size: rFS, font: rF, color: rC });
+            currentPage.drawText(toWinAnsi(txt), { x: xStart, y: ly, size: rFS, font: rF, color: rC });
           }
           ly -= rLH;
         }
@@ -427,11 +441,11 @@ export const generatePdfBuffer = async (jsonInput) => {
 
       let hy = pageHeight - topMargin - (maxHeaderBlockHeight - headerTextHeight);
       for (const ln of header.text) {
-        pg.drawText(sanitiseText(ln), { x: leftMargin, y: hy, size: hFS, font: hF, color: hC });
+        pg.drawText(toWinAnsi(sanitiseText(ln)), { x: leftMargin, y: hy, size: hFS, font: hF, color: hC });
         hy -= hLH;
       }
       const asAtText = `As at ${ts}`;
-      pg.drawText(sanitiseText(asAtText), { x: leftMargin, y: hy, size: hFS, font: hF, color: hC });
+      pg.drawText(toWinAnsi(sanitiseText(asAtText)), { x: leftMargin, y: hy, size: hFS, font: hF, color: hC });
     }
 
     if (embeddedLogo) {
@@ -450,23 +464,29 @@ export const generatePdfBuffer = async (jsonInput) => {
       const fyMain = bottomMargin + fLH;
       const fyCredit = bottomMargin;
 
+      // Prepare safe footer strings
+      const safeFilename = toWinAnsi(filenameBase);
+      const pgText   = `Page ${i + 1} of ${total}`;
+      const safePgText = toWinAnsi(pgText);
+      const tText    = `Document generated ${ts}`;
+      const safeTText = toWinAnsi(tText);
+      const creditText = `Capcom – https://www.capcom.london`;
+      const safeCredit = toWinAnsi(creditText);
+
       // Left: filename
-      pg.drawText(sanitiseText(filenameBase), { x: leftMargin, y: fyMain, size: fFS, font: fF, color: fC });
+      pg.drawText(safeFilename, { x: leftMargin, y: fyMain, size: fFS, font: fF, color: fC });
 
       // Centre: Page X of Y
-      const pgText = `Page ${i + 1} of ${total}`;
-      const pgTextWidth = fF.widthOfTextAtSize(pgText, fFS);
-      pg.drawText(pgText, { x: (pageWidth - pgTextWidth) / 2, y: fyMain, size: fFS, font: fF, color: fC });
+      const pgTextWidth = fF.widthOfTextAtSize(safePgText, fFS);
+      pg.drawText(safePgText, { x: (pageWidth - pgTextWidth) / 2, y: fyMain, size: fFS, font: fF, color: fC });
 
       // Right: timestamp
-      const tText = `Document generated ${ts}`;
-      const tTextWidth = fF.widthOfTextAtSize(tText, fFS);
-      pg.drawText(tText, { x: pageWidth - rightMargin - tTextWidth, y: fyMain, size: fFS, font: fF, color: fC });
+      const tTextWidth = fF.widthOfTextAtSize(safeTText, fFS);
+      pg.drawText(safeTText, { x: pageWidth - rightMargin - tTextWidth, y: fyMain, size: fFS, font: fF, color: fC });
 
       // Line 2 (centre): credit
-      const creditText = `Capcom – https://www.capcom.london`;
-      const creditWidth = fF.widthOfTextAtSize(creditText, fFS);
-      pg.drawText(creditText, { x: (pageWidth - creditWidth) / 2, y: fyCredit, size: fFS, font: fF, color: fC });
+      const creditWidth = fF.widthOfTextAtSize(safeCredit, fFS);
+      pg.drawText(safeCredit, { x: (pageWidth - creditWidth) / 2, y: fyCredit, size: fFS, font: fF, color: fC });
     }
 
     if (debug) {

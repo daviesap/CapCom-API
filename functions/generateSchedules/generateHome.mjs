@@ -89,10 +89,19 @@ export async function generateHome({
       const items = g.items.map(s => {
         const labelRaw = (s.filename || "Snapshot").toString();
         const label = escapeHtml(labelRaw);
-        const targetUrl = (typeof s.urlTemp === "string" && s.urlTemp.trim())
+        // Prefer the real generated HTML URL when present; otherwise fall back to the temporary URL.
+        const realUrl = (typeof s.realHtmlUrl === "string" && s.realHtmlUrl.trim())
+          ? s.realHtmlUrl.trim()
+          : "";
+        const tempUrl = (typeof s.urlTemp === "string" && s.urlTemp.trim())
           ? s.urlTemp.trim()
           : "";
-        const hrefAttr = targetUrl ? ` href="${targetUrl}"` : "";
+        const targetUrl = realUrl || tempUrl;
+
+        // If we have a URL, link it; otherwise render as a disabled-style button.
+        const hrefAttr = targetUrl
+          ? ` href="${escapeHtml(targetUrl)}" target="_blank" rel="noopener"`
+          : ` role="button" aria-disabled="true"`;
         return `
           <a class="snap-btn"${hrefAttr}>
             <div class="left">
@@ -420,6 +429,11 @@ export async function generateHome({
     transform: translateY(-1px);
     box-shadow: 0 8px 20px rgba(0,0,0,.06);
     border-color: #e5e7eb;
+  }
+  .snap-btn[aria-disabled="true"] {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
   }
   .snap-label {
     font-weight: 600;
