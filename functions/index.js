@@ -242,9 +242,9 @@ async function getPkgVersion() {
 export const v2 = onRequest({
   region: "europe-west2",
   //minInstances: 1,    // keep one warm
-  //memory: "1GiB",     // PDF/Excel need headroom
-  //cpu: 2,             // faster processing
-  //concurrency: 10     // handle multiple requests per instance
+  memory: "1GiB",     // PDF/Excel need headroom
+  cpu: 2,             // faster processing
+  concurrency: 10,     // handle multiple requests per instance
   secrets: [API_KEY, GLIDE_API_KEY],
 }, async (req, res) => {
   const startTime = Date.now();
