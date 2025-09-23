@@ -527,6 +527,7 @@ export const v2 = onRequest({
 
       /********************************************* */
       const snap = req.body.snapshots[0];
+      console.log(`▶️ Starting snapshot: ${snap.filename || "(unnamed)"}`);
 
       // 1) Decide which profile to use for THIS snapshot
       const effectiveProfileId = snap.profileId || jsonInput.profileId;
@@ -577,7 +578,18 @@ export const v2 = onRequest({
       });
 
       console.log(`PDF URL = ${pdfUrl} and HTML url = ${htmlUrl}`);
+      console.log(`✅ Done snapshot: ${snap.filename || "(unnamed)"} — HTML: ${htmlUrl} | PDF: ${pdfUrl}`);
 
+      // Attach real URLs back onto the snapshot so home page can use actual links
+      snap.realPdfUrl = pdfUrl;
+      snap.realHtmlUrl = htmlUrl;
+
+      // Keep the top-level JSON in sync with the mutated request body snapshots
+      if (Array.isArray(req.body.snapshots)) {
+        jsonInput.snapshots = req.body.snapshots;
+      }
+
+//console.log("Snapshot JSON =", JSON.stringify(jsonInput.snapshots, null, 2));
 
 
 
