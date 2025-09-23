@@ -19,7 +19,8 @@ import { filterJson } from "./utils/filterJSON.mjs";
 import { sanitiseText } from "./utils/sanitiseText.mjs";
 import { deriveDetectedFieldsFromGroups } from "./utils/detectFields.mjs";
 import { generateHome } from "./generateSchedules/generateHome.mjs";
-import { groupAndSortJSON } from "./generateSchedules/prepareJSON.mjs";
+import { groupAndSortJSON, filterJSON } from "./generateSchedules/prepareJSON.mjs";
+import { generateSnapshotOutputsv2 } from "./generateSchedules/generateSnapshots.mjs";
 
 initializeApp({
   credential: applicationDefault(),
@@ -494,11 +495,93 @@ export const v2 = onRequest({
     if (action === ACTIONS.GENERATE_HOME) {
 
       const jsonDataRaw = req.body.data;
+      //************************ */
+
+      // Grab filter arrays from request or snapshot definition.
+      // The `|| []` ensures they are always arrays, never undefined.
+      const filterTagIds = req.body.snapshots[0].filterTagIds || [];
+      const filterLocationIds = req.body.snapshots[0].filterLocationIds || [];
+      const filterSubLocationIds = req.body.snapshots[0].filterSubLocationIds || [];
+
+
+      // Debug/logging
+      console.log("📊 Un-filtered entries count:", jsonDataRaw.length);
+      // Run the filter
+      const filteredData = filterJSON({
+        data: jsonDataRaw,
+        filterTagIds,
+        filterLocationIds,
+        filterSubLocationIds,
+      });
+
+      // Debug/logging
+      console.log("📊 Filtered entries count:", filteredData.length);
+      //************************ */
+
+
       const groupBy = req.body.snapshots[0].groupBy;
-      const processedJSON = groupAndSortJSON ({
-        jsonDataRaw,
+      const processedJSON = groupAndSortJSON({
+        jsonDataRaw: filteredData,
         groupBy
       });
+
+      /********************************************* */
+      const snap = req.body.snapshots[0];
+
+      // 1) Decide which profile to use for THIS snapshot
+      const effectiveProfileId = snap.profileId || jsonInput.profileId;
+
+      // 2) Fetch the style profile
+      let profileDoc = {};
+      if (effectiveProfileId) {
+        const ref = db.collection("styleProfiles").doc(effectiveProfileId);
+        const snapDoc = await ref.get();
+        if (snapDoc.exists) profileDoc = snapDoc.data();
+      }
+
+      // 3) Build the prepared JSON that HTML/PDF expect
+      const prepared = {
+        ...jsonInput,                     // keep event meta, etc.
+        groups: processedJSON.groups,     // <- from your grouping
+        // merge styles/document/columns (profile -> incoming -> snapshot overrides)
+        styles: merge({}, profileDoc.styles || {}, jsonInput.styles || {}),
+        document: merge(
+          {},
+          profileDoc.document || {},
+          jsonInput.document || {},
+          { filename: snap.filename || (jsonInput.document?.filename || "schedule") }
+        ),
+        columns: profileDoc.columns || jsonInput.columns || [],
+        // optional: header line handling
+        header: Array.isArray(jsonInput.header)
+          ? jsonInput.header
+          : (typeof snap.header === "string" ? snap.header.split(",") : jsonInput.header),
+        profileId: effectiveProfileId,    // keep for logging
+      };
+
+      // 4) Now render with the fully prepared JSON
+      const { pdfUrl, htmlUrl } = await generateSnapshotOutputsv2({
+        jsonInput: prepared,
+        safeAppName,
+        safeEventName,
+        bucket,
+        runningEmulated,
+        LOCAL_OUTPUT_DIR,
+        startTime,
+        timestamp,
+        userEmail,
+        profileId: effectiveProfileId,
+        makePublicUrl,
+        logPdfEvent,
+        extraSubdir: "v2", // your safety sandbox
+      });
+
+      console.log(`PDF URL = ${pdfUrl} and HTML url = ${htmlUrl}`);
+
+
+
+
+      /********************************************* */
 
       //Write the output to a file
       if (runningEmulated) {

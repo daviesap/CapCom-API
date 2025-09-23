@@ -33,3 +33,16 @@ export function formatFriendlyDateUTC(isoDateString) {
     timeZone: "UTC"
   }).format(d);
 }
+
+export function formatFriendlyDateTime(d = new Date()) {
+  return d.toLocaleString("en-GB", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,          // ✅ gives “12.29 pm” not “0.29 pm”
+    timeZone: "Europe/London",
+  });
+}

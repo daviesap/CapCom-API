@@ -1,6 +1,47 @@
 import { formatFriendlyDateUTC } from "../utils/prettyDate.mjs";
 
-/**
+// ---------- filterJSON ----------
+// This function filters an array of schedule entries (data)
+// by tags, locations, and sub-locations.
+//
+// Rules:
+//  - If a filter array is empty → that filter is considered "off"
+//    and all entries pass it.
+//  - If a filter array has values → an entry must have *at least one*
+//    matching ID in its own array to pass.
+//
+// Example: If filterTagIds = ["A"], only entries where entry.tagIds
+// contains "A" will pass.
+
+export function filterJSON({
+  data,
+  filterTagIds = [],
+  filterLocationIds = [],
+  filterSubLocationIds = [],
+}) {
+  return data.filter(entry => {
+    // ✅ Pass if no tag filter OR at least one tag matches
+    const tagMatch =
+      filterTagIds.length === 0 ||
+      entry.tagIds.some(tag => filterTagIds.includes(tag));
+
+    // ✅ Pass if no location filter OR at least one location matches
+    const locationMatch =
+      filterLocationIds.length === 0 ||
+      entry.locationIds.some(loc => filterLocationIds.includes(loc));
+
+    // ✅ Pass if no sub-location filter OR at least one sub-location matches
+    const subLocationMatch =
+      filterSubLocationIds.length === 0 ||
+      entry.subLocationIds.some(sub => filterSubLocationIds.includes(sub));
+
+    // ✅ Entry must pass *all three* checks
+    return tagMatch && locationMatch && subLocationMatch;
+  });
+}
+
+
+/***********************************************************
  * Group raw schedule items by a single key.
  * Always adds `friendlyDate` (UTC-safe, no timezone day-shift).
  * No sorting and no validation (per your request).

@@ -18,7 +18,6 @@
   "snapshots": [
     {
       "filename": "Full schedule",
-      "header": "Bloomberg Day 2025,Hampton Court Palace 28th September 2025, Full schedule",
       "type": "Master",
       "groupBy": "date",
       "sortOrder": [
@@ -26,6 +25,8 @@
         "time",
         "description"
       ],
+      "filterTagIds": ["DonIXlE.SeqzQAe5V0GXLA"],
+      "locationFilter": [],
       "profileId": "DzhLnf64Vv",
       "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/Fullschedule.html",
       "isFiltered": false
@@ -34,9 +35,14 @@
       "filename": "MP Squares schedule",
       "header": "Bloomberg Day 2025,Hampton Court Palace 28th September 2025, MP Squares schedule",
       "type": "By supplier",
-      "groupBy": "date",
+      "groupBy": "Dates",
       "sortOrder": [],
-      "tagsFilter": "ra8Z47n-QwCffoTVDR19nw",
+      "filterTagIds": [
+        "ra8Z47n-QwCffoTVDR19nw",
+        "DonIXlE.SeqzQAe5V0GXLA",
+        "TVzTqAp4SgWPyRCyRPWISw"
+      ],
+      "locationFilter": [],
       "profileId": "DzhLnf64Vv",
       "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/MPSquaresschedule.html",
       "isFiltered": true
@@ -45,9 +51,12 @@
       "filename": "HCP schedule",
       "header": "Bloomberg Day 2025,Hampton Court Palace 28th September 2025, HCP schedule",
       "type": "Venue",
-      "groupBy": "date",
+      "groupBy": "Dates",
       "sortOrder": [],
-      "tagsFilter": "DonIXlE.SeqzQAe5V0GXLA",
+      "tagsFilter": [
+        "DonIXlE.SeqzQAe5V0GXLA"
+      ],
+      "locationFilter": [],
       "profileId": "DzhLnf64Vv",
       "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/HCPschedule.html",
       "isFiltered": true
@@ -56,9 +65,12 @@
       "filename": "Kerb schedule",
       "header": "Bloomberg Day 2025,Hampton Court Palace 28th September 2025, Kerb schedule",
       "type": "By supplier",
-      "groupBy": "date",
+      "groupBy": "Dates",
       "sortOrder": [],
-      "tagsFilter": "a.A-QALuWT46KS8nX8kh8wg",
+      "tagsFilter": [
+        "a.A-QALuWT46KS8nX8kh8wg"
+      ],
+      "locationFilter": [],
       "profileId": "DzhLnf64Vv",
       "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/Kerbschedule.html",
       "isFiltered": true
@@ -67,9 +79,12 @@
       "filename": "Insite schedule",
       "header": "Bloomberg Day 2025,Hampton Court Palace 28th September 2025, Insite schedule",
       "type": "By supplier",
-      "groupBy": "date",
+      "groupBy": "Dates",
       "sortOrder": [],
-      "tagsFilter": "unC3zBAMQy-pLki5bgQdmA",
+      "tagsFilter": [
+        "unC3zBAMQy-pLki5bgQdmA"
+      ],
+      "locationFilter": [],
       "profileId": "DzhLnf64Vv",
       "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/Insiteschedule.html",
       "isFiltered": true
@@ -78,9 +93,12 @@
       "filename": "AAC Power schedule",
       "header": "Bloomberg Day 2025,Hampton Court Palace 28th September 2025, AAC Power schedule",
       "type": "By supplier",
-      "groupBy": "date",
+      "groupBy": "Dates",
       "sortOrder": [],
-      "tagsFilter": "Xi8rOuVnRs-ihhFiHGv8kg",
+      "tagsFilter": [
+        "Xi8rOuVnRs-ihhFiHGv8kg"
+      ],
+      "locationFilter": [],
       "profileId": "DzhLnf64Vv",
       "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/AACPowerschedule.html",
       "isFiltered": true
@@ -89,9 +107,12 @@
       "filename": "Deliveries - All gates",
       "header": "Bloomberg Day 2025,Hampton Court Palace 28th September 2025, Deliveries - All gates",
       "type": "Deliveries",
-      "groupBy": "date",
+      "groupBy": "Dates",
       "sortOrder": [],
-      "tagsFilter": "TAtz-oeITKeLO4-uxu.DPw",
+      "tagsFilter": [
+        "TAtz-oeITKeLO4-uxu.DPw"
+      ],
+      "locationFilter": [],
       "profileId": "DzhLnf64Vv",
       "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/Deliveries-Allgates.html",
       "isFiltered": true
@@ -100,9 +121,12 @@
       "filename": "Garden Catering",
       "header": "Bloomberg Day 2025,Hampton Court Palace 28th September 2025, Garden Catering",
       "type": "By supplier",
-      "groupBy": "date",
+      "groupBy": "Dates",
       "sortOrder": [],
-      "tagsFilter": "c6D39RzGRmq.aMahe-g-yQ",
+      "tagsFilter": [
+        "c6D39RzGRmq.aMahe-g-yQ"
+      ],
+      "locationFilter": [],
       "profileId": "DzhLnf64Vv",
       "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/GardenCatering.html",
       "isFiltered": true
@@ -111,10 +135,14 @@
       "filename": "Deliveries - Cart Track Gate",
       "header": "Bloomberg Day 2025,Hampton Court Palace 28th September 2025, Deliveries - Cart Track Gate",
       "type": "Deliveries",
-      "groupBy": "date",
+      "groupBy": "Dates",
       "sortOrder": [],
-      "tagsFilter": "TAtz-oeITKeLO4-uxu.DPw",
-      "locationFilter": "avDh6Lx0QwG941DZ.ed0Og",
+      "tagsFilter": [
+        "TAtz-oeITKeLO4-uxu.DPw"
+      ],
+      "locationFilter": [
+        "avDh6Lx0QwG941DZ.ed0Og"
+      ],
       "profileId": "DzhLnf64Vv",
       "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/Deliveries-CartTrackGate.html",
       "isFiltered": true
@@ -123,9 +151,12 @@
       "filename": "Deliveries - Flower Pot Gate",
       "header": "Bloomberg Day 2025,Hampton Court Palace 28th September 2025, Deliveries - Flower Pot Gate",
       "type": "Deliveries",
-      "groupBy": "date",
+      "groupBy": "Dates",
       "sortOrder": [],
-      "locationFilter": "Ko4msj1HS2aCTlQg0iiZPA",
+      "tagsFilter": [],
+      "locationFilter": [
+        "Ko4msj1HS2aCTlQg0iiZPA"
+      ],
       "profileId": "DzhLnf64Vv",
       "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/Deliveries-FlowerPotGate.html",
       "isFiltered": true
@@ -134,9 +165,12 @@
       "filename": "Deliveries - Adams Gate",
       "header": "Bloomberg Day 2025,Hampton Court Palace 28th September 2025, Deliveries - Adams Gate",
       "type": "Deliveries",
-      "groupBy": "date",
+      "groupBy": "Dates",
       "sortOrder": [],
-      "locationFilter": "rfWMwhqyQZeGYkkW.NXLZQ",
+      "tagsFilter": [],
+      "locationFilter": [
+        "rfWMwhqyQZeGYkkW.NXLZQ"
+      ],
       "profileId": "DzhLnf64Vv",
       "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/Deliveries-AdamsGate.html",
       "isFiltered": true

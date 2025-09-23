@@ -19,7 +19,7 @@ curl -X POST \
 ## To generate home
 curl -X POST \
   -H "Content-Type: application/json" \
-  --data-binary @/Users/apndavies/Coding/flair-pdf-generator/functions/local-emulator/input/generateHome.json \
+  --data-binary @/Users/apndavies/Coding/flair-pdf-generator/functions/local-emulator/input/vsc25.json \
   "http://127.0.0.1:5001/flair-pdf-generator/europe-west2/v2?action=generateHome"
 
 
