@@ -1,6 +1,7 @@
 // functions/generateSchedules/generateSnapshots.mjs
 import fs from "fs";
 import path from "path";
+import { sanitiseUrl } from "../utils/sanitiseUrl.mjs";
 
 function formatYYYYMMDD(d = new Date()) {
   const fmt = new Intl.DateTimeFormat('en-GB', {
@@ -14,8 +15,15 @@ function formatYYYYMMDD(d = new Date()) {
 
 // Add near the top of generateSnapshots.mjs (above export):
 function applyHeader(prepared, filename) {
-  // header is guaranteed to be an array at root in v2
-  const fullHeader = [...prepared.header, filename];
+  // Root header is guaranteed to be an array in v2
+  const baseHeader = Array.isArray(prepared.header) ? prepared.header.slice() : [];
+  const name = String(filename || "").trim();
+
+  // Only append if not already present (case-insensitive)
+  const alreadyHas = baseHeader.some(
+    (s) => String(s).trim().toLowerCase() === name.toLowerCase()
+  );
+  const fullHeader = alreadyHas ? baseHeader : [...baseHeader, name];
 
   prepared.header = fullHeader;
   prepared.document = prepared.document || {};
@@ -23,7 +31,7 @@ function applyHeader(prepared, filename) {
     textLines: fullHeader,
     text: fullHeader.join("\n"),
   };
-  // Leave any existing title, else default to first line
+  // Preserve existing title, otherwise use first line
   prepared.document.title = prepared.document.title || fullHeader[0];
 
   return prepared;
@@ -52,20 +60,23 @@ export async function generateSnapshotOutputsv2({
   const joinLocalPath = (...parts) =>
     path.join(LOCAL_OUTPUT_DIR, "public", safeAppName, safeEventName, ...(extraSubdir ? [extraSubdir] : []), ...parts);
 
-  // --- Derive display/base filename early & enrich header for v2 renderers ---
-  const baseNoExt = jsonInput?.document?.filename || jsonInput?.filename || "schedule";
-  // Apply header enrichment (append filename to root header array and mirror into document.header)
-  const prepared = applyHeader({ ...jsonInput }, baseNoExt);
+  // --- Derive display name and sanitised base, then enrich header ---
+  // Human-friendly base used in headers (keep spaces/case, strip any extension)
+  const rawBase = (jsonInput?.document?.filename || jsonInput?.filename || "schedule").toString();
+  const displayBase = rawBase.replace(/\.[a-zA-Z0-9]+$/, "");
+  // Apply header enrichment with the human-friendly name
+  const prepared = applyHeader({ ...jsonInput }, displayBase);
 
   // 1) PDF bytes
   const { generatePdfBuffer } = await import("../generateSchedules/generatepdfv2.mjs");
   const { bytes, filename } = await generatePdfBuffer(prepared);
   console.log(`Filename ${filename}`);
 
-  // 2) Names
+  // 2) Names (use sanitised base for storage paths)
   const pdfDate = formatYYYYMMDD();
-  const pdfName  = `${baseNoExt}-${pdfDate}.pdf`; // versioned
-  const htmlName = `${baseNoExt}.html`;           // stable
+  const safeBase = sanitiseUrl(displayBase);       // e.g. "AAC-Power-schedule"
+  const pdfName = `${safeBase}-${pdfDate}.pdf`;   // versioned
+  const htmlName = `${safeBase}.html`;             // stable
 
   // 3) Save PDF
   if (runningEmulated) {
