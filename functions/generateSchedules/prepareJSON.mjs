@@ -107,3 +107,60 @@ export function groupAndSortJSON({ jsonDataRaw, groupBy, sortOrder }) {
 
   return { groups };
 }
+
+
+
+/*********************NEW FUNCTIONS */
+export function filterEntriesArray({
+  data,
+  filterTagIds = [],
+  filterLocationIds = [],
+  filterSubLocationIds = [],
+}) {
+  return data.filter(entry => {
+    const tags = Array.isArray(entry.tagIds) ? entry.tagIds : [];
+    const locs = Array.isArray(entry.locationIds) ? entry.locationIds : [];
+    const subs = Array.isArray(entry.subLocationIds) ? entry.subLocationIds : [];
+
+    const tagMatch =
+      filterTagIds.length === 0 || tags.some(id => filterTagIds.includes(id));
+
+    const locationMatch =
+      filterLocationIds.length === 0 || locs.some(id => filterLocationIds.includes(id));
+
+    const subLocationMatch =
+      filterSubLocationIds.length === 0 || subs.some(id => filterSubLocationIds.includes(id));
+
+    return tagMatch && locationMatch && subLocationMatch;
+  });
+}
+
+/** take a precomputed view { groupBy, groups:[{rawKey,title,meta,entries}...] }
+ *  and return a shallow-cloned view with groups filtered + empty groups removed */
+export function applySnapshotFiltersToView(view, {
+  filterTagIds = [],
+  filterLocationIds = [],
+  filterSubLocationIds = [],
+}) {
+  if (!view || !Array.isArray(view.groups)) return { groups: [] };
+
+  const filteredGroups = [];
+  for (const g of view.groups) {
+    const entries = filterEntriesArray({
+      data: Array.isArray(g.entries) ? g.entries : [],
+      filterTagIds,
+      filterLocationIds,
+      filterSubLocationIds,
+    });
+    if (entries.length > 0) {
+      // preserve ordering, title, meta; only entries change
+      filteredGroups.push({
+        rawKey: g.rawKey,
+        title: g.title,
+        meta: g.meta,
+        entries,
+      });
+    }
+  }
+  return { groupBy: view.groupBy, groups: filteredGroups };
+}

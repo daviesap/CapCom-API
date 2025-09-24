@@ -19,8 +19,81 @@ import { filterJson } from "./utils/filterJSON.mjs";
 import { sanitiseText } from "./utils/sanitiseText.mjs";
 import { deriveDetectedFieldsFromGroups } from "./utils/detectFields.mjs";
 import { generateHome } from "./generateSchedules/generateHome.mjs";
-import { groupAndSortJSON, filterJSON } from "./generateSchedules/prepareJSON.mjs";
+// Filter helpers for grouped views (precomputed)
+function filterEntriesArray({
+  data,
+  filterTagIds = [],
+  filterLocationIds = [],
+  filterSubLocationIds = [],
+}) {
+  return (Array.isArray(data) ? data : []).filter(entry => {
+    const tags = Array.isArray(entry.tagIds) ? entry.tagIds : [];
+    const locs = Array.isArray(entry.locationIds) ? entry.locationIds : [];
+    const subs = Array.isArray(entry.subLocationIds) ? entry.subLocationIds : [];
+
+    const tagMatch = filterTagIds.length === 0 || tags.some(id => filterTagIds.includes(id));
+    const locationMatch = filterLocationIds.length === 0 || locs.some(id => filterLocationIds.includes(id));
+    const subLocationMatch = filterSubLocationIds.length === 0 || subs.some(id => filterSubLocationIds.includes(id));
+    return tagMatch && locationMatch && subLocationMatch;
+  });
+}
+
+function applySnapshotFiltersToView(view, {
+  filterTagIds = [],
+  filterLocationIds = [],
+  filterSubLocationIds = [],
+}) {
+  if (!view || !Array.isArray(view.groups)) return { groupBy: view?.groupBy || "", groups: [] };
+  const filteredGroups = [];
+  for (const g of view.groups) {
+    const entries = filterEntriesArray({
+      data: g.entries,
+      filterTagIds,
+      filterLocationIds,
+      filterSubLocationIds,
+    });
+    if (entries.length > 0) {
+      filteredGroups.push({
+        rawKey: g.rawKey,
+        title: g.title,
+        meta: g.meta,
+        entries,
+      });
+    }
+  }
+  return { groupBy: view.groupBy, groups: filteredGroups };
+}
+
+// Adapt grouped entries to renderer v2 shape: each entry should have a `fields` object.
+function adaptGroupsForRendererV2(groups) {
+  if (!Array.isArray(groups)) return [];
+  return groups.map(g => {
+    const entries = Array.isArray(g.entries) ? g.entries : [];
+    const adaptedEntries = entries.map(e => {
+      // If already in v2 shape, leave as-is
+      if (e && typeof e === "object" && e.fields && typeof e.fields === "object") return e;
+      // Otherwise, adapt common fields
+      const fields = {
+        date: e?.date ?? e?.dateKey ?? "",
+        time: e?.time ?? "",
+        description: e?.description ?? e?.fields?.description ?? "",
+        notes: e?.notes ?? e?.fields?.notes ?? "",
+        // Pass-through simple display strings if present
+        tags: Array.isArray(e?.tags) ? e.tags.join(", ") : (e?.tags ?? ""),
+        locations: Array.isArray(e?.locations) ? e.locations.join(", ") : (e?.locations ?? "")
+      };
+      return { ...e, fields };
+    });
+    return {
+      rawKey: g.rawKey,
+      title: g.title,
+      meta: g.meta,
+      entries: adaptedEntries,
+    };
+  });
+}
 import { generateSnapshotOutputsv2 } from "./generateSchedules/generateSnapshots.mjs";
+import { prepareJSONGroups } from "./generateSchedules/prepareJSONforSnapshots.mjs";
 
 initializeApp({
   credential: applicationDefault(),
@@ -494,9 +567,22 @@ export const v2 = onRequest({
     //////////////////////////////////////////////////////////////////////////////////////
     if (action === ACTIONS.GENERATE_HOME) {
 
+      // Build all groupings once from the incoming JSON
+      const groupedViews = await prepareJSONGroups(req.body);
+
+      // (Optional debug dump when running locally/emulated)
+      if (runningEmulated || req.body.debug === true) {
+        const dumpPath = writeDebugJson(
+          groupedViews,
+          req.body.glideAppName || "Flair PDF Generator",
+          "grouped-views-pre-snapshot"
+        );
+        if (dumpPath) console.log(`📝 Wrote grouped views to ${dumpPath}`);
+      }
+
+
       // Process ALL snapshots sequentially so we don't overload the instance and to preserve order.
       const snapshots = Array.isArray(req.body.snapshots) ? req.body.snapshots : [];
-      const jsonDataRaw = Array.isArray(req.body.data) ? req.body.data : [];
 
       console.log(`🧩 GENERATE_HOME: processing ${snapshots.length} snapshot(s) sequentially...`);
 
@@ -506,30 +592,46 @@ export const v2 = onRequest({
         console.log(`▶️  Starting snapshot ${idx + 1}/${snapshots.length}: ${label}`);
 
         // Per-snapshot filters (empty array means "no filter" for that dimension)
-        const filterTagIds = snap.filterTagIds || [];
-        const filterLocationIds = snap.filterLocationIds || [];
-        const filterSubLocationIds = snap.filterSubLocationIds || [];
+        //const filterTagIds = snap.filterTagIds || [];
+        //const filterLocationIds = snap.filterLocationIds || [];
+        //const filterSubLocationIds = snap.filterSubLocationIds || [];
 
-        // 1) Filter
-        const filteredData = filterJSON({
-          data: jsonDataRaw,
-          filterTagIds,
-          filterLocationIds,
-          filterSubLocationIds,
-        });
-        console.log(`   • Filtered entries: ${filteredData.length}`);
+        // // 1) Filter
+        // const filteredData = filterJSON({
+        //   data: jsonDataRaw,
+        //   filterTagIds,
+        //   filterLocationIds,
+        //   filterSubLocationIds,
+        // });
+        // console.log(`   • Filtered entries: ${filteredData.length}`);
 
-        // 2) Group + sort
+        // // 2) Group + sort
+        // const groupBy = snap.groupBy || "date";
+        // const sortOrder = Array.isArray(snap.sortOrder) ? snap.sortOrder : [];
+        // const processedJSON = groupAndSortJSON({
+        //   jsonDataRaw: filteredData,
+        //   groupBy,
+        //   sortOrder,
+        // });
+
         const groupBy = snap.groupBy || "date";
-        const sortOrder = Array.isArray(snap.sortOrder) ? snap.sortOrder : [];
-        const processedJSON = groupAndSortJSON({
-          jsonDataRaw: filteredData,
-          groupBy,
-          sortOrder,
+
+        // Find the precomputed view for this groupBy.
+        // We first try a direct property (e.g. groupedViews.date), then fall back to scanning.
+        const baseView =
+          groupedViews[groupBy] ||
+          Object.values(groupedViews).find(v => v && v.groupBy === groupBy) ||
+          { groupBy, groups: [] };
+
+        // Apply per-snapshot filters to the precomputed groups
+        const processedJSON = applySnapshotFiltersToView(baseView, {
+          filterTagIds: snap.filterTagIds || [],
+          filterLocationIds: snap.filterLocationIds || [],
+          filterSubLocationIds: snap.filterSubLocationIds || [],
         });
 
         const groupsCount = Array.isArray(processedJSON?.groups) ? processedJSON.groups.length : 0;
-        console.log(`   • Groups built: ${groupsCount} (groupBy=${groupBy})`);
+        console.log(`   • Groups final (after filter): ${groupsCount} (groupBy=${groupBy})`);
 
         // 3) Resolve and merge profile
         const effectiveProfileId = snap.profileId || jsonInput.profileId;
@@ -545,9 +647,20 @@ export const v2 = onRequest({
         }
 
         // 4) Build prepared JSON for renderer (HTML/PDF)
+        // Ensure friendly group titles from meta override raw titles,
+        // and expose meta.above to the HTML renderer as `metadata`.
+        const adaptedGroups = adaptGroupsForRendererV2(processedJSON.groups);
+        const finalGroups = adaptedGroups.map(g => {
+          const friendlyTitle = g?.meta?.title ? g.meta.title : g.title;
+          // above may be a string (current) or array (future); support both
+          const above = g?.meta?.above;
+          const metadata = Array.isArray(above) ? above.filter(Boolean).join("\n") : (above ?? "");
+          const originalRawKey = g.rawKey;
+          return { ...g, title: friendlyTitle, rawKey: friendlyTitle, rawKeyCanonical: originalRawKey, metadata };
+        });
         const prepared = {
           ...jsonInput, // retain event meta (glideAppName, eventName, etc.)
-          groups: processedJSON.groups,
+          groups: finalGroups,
           styles: merge({}, profileDoc.styles || {}, jsonInput.styles || {}),
           document: merge(
             {},

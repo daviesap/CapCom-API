@@ -131,6 +131,7 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
 
   // Build groups → tables
   const groupsHtml = groupsArr.map(g => {
+    const groupHeading = escapeHtml(g.title ?? g.rawKey ?? "");
     const headerHtml = showHeader
       ? `<tr>${columnHeaders.map((h, i) => {
           const w = htmlWidths[i];
@@ -163,7 +164,7 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
 
     return `
       <section class="group">
-        <div class="group-title">${escapeHtml(g.title || "")}</div>
+        <div class="group-title">${groupHeading}</div>
         ${g.metadata ? `<div class="group-metadata">${escapeHtml(g.metadata)}</div>` : ""}
         <table>
           <thead>${headerHtml}</thead>

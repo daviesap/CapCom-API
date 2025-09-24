@@ -1,0 +1,39 @@
+{
+  "groupPresets": {
+    "date": {
+      "label": "Group by date",
+      "groupBy": "date",
+      "groupSort": [
+        "date:asc"
+      ],
+      "entrySort": [
+        "time:asc",
+        "description:asc"
+      ]
+    },
+    "tag": {
+      "label": "Group by tag",
+      "groupBy": "tagId",
+      "groupSort": [
+        "tagName:asc"
+      ],
+      "entrySort": [
+        "dateKey:asc",
+        "time:desc",
+        "description:asc"
+      ]
+    },
+    "location": {
+      "label": "Group by location",
+      "groupBy": "locationId",
+      "groupSort": [
+        "locationName:asc"
+      ],
+      "entrySort": [
+        "dateKey:asc",
+        "time:asc",
+        "description:asc"
+      ]
+    }
+  }
+}
