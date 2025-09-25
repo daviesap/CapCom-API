@@ -19,50 +19,8 @@ import { filterJson } from "./utils/filterJSON.mjs";
 import { sanitiseText } from "./utils/sanitiseText.mjs";
 import { deriveDetectedFieldsFromGroups } from "./utils/detectFields.mjs";
 import { generateHome } from "./generateSchedules/generateHome.mjs";
-// Filter helpers for grouped views (precomputed)
-function filterEntriesArray({
-  data,
-  filterTagIds = [],
-  filterLocationIds = [],
-  filterSubLocationIds = [],
-}) {
-  return (Array.isArray(data) ? data : []).filter(entry => {
-    const tags = Array.isArray(entry.tagIds) ? entry.tagIds : [];
-    const locs = Array.isArray(entry.locationIds) ? entry.locationIds : [];
-    const subs = Array.isArray(entry.subLocationIds) ? entry.subLocationIds : [];
+import { applySnapshotFiltersToView } from "./generateSchedules/applyFilters.mjs";
 
-    const tagMatch = filterTagIds.length === 0 || tags.some(id => filterTagIds.includes(id));
-    const locationMatch = filterLocationIds.length === 0 || locs.some(id => filterLocationIds.includes(id));
-    const subLocationMatch = filterSubLocationIds.length === 0 || subs.some(id => filterSubLocationIds.includes(id));
-    return tagMatch && locationMatch && subLocationMatch;
-  });
-}
-
-function applySnapshotFiltersToView(view, {
-  filterTagIds = [],
-  filterLocationIds = [],
-  filterSubLocationIds = [],
-}) {
-  if (!view || !Array.isArray(view.groups)) return { groupBy: view?.groupBy || "", groups: [] };
-  const filteredGroups = [];
-  for (const g of view.groups) {
-    const entries = filterEntriesArray({
-      data: g.entries,
-      filterTagIds,
-      filterLocationIds,
-      filterSubLocationIds,
-    });
-    if (entries.length > 0) {
-      filteredGroups.push({
-        rawKey: g.rawKey,
-        title: g.title,
-        meta: g.meta,
-        entries,
-      });
-    }
-  }
-  return { groupBy: view.groupBy, groups: filteredGroups };
-}
 
 // Adapt grouped entries to renderer v2 shape: each entry should have a `fields` object.
 function adaptGroupsForRendererV2(groups) {
@@ -567,6 +525,30 @@ export const v2 = onRequest({
     //////////////////////////////////////////////////////////////////////////////////////
     if (action === ACTIONS.GENERATE_HOME) {
 
+      // Load and merge profile once for GENERATE_HOME using root profileId
+      const rootProfileId = jsonInput.profileId || req.body.profileId;
+      let rootProfileDoc = {};
+      if (rootProfileId) {
+        try {
+          const ref = db.collection("styleProfiles").doc(rootProfileId);
+          const snap = await ref.get();
+          if (snap.exists) {
+            rootProfileDoc = snap.data() || {};
+            // Merge into the main JSON once (styles/document). Columns: prefer body columns if present
+            jsonInput.styles = merge({}, rootProfileDoc.styles || {}, jsonInput.styles || {});
+            jsonInput.document = merge({}, rootProfileDoc.document || {}, jsonInput.document || {});
+            if (!Array.isArray(jsonInput.columns) || jsonInput.columns.length === 0) {
+              jsonInput.columns = rootProfileDoc.columns || [];
+            }
+          } else {
+            console.warn(`⚠️ No Firestore profile found for root profileId "${rootProfileId}" (GENERATE_HOME).`);
+          }
+        } catch (e) {
+          console.warn(`⚠️ Failed to load root profile "${rootProfileId}" for GENERATE_HOME:`, e?.message || e);
+        }
+      }
+
+
       // Build all groupings once from the incoming JSON
       const groupedViews = await prepareJSONGroups(req.body);
 
@@ -614,14 +596,9 @@ export const v2 = onRequest({
         //   sortOrder,
         // });
 
-        const groupBy = snap.groupBy || "date";
-
-        // Find the precomputed view for this groupBy.
-        // We first try a direct property (e.g. groupedViews.date), then fall back to scanning.
-        const baseView =
-          groupedViews[groupBy] ||
-          Object.values(groupedViews).find(v => v && v.groupBy === groupBy) ||
-          { groupBy, groups: [] };
+        // Select the precomputed view by groupPresetId (required)
+        const presetId = snap.groupPresetId;
+        const baseView = groupedViews[presetId] || { groupBy: "", groups: [], columns: [] };
 
         // Apply per-snapshot filters to the precomputed groups
         const processedJSON = applySnapshotFiltersToView(baseView, {
@@ -631,20 +608,11 @@ export const v2 = onRequest({
         });
 
         const groupsCount = Array.isArray(processedJSON?.groups) ? processedJSON.groups.length : 0;
-        console.log(`   • Groups final (after filter): ${groupsCount} (groupBy=${groupBy})`);
+        console.log(`   • Groups final (after filter): ${groupsCount} (groupBy=${presetId})`);
 
-        // 3) Resolve and merge profile
-        const effectiveProfileId = snap.profileId || jsonInput.profileId;
-        let profileDoc = {};
-        if (effectiveProfileId) {
-          try {
-            const ref = db.collection("styleProfiles").doc(effectiveProfileId);
-            const profileSnap = await ref.get();
-            if (profileSnap.exists) profileDoc = profileSnap.data();
-          } catch (e) {
-            console.warn(`   • ⚠️ Failed to load profile "${effectiveProfileId}":`, e?.message || e);
-          }
-        }
+        // 3) Use root profile (loaded once above) for all snapshots in GENERATE_HOME
+        const effectiveProfileId = rootProfileId || jsonInput.profileId || profileId;
+        const profileDoc = rootProfileDoc || {};
 
         // 4) Build prepared JSON for renderer (HTML/PDF)
         // Ensure friendly group titles from meta override raw titles,
@@ -668,7 +636,11 @@ export const v2 = onRequest({
             jsonInput.document || {},
             { filename: snap.filename || (jsonInput.document?.filename || "schedule") }
           ),
-          columns: profileDoc.columns || jsonInput.columns || [],
+          columns:
+            (Array.isArray(baseView.columns) && baseView.columns.length ? baseView.columns : null) ||
+            jsonInput.columns ||
+            profileDoc.columns ||
+            [],
           // Header will always be an array at root; append filename for this snapshot
           header: [...jsonInput.header, snap.filename].filter(Boolean),
           profileId: effectiveProfileId,

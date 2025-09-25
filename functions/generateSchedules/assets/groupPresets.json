@@ -1,39 +1,46 @@
 {
-  "groupPresets": {
-    "date": {
-      "label": "Group by date",
+  "groupPresets": [
+    {
+      "id": "byDate-1",
+      "label": "Group by date. Columns for time, description, tags, location and notes",
       "groupBy": "date",
-      "groupSort": [
-        "date:asc"
-      ],
-      "entrySort": [
-        "time:asc",
-        "description:asc"
+      "groupSort": ["date:asc"],
+      "entrySort": ["time:asc", "description:asc"],
+      "columns": [
+        { "label": "Time",        "showLabel": true, "field": "time",        "width": 75 },
+        { "label": "Description", "showLabel": true, "field": "description", "width": 250 },
+        { "label": "Tags",        "showLabel": true, "field": "tags",        "width": 100 },
+        { "label": "Location",    "showLabel": true, "field": "locations",   "width": 100 },
+        { "label": "Notes",       "showLabel": true, "field": "notes",       "width": 217 }
       ]
     },
-    "tag": {
-      "label": "Group by tag",
+    {
+      "id": "byTag-1",
+      "label": "Group by tag. Columns for time, description, tags, location and notes",
       "groupBy": "tagId",
-      "groupSort": [
-        "tagName:asc"
-      ],
-      "entrySort": [
-        "dateKey:asc",
-        "time:desc",
-        "description:asc"
+      "groupSort": ["tagName:asc"],
+      "entrySort": ["dateKey:asc", "time:desc", "description:asc"],
+      "columns": [
+        { "label": "Date",        "showLabel": true, "field": "dateKey",     "width": 90 },
+        { "label": "Time",        "showLabel": true, "field": "time",        "width": 75 },
+        { "label": "Description", "showLabel": true, "field": "description", "width": 260 },
+        { "label": "Location",    "showLabel": true, "field": "locations",   "width": 120 },
+        { "label": "Notes",       "showLabel": true, "field": "notes",       "width": 180 }
       ]
     },
-    "location": {
-      "label": "Group by location",
+    {
+      "id": "byLocation-1",
+      "label": "Group by location. Columns for time, description, tags, location and notes",
       "groupBy": "locationId",
-      "groupSort": [
-        "locationName:asc"
-      ],
-      "entrySort": [
-        "dateKey:asc",
-        "time:asc",
-        "description:asc"
+      "groupSort": ["locationName:asc"],
+      "entrySort": ["dateKey:asc", "time:asc", "description:asc"],
+      "columns": [
+        { "label": "Date",        "showLabel": true, "field": "dateKey",     "width": 90 },
+        { "label": "Time",        "showLabel": true, "field": "time",        "width": 75 },
+        { "label": "Description", "showLabel": true, "field": "description", "width": 280 },
+        { "label": "Tags",        "showLabel": true, "field": "tags",        "width": 110 },
+        { "label": "Notes",       "showLabel": true, "field": "notes",       "width": 160 }
       ]
     }
-  }
+  ]
 }

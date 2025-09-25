@@ -8,8 +8,8 @@
       "filename": "Full schedule",
       "type": "Master",
       "groupPresetId": "byDate-1",
-      "filterTagIds": [],
-      "filterLocationIds": [],
+      "tagsFilter": [],
+      "locationFilter": [],
       "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/Fullschedule.html",
       "isFiltered": false
     },
@@ -17,11 +17,112 @@
       "filename": "MP Squares schedule",
       "type": "By supplier",
       "groupPresetId": "byDate-1",
-      "filterTagIds": [
+      "tagsFilter": [
         "ra8Z47n-QwCffoTVDR19nw"
       ],
-      "filterLocationIds": [],
+      "locationFilter": [],
       "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/MPSquaresschedule.html",
+      "isFiltered": true
+    },
+    {
+      "filename": "HCP schedule",
+      "type": "Venue",
+      "groupPresetId": "byDate-1",
+      "tagsFilter": [
+        "DonIXlE.SeqzQAe5V0GXLA"
+      ],
+      "locationFilter": [],
+      "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/HCPschedule.html",
+      "isFiltered": true
+    },
+    {
+      "filename": "Kerb schedule",
+      "type": "By supplier",
+      "groupPresetId": "byDate-1",
+      "tagsFilter": [
+        "a.A-QALuWT46KS8nX8kh8wg"
+      ],
+      "locationFilter": [],
+      "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/Kerbschedule.html",
+      "isFiltered": true
+    },
+    {
+      "filename": "Insite schedule",
+      "type": "By supplier",
+      "groupPresetId": "byDate-1",
+      "tagsFilter": [
+        "unC3zBAMQy-pLki5bgQdmA"
+      ],
+      "locationFilter": [],
+      "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/Insiteschedule.html",
+      "isFiltered": true
+    },
+    {
+      "filename": "AAC Power schedule",
+      "type": "By supplier",
+      "groupPresetId": "byDate-1",
+      "tagsFilter": [
+        "Xi8rOuVnRs-ihhFiHGv8kg"
+      ],
+      "locationFilter": [],
+      "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/AACPowerschedule.html",
+      "isFiltered": true
+    },
+    {
+      "filename": "Deliveries - All gates",
+      "type": "Deliveries",
+      "groupPresetId": "byDate-1",
+      "tagsFilter": [
+        "TAtz-oeITKeLO4-uxu.DPw"
+      ],
+      "locationFilter": [],
+      "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/Deliveries-Allgates.html",
+      "isFiltered": true
+    },
+    {
+      "filename": "Garden Catering",
+      "type": "By supplier",
+      "groupPresetId": "byDate-1",
+      "tagsFilter": [
+        "c6D39RzGRmq.aMahe-g-yQ"
+      ],
+      "locationFilter": [],
+      "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/GardenCatering.html",
+      "isFiltered": true
+    },
+    {
+      "filename": "Deliveries - Cart Track Gate",
+      "type": "Deliveries",
+      "groupPresetId": "byDate-1",
+      "tagsFilter": [
+        "TAtz-oeITKeLO4-uxu.DPw"
+      ],
+      "locationFilter": [
+        "avDh6Lx0QwG941DZ.ed0Og"
+      ],
+      "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/Deliveries-CartTrackGate.html",
+      "isFiltered": true
+    },
+    {
+      "filename": "Deliveries - Flower Pot Gate",
+      "type": "Deliveries",
+      "groupPresetId": "byDate-1",
+      "tagsFilter": [],
+      "locationFilter": [
+        "Ko4msj1HS2aCTlQg0iiZPA"
+      ],
+      "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/Deliveries-FlowerPotGate.html",
+      "isFiltered": true
+    },
+    {
+      "filename": "Deliveries - Adams Gate",
+      "type": "Deliveries",
+      "groupPresetId": "byDate-1",
+      "tagsFilter": [],
+      "locationFilter": [
+        "rfWMwhqyQZeGYkkW.NXLZQ"
+      ],
+      "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/Deliveries-AdamsGate.html",
       "isFiltered": true
     }
   ],

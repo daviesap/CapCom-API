@@ -26,12 +26,11 @@ export async function prepareJSONGroups(
 
   // 4) For each preset, group + sort + attach meta
   const result = {};
-  for (const presetName of Object.keys(groupPresets || {})) {
-    const preset = groupPresets[presetName];
+  for (const preset of (Array.isArray(groupPresets) ? groupPresets : [])) {
     if (!preset?.groupBy) continue;
 
-    const groupBy = preset.groupBy;               // "date" | "tagId" | "locationId"
-    const outKey  = preset.label || presetName;     // use preset.key to name the block
+    const groupBy = preset.groupBy;                 // "date" | "tagId" | "locationId"
+    const outKey  = preset.id || preset.label || groupBy;
     const groups  = groupRows(rows, groupBy);
 
     // Attach date meta only (extend later if you add other meta types)
@@ -46,9 +45,13 @@ export async function prepareJSONGroups(
     sortGroupsInPlace(groups, preset);
     for (const g of groups) sortEntriesInPlace(g.entries, groupBy, preset);
 
+    // Columns: take from preset.columns if present
+    const columns = Array.isArray(preset.columns) ? preset.columns.map(c => ({ ...c })) : [];
+
     result[outKey] = {
       label: preset.label || outKey,
       groupBy,
+      columns,
       groups,
     };
   }
