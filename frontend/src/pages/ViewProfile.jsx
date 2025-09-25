@@ -118,21 +118,21 @@ export default function ViewProfile({ profileId }) {
               />
             ),
           },
-          {
-            label: "Columns",
-            content: (
-              <ColumnsEditor
-                columnsData={profile.columns}
-                detectedFields={profile.detectedFields || []}
-                fieldsLastUpdated={profile.fieldsLastUpdated || null}
-                documentConfig={profile.document}
-                onChange={(updated) => {
-                  setProfile((prev) => ({ ...prev, columns: updated }));
-                }}
-                onSave={(updatedColumns) => saveSection("columns", updatedColumns)}
-              />
-            )
-          },
+          // {
+          //   label: "Columns",
+          //   content: (
+          //     <ColumnsEditor
+          //       columnsData={profile.columns}
+          //       detectedFields={profile.detectedFields || []}
+          //       fieldsLastUpdated={profile.fieldsLastUpdated || null}
+          //       documentConfig={profile.document}
+          //       onChange={(updated) => {
+          //         setProfile((prev) => ({ ...prev, columns: updated }));
+          //       }}
+          //       onSave={(updatedColumns) => saveSection("columns", updatedColumns)}
+          //     />
+          //   )
+          // },
           {
             label: "Logo",
             content: (

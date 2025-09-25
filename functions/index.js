@@ -413,7 +413,7 @@ export const v2 = onRequest({
         // Local JSON provides defaults; request body overrides
         jsonInput = merge({}, localJson, jsonInput);
         console.log("🗂 Using local JSON (emulator) merged with request body");
-      } catch (e) {
+      } catch {
         console.log("ℹ️ Emulator: no JSON/local.json found; proceeding with request body only");
       }
     }
