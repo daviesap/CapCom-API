@@ -1,103 +1,102 @@
 {
-  "document": {},
+  "profileId": "nwyjifV41b",
   "api_key": "Sausages2025!!",
   "debug": false,
-  "profileId": "nwyjifV41b",
   "snapshots": [
     {
       "filename": "Full schedule",
       "type": "Master",
-      "groupPresetId": "byDate-1",
-      "tagsFilter": [],
-      "locationFilter": [],
+      "groupBy": "byDate-1",
+      "filterTagIds": [],
+      "filterLocationIds": [],
       "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/Fullschedule.html",
       "isFiltered": false
     },
     {
       "filename": "MP Squares schedule",
       "type": "By supplier",
-      "groupPresetId": "byDate-1",
-      "tagsFilter": [
+      "groupBy": "byDate-1",
+      "filterTagIds": [
         "ra8Z47n-QwCffoTVDR19nw"
       ],
-      "locationFilter": [],
+      "filterLocationIds": [],
       "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/MPSquaresschedule.html",
       "isFiltered": true
     },
     {
       "filename": "HCP schedule",
       "type": "Venue",
-      "groupPresetId": "byDate-1",
-      "tagsFilter": [
+      "groupBy": "byDate-1",
+      "filterTagIds": [
         "DonIXlE.SeqzQAe5V0GXLA"
       ],
-      "locationFilter": [],
+      "filterLocationIds": [],
       "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/HCPschedule.html",
       "isFiltered": true
     },
     {
       "filename": "Kerb schedule",
       "type": "By supplier",
-      "groupPresetId": "byDate-1",
-      "tagsFilter": [
+      "groupBy": "byDate-1",
+      "filterTagIds": [
         "a.A-QALuWT46KS8nX8kh8wg"
       ],
-      "locationFilter": [],
+      "filterLocationIds": [],
       "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/Kerbschedule.html",
       "isFiltered": true
     },
     {
       "filename": "Insite schedule",
       "type": "By supplier",
-      "groupPresetId": "byDate-1",
-      "tagsFilter": [
+      "groupBy": "byDate-1",
+      "filterTagIds": [
         "unC3zBAMQy-pLki5bgQdmA"
       ],
-      "locationFilter": [],
+      "filterLocationIds": [],
       "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/Insiteschedule.html",
       "isFiltered": true
     },
     {
       "filename": "AAC Power schedule",
       "type": "By supplier",
-      "groupPresetId": "byDate-1",
-      "tagsFilter": [
+      "groupBy": "byDate-1",
+      "filterTagIds": [
         "Xi8rOuVnRs-ihhFiHGv8kg"
       ],
-      "locationFilter": [],
+      "filterLocationIds": [],
       "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/AACPowerschedule.html",
       "isFiltered": true
     },
     {
       "filename": "Deliveries - All gates",
       "type": "Deliveries",
-      "groupPresetId": "byDate-1",
-      "tagsFilter": [
+      "groupBy": "byDate-1",
+      "filterTagIds": [
         "TAtz-oeITKeLO4-uxu.DPw"
       ],
-      "locationFilter": [],
+      "filterLocationIds": [],
       "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/Deliveries-Allgates.html",
       "isFiltered": true
     },
     {
       "filename": "Garden Catering",
       "type": "By supplier",
-      "groupPresetId": "byDate-1",
-      "tagsFilter": [
+      "groupBy": "byDate-1",
+      "filterTagIds": [
         "c6D39RzGRmq.aMahe-g-yQ"
       ],
-      "locationFilter": [],
+      "filterLocationIds": [],
       "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/GardenCatering.html",
       "isFiltered": true
     },
     {
       "filename": "Deliveries - Cart Track Gate",
       "type": "Deliveries",
-      "groupPresetId": "byDate-1",
-      "tagsFilter": [
+      "groupBy": "byDate-1",
+      "filterTagIds": [
         "TAtz-oeITKeLO4-uxu.DPw"
       ],
-      "locationFilter": [
+      "filterLocationIds": [
         "avDh6Lx0QwG941DZ.ed0Og"
       ],
       "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/Deliveries-CartTrackGate.html",
@@ -106,9 +105,9 @@
     {
       "filename": "Deliveries - Flower Pot Gate",
       "type": "Deliveries",
-      "groupPresetId": "byDate-1",
-      "tagsFilter": [],
-      "locationFilter": [
+      "groupBy": "byDate-1",
+      "filterTagIds": [],
+      "filterLocationIds": [
         "Ko4msj1HS2aCTlQg0iiZPA"
       ],
       "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/Deliveries-FlowerPotGate.html",
@@ -117,9 +116,9 @@
     {
       "filename": "Deliveries - Adams Gate",
       "type": "Deliveries",
-      "groupPresetId": "byDate-1",
-      "tagsFilter": [],
-      "locationFilter": [
+      "groupBy": "byDate-1",
+      "filterTagIds": [],
+      "filterLocationIds": [
         "rfWMwhqyQZeGYkkW.NXLZQ"
       ],
       "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/Deliveries-AdamsGate.html",
@@ -340,27 +339,6 @@
     {
       "date": "2025-09-26",
       "time": "18:01",
-      "description": "Edible postcards delivered - store in RND (Production office)",
-      "tagIds": [
-        "pDXUww6IRfCeVV6ej8n--Q",
-        "TAtz-oeITKeLO4-uxu.DPw"
-      ],
-      "locationIds": [
-        "wa2tC2s3S0GTJi1eSYlsOg"
-      ],
-      "subLocationIds": [],
-      "notes": "Edible postcards etc\nDelivery through Tennis CL",
-      "format": "default",
-      "tags": [
-        "Bombas & Parr"
-      ],
-      "locations": [
-        "Tennis Court lane"
-      ]
-    },
-    {
-      "date": "2025-09-26",
-      "time": "18:01",
       "description": "Tower Lights, Fencing & Forklifts delivered",
       "tagIds": [
         "cS4Ig7XyQaGQJeHy5LVd1Q",
@@ -459,25 +437,6 @@
       ],
       "locations": [
         "Tennis Court lane"
-      ]
-    },
-    {
-      "date": "2025-09-26",
-      "time": "18:30",
-      "description": "Mark Out - Victoria lays out flags on East Front",
-      "tagIds": [
-        "2vyf4cICQt-Nh35ALy0KbA"
-      ],
-      "locationIds": [
-        "BCSTWTmNQjuZfZGD7goaIg"
-      ],
-      "subLocationIds": [],
-      "format": "default",
-      "tags": [
-        "VS Creative"
-      ],
-      "locations": [
-        "East Front Palace Gardens"
       ]
     },
     {
@@ -769,30 +728,6 @@
     },
     {
       "date": "2025-09-26",
-      "time": "15:00",
-      "description": "VS Creative team walkaround & site orientation prior to 18:00 ACCESS",
-      "tagIds": [
-        "XCCIvS3bRweSmHjWAx3JVQ",
-        "KUmb6RrWQlu94e844gom4A",
-        "2vyf4cICQt-Nh35ALy0KbA"
-      ],
-      "locationIds": [
-        "fgAjF3huSEmWJG533DZmEg"
-      ],
-      "subLocationIds": [],
-      "notes": "Victoria Swift, Sandra Ewart, Kelly Graves, Charlie Webster, Louis Souyave, Chris Brown, Chris Burke, Andrew Davies, Janet Noles, Kerry Stewart, Isaac Stephenson, Anya Watson, Roz England, Ian Lamb, Gigi De Courcey Swoffer, Gary Collins",
-      "format": "default",
-      "tags": [
-        "VS Creative",
-        "Rock Safely",
-        "Old Skool"
-      ],
-      "locations": [
-        "Apartment 15 / Site Office"
-      ]
-    },
-    {
-      "date": "2025-09-26",
       "time": "12:00",
       "description": "HCP run power to Tennis Court Lane for Garden Catering.",
       "tagIds": [
@@ -904,7 +839,7 @@
       ],
       "subLocationIds": [],
       "notes": "Jenna, Tami, B, Marianne, Elodie, Christopher, Joanna, Katlyn",
-      "format": "new",
+      "format": "default",
       "tags": [
         "Bloomberg"
       ],
@@ -953,6 +888,71 @@
       ],
       "locations": [
         "Trophy Gate"
+      ]
+    },
+    {
+      "date": "2025-09-26",
+      "time": "18:30",
+      "description": "Mark Out - Victoria lays out flags on East Front",
+      "tagIds": [
+        "2vyf4cICQt-Nh35ALy0KbA"
+      ],
+      "locationIds": [
+        "BCSTWTmNQjuZfZGD7goaIg"
+      ],
+      "subLocationIds": [],
+      "notes": "Sandra, Gary, Kerry",
+      "format": "new",
+      "tags": [
+        "VS Creative"
+      ],
+      "locations": [
+        "East Front Palace Gardens"
+      ]
+    },
+    {
+      "date": "2025-09-26",
+      "time": "15:00",
+      "description": "VS Creative team walkaround & site orientation prior to 18:00 ACCESS",
+      "tagIds": [
+        "XCCIvS3bRweSmHjWAx3JVQ",
+        "KUmb6RrWQlu94e844gom4A",
+        "2vyf4cICQt-Nh35ALy0KbA"
+      ],
+      "locationIds": [
+        "fgAjF3huSEmWJG533DZmEg"
+      ],
+      "subLocationIds": [],
+      "notes": "Victoria Swift, Sandra Ewart, Kelly Graves, Charlie Webster, Louis Souyave, Chris Brown, Chris Burke, Andrew Davies, Janet Noles, Kerry Stewart, Isaac Stephenson, Anya Watson, Roz England, Ian Lamb, Gigi De Courcey Swoffer, Gary Collins, Isa Watson",
+      "format": "new",
+      "tags": [
+        "VS Creative",
+        "Rock Safely",
+        "Old Skool"
+      ],
+      "locations": [
+        "Apartment 15 / Site Office"
+      ]
+    },
+    {
+      "date": "2025-09-26",
+      "time": "18:01",
+      "description": "Edible postcards delivered - store in RND (Production office)",
+      "tagIds": [
+        "pDXUww6IRfCeVV6ej8n--Q",
+        "TAtz-oeITKeLO4-uxu.DPw"
+      ],
+      "locationIds": [
+        "wa2tC2s3S0GTJi1eSYlsOg"
+      ],
+      "subLocationIds": [],
+      "notes": "Edible postcards etc\nDelivery through Tennis CL",
+      "format": "new",
+      "tags": [
+        "Bombas & Parr"
+      ],
+      "locations": [
+        "Tennis Court lane"
       ]
     },
     {
@@ -1740,25 +1740,6 @@
       ],
       "locations": [
         "Flower Pot Gate"
-      ]
-    },
-    {
-      "date": "2025-09-27",
-      "time": "16:00",
-      "description": "Lego Man Arriving - Garden Room - Coming in through Adams Gate",
-      "tagIds": [
-        "Mma4f3lcTGKC4gL6stEMwQ"
-      ],
-      "locationIds": [
-        "rfWMwhqyQZeGYkkW.NXLZQ"
-      ],
-      "subLocationIds": [],
-      "format": "default",
-      "tags": [
-        "Lego Man"
-      ],
-      "locations": [
-        "Adams Gate"
       ]
     },
     {
@@ -2797,27 +2778,6 @@
     {
       "date": "2025-09-27",
       "time": "15:00",
-      "description": "Disco Bus arrives",
-      "tagIds": [
-        "7fVY8Wi3RTijUV1.xYqh9g",
-        "TAtz-oeITKeLO4-uxu.DPw"
-      ],
-      "locationIds": [
-        "Ko4msj1HS2aCTlQg0iiZPA"
-      ],
-      "subLocationIds": [],
-      "notes": "Needs 2 hours to setup",
-      "format": "default",
-      "tags": [
-        "The Bug Club"
-      ],
-      "locations": [
-        "Flower Pot Gate"
-      ]
-    },
-    {
-      "date": "2025-09-27",
-      "time": "15:00",
       "description": "Go letters delivered - 18T rigid curtain sider",
       "tagIds": [
         "fZAxS4dRTD2.HHSwftN6cA",
@@ -2830,27 +2790,6 @@
       "format": "default",
       "tags": [
         "Perudo"
-      ],
-      "locations": [
-        "Cart Track Gate"
-      ]
-    },
-    {
-      "date": "2025-09-27",
-      "time": "18:15-20:00",
-      "description": "Bubble Bar& Edible Postcards counters load into Privy Garden",
-      "tagIds": [
-        "a.A-QALuWT46KS8nX8kh8wg",
-        "TAtz-oeITKeLO4-uxu.DPw"
-      ],
-      "locationIds": [
-        "avDh6Lx0QwG941DZ.ed0Og"
-      ],
-      "subLocationIds": [],
-      "notes": "2 x Velvet Living Counters 1.8m long",
-      "format": "default",
-      "tags": [
-        "KERB"
       ],
       "locations": [
         "Cart Track Gate"
@@ -3132,7 +3071,7 @@
       ],
       "subLocationIds": [],
       "notes": "See Furniture Plan",
-      "format": "new",
+      "format": "default",
       "tags": [
         "VS Creative",
         "Old Skool"
@@ -3154,7 +3093,7 @@
       ],
       "subLocationIds": [],
       "notes": "Grey Bins and Pallets\n18 Tonne curtain sider\nIncluding 4 x pallets for GO letters",
-      "format": "new",
+      "format": "default",
       "tags": [
         "GJS"
       ],
@@ -3175,32 +3114,13 @@
       ],
       "subLocationIds": [],
       "notes": "Ready for Crew Lunch ",
-      "format": "new",
+      "format": "default",
       "tags": [
         "Eco Furniture",
         "Old Skool"
       ],
       "locations": [
         "Smoking Garden"
-      ]
-    },
-    {
-      "date": "2025-09-27",
-      "time": "14:00",
-      "description": "Tiltyard Furniture Dropped Off down Moat Lane - Focus Van",
-      "tagIds": [
-        "uBVDp08WRuedIwvSxRCn7w"
-      ],
-      "locationIds": [
-        "rfWMwhqyQZeGYkkW.NXLZQ"
-      ],
-      "subLocationIds": [],
-      "format": "new",
-      "tags": [
-        "Focus"
-      ],
-      "locations": [
-        "Adams Gate"
       ]
     },
     {
@@ -3215,7 +3135,7 @@
       ],
       "subLocationIds": [],
       "notes": "Justin to handover keys to VSC production management team on departure.",
-      "format": "new",
+      "format": "default",
       "tags": [
         "Focus"
       ],
@@ -3234,7 +3154,7 @@
         "rfWMwhqyQZeGYkkW.NXLZQ"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "default",
       "tags": [
         "Focus"
       ],
@@ -3254,7 +3174,7 @@
       ],
       "subLocationIds": [],
       "notes": "Focus van to drive & tip at Tiltyard",
-      "format": "new",
+      "format": "default",
       "tags": [
         "Focus"
       ],
@@ -3274,7 +3194,7 @@
       ],
       "subLocationIds": [],
       "notes": "WORKING LIGHT FROM VS CREATIVE - VIA LOUIS\n1 x Colonial for Help! in Clock Court - needs hand balling from Tennis Court Lane\n5m Sunbrella for Help! in Tiltyard Gardens \n4m Sunbrella for Volunteering Check-in in Wilderness \n2 x Colonials in Privy Garden ",
-      "format": "new",
+      "format": "default",
       "tags": [
         "Sunbrella"
       ],
@@ -3294,7 +3214,7 @@
       ],
       "subLocationIds": [],
       "notes": "Jenna, Tami, B, Marianne, Elodie, Christopher, Joanna, Katlyn",
-      "format": "new",
+      "format": "default",
       "tags": [
         "Bloomberg"
       ],
@@ -3314,7 +3234,7 @@
       ],
       "subLocationIds": [],
       "notes": "Dan, Kim",
-      "format": "new",
+      "format": "default",
       "tags": [
         "Bloomberg"
       ],
@@ -3336,7 +3256,7 @@
       ],
       "subLocationIds": [],
       "notes": "BES booked via Bloomberg - Rob & Jonathan\nVW Campervan staying overnight in Green Car park",
-      "format": "new",
+      "format": "default",
       "tags": [
         "Bloomberg",
         "BES"
@@ -3357,7 +3277,7 @@
       "locationIds": [],
       "subLocationIds": [],
       "notes": "4 staff",
-      "format": "new",
+      "format": "default",
       "tags": [
         "Bloomberg",
         "Restaurant Associates"
@@ -3375,7 +3295,7 @@
         "zhaAVFHHRROpG26JLMOk5g"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "default",
       "tags": [
         "Bloomberg"
       ],
@@ -3396,7 +3316,7 @@
       ],
       "subLocationIds": [],
       "notes": "WORKING LIGHT FROM VS CREATIVE - VIA LOUIS\nLandrovers & trailers. -2 teams\nDrop at West Front Apron, then access Tiltyard via Tennis Court Lane\nEmergency contact - Jesse Powell 07590 046552",
-      "format": "new",
+      "format": "default",
       "tags": [
         "Perfect Pitch"
       ],
@@ -3426,26 +3346,6 @@
     },
     {
       "date": "2025-09-27",
-      "time": "09:00",
-      "description": "Get Lost & Found arrive x 1 - Rob Wilson",
-      "tagIds": [
-        "BhNN4ujqRNyry2vk1FHrFA"
-      ],
-      "locationIds": [
-        "KHWNal9JQy6EJLD9mjcMxg"
-      ],
-      "subLocationIds": [],
-      "notes": "Unload props into Clore - park in car park",
-      "format": "new",
-      "tags": [
-        "Get Lost & Found"
-      ],
-      "locations": [
-        "Trophy Gate"
-      ]
-    },
-    {
-      "date": "2025-09-27",
       "time": "All day",
       "description": "Mowing of East Front Gardens lawns ",
       "tagIds": [
@@ -3466,8 +3366,134 @@
     },
     {
       "date": "2025-09-27",
+      "time": "09:00",
+      "description": "Joe Collins on site - brief with Roz - location tba",
+      "tagIds": [],
+      "locationIds": [],
+      "subLocationIds": [],
+      "format": "new",
+      "tags": [],
+      "locations": []
+    },
+    {
+      "date": "2025-09-27",
+      "time": "08:00",
+      "description": "Phoebe Collins on site - Production Office ",
+      "tagIds": [
+        "2vyf4cICQt-Nh35ALy0KbA"
+      ],
+      "locationIds": [],
+      "subLocationIds": [],
+      "format": "new",
+      "tags": [
+        "VS Creative"
+      ],
+      "locations": []
+    },
+    {
+      "date": "2025-09-27",
+      "time": "09:00",
+      "description": "Gary Collins on site - stage management brief with Sandra",
+      "tagIds": [
+        "2vyf4cICQt-Nh35ALy0KbA"
+      ],
+      "locationIds": [],
+      "subLocationIds": [],
+      "format": "new",
+      "tags": [
+        "VS Creative"
+      ],
+      "locations": []
+    },
+    {
+      "date": "2025-09-27",
+      "time": "12:00",
+      "description": "Lego Team on site x 3 - set up in Garden Room",
+      "tagIds": [
+        "4PsDDazJRlSVn2BXaXzk2A",
+        "TAtz-oeITKeLO4-uxu.DPw"
+      ],
+      "locationIds": [
+        "rfWMwhqyQZeGYkkW.NXLZQ"
+      ],
+      "subLocationIds": [],
+      "format": "new",
+      "tags": [
+        "Brick by Brick (Steve",
+        "Obby",
+        "Rachael Guinness)"
+      ],
+      "locations": [
+        "Adams Gate"
+      ]
+    },
+    {
+      "date": "2025-09-27",
+      "time": "18:00",
+      "description": "Lego Team x 3 depart",
+      "tagIds": [
+        "4PsDDazJRlSVn2BXaXzk2A",
+        "TAtz-oeITKeLO4-uxu.DPw"
+      ],
+      "locationIds": [
+        "rfWMwhqyQZeGYkkW.NXLZQ"
+      ],
+      "subLocationIds": [],
+      "format": "new",
+      "tags": [
+        "Brick by Brick (Steve",
+        "Obby",
+        "Rachael Guinness)"
+      ],
+      "locations": [
+        "Adams Gate"
+      ]
+    },
+    {
+      "date": "2025-09-27",
+      "time": "09:00",
+      "description": "Get Lost & Found arrive x 1 - Rob Wilson",
+      "tagIds": [
+        "BhNN4ujqRNyry2vk1FHrFA",
+        "TAtz-oeITKeLO4-uxu.DPw"
+      ],
+      "locationIds": [
+        "KHWNal9JQy6EJLD9mjcMxg"
+      ],
+      "subLocationIds": [],
+      "notes": "Unload props into Clore - park in car park",
+      "format": "new",
+      "tags": [
+        "Get Lost & Found"
+      ],
+      "locations": [
+        "Trophy Gate"
+      ]
+    },
+    {
+      "date": "2025-09-27",
       "time": "14:00",
-      "description": "Get Lost and Found and VS Creative (Gary & Joe) set up Team Challenges",
+      "description": "Get Lost & Found - Hannah (Bakehouse) on site ",
+      "tagIds": [
+        "BhNN4ujqRNyry2vk1FHrFA",
+        "TAtz-oeITKeLO4-uxu.DPw"
+      ],
+      "locationIds": [
+        "KHWNal9JQy6EJLD9mjcMxg"
+      ],
+      "subLocationIds": [],
+      "format": "new",
+      "tags": [
+        "Get Lost & Found"
+      ],
+      "locations": [
+        "Trophy Gate"
+      ]
+    },
+    {
+      "date": "2025-09-27",
+      "time": "14:00",
+      "description": "Get Lost & Found and VS Creative (Gary & Joe) set up Team Challenges",
       "tagIds": [
         "BhNN4ujqRNyry2vk1FHrFA",
         "2vyf4cICQt-Nh35ALy0KbA"
@@ -3483,6 +3509,86 @@
       ],
       "locations": [
         "Flowerpot Lawn"
+      ]
+    },
+    {
+      "date": "2025-09-27",
+      "time": "14:00",
+      "description": "Disco Bus arrives - Driver Issac Gauntlet 07718 079988",
+      "tagIds": [
+        "7fVY8Wi3RTijUV1.xYqh9g",
+        "TAtz-oeITKeLO4-uxu.DPw"
+      ],
+      "locationIds": [
+        "Ko4msj1HS2aCTlQg0iiZPA"
+      ],
+      "subLocationIds": [],
+      "notes": "Needs 2 hours to setup",
+      "format": "new",
+      "tags": [
+        "The Bug Club"
+      ],
+      "locations": [
+        "Flower Pot Gate"
+      ]
+    },
+    {
+      "date": "2025-09-27",
+      "time": "18:15-20:00",
+      "description": "Lime Blue, Bubble Bar& Edible Postcards counters load into Privy Garden",
+      "tagIds": [
+        "a.A-QALuWT46KS8nX8kh8wg",
+        "TAtz-oeITKeLO4-uxu.DPw"
+      ],
+      "locationIds": [
+        "avDh6Lx0QwG941DZ.ed0Og"
+      ],
+      "subLocationIds": [],
+      "notes": "2 x Velvet Living Counters 1.8m long",
+      "format": "new",
+      "tags": [
+        "KERB"
+      ],
+      "locations": [
+        "Cart Track Gate"
+      ]
+    },
+    {
+      "date": "2025-09-27",
+      "time": "10:00",
+      "description": "Joe and Gary Collins  working with Kerry for the day",
+      "tagIds": [
+        "2vyf4cICQt-Nh35ALy0KbA"
+      ],
+      "locationIds": [
+        "BCSTWTmNQjuZfZGD7goaIg"
+      ],
+      "subLocationIds": [],
+      "format": "new",
+      "tags": [
+        "VS Creative"
+      ],
+      "locations": [
+        "East Front Palace Gardens"
+      ]
+    },
+    {
+      "date": "2025-09-27",
+      "time": "14:00",
+      "description": "Garden Room Load-in (of Tiltyard Furniture) Dropped Off down Moat Lane - Focus Van",
+      "tagIds": [
+        "uBVDp08WRuedIwvSxRCn7w"
+      ],
+      "locationIds": [
+        "rfWMwhqyQZeGYkkW.NXLZQ"
+      ],
+      "subLocationIds": [],
+      "format": "new",
+      "tags": [
+        "Focus"
+      ],
+      "locations": [
+        "Adams Gate"
       ]
     },
     {
@@ -3762,26 +3868,6 @@
     },
     {
       "date": "2025-09-28",
-      "time": "19:00",
-      "description": "Putter Fingers collect Mini Golf",
-      "tagIds": [
-        "LY.xpVV9Qg6k5gB.uebjcg"
-      ],
-      "locationIds": [
-        "Ko4msj1HS2aCTlQg0iiZPA"
-      ],
-      "subLocationIds": [],
-      "notes": "Richard Clarke and Harry Hammond. Vehicle is a Vauxhall Movano, DN72 UCH",
-      "format": "default",
-      "tags": [
-        "Putter Fingers"
-      ],
-      "locations": [
-        "Flower Pot Gate"
-      ]
-    },
-    {
-      "date": "2025-09-28",
       "time": "06:01",
       "description": "Lil Watan 2 load in",
       "tagIds": [
@@ -3949,21 +4035,6 @@
     },
     {
       "date": "2025-09-28",
-      "time": "17:00",
-      "description": "Science Museum - Break down and depart",
-      "tagIds": [
-        "ha0CFXyRQoOu.a-UQb73jA"
-      ],
-      "locationIds": [],
-      "subLocationIds": [],
-      "format": "default",
-      "tags": [
-        "Science Museum"
-      ],
-      "locations": []
-    },
-    {
-      "date": "2025-09-28",
       "time": "19:00",
       "description": "Fairground stalls collected",
       "tagIds": [
@@ -3977,66 +4048,6 @@
         "Irvin Leisure"
       ],
       "locations": []
-    },
-    {
-      "date": "2025-09-28",
-      "time": "09:00",
-      "description": "Science Museum arrive",
-      "tagIds": [
-        "ha0CFXyRQoOu.a-UQb73jA",
-        "TAtz-oeITKeLO4-uxu.DPw"
-      ],
-      "locationIds": [
-        "rfWMwhqyQZeGYkkW.NXLZQ"
-      ],
-      "subLocationIds": [],
-      "format": "default",
-      "tags": [
-        "Science Museum"
-      ],
-      "locations": [
-        "Adams Gate"
-      ]
-    },
-    {
-      "date": "2025-09-28",
-      "time": "09.00",
-      "description": "Carnival Collective arrive",
-      "tagIds": [
-        "9c9.NLVHRSKegaJP5sishw",
-        "TAtz-oeITKeLO4-uxu.DPw"
-      ],
-      "locationIds": [
-        "Ko4msj1HS2aCTlQg0iiZPA"
-      ],
-      "subLocationIds": [],
-      "format": "default",
-      "tags": [
-        "Carnival Collective"
-      ],
-      "locations": [
-        "Flower Pot Gate"
-      ]
-    },
-    {
-      "date": "2025-09-28",
-      "time": "09:00",
-      "description": "History Riot performers call ",
-      "tagIds": [
-        "fT-WmsejRmCle0.nvbVmvw"
-      ],
-      "locationIds": [
-        "WndxCJoyQ.SwnfUN88EeFg"
-      ],
-      "subLocationIds": [],
-      "notes": "performers  - some have Hampton Court ID - others check in at Visitors Office - names list supplied to security by Kitty ",
-      "format": "default",
-      "tags": [
-        "History Riot"
-      ],
-      "locations": [
-        "ALL of Palace"
-      ]
     },
     {
       "date": "2025-09-28",
@@ -4213,22 +4224,6 @@
     },
     {
       "date": "2025-09-28",
-      "time": "10:00",
-      "description": "Pianist - setup via Seymour Gate",
-      "tagIds": [
-        "sapsG6dITtiK4wAe3lwS4g",
-        "TAtz-oeITKeLO4-uxu.DPw"
-      ],
-      "locationIds": [],
-      "subLocationIds": [],
-      "format": "default",
-      "tags": [
-        "Patrick Yeboah"
-      ],
-      "locations": []
-    },
-    {
-      "date": "2025-09-28",
       "time": "09:00",
       "description": "Starlink cable tie WiFi mast to Sunbrella tent leg.",
       "tagIds": [
@@ -4265,25 +4260,6 @@
       ],
       "locations": [
         "East Front Palace Gardens"
-      ]
-    },
-    {
-      "date": "2025-09-28",
-      "time": "17:30",
-      "description": "Lego Man loads out - Garden Room - through Adams Gate",
-      "tagIds": [
-        "Mma4f3lcTGKC4gL6stEMwQ"
-      ],
-      "locationIds": [
-        "rfWMwhqyQZeGYkkW.NXLZQ"
-      ],
-      "subLocationIds": [],
-      "format": "default",
-      "tags": [
-        "Lego Man"
-      ],
-      "locations": [
-        "Adams Gate"
       ]
     },
     {
@@ -4442,21 +4418,6 @@
       "locations": [
         "Cheese 4 - Gardens"
       ]
-    },
-    {
-      "date": "2025-09-28",
-      "time": "09:00",
-      "description": "Band Stage Sound Check:  Sophia Gillani",
-      "tagIds": [
-        "nEUVgmZJRZGIf.F72mM5-w"
-      ],
-      "locationIds": [],
-      "subLocationIds": [],
-      "format": "default",
-      "tags": [
-        "Entertainers Main Stage"
-      ],
-      "locations": []
     },
     {
       "date": "2025-09-28",
@@ -4822,27 +4783,6 @@
         "VS Creative"
       ],
       "locations": []
-    },
-    {
-      "date": "2025-09-28",
-      "time": "09:00",
-      "description": "EEP and BBG security brief and handover meeting",
-      "tagIds": [
-        "UFT3IwWBTa2qkK9pKncYLg",
-        "2ZI6vFm.Qly3z.9b6VLMZw"
-      ],
-      "locationIds": [
-        "KHWNal9JQy6EJLD9mjcMxg"
-      ],
-      "subLocationIds": [],
-      "format": "default",
-      "tags": [
-        "Bloomberg Security",
-        "EEP Security"
-      ],
-      "locations": [
-        "Trophy Gate"
-      ]
     },
     {
       "date": "2025-09-28",
@@ -5441,7 +5381,7 @@
         "KHWNal9JQy6EJLD9mjcMxg"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "default",
       "tags": [
         "Garden Catering (Crew)"
       ],
@@ -5463,7 +5403,7 @@
       ],
       "subLocationIds": [],
       "notes": "Position tensa (from Eco furniture) along drive.\n4 x flags (from Event Flag Co) attached to Wristband tent poles. \nTables for Wristband tent (from Eco furniture). \n2 x Black plinths for Scanners (Options Hire)\n2 x MP Squares. \nScanners from Bloomberg, RA team - Room 39, CEO Office to charge scanners",
-      "format": "new",
+      "format": "default",
       "tags": [
         "MP Squares",
         "VS Creative",
@@ -5485,7 +5425,7 @@
       ],
       "subLocationIds": [],
       "notes": "Work with Kerry re: furniture layouts / wiping down if wet (paper towel from Falcon).",
-      "format": "new",
+      "format": "default",
       "tags": [
         "Old Skool"
       ],
@@ -5502,7 +5442,7 @@
       ],
       "locationIds": [],
       "subLocationIds": [],
-      "format": "new",
+      "format": "default",
       "tags": [
         "Old Skool"
       ],
@@ -5521,7 +5461,7 @@
       ],
       "subLocationIds": [],
       "notes": "Store bunting/hooks for Event Flag Hire",
-      "format": "new",
+      "format": "default",
       "tags": [
         "Focus",
         "Old Skool"
@@ -5541,7 +5481,7 @@
         "COHsc-VZRWqGTuT9BR136A"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "default",
       "tags": [
         "Old Skool"
       ],
@@ -5562,7 +5502,7 @@
       ],
       "subLocationIds": [],
       "notes": "MP Squares Crew",
-      "format": "new",
+      "format": "default",
       "tags": [
         "MP Squares",
         "VS Creative"
@@ -5584,7 +5524,7 @@
       ],
       "subLocationIds": [],
       "notes": "Collate tensa & 4 x flags (to Kerry) attached to Wristband tent poles. Plus tables for wristbands (to Kerry).\nForklift back to East Front.\nCollect bunting & shepherd's hooks from Tiltyard",
-      "format": "new",
+      "format": "default",
       "tags": [
         "MP Squares",
         "VS Creative"
@@ -5608,7 +5548,7 @@
         "WndxCJoyQ.SwnfUN88EeFg"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "default",
       "tags": [
         "HCP",
         "VS Creative",
@@ -5632,7 +5572,7 @@
       ],
       "subLocationIds": [],
       "notes": "VS Creative to assist where possible",
-      "format": "new",
+      "format": "default",
       "tags": [
         "Bloomberg"
       ],
@@ -5650,7 +5590,7 @@
       "locationIds": [],
       "subLocationIds": [],
       "notes": "CLOCK COURT A PRIORITY - TENANCY ONLY TILL 20:00\nVS Creative, Louis assist where possible.",
-      "format": "new",
+      "format": "default",
       "tags": [
         "Bloomberg"
       ],
@@ -5667,7 +5607,7 @@
         "ruJ5-1fGTcWDskkx42Sq5w"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "default",
       "tags": [
         "Old Skool"
       ],
@@ -5686,7 +5626,7 @@
         "WndxCJoyQ.SwnfUN88EeFg"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "default",
       "tags": [
         "Sunbrella"
       ],
@@ -5705,7 +5645,7 @@
         "fgAjF3huSEmWJG533DZmEg"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "default",
       "tags": [
         "Sunbrella"
       ],
@@ -5725,7 +5665,7 @@
       ],
       "subLocationIds": [],
       "notes": "Jenna, Tami, B, Marianne, Elodie, Christopher, Joanna, Katlyn",
-      "format": "new",
+      "format": "default",
       "tags": [
         "Bloomberg"
       ],
@@ -5745,7 +5685,7 @@
       ],
       "subLocationIds": [],
       "notes": "Team of 13",
-      "format": "new",
+      "format": "default",
       "tags": [
         "Bloomberg"
       ],
@@ -5764,7 +5704,7 @@
       "locationIds": [],
       "subLocationIds": [],
       "notes": "Various timings for teams as follows:\nHelp! 09:00-18:00\nFOH Staff 09:00-17:00\nTeam Challenges 09:00-17:30\nBBG Connects 09:00-17:00\nVolunteering 11:00-16:00\nBag Check 09:00-19:00\nTattoos 10:00-17:00",
-      "format": "new",
+      "format": "default",
       "tags": [
         "Bloomberg",
         "Restaurant Associates"
@@ -5782,7 +5722,7 @@
         "zhaAVFHHRROpG26JLMOk5g"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "default",
       "tags": [
         "Bloomberg"
       ],
@@ -5801,32 +5741,12 @@
         "zhaAVFHHRROpG26JLMOk5g"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "default",
       "tags": [
         "Bloomberg"
       ],
       "locations": [
         "RND"
-      ]
-    },
-    {
-      "date": "2025-09-28",
-      "time": "18:31",
-      "description": "Pitch Perfect remove tents - West Front and Tiltyard Gardens",
-      "tagIds": [
-        "HAyQvK9sSTesZgiDz3JlMw"
-      ],
-      "locationIds": [
-        "KHWNal9JQy6EJLD9mjcMxg"
-      ],
-      "subLocationIds": [],
-      "notes": "WORKING LIGHT FROM VS CREATIVE - VIA LOUIS\nLandrovers & trailers. -2 teams\nStart at West Front Apron, then access Tiltyard via Tennis Court Lane\nEmergency contact - Jesse Powell 07590 046552",
-      "format": "new",
-      "tags": [
-        "Perfect Pitch"
-      ],
-      "locations": [
-        "Trophy Gate"
       ]
     },
     {
@@ -5846,32 +5766,6 @@
     },
     {
       "date": "2025-09-28",
-      "time": "08:30",
-      "description": "Rajhastan Brass Band arrive ",
-      "tagIds": [
-        "RtYTqcH6SzSZSa8mrs5sSA"
-      ],
-      "locationIds": [
-        "lWsc3CHhT9eVCCcvaCkIeQ"
-      ],
-      "subLocationIds": [],
-      "format": "new",
-      "tags": [
-        "Rajhastan Brass Band (ArifKhan",
-        "Dharu",
-        "Sikander Khan",
-        "Usman",
-        "Fazana Nenezi",
-        "Haidar Ali",
-        "Izrar Hussian",
-        "Salman)"
-      ],
-      "locations": [
-        "Trophy Gate "
-      ]
-    },
-    {
-      "date": "2025-09-28",
       "time": "10:00",
       "description": "Bandstage Act",
       "tagIds": [
@@ -5886,195 +5780,7 @@
         "Adam Kelly (Poseur DJ)"
       ],
       "locations": [
-        "Trophy Gate "
-      ]
-    },
-    {
-      "date": "2025-09-28",
-      "time": "07:30",
-      "description": "Musical Director - Ryan",
-      "tagIds": [
-        "9c9.NLVHRSKegaJP5sishw"
-      ],
-      "locationIds": [
-        "lWsc3CHhT9eVCCcvaCkIeQ"
-      ],
-      "subLocationIds": [],
-      "format": "new",
-      "tags": [
-        "Carnival Collective"
-      ],
-      "locations": [
-        "Trophy Gate "
-      ]
-    },
-    {
-      "date": "2025-09-28",
-      "time": "08:30",
-      "description": "Band Member (Simon)",
-      "tagIds": [
-        "9c9.NLVHRSKegaJP5sishw"
-      ],
-      "locationIds": [
-        "lWsc3CHhT9eVCCcvaCkIeQ"
-      ],
-      "subLocationIds": [],
-      "format": "new",
-      "tags": [
-        "Carnival Collective"
-      ],
-      "locations": [
-        "Trophy Gate "
-      ]
-    },
-    {
-      "date": "2025-09-28",
-      "time": "09:00",
-      "description": "Musicians x 8",
-      "tagIds": [
-        "9c9.NLVHRSKegaJP5sishw"
-      ],
-      "locationIds": [
-        "KHWNal9JQy6EJLD9mjcMxg"
-      ],
-      "subLocationIds": [],
-      "format": "new",
-      "tags": [
-        "Carnival Collective"
-      ],
-      "locations": [
-        "Trophy Gate"
-      ]
-    },
-    {
-      "date": "2025-09-28",
-      "time": "13:30",
-      "description": "Musicians x 16",
-      "tagIds": [
-        "9c9.NLVHRSKegaJP5sishw"
-      ],
-      "locationIds": [
-        "KHWNal9JQy6EJLD9mjcMxg"
-      ],
-      "subLocationIds": [],
-      "format": "new",
-      "tags": [
-        "Carnival Collective"
-      ],
-      "locations": [
-        "Trophy Gate"
-      ]
-    },
-    {
-      "date": "2025-09-28",
-      "time": "08:30",
-      "description": "Instruments delivered to Bandstand through FlowerPot Gate, drop then return to HCP Car Park for the day",
-      "tagIds": [
-        "9c9.NLVHRSKegaJP5sishw",
-        "TAtz-oeITKeLO4-uxu.DPw"
-      ],
-      "locationIds": [
-        "Ko4msj1HS2aCTlQg0iiZPA"
-      ],
-      "subLocationIds": [],
-      "notes": "Transit - hired.  Drop instruments in 3 x 3 gazebo by main stage",
-      "format": "new",
-      "tags": [
-        "Carnival Collective"
-      ],
-      "locations": [
-        "Flower Pot Gate"
-      ]
-    },
-    {
-      "date": "2025-09-28",
-      "time": "08:50",
-      "description": "Bandstage Act arrives",
-      "tagIds": [
-        "QKuW3vsfRAmcdT16zR.gZQ"
-      ],
-      "locationIds": [],
-      "subLocationIds": [],
-      "format": "new",
-      "tags": [
-        "Amy Gadiaga"
-      ],
-      "locations": []
-    },
-    {
-      "date": "2025-09-28",
-      "time": "10:00",
-      "description": "Performer arrives ",
-      "tagIds": [
-        "zZunDBr0RhGl4ixGsh-0mw"
-      ],
-      "locationIds": [
-        "lWsc3CHhT9eVCCcvaCkIeQ"
-      ],
-      "subLocationIds": [],
-      "format": "new",
-      "tags": [
-        "Scarlet Entertainment (Rick Allen",
-        "Stuart Lodge)"
-      ],
-      "locations": [
-        "Trophy Gate "
-      ]
-    },
-    {
-      "date": "2025-09-28",
-      "time": "09:00",
-      "description": "Performer arrives ",
-      "tagIds": [],
-      "locationIds": [
-        "lWsc3CHhT9eVCCcvaCkIeQ"
-      ],
-      "subLocationIds": [],
-      "format": "new",
-      "tags": [],
-      "locations": [
-        "Trophy Gate "
-      ]
-    },
-    {
-      "date": "2025-09-28",
-      "time": "12:00",
-      "description": "Bandstage Act",
-      "tagIds": [
-        "Vpynf02xRYKBdmDbl1kQpQ"
-      ],
-      "locationIds": [
-        "lWsc3CHhT9eVCCcvaCkIeQ"
-      ],
-      "subLocationIds": [],
-      "format": "new",
-      "tags": [
-        "Chloe August and Cerry Tolliday"
-      ],
-      "locations": [
-        "Trophy Gate "
-      ]
-    },
-    {
-      "date": "2025-09-28",
-      "time": "09:30",
-      "description": "Performer arrives",
-      "tagIds": [
-        "7EnYxao9RMqVIStXkqh.-A"
-      ],
-      "locationIds": [
-        "lWsc3CHhT9eVCCcvaCkIeQ"
-      ],
-      "subLocationIds": [],
-      "format": "new",
-      "tags": [
-        "Scarlet Entertainment (Rob Aitkin",
-        "Rachel Ojo Tokun Boh",
-        "Rupert Harry",
-        "Kirstie Simpson)"
-      ],
-      "locations": [
-        "Trophy Gate "
+        "use Trophy Gate "
       ]
     },
     {
@@ -6093,44 +5799,7 @@
         "Scarlet Entertainment (Roaming Ducks)"
       ],
       "locations": [
-        "Trophy Gate "
-      ]
-    },
-    {
-      "date": "2025-09-28",
-      "time": "09:00",
-      "description": "Performers arrive ",
-      "tagIds": [
-        "aIQNA5GNQIaDxw9rpb57aQ"
-      ],
-      "locationIds": [
-        "lWsc3CHhT9eVCCcvaCkIeQ"
-      ],
-      "subLocationIds": [],
-      "format": "new",
-      "tags": [
-        "Scarlet Entertainment (Fleur de Reve 1 & 2)"
-      ],
-      "locations": [
-        "Trophy Gate "
-      ]
-    },
-    {
-      "date": "2025-09-28",
-      "description": "Performers Arrive (Flowerpot People)",
-      "tagIds": [
-        "tBlyiOd4S0aBvYFiTCEUGA"
-      ],
-      "locationIds": [
-        "lWsc3CHhT9eVCCcvaCkIeQ"
-      ],
-      "subLocationIds": [],
-      "format": "new",
-      "tags": [
-        "Scarlet Entertainment (Ivaylo Danailov and Isus Rose)"
-      ],
-      "locations": [
-        "Trophy Gate "
+        "use Trophy Gate "
       ]
     },
     {
@@ -6149,26 +5818,7 @@
         "Get Lost & Found"
       ],
       "locations": [
-        "Trophy Gate "
-      ]
-    },
-    {
-      "date": "2025-09-28",
-      "time": "08:30",
-      "description": "History Riot Performers Arrive",
-      "tagIds": [
-        "fT-WmsejRmCle0.nvbVmvw"
-      ],
-      "locationIds": [
-        "lWsc3CHhT9eVCCcvaCkIeQ"
-      ],
-      "subLocationIds": [],
-      "format": "new",
-      "tags": [
-        "History Riot"
-      ],
-      "locations": [
-        "Trophy Gate "
+        "use Trophy Gate "
       ]
     },
     {
@@ -6187,26 +5837,7 @@
         "The Bug Club"
       ],
       "locations": [
-        "Trophy Gate "
-      ]
-    },
-    {
-      "date": "2025-09-28",
-      "time": "09:00",
-      "description": "Bandstage DJ arrives",
-      "tagIds": [
-        "h9DLWgw8Tgiu3Ma53XazeA"
-      ],
-      "locationIds": [
-        "lWsc3CHhT9eVCCcvaCkIeQ"
-      ],
-      "subLocationIds": [],
-      "format": "new",
-      "tags": [
-        "Luke Manchester"
-      ],
-      "locations": [
-        "Trophy Gate "
+        "use Trophy Gate "
       ]
     },
     {
@@ -6225,55 +5856,7 @@
         "Patrick Yeboah"
       ],
       "locations": [
-        "Trophy Gate "
-      ]
-    },
-    {
-      "date": "2025-09-28",
-      "time": "08:30",
-      "description": "Indian Brass Band ",
-      "tagIds": [
-        "RtYTqcH6SzSZSa8mrs5sSA"
-      ],
-      "locationIds": [
-        "lWsc3CHhT9eVCCcvaCkIeQ"
-      ],
-      "subLocationIds": [],
-      "format": "new",
-      "tags": [
-        "Rajhastan Brass Band (ArifKhan",
-        "Dharu",
-        "Sikander Khan",
-        "Usman",
-        "Fazana Nenezi",
-        "Haidar Ali",
-        "Izrar Hussian",
-        "Salman)"
-      ],
-      "locations": [
-        "Trophy Gate "
-      ]
-    },
-    {
-      "date": "2025-09-28",
-      "time": "09:30",
-      "description": "Bandstage Act",
-      "tagIds": [
-        "HhT.J4cnQH6-pVCVf7wlig"
-      ],
-      "locationIds": [
-        "lWsc3CHhT9eVCCcvaCkIeQ"
-      ],
-      "subLocationIds": [],
-      "format": "new",
-      "tags": [
-        "Roameo Band (Kahaya Maseko",
-        "Alexander Shad",
-        "Zeb Tomkin",
-        "Josh Arkelo)"
-      ],
-      "locations": [
-        "Trophy Gate "
+        "use Trophy Gate "
       ]
     },
     {
@@ -6292,26 +5875,7 @@
         "Get Lost & Found"
       ],
       "locations": [
-        "Trophy Gate "
-      ]
-    },
-    {
-      "date": "2025-09-28",
-      "time": "08:00",
-      "description": "Scarlet Entertainment Lead Charlee Oakton Arrives",
-      "tagIds": [
-        "wVrsUWdpRYCKgAvnzYeXWg"
-      ],
-      "locationIds": [
-        "lWsc3CHhT9eVCCcvaCkIeQ"
-      ],
-      "subLocationIds": [],
-      "format": "new",
-      "tags": [
-        "Scarlet Entertainment - Charlee Oakton"
-      ],
-      "locations": [
-        "Trophy Gate "
+        "use Trophy Gate "
       ]
     },
     {
@@ -6331,59 +5895,8 @@
         "Charlie and Paradis)"
       ],
       "locations": [
-        "Trophy Gate "
+        "use Trophy Gate "
       ]
-    },
-    {
-      "date": "2025-09-28",
-      "time": "08:45",
-      "description": "Science Workshop Team x 2 arrives ",
-      "tagIds": [
-        "ha0CFXyRQoOu.a-UQb73jA"
-      ],
-      "locationIds": [],
-      "subLocationIds": [],
-      "format": "new",
-      "tags": [
-        "Science Museum"
-      ],
-      "locations": []
-    },
-    {
-      "date": "2025-09-28",
-      "time": "10:30",
-      "description": "Bandstage Performer",
-      "tagIds": [
-        "OU2BCpL9TwSryNRZotznmw"
-      ],
-      "locationIds": [
-        "lWsc3CHhT9eVCCcvaCkIeQ"
-      ],
-      "subLocationIds": [],
-      "format": "new",
-      "tags": [
-        "Kirk-Ann Roberts"
-      ],
-      "locations": [
-        "Trophy Gate "
-      ]
-    },
-    {
-      "date": "2025-09-28",
-      "time": "09:30",
-      "description": "Lego Team x 3",
-      "tagIds": [
-        "4PsDDazJRlSVn2BXaXzk2A"
-      ],
-      "locationIds": [],
-      "subLocationIds": [],
-      "format": "new",
-      "tags": [
-        "Brick by Brick (Steve",
-        "Obby",
-        "Rachael Guinness)"
-      ],
-      "locations": []
     },
     {
       "date": "2025-09-28",
@@ -6401,7 +5914,7 @@
         "Scarlet Entertainment  (John Godbalt and James Guiver)"
       ],
       "locations": [
-        "Trophy Gate "
+        "use Trophy Gate "
       ]
     },
     {
@@ -6482,67 +5995,7 @@
         "Greenhouse Sports"
       ],
       "locations": [
-        "Trophy Gate "
-      ]
-    },
-    {
-      "date": "2025-09-28",
-      "time": "08:00",
-      "description": "Get Lost & Found Team arrive",
-      "tagIds": [
-        "BhNN4ujqRNyry2vk1FHrFA"
-      ],
-      "locationIds": [
-        "WndxCJoyQ.SwnfUN88EeFg"
-      ],
-      "subLocationIds": [],
-      "notes": "Challenge Activities team x 4 \nand 'Together Team'",
-      "format": "new",
-      "tags": [
-        "Get Lost & Found"
-      ],
-      "locations": [
-        "ALL of Palace"
-      ]
-    },
-    {
-      "date": "2025-09-28",
-      "time": "08:00",
-      "description": "Greenhouse sports staff and equipment delivered",
-      "tagIds": [
-        "VxMdsyuBRLChmfrHCuFUig",
-        "TAtz-oeITKeLO4-uxu.DPw"
-      ],
-      "locationIds": [
-        "KHWNal9JQy6EJLD9mjcMxg"
-      ],
-      "subLocationIds": [],
-      "format": "new",
-      "tags": [
-        "Greenhouse Sports"
-      ],
-      "locations": [
-        "Trophy Gate"
-      ]
-    },
-    {
-      "date": "2025-09-28",
-      "time": "07:00-08:30",
-      "description": "Mowing of East Front lawns ",
-      "tagIds": [
-        "DonIXlE.SeqzQAe5V0GXLA"
-      ],
-      "locationIds": [
-        "oDCJdebXTl-zq6typ.0x-Q"
-      ],
-      "subLocationIds": [],
-      "notes": "Clear grass (geese issue) for Games & Team Challenges (Golf)",
-      "format": "new",
-      "tags": [
-        "HCP"
-      ],
-      "locations": [
-        "North End of East Front Gardens"
+        "use Trophy Gate "
       ]
     },
     {
@@ -6563,6 +6016,785 @@
       ],
       "locations": [
         "Adams Gate"
+      ]
+    },
+    {
+      "date": "2025-09-28",
+      "time": "09:00",
+      "description": "Science Museum arrive team of 2",
+      "tagIds": [
+        "ha0CFXyRQoOu.a-UQb73jA",
+        "TAtz-oeITKeLO4-uxu.DPw"
+      ],
+      "locationIds": [
+        "rfWMwhqyQZeGYkkW.NXLZQ"
+      ],
+      "subLocationIds": [],
+      "format": "new",
+      "tags": [
+        "Science Museum"
+      ],
+      "locations": [
+        "Adams Gate"
+      ]
+    },
+    {
+      "date": "2025-09-28",
+      "time": "09:30",
+      "description": "Lego Team x 3",
+      "tagIds": [
+        "4PsDDazJRlSVn2BXaXzk2A",
+        "TAtz-oeITKeLO4-uxu.DPw"
+      ],
+      "locationIds": [
+        "rfWMwhqyQZeGYkkW.NXLZQ"
+      ],
+      "subLocationIds": [],
+      "format": "new",
+      "tags": [
+        "Brick by Brick (Steve",
+        "Obby",
+        "Rachael Guinness)"
+      ],
+      "locations": [
+        "Adams Gate"
+      ]
+    },
+    {
+      "date": "2025-09-28",
+      "time": "19:00",
+      "description": "6pm Lego team  pack up and 7pm depart ",
+      "tagIds": [
+        "4PsDDazJRlSVn2BXaXzk2A",
+        "TAtz-oeITKeLO4-uxu.DPw"
+      ],
+      "locationIds": [
+        "rfWMwhqyQZeGYkkW.NXLZQ"
+      ],
+      "subLocationIds": [],
+      "format": "new",
+      "tags": [
+        "Brick by Brick (Steve",
+        "Obby",
+        "Rachael Guinness)"
+      ],
+      "locations": [
+        "Adams Gate"
+      ]
+    },
+    {
+      "date": "2025-09-28",
+      "time": "17:30",
+      "description": "Science Museum - Break down 5pm and depart 5.30pm",
+      "tagIds": [
+        "ha0CFXyRQoOu.a-UQb73jA",
+        "TAtz-oeITKeLO4-uxu.DPw"
+      ],
+      "locationIds": [
+        "rfWMwhqyQZeGYkkW.NXLZQ"
+      ],
+      "subLocationIds": [],
+      "format": "new",
+      "tags": [
+        "Science Museum"
+      ],
+      "locations": [
+        "Adams Gate"
+      ]
+    },
+    {
+      "date": "2025-09-28",
+      "time": "07:00 ",
+      "description": "Stage Management Team on site for breakfast",
+      "tagIds": [
+        "2vyf4cICQt-Nh35ALy0KbA"
+      ],
+      "locationIds": [],
+      "subLocationIds": [],
+      "format": "new",
+      "tags": [
+        "VS Creative"
+      ],
+      "locations": []
+    },
+    {
+      "date": "2025-09-28",
+      "time": "07:00-08:30",
+      "description": "Mowing of East Front lawns - sensitive lawn first",
+      "tagIds": [
+        "DonIXlE.SeqzQAe5V0GXLA"
+      ],
+      "locationIds": [
+        "oDCJdebXTl-zq6typ.0x-Q"
+      ],
+      "subLocationIds": [],
+      "notes": "Clear grass (geese issue) for Games & Team Challenges (Golf)",
+      "format": "new",
+      "tags": [
+        "HCP"
+      ],
+      "locations": [
+        "North End of East Front Gardens"
+      ]
+    },
+    {
+      "date": "2025-09-28",
+      "time": "07:30",
+      "description": "Carnival Collective Musical Director on site Ryan Kearsley",
+      "tagIds": [
+        "9c9.NLVHRSKegaJP5sishw",
+        "TAtz-oeITKeLO4-uxu.DPw"
+      ],
+      "locationIds": [
+        "KHWNal9JQy6EJLD9mjcMxg"
+      ],
+      "subLocationIds": [],
+      "format": "new",
+      "tags": [
+        "Carnival Collective"
+      ],
+      "locations": [
+        "Trophy Gate"
+      ]
+    },
+    {
+      "date": "2025-09-28",
+      "time": "08:30",
+      "description": "Instruments delivered to Bandstand through FlowerPot Gate, drop then park HCP Car Park ",
+      "tagIds": [
+        "9c9.NLVHRSKegaJP5sishw",
+        "TAtz-oeITKeLO4-uxu.DPw"
+      ],
+      "locationIds": [
+        "Ko4msj1HS2aCTlQg0iiZPA"
+      ],
+      "subLocationIds": [],
+      "notes": "Transit - hired.  Drop instruments in 3 x 3 gazebo by main stage",
+      "format": "new",
+      "tags": [
+        "Carnival Collective"
+      ],
+      "locations": [
+        "Flower Pot Gate"
+      ]
+    },
+    {
+      "date": "2025-09-28",
+      "time": "08:30",
+      "description": "Rajhastan Brass Band arrive ",
+      "tagIds": [
+        "RtYTqcH6SzSZSa8mrs5sSA",
+        "TAtz-oeITKeLO4-uxu.DPw"
+      ],
+      "locationIds": [
+        "KHWNal9JQy6EJLD9mjcMxg"
+      ],
+      "subLocationIds": [],
+      "notes": "Minibus",
+      "format": "new",
+      "tags": [
+        "Rajhastan Brass Band (ArifKhan",
+        "Dharu",
+        "Sikander Khan",
+        "Usman",
+        "Fazana Nenezi",
+        "Haidar Ali",
+        "Izrar Hussian",
+        "Salman)"
+      ],
+      "locations": [
+        "Trophy Gate"
+      ]
+    },
+    {
+      "date": "2025-09-28",
+      "time": "09:00",
+      "description": "Band Member with van from Flowerpot Gate (Simon Purcell)",
+      "tagIds": [
+        "9c9.NLVHRSKegaJP5sishw",
+        "TAtz-oeITKeLO4-uxu.DPw"
+      ],
+      "locationIds": [
+        "KHWNal9JQy6EJLD9mjcMxg"
+      ],
+      "subLocationIds": [],
+      "format": "new",
+      "tags": [
+        "Carnival Collective"
+      ],
+      "locations": [
+        "Trophy Gate"
+      ]
+    },
+    {
+      "date": "2025-09-28",
+      "time": "09:00",
+      "description": "Fleur de Reve  x 2 Performers arrive ",
+      "tagIds": [
+        "aIQNA5GNQIaDxw9rpb57aQ"
+      ],
+      "locationIds": [
+        "lWsc3CHhT9eVCCcvaCkIeQ"
+      ],
+      "subLocationIds": [],
+      "format": "new",
+      "tags": [
+        "Scarlet Entertainment (Fleur de Reve 1 & 2)"
+      ],
+      "locations": [
+        "use Trophy Gate "
+      ]
+    },
+    {
+      "date": "2025-09-28",
+      "time": "09:30",
+      "description": "Bandstage Act Roameo arrive",
+      "tagIds": [
+        "HhT.J4cnQH6-pVCVf7wlig"
+      ],
+      "locationIds": [
+        "lWsc3CHhT9eVCCcvaCkIeQ"
+      ],
+      "subLocationIds": [],
+      "format": "new",
+      "tags": [
+        "Roameo Band (Kahaya Maseko",
+        "Alexander Shad",
+        "Zeb Tomkin",
+        "Josh Arkelo)"
+      ],
+      "locations": [
+        "use Trophy Gate "
+      ]
+    },
+    {
+      "date": "2025-09-28",
+      "time": "8:50",
+      "description": "Bandstage Performer Amy Gadiga arrives",
+      "tagIds": [],
+      "locationIds": [],
+      "subLocationIds": [],
+      "format": "new",
+      "tags": [],
+      "locations": []
+    },
+    {
+      "date": "2025-09-28",
+      "time": "09:00",
+      "description": "EEP and BBG security brief and handover meeting",
+      "tagIds": [
+        "UFT3IwWBTa2qkK9pKncYLg",
+        "2ZI6vFm.Qly3z.9b6VLMZw"
+      ],
+      "locationIds": [
+        "lWsc3CHhT9eVCCcvaCkIeQ"
+      ],
+      "subLocationIds": [],
+      "format": "new",
+      "tags": [
+        "Bloomberg Security",
+        "EEP Security"
+      ],
+      "locations": [
+        "use Trophy Gate "
+      ]
+    },
+    {
+      "date": "2025-09-28",
+      "time": "10:30",
+      "description": "Pianist - setup via Seymour Gate",
+      "tagIds": [
+        "sapsG6dITtiK4wAe3lwS4g"
+      ],
+      "locationIds": [
+        "lWsc3CHhT9eVCCcvaCkIeQ"
+      ],
+      "subLocationIds": [],
+      "format": "new",
+      "tags": [
+        "Patrick Yeboah"
+      ],
+      "locations": [
+        "use Trophy Gate "
+      ]
+    },
+    {
+      "date": "2025-09-28",
+      "time": "13:30",
+      "description": "Musicians x 16",
+      "tagIds": [
+        "9c9.NLVHRSKegaJP5sishw"
+      ],
+      "locationIds": [
+        "lWsc3CHhT9eVCCcvaCkIeQ"
+      ],
+      "subLocationIds": [],
+      "format": "new",
+      "tags": [
+        "Carnival Collective"
+      ],
+      "locations": [
+        "use Trophy Gate "
+      ]
+    },
+    {
+      "date": "2025-09-28",
+      "time": "09:30",
+      "description": "Performers Arrive (Flowerpot People)",
+      "tagIds": [
+        "tBlyiOd4S0aBvYFiTCEUGA"
+      ],
+      "locationIds": [
+        "lWsc3CHhT9eVCCcvaCkIeQ"
+      ],
+      "subLocationIds": [],
+      "format": "new",
+      "tags": [
+        "Scarlet Entertainment (Ivaylo Danailov and Isus Rose)"
+      ],
+      "locations": [
+        "use Trophy Gate "
+      ]
+    },
+    {
+      "date": "2025-09-28",
+      "time": "06:30",
+      "description": "Lil Watan - stock drop",
+      "tagIds": [
+        "a.A-QALuWT46KS8nX8kh8wg",
+        "TAtz-oeITKeLO4-uxu.DPw"
+      ],
+      "locationIds": [
+        "Ko4msj1HS2aCTlQg0iiZPA"
+      ],
+      "subLocationIds": [],
+      "format": "new",
+      "tags": [
+        "KERB"
+      ],
+      "locations": [
+        "Flower Pot Gate"
+      ]
+    },
+    {
+      "date": "2025-09-28",
+      "time": "06:30",
+      "description": "Hanoi Kitchen stock drop",
+      "tagIds": [
+        "a.A-QALuWT46KS8nX8kh8wg",
+        "TAtz-oeITKeLO4-uxu.DPw"
+      ],
+      "locationIds": [
+        "Ko4msj1HS2aCTlQg0iiZPA"
+      ],
+      "subLocationIds": [],
+      "format": "new",
+      "tags": [
+        "KERB"
+      ],
+      "locations": [
+        "Flower Pot Gate"
+      ]
+    },
+    {
+      "date": "2025-09-28",
+      "time": "08:00",
+      "description": "Komex Kitchen stock drop",
+      "tagIds": [
+        "a.A-QALuWT46KS8nX8kh8wg",
+        "TAtz-oeITKeLO4-uxu.DPw"
+      ],
+      "locationIds": [
+        "Ko4msj1HS2aCTlQg0iiZPA"
+      ],
+      "subLocationIds": [],
+      "format": "new",
+      "tags": [
+        "KERB"
+      ],
+      "locations": [
+        "Flower Pot Gate"
+      ]
+    },
+    {
+      "date": "2025-09-28",
+      "time": "09:00",
+      "description": "Band Stage Sound Check:  Sophia Gillani",
+      "tagIds": [
+        "nEUVgmZJRZGIf.F72mM5-w"
+      ],
+      "locationIds": [
+        "lWsc3CHhT9eVCCcvaCkIeQ"
+      ],
+      "subLocationIds": [],
+      "format": "new",
+      "tags": [
+        "Entertainers Main Stage"
+      ],
+      "locations": [
+        "use Trophy Gate "
+      ]
+    },
+    {
+      "date": "2025-09-28",
+      "time": "09:00",
+      "description": "Musicians x 8 arrive",
+      "tagIds": [
+        "9c9.NLVHRSKegaJP5sishw"
+      ],
+      "locationIds": [
+        "lWsc3CHhT9eVCCcvaCkIeQ"
+      ],
+      "subLocationIds": [],
+      "format": "new",
+      "tags": [
+        "Carnival Collective"
+      ],
+      "locations": [
+        "use Trophy Gate "
+      ]
+    },
+    {
+      "date": "2025-09-28",
+      "time": "09:30",
+      "description": "Performer arrives - (Colourful Stilt Walkers)",
+      "tagIds": [
+        "7EnYxao9RMqVIStXkqh.-A"
+      ],
+      "locationIds": [
+        "lWsc3CHhT9eVCCcvaCkIeQ"
+      ],
+      "subLocationIds": [],
+      "format": "new",
+      "tags": [
+        "Scarlet Entertainment (Rob Aitkin",
+        "Rachel Ojo Tokun Boh",
+        "Rupert Harry",
+        "Kirstie Simpson)"
+      ],
+      "locations": [
+        "use Trophy Gate "
+      ]
+    },
+    {
+      "date": "2025-09-28",
+      "time": "10:00",
+      "description": "Performer arrives (Man in a Box)",
+      "tagIds": [
+        "zZunDBr0RhGl4ixGsh-0mw"
+      ],
+      "locationIds": [
+        "lWsc3CHhT9eVCCcvaCkIeQ"
+      ],
+      "subLocationIds": [],
+      "format": "new",
+      "tags": [
+        "Scarlet Entertainment (Rick Allen",
+        "Stuart Lodge)"
+      ],
+      "locations": [
+        "use Trophy Gate "
+      ]
+    },
+    {
+      "date": "2025-09-28",
+      "time": "12:00",
+      "description": "Bandstage Act arrives Chloe August",
+      "tagIds": [
+        "Vpynf02xRYKBdmDbl1kQpQ"
+      ],
+      "locationIds": [
+        "lWsc3CHhT9eVCCcvaCkIeQ"
+      ],
+      "subLocationIds": [],
+      "format": "new",
+      "tags": [
+        "Chloe August and Cerry Tolliday"
+      ],
+      "locations": [
+        "use Trophy Gate "
+      ]
+    },
+    {
+      "date": "2025-09-28",
+      "time": "10:30",
+      "description": "Bandstage Performer arrives (Kirk-Ann Roberts)",
+      "tagIds": [
+        "OU2BCpL9TwSryNRZotznmw"
+      ],
+      "locationIds": [
+        "lWsc3CHhT9eVCCcvaCkIeQ"
+      ],
+      "subLocationIds": [],
+      "format": "new",
+      "tags": [
+        "Kirk-Ann Roberts"
+      ],
+      "locations": [
+        "use Trophy Gate "
+      ]
+    },
+    {
+      "date": "2025-09-28",
+      "time": "10.15",
+      "description": "Performer arrrival x 5 (Roaming Ducks)",
+      "tagIds": [
+        "mt03EisMT8W2JyKMb8uZfg"
+      ],
+      "locationIds": [],
+      "subLocationIds": [],
+      "format": "new",
+      "tags": [
+        "Scarlet Entertainment (Roaming Ducks)"
+      ],
+      "locations": []
+    },
+    {
+      "date": "2025-09-28",
+      "time": "09:00",
+      "description": "Performer arrives (Bubble Rogue Roo)",
+      "tagIds": [
+        "LCJ6IgmfRJ-7uHU.QhbQoQ",
+        "mt03EisMT8W2JyKMb8uZfg"
+      ],
+      "locationIds": [
+        "lWsc3CHhT9eVCCcvaCkIeQ"
+      ],
+      "subLocationIds": [],
+      "format": "new",
+      "tags": [
+        "Scarlet Entertainment (Roaming Ducks)",
+        "Scarlet Entertainment (Bubble Rogue - Roo)"
+      ],
+      "locations": [
+        "use Trophy Gate "
+      ]
+    },
+    {
+      "date": "2025-09-28",
+      "time": "10:00",
+      "description": "Performer arrives (Matheus Kamla)",
+      "tagIds": [
+        "JVcoe7zNTe28TcGsVH1COg"
+      ],
+      "locationIds": [
+        "lWsc3CHhT9eVCCcvaCkIeQ"
+      ],
+      "subLocationIds": [],
+      "format": "new",
+      "tags": [
+        "Matheus Kamla"
+      ],
+      "locations": [
+        "use Trophy Gate "
+      ]
+    },
+    {
+      "date": "2025-09-28",
+      "time": "18:31",
+      "description": "Pitch Perfect remove tents - West Front and Tiltyard Gardens",
+      "tagIds": [
+        "HAyQvK9sSTesZgiDz3JlMw"
+      ],
+      "locationIds": [
+        "lWsc3CHhT9eVCCcvaCkIeQ"
+      ],
+      "subLocationIds": [],
+      "notes": "WORKING LIGHT FROM VS CREATIVE - VIA LOUIS\nLandrovers & trailers. -2 teams\nStart at West Front Apron, then access Tiltyard via Tennis Court Lane\nEmergency contact - Jesse Powell 07590 046552",
+      "format": "new",
+      "tags": [
+        "Perfect Pitch"
+      ],
+      "locations": [
+        "use Trophy Gate "
+      ]
+    },
+    {
+      "date": "2025-09-28",
+      "time": "08.00",
+      "description": "Carnival Collective Bridget McDermott arrives",
+      "tagIds": [
+        "9c9.NLVHRSKegaJP5sishw"
+      ],
+      "locationIds": [
+        "lWsc3CHhT9eVCCcvaCkIeQ"
+      ],
+      "subLocationIds": [],
+      "notes": "Car",
+      "format": "new",
+      "tags": [
+        "Carnival Collective"
+      ],
+      "locations": [
+        "use Trophy Gate "
+      ]
+    },
+    {
+      "date": "2025-09-28",
+      "time": "08:00",
+      "description": "Get Lost & Found Team arrive",
+      "tagIds": [
+        "BhNN4ujqRNyry2vk1FHrFA"
+      ],
+      "locationIds": [
+        "lWsc3CHhT9eVCCcvaCkIeQ"
+      ],
+      "subLocationIds": [],
+      "notes": "Car",
+      "format": "new",
+      "tags": [
+        "Get Lost & Found"
+      ],
+      "locations": [
+        "use Trophy Gate "
+      ]
+    },
+    {
+      "date": "2025-09-28",
+      "time": "08:00",
+      "description": "Scarlet Entertainment Lead Charlee Oakton Arrives",
+      "tagIds": [
+        "wVrsUWdpRYCKgAvnzYeXWg"
+      ],
+      "locationIds": [
+        "lWsc3CHhT9eVCCcvaCkIeQ"
+      ],
+      "subLocationIds": [],
+      "notes": "Car",
+      "format": "new",
+      "tags": [
+        "Scarlet Entertainment - Charlee Oakton"
+      ],
+      "locations": [
+        "use Trophy Gate "
+      ]
+    },
+    {
+      "date": "2025-09-28",
+      "time": "08:30",
+      "description": "Bandstage act arrives:",
+      "tagIds": [
+        "5VPeCz72Tp2aHCTsf0PYIQ"
+      ],
+      "locationIds": [
+        "lWsc3CHhT9eVCCcvaCkIeQ"
+      ],
+      "subLocationIds": [],
+      "notes": "2 cars",
+      "format": "new",
+      "tags": [
+        "Sofia Gillani (Asif Gillani",
+        "Chris Kane)"
+      ],
+      "locations": [
+        "use Trophy Gate "
+      ]
+    },
+    {
+      "date": "2025-09-28",
+      "time": "08:30",
+      "description": "History Riot Performers Arrive",
+      "tagIds": [
+        "fT-WmsejRmCle0.nvbVmvw"
+      ],
+      "locationIds": [
+        "lWsc3CHhT9eVCCcvaCkIeQ"
+      ],
+      "subLocationIds": [],
+      "notes": "Parking at Green Car Park",
+      "format": "new",
+      "tags": [
+        "History Riot"
+      ],
+      "locations": [
+        "use Trophy Gate "
+      ]
+    },
+    {
+      "date": "2025-09-28",
+      "time": "08:30",
+      "description": "Indian Brass Band arrrives",
+      "tagIds": [
+        "RtYTqcH6SzSZSa8mrs5sSA"
+      ],
+      "locationIds": [
+        "lWsc3CHhT9eVCCcvaCkIeQ"
+      ],
+      "subLocationIds": [],
+      "notes": "Mini bus",
+      "format": "new",
+      "tags": [
+        "Rajhastan Brass Band (ArifKhan",
+        "Dharu",
+        "Sikander Khan",
+        "Usman",
+        "Fazana Nenezi",
+        "Haidar Ali",
+        "Izrar Hussian",
+        "Salman)"
+      ],
+      "locations": [
+        "use Trophy Gate "
+      ]
+    },
+    {
+      "date": "2025-09-28",
+      "time": "08:50",
+      "description": "Bandstage Act arrives",
+      "tagIds": [
+        "QKuW3vsfRAmcdT16zR.gZQ"
+      ],
+      "locationIds": [
+        "lWsc3CHhT9eVCCcvaCkIeQ"
+      ],
+      "subLocationIds": [],
+      "notes": "Train",
+      "format": "new",
+      "tags": [
+        "Amy Gadiaga"
+      ],
+      "locations": [
+        "use Trophy Gate "
+      ]
+    },
+    {
+      "date": "2025-09-28",
+      "time": "09:00",
+      "description": "Bandstage DJ arrives",
+      "tagIds": [
+        "h9DLWgw8Tgiu3Ma53XazeA"
+      ],
+      "locationIds": [
+        "lWsc3CHhT9eVCCcvaCkIeQ"
+      ],
+      "subLocationIds": [],
+      "notes": "uber",
+      "format": "new",
+      "tags": [
+        "Luke Manchester"
+      ],
+      "locations": [
+        "use Trophy Gate "
+      ]
+    },
+    {
+      "date": "2025-09-28",
+      "time": "09:30",
+      "description": "Sadlers Wells Lead - Paradis Farahati arrives",
+      "tagIds": [
+        "a9yMjoTUTC6vc2Whw1RRwg"
+      ],
+      "locationIds": [
+        "lWsc3CHhT9eVCCcvaCkIeQ"
+      ],
+      "subLocationIds": [],
+      "format": "new",
+      "tags": [
+        "Sadlers Wells (Leila",
+        "Charlie and Paradis)"
+      ],
+      "locations": [
+        "use Trophy Gate "
       ]
     },
     {
@@ -7038,26 +7270,6 @@
     },
     {
       "date": "2025-09-29",
-      "time": "11:00",
-      "description": "Putter Fingers Collect",
-      "tagIds": [
-        "LY.xpVV9Qg6k5gB.uebjcg",
-        "TAtz-oeITKeLO4-uxu.DPw"
-      ],
-      "locationIds": [
-        "BCSTWTmNQjuZfZGD7goaIg"
-      ],
-      "subLocationIds": [],
-      "format": "default",
-      "tags": [
-        "Putter Fingers"
-      ],
-      "locations": [
-        "East Front Palace Gardens"
-      ]
-    },
-    {
-      "date": "2025-09-29",
       "time": "12:00",
       "description": "Bins, Compactor & Skip collected (full) - Before Noon",
       "tagIds": [
@@ -7387,44 +7599,6 @@
     },
     {
       "date": "2025-09-29",
-      "time": "09:00-17:00",
-      "description": "Focus driver on site.",
-      "tagIds": [
-        "uBVDp08WRuedIwvSxRCn7w"
-      ],
-      "locationIds": [
-        "KHWNal9JQy6EJLD9mjcMxg"
-      ],
-      "subLocationIds": [],
-      "format": "default",
-      "tags": [
-        "Focus"
-      ],
-      "locations": [
-        "Trophy Gate"
-      ]
-    },
-    {
-      "date": "2025-09-29",
-      "time": "EOD",
-      "description": "Focus Luton van departs site for Focus Warehouse.",
-      "tagIds": [
-        "uBVDp08WRuedIwvSxRCn7w"
-      ],
-      "locationIds": [
-        "KHWNal9JQy6EJLD9mjcMxg"
-      ],
-      "subLocationIds": [],
-      "format": "default",
-      "tags": [
-        "Focus"
-      ],
-      "locations": [
-        "Trophy Gate"
-      ]
-    },
-    {
-      "date": "2025-09-29",
       "time": "09:01",
       "description": "GJS collect GO letters - 18T Rigid",
       "tagIds": [
@@ -7519,7 +7693,7 @@
         "BCSTWTmNQjuZfZGD7goaIg"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "default",
       "tags": [
         "Sunbrella"
       ],
@@ -7530,23 +7704,59 @@
     {
       "date": "2025-09-29",
       "time": "11:30",
-      "description": "Putter Fingers Break down and depart",
+      "description": "Putter Fingers collect Mini Golf",
       "tagIds": [
-        "BhNN4ujqRNyry2vk1FHrFA",
         "LY.xpVV9Qg6k5gB.uebjcg"
       ],
       "locationIds": [
         "Ko4msj1HS2aCTlQg0iiZPA"
       ],
       "subLocationIds": [],
-      "notes": "\n",
+      "notes": "Richard Clarke and Harry Hammond. Vehicle is a Vauxhall Movano, DN72 UCH",
       "format": "new",
       "tags": [
-        "Get Lost & Found",
         "Putter Fingers"
       ],
       "locations": [
         "Flower Pot Gate"
+      ]
+    },
+    {
+      "date": "2025-09-29",
+      "time": "09:00-17:00",
+      "description": "Focus driver on site.",
+      "tagIds": [
+        "uBVDp08WRuedIwvSxRCn7w"
+      ],
+      "locationIds": [
+        "lWsc3CHhT9eVCCcvaCkIeQ"
+      ],
+      "subLocationIds": [],
+      "format": "new",
+      "tags": [
+        "Focus"
+      ],
+      "locations": [
+        "use Trophy Gate "
+      ]
+    },
+    {
+      "date": "2025-09-29",
+      "time": "EOD",
+      "description": "Focus Luton van departs site for Focus Warehouse.",
+      "tagIds": [
+        "uBVDp08WRuedIwvSxRCn7w"
+      ],
+      "locationIds": [
+        "lWsc3CHhT9eVCCcvaCkIeQ"
+      ],
+      "subLocationIds": [],
+      "format": "new",
+      "tags": [
+        "Focus"
+      ],
+      "locations": [
+        "use Trophy Gate "
       ]
     }
   ]

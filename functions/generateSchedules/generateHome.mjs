@@ -1,3 +1,47 @@
+/**
+ * generateHome.mjs
+ *
+ * Purpose
+ * -------
+ * Build and publish the **Home / MOM** page for an event. This page lists all
+ * snapshots (unfiltered “Master” and filtered views), grouped visually by type,
+ * and links to the generated HTML/PDF for each snapshot when available.
+ *
+ * What this module does
+ * ---------------------
+ * 1) Sorts snapshots by `sortOrder`, then by `type`, then by `filename` for a
+ *    stable, human-friendly order on the Home page.
+ * 2) Splits the list into **unfiltered** (Master) and **filtered** snapshots,
+ *    then renders each set into responsive button grids.
+ * 3) Builds header content from `jsonInput.header` (or eventName fallback) and
+ *    renders an optional **Key Info** accordion from `keyInfo`/`document.keyInfo`
+ *    using `marked` + `sanitize-html`.
+ * 4) Resolves a header logo from `jsonInput.logoUrl`, `document.header.logo.url`,
+ *    or a derived storage path based on `profileId`.
+ * 5) Emits a complete HTML page, saving it **locally** when emulated or to the
+ *    default GCS bucket when running in the cloud.
+ * 6) Logs the publish event via `logPdfEvent` (including the computed URL).
+ *
+ * Inputs (via function params)
+ * ----------------------------
+ * - jsonInput: overall event metadata and the `snapshots` array (each with
+ *   filename/type/urls and optional filter flags).
+ * - makePublicUrl: function to construct a public URL for a given GCS path.
+ * - runningEmulated, LOCAL_OUTPUT_DIR: control local writes when emulating.
+ * - startTime, timestamp, userEmail, profileId, glideAppName: metadata used for
+ *   logging and page chrome.
+ * - req: used to derive `safeAppName`/`safeEventName` slugs (and to keep
+ *   makePublicUrl in index.js for now).
+ * - logPdfEvent: callback used to persist an audit trail entry.
+ *
+ * Notes
+ * -----
+ * - This module does **not** generate snapshots itself; it only renders the Home
+ *   page that links to them. The snapshot generation happens upstream and
+ *   populates `realHtmlUrl` / `realPdfUrl` on each snapshot.
+ * - No filtering/grouping logic for schedules lives here; this file focuses on
+ *   the Home page UX and publishing only.
+ */
 // functions/handlers/generateHome.mjs
 import { getStorage } from "firebase-admin/storage";
 import fs from "fs";

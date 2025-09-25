@@ -1,3 +1,57 @@
+/**
+ * generatepdfv2.mjs
+ *
+ * Purpose
+ * -------
+ * Render a grouped schedule JSON into a paginated **PDF** using pdf-lib.
+ *
+ * Expected input shape (pre-sanitised & pre-grouped by upstream code):
+ * - jsonInput.document
+ *     - filename: string (without extension is fine)
+ *     - pageSize: { width, height }
+ *     - margins: leftMargin, rightMargin, topMargin, bottomMargin
+ *     - header: { textLines[] (or root-level `header` array), logo: { url, width, height } }
+ *     - groupPaddingBottom?: number
+ *     - bottomPageThreshold?: number (debug aide to visualise near-page-end)
+ * - jsonInput.styles
+ *     - header, footer, labelRow, groupTitle, groupMetadata, row: { default, highlight, lowlight, ... }
+ *     - colours use hex (e.g. "#333333"); British English keys like `colour` are supported
+ * - jsonInput.columns: Array<{ label, showLabel, field, width }>
+ * - jsonInput.groups: Array<{
+ *     title: string,
+ *     metadata?: string,      // shown under the group title (e.g., meta.above)
+ *     entries: Array<{
+ *       fields: Record<string, string | string[]>, // values looked up by `columns[].field`
+ *       format?: string | { ... }                  // maps to styles.row[variant]; supports icon/badge/underline
+ *     }>
+ *   }>
+ * - Optional:
+ *     - jsonInput.keyInfo: markdown-ish string rendered in a shaded box on page 1
+ *     - jsonInput.debug: true to draw layout guides (margins, thresholds, etc.)
+ *
+ * What this module does
+ * ---------------------
+ * 1) Creates a new PDF and embeds Helvetica font variants.
+ * 2) Reserves header space (text + optional logo), and draws a Key Info box if provided.
+ * 3) For each group:
+ *    - Draws the group title and optional metadata.
+ *    - Optionally draws a label row based on `columns[].showLabel`.
+ *    - Renders each entry using `columns` to select and wrap text from `entry.fields`.
+ *    - Applies row styling via `styles.row[variant]` (including gutter, icon, badge, underline).
+ *    - Handles pagination with repeated headers/labels when rows span pages.
+ * 4) Final header/footer pass on every page:
+ *    - Header: lines + "As at ..." timestamp and optional logo.
+ *    - Footer: filename (left), "Page X of Y" (centre), generated timestamp (right) + credit line.
+ * 5) Returns `{ bytes, filename }` where `bytes` is a Uint8Array from `pdfDoc.save()` and
+ *    `filename` is ensured to end in `.pdf`.
+ *
+ * Notes
+ * -----
+ * - `toWinAnsi` strips unsupported glyphs so pdf-lib width calculations remain safe.
+ * - Column widths are respected; text is hard-wrapped according to font metrics.
+ * - The module does **no** filtering/grouping/sorting; upstream code must prepare `groups`,
+ *   `columns`, and `styles` appropriately for v2.
+ */
 // functions/generateSchedules/generatepdfv2.mjs
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import fetch from 'node-fetch';

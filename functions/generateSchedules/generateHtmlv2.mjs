@@ -1,3 +1,37 @@
+/**
+ * generateHtmlv2.mjs
+ *
+ * Purpose
+ * -------
+ * Render a grouped schedule JSON into a fully styled **HTML page** using a template + CSS.
+ * This is the v2 HTML renderer that pairs with generatepdfv2.mjs.
+ *
+ * Expected input (jsonInput):
+ * - header: array of strings (root-level; required in v2)
+ * - document.header.logo or logoUrl: optional logo
+ * - columns: ordered array { field, label, width, showLabel }
+ * - groups: array of { title, metadata?, entries: [{ fields: {...}, format? }] }
+ * - keyInfo: optional markdown string (rendered into an accordion block)
+ * - document.footer: optional plain string
+ *
+ * What this module does:
+ * 1) Builds a human-friendly timestamp (London TZ) for “As at …” and footer.
+ * 2) Escapes HTML safely for all header, group, and row content.
+ * 3) Renders:
+ *    - Header (text lines + timestamp, plus optional logo)
+ *    - Key Info accordion if present (Markdown → safe HTML)
+ *    - Groups as <section> elements, each with title, optional metadata, and a table
+ *      built from `columns` (show/hide headers, widths preserved proportionally).
+ *    - Each entry row styled by format (“default”, “new”, “important”, “past”).
+ *    - An optional Download PDF link if pdfUrl is provided.
+ *    - A footer with document name, generated timestamp, and Capcom credit link.
+ * 4) Loads CSS from `htmlutils/schedule.css` and base template from `htmlutils/template.html`,
+ *    injecting extra CSS for the Key Info accordion.
+ *
+ * Returns:
+ * - { htmlString, htmlFilenameBase } where htmlString is the full HTML page,
+ *   and htmlFilenameBase is a slugified filename base.
+ */
 /* eslint-env node */
 import { readFile } from "fs/promises";
 import path from "path";

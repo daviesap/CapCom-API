@@ -403,15 +403,23 @@ export const v2 = onRequest({
   const profileId = req.body.profileId || "unknown profileId";
 
   try {
-    // Load JSON input (body first, fallback to local)
-    let jsonInput;
-    if (req.body?.document) {
-      jsonInput = req.body;
-    } else {
-      const samplePath = path.resolve(process.cwd(), "JSON/local.json");
-      const raw = await readFile(samplePath, "utf-8");
-      jsonInput = JSON.parse(raw);
+    // Load JSON input: prefer request body; when emulated, optionally overlay local JSON if present
+    let jsonInput = (typeof req.body === "object" && req.body) ? req.body : {};
+    if (runningEmulated) {
+      try {
+        const samplePath = path.resolve(process.cwd(), "JSON/local.json");
+        const raw = await readFile(samplePath, "utf-8");
+        const localJson = JSON.parse(raw);
+        // Local JSON provides defaults; request body overrides
+        jsonInput = merge({}, localJson, jsonInput);
+        console.log("🗂 Using local JSON (emulator) merged with request body");
+      } catch (e) {
+        console.log("ℹ️ Emulator: no JSON/local.json found; proceeding with request body only");
+      }
     }
+    // Ensure optional document key exists so downstream code never branches into disk fallback
+    jsonInput.document = jsonInput.document || {};
+
     const glideAppName = jsonInput.glideAppName || "No Glide app name defined";
 
     // Optional profile merge from Firestore
