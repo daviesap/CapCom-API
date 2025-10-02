@@ -75,7 +75,7 @@ export async function generateSnapshotOutputsv2({
   makePublicUrl,
   logPdfEvent,
   // 👇 easy toggle: set to "" when promoting to prod paths
-  extraSubdir = "v2",
+  extraSubdir = "",  //was "v2"
 }) {
   // Build a path under: public/<app>/<event>/<maybe v2>/<file>
   const joinCloudPath = (filename) =>

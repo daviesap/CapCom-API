@@ -697,7 +697,7 @@ export const v2 = onRequest({
           profileId: effectiveProfileId,
           makePublicUrl,
           logPdfEvent,
-          extraSubdir: "v2",
+          extraSubdir: "", //was "v2"
         });
 
         console.log(`   • Done HTML: ${htmlUrl}`);

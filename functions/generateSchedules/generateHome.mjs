@@ -537,7 +537,7 @@ export async function generateHome({
 </html>`;
 
   // Write to Storage
-  const safeHomeName = "v2/mom.html";
+  const safeHomeName = "mom.html";
   if (runningEmulated) {
     const htmlDir = path.join(LOCAL_OUTPUT_DIR, "public", safeAppName, safeEventName);
     fs.mkdirSync(htmlDir, { recursive: true });
