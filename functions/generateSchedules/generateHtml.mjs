@@ -102,12 +102,11 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
     ? jsonInput.event.header
     : [];
 
-  const title = jsonInput?.document?.title || jsonInput?.event?.eventName || "Schedule";
+  const title = jsonInput?.document?.filename|| "Schedule";
 
   // Header (left: text lines + “As at…”, right: logo)
   const headerTextHtml = headerLines.map(escapeHtml).join("<br/>");
-  const subtitleBlock =
-    `${headerTextHtml}<br/><span class="asAtDate">As at ${prettyTimestamp}</span>`;
+  const subtitleBlock =`${headerTextHtml}<br/>${title}<br/><span class="asAtDate">As at ${prettyTimestamp}</span>`;
   const logoSource = jsonInput?.event?.logoUrl ? { url: jsonInput.event.logoUrl } : null;
   const logoHtml = renderLogo(logoSource);
   const subtitleWithLogo = `

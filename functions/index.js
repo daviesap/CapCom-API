@@ -476,7 +476,7 @@ export const v2 = onRequest({
 
       for (let idx = 0; idx < snapshots.length; idx++) {
         const snap = snapshots[idx];
-        const label = snap.filename || `(unnamed #${idx + 1})`;
+        const label = snap.name || `(unnamed #${idx + 1})`;
         console.log(`▶️  Starting snapshot ${idx + 1}/${snapshots.length}: ${label}`);
 
         // Select the precomputed view by groupPresetId (required)
@@ -517,7 +517,7 @@ export const v2 = onRequest({
             {},
             profileDoc.document || {},
             jsonInput.document || {},
-            { filename: snap.filename || (jsonInput.document?.filename || "schedule") }
+            { filename: snap.name || (jsonInput.document?.filename || "schedule") }
           ),
           columns:
             (Array.isArray(baseView.columns) && baseView.columns.length ? baseView.columns : null) ||

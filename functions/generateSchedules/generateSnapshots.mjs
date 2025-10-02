@@ -37,7 +37,6 @@ function formatYYYYMMDD(d = new Date()) {
   return `${parts.year}${parts.month}${parts.day}-${parts.hour}${parts.minute}`;
 }
 
-// Add near the top of generateSnapshots.mjs (above export):
 function applyHeader(prepared, filename) {
   // Root header is guaranteed to be an array in v2
   const baseHeader = Array.isArray(prepared.header) ? prepared.header.slice() : [];

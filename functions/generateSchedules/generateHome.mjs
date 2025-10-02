@@ -562,7 +562,7 @@ export async function generateHome({
       : "";
 
     return {
-      name: String(s.filename || "Snapshot"),
+      name: String(s.name || "Snapshot name missing"),
       htmlUrl,
       pdfUrl
     };

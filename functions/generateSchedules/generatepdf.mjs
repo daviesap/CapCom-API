@@ -289,7 +289,7 @@ export const generatePdfBuffer = async (jsonInput) => {
   };
 
   // ---- Key Info box (optional) ----
-  if (jsonData.keyInfo) {
+  if (jsonData.event.keyInfo) {
     const textStyle = resolveStyle(
       styles.keyInfo?.text || { fontSize: 10, fontStyle: 'normal', fontColour: '#000000' },
       boldFont, regularFont, italicFont, boldItalicFont, DEFAULT_LINE_SPACING
@@ -301,7 +301,7 @@ export const generatePdfBuffer = async (jsonInput) => {
       marginBottom: 16,
     };
 
-    const lines = normaliseKeyInfoToLines(jsonData.keyInfo);
+    const lines = normaliseKeyInfoToLines(jsonData.event.keyInfo);
     const innerWidth = Math.max(1, (pageWidth - leftMargin - rightMargin) - (boxStyle.padding ?? 10) * 2);
     const wrappedProbe = wrapLinesForWidth(lines, textStyle.font, textStyle.fontSize, innerWidth);
     const neededHeight = (boxStyle.padding ?? 10) + (wrappedProbe.length * textStyle.lineHeight) + (boxStyle.padding ?? 10) + (boxStyle.marginBottom ?? 16);
@@ -315,7 +315,7 @@ export const generatePdfBuffer = async (jsonInput) => {
   }
 
   // If a Key Info box exists, start groups on a new page
-  const hasKeyInfo = !!jsonData.keyInfo;
+  const hasKeyInfo = !!jsonData.event.keyInfo;
   let isFirstGroup = true;
 
   // ---- Groups ----
