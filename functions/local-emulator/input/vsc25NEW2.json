@@ -1,98 +1,146 @@
 {
-  "document": {},
-  "profileId": "nwyjifV41b",
   "api_key": "Sausages2025!!",
+  "event": {
+    "profileId": "nwyjifV41b",
+    "name": "Bloomberg Day 2025",
+    "logoUrl": "https://firebasestorage.googleapis.com/v0/b/flair-pdf-generator.firebasestorage.app/o/logos%2FDzhLnf64Vv_logotype-footer.png?alt=media&token=19313b2d-a76e-40d2-80ac-f3939131c4c5",
+    "header": [
+      "Bloomberg Day 2025",
+      "Hampton Court Palace",
+      "Sunday, 28 September 2025"
+    ],
+    "keyInfo": "**Hampton Court Palace** - East Molesey, Surrey, KT8 9AU (Main entrance to Hampton Court)\n\n**Crew Check-in (on foot) - via Trophy Gate**  \n[https://w3w.co/settle.blows.alert, then](https://w3w.co/settle.blows.alert) check in at Reception [https://w3w.co/shin.beams.mutual](https://w3w.co/shin.beams.mutual)\n\n**Delivery Address (Trucks < 7.5T) - Flowerpot Gate**  \nA308 (South Side), Opp. Clarence Lodge, Hampton Ct.Road [https://w3w.co/visual.talent.spoke](https://w3w.co/slam.rank.apples)\n\n**Delivery Address (Trucks > 7.5T) - Cart Track Gate**  \n[https://w3w.co/rushed.design.fortunate **\\-**](https://w3w.co/rushed.design.fortunate) Via Home Park Terrace, Off A308 (South Side) Hampton Ct Rd [https://w3w.co/gentle.visits.cover](https://w3w.co/gentle.visits.cover)\n\n**Delivery Address (Trucks <  7.5T) - Adam's Gate. (Tiltyard & Wilderness areas)**  \nHampton Court Palace, East Molesey, Surrey, KT8 9DD    \n[https://w3w.co/luck.castle.wages](https://w3w.co/luck.castle.wages)\n\n**Site safety induction form** - [https://safetyinduction.co.uk/bloomberg-bbg-25/](https://safetyinduction.co.uk/bloomberg-bbg-25/)\n\n**VS Creative Site Contacts (for crew / deliveries etc)**\n\n*   Charlie Webster 07913 516001\n    \n*   Andrew Davies 07725 191913\n    \n*   Chris Brown 07958 710901\n    \n*   Louis Souyave 07904 276704\n    \n\nOn site plans [https://drive.google.com/drive/folders/1PALITVbyNrl5ByRfuvH0bA2lBCmLTZz9?usp=drive\\_link](https://drive.google.com/drive/folders/1PALITVbyNrl5ByRfuvH0bA2lBCmLTZz9?usp=drive_link)"
+  },
   "debug": false,
+  "UserId": "JwAOVyJUSwGKh1mD8Z1ovg",
+  "userEmail": "andrew@flair.london",
+  "glideAppName": "VS Creative",
+  "groupMeta": {
+    "scheduleDates": [
+      {
+        "date": "2025-09-26",
+        "data": {
+          "title": "Friday, 26 September 2025",
+          "above": "Install day 1"
+        }
+      },
+      {
+        "date": "2025-09-28",
+        "data": {
+          "title": "Sunday, 28 September 2025",
+          "above": "Live day"
+        }
+      },
+      {
+        "date": "2025-09-29",
+        "data": {
+          "title": "Monday, 29 September 2025",
+          "above": "Derig",
+          "below": "Venue to be clear"
+        }
+      },
+      {
+        "date": "2025-09-25",
+        "data": {
+          "title": "Thursday, 25 September 2025"
+        }
+      },
+      {
+        "date": "2025-09-27",
+        "data": {
+          "title": "Saturday, 27 September 2025",
+          "above": "Install day 2"
+        }
+      },
+      {
+        "date": "2025-09-30",
+        "data": {
+          "title": "Tuesday, 30 September 2025"
+        }
+      }
+    ],
+    "trucks": "trucking Group Meta Data",
+    "contacts": "contacts Group Meta Data"
+  },
   "snapshots": [
     {
       "filename": "Full schedule",
-      "type": "Master",
       "groupPresetId": "byDate-1",
       "filterTagIds": [],
       "filterLocationIds": [],
-      "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/Fullschedule.html",
-      "isFiltered": false
+      "filterSubLocationIds": []
     },
     {
       "filename": "MP Squares schedule",
-      "type": "By supplier",
+      "type": "qljqg6puSQOGJLmQrTSWtw",
       "groupPresetId": "byDate-1",
       "filterTagIds": [
         "ra8Z47n-QwCffoTVDR19nw"
       ],
       "filterLocationIds": [],
-      "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/MPSquaresschedule.html",
-      "isFiltered": true
+      "filterSubLocationIds": []
     },
     {
       "filename": "HCP schedule",
-      "type": "Venue",
       "groupPresetId": "byDate-1",
       "filterTagIds": [
         "DonIXlE.SeqzQAe5V0GXLA"
       ],
       "filterLocationIds": [],
-      "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/HCPschedule.html",
-      "isFiltered": true
+      "filterSubLocationIds": []
     },
     {
       "filename": "Kerb schedule",
-      "type": "By supplier",
+      "type": "qljqg6puSQOGJLmQrTSWtw",
       "groupPresetId": "byDate-1",
       "filterTagIds": [
         "a.A-QALuWT46KS8nX8kh8wg"
       ],
       "filterLocationIds": [],
-      "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/Kerbschedule.html",
-      "isFiltered": true
+      "filterSubLocationIds": []
     },
     {
       "filename": "Insite schedule",
-      "type": "By supplier",
+      "type": "qljqg6puSQOGJLmQrTSWtw",
       "groupPresetId": "byDate-1",
       "filterTagIds": [
         "unC3zBAMQy-pLki5bgQdmA"
       ],
       "filterLocationIds": [],
-      "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/Insiteschedule.html",
-      "isFiltered": true
+      "filterSubLocationIds": []
     },
     {
       "filename": "AAC Power schedule",
-      "type": "By supplier",
+      "type": "qljqg6puSQOGJLmQrTSWtw",
       "groupPresetId": "byDate-1",
       "filterTagIds": [
         "Xi8rOuVnRs-ihhFiHGv8kg"
       ],
       "filterLocationIds": [],
-      "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/AACPowerschedule.html",
-      "isFiltered": true
+      "filterSubLocationIds": []
     },
     {
       "filename": "Deliveries - All gates",
-      "type": "Deliveries",
+      "type": "dBhsiYRXQuCGYoDW.6QJKA",
       "groupPresetId": "byDate-1",
       "filterTagIds": [
         "TAtz-oeITKeLO4-uxu.DPw"
       ],
       "filterLocationIds": [],
-      "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/Deliveries-Allgates.html",
-      "isFiltered": true
+      "filterSubLocationIds": []
     },
     {
       "filename": "Garden Catering",
-      "type": "By supplier",
+      "type": "qljqg6puSQOGJLmQrTSWtw",
       "groupPresetId": "byDate-1",
       "filterTagIds": [
         "c6D39RzGRmq.aMahe-g-yQ"
       ],
       "filterLocationIds": [],
-      "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/GardenCatering.html",
-      "isFiltered": true
+      "filterSubLocationIds": []
     },
     {
       "filename": "Deliveries - Cart Track Gate",
-      "type": "Deliveries",
       "groupPresetId": "byDate-1",
       "filterTagIds": [
         "TAtz-oeITKeLO4-uxu.DPw"
@@ -100,99 +148,39 @@
       "filterLocationIds": [
         "avDh6Lx0QwG941DZ.ed0Og"
       ],
-      "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/Deliveries-CartTrackGate.html",
-      "isFiltered": true
+      "filterSubLocationIds": []
     },
     {
       "filename": "Deliveries - Flower Pot Gate",
-      "type": "Deliveries",
+      "type": "dBhsiYRXQuCGYoDW.6QJKA",
       "groupPresetId": "byDate-1",
       "filterTagIds": [],
       "filterLocationIds": [
         "Ko4msj1HS2aCTlQg0iiZPA"
       ],
-      "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/Deliveries-FlowerPotGate.html",
-      "isFiltered": true
+      "filterSubLocationIds": []
     },
     {
       "filename": "Deliveries - Adams Gate",
-      "type": "Deliveries",
+      "type": "dBhsiYRXQuCGYoDW.6QJKA",
       "groupPresetId": "byDate-1",
       "filterTagIds": [],
       "filterLocationIds": [
         "rfWMwhqyQZeGYkkW.NXLZQ"
       ],
-      "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/Deliveries-AdamsGate.html",
-      "isFiltered": true
+      "filterSubLocationIds": []
     },
     {
       "filename": "Trophy Gate",
-      "type": "Deliveries",
+      "type": "dBhsiYRXQuCGYoDW.6QJKA",
       "groupPresetId": "byDate-1",
       "filterTagIds": [],
       "filterLocationIds": [
         "lWsc3CHhT9eVCCcvaCkIeQ"
       ],
-      "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/TrophyGate.html",
-      "isFiltered": true
+      "filterSubLocationIds": []
     }
   ],
-  "groupMeta": [
-    {
-      "date": "2025-09-26",
-      "data": {
-        "title": "Friday, 26 September 2025",
-        "above": "Install day 1"
-      }
-    },
-    {
-      "date": "2025-09-28",
-      "data": {
-        "title": "Sunday, 28 September 2025",
-        "above": "Live day"
-      }
-    },
-    {
-      "date": "2025-09-29",
-      "data": {
-        "title": "Monday, 29 September 2025",
-        "above": "Derig",
-        "below": "Venue to be clear"
-      }
-    },
-    {
-      "date": "2025-09-25",
-      "data": {
-        "title": "Thursday, 25 September 2025"
-      }
-    },
-    {
-      "date": "2025-09-27",
-      "data": {
-        "title": "Saturday, 27 September 2025",
-        "above": "Install day 2"
-      }
-    },
-    {
-      "date": "2025-09-30",
-      "data": {
-        "title": "Tuesday, 30 September 2025"
-      }
-    }
-  ],
-  "logoUrl": "https://firebasestorage.googleapis.com/v0/b/flair-pdf-generator.firebasestorage.app/o/logos%2FDzhLnf64Vv_logotype-footer.png?alt=media&token=19313b2d-a76e-40d2-80ac-f3939131c4c5",
-  "glideAppName": "VS Creative",
-  "UserId": "JwAOVyJUSwGKh1mD8Z1ovg",
-  "userEmail": "andrew@flair.london",
-  "eventName": "Bloomberg Day 2025",
-  "eventVenue": "Hampton Court Palace",
-  "eventDates": "Sunday, 28 September 2025",
-  "header": [
-    "Bloomberg Day 2025",
-    "Hampton Court Palace",
-    "Sunday, 28 September 2025"
-  ],
-  "keyInfo": "**Hampton Court Palace** - East Molesey, Surrey, KT8 9AU (Main entrance to Hampton Court)\n\n**Crew Check-in (on foot) - via Trophy Gate**  \n[https://w3w.co/settle.blows.alert, then](https://w3w.co/settle.blows.alert) check in at Reception [https://w3w.co/shin.beams.mutual](https://w3w.co/shin.beams.mutual)\n\n**Delivery Address (Trucks < 7.5T) - Flowerpot Gate**  \nA308 (South Side), Opp. Clarence Lodge, Hampton Ct.Road [https://w3w.co/visual.talent.spoke](https://w3w.co/slam.rank.apples)\n\n**Delivery Address (Trucks > 7.5T) - Cart Track Gate**  \n[https://w3w.co/rushed.design.fortunate **\\-**](https://w3w.co/rushed.design.fortunate) Via Home Park Terrace, Off A308 (South Side) Hampton Ct Rd [https://w3w.co/gentle.visits.cover](https://w3w.co/gentle.visits.cover)\n\n**Delivery Address (Trucks <  7.5T) - Adam's Gate. (Tiltyard & Wilderness areas)**  \nHampton Court Palace, East Molesey, Surrey, KT8 9DD    \n[https://w3w.co/luck.castle.wages](https://w3w.co/luck.castle.wages)\n\n**Site safety induction form** - [https://safetyinduction.co.uk/bloomberg-bbg-25/](https://safetyinduction.co.uk/bloomberg-bbg-25/)\n\n**VS Creative Site Contacts (for crew / deliveries etc)**\n\n*   Charlie Webster 07913 516001\n    \n*   Andrew Davies 07725 191913\n    \n*   Chris Brown 07958 710901\n    \n*   Louis Souyave 07904 276704\n    \n\nOn site plans [https://drive.google.com/drive/folders/1PALITVbyNrl5ByRfuvH0bA2lBCmLTZz9?usp=drive\\_link](https://drive.google.com/drive/folders/1PALITVbyNrl5ByRfuvH0bA2lBCmLTZz9?usp=drive_link)",
   "data": [
     {
       "date": "2025-09-25",

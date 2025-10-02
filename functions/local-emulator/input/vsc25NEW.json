@@ -1,12 +1,72 @@
 {
-  "profileId": "nwyjifV41b",
   "api_key": "Sausages2025!!",
+  "event": {
+    "profileId": "nwyjifV41b",
+    "name": "Bloomberg Day 2025",
+    "logoUrl": "https://firebasestorage.googleapis.com/v0/b/flair-pdf-generator.firebasestorage.app/o/logos%2FDzhLnf64Vv_logotype-footer.png?alt=media&token=19313b2d-a76e-40d2-80ac-f3939131c4c5",
+    "header": [
+      "Bloomberg Day 2025",
+      "Hampton Court Palace",
+      "Sunday, 28 September 2025"
+    ],
+    "keyInfo": "**Hampton Court Palace** - East Molesey, Surrey, KT8 9AU (Main entrance to Hampton Court)\n\n**Crew Check-in (on foot) - via Trophy Gate**  \n[https://w3w.co/settle.blows.alert, then](https://w3w.co/settle.blows.alert) check in at Reception [https://w3w.co/shin.beams.mutual](https://w3w.co/shin.beams.mutual)\n\n**Delivery Address (Trucks < 7.5T) - Flowerpot Gate**  \nA308 (South Side), Opp. Clarence Lodge, Hampton Ct.Road [https://w3w.co/visual.talent.spoke](https://w3w.co/slam.rank.apples)\n\n**Delivery Address (Trucks > 7.5T) - Cart Track Gate**  \n[https://w3w.co/rushed.design.fortunate **\\-**](https://w3w.co/rushed.design.fortunate) Via Home Park Terrace, Off A308 (South Side) Hampton Ct Rd [https://w3w.co/gentle.visits.cover](https://w3w.co/gentle.visits.cover)\n\n**Delivery Address (Trucks <  7.5T) - Adam's Gate. (Tiltyard & Wilderness areas)**  \nHampton Court Palace, East Molesey, Surrey, KT8 9DD    \n[https://w3w.co/luck.castle.wages](https://w3w.co/luck.castle.wages)\n\n**Site safety induction form** - [https://safetyinduction.co.uk/bloomberg-bbg-25/](https://safetyinduction.co.uk/bloomberg-bbg-25/)\n\n**VS Creative Site Contacts (for crew / deliveries etc)**\n\n*   Charlie Webster 07913 516001\n    \n*   Andrew Davies 07725 191913\n    \n*   Chris Brown 07958 710901\n    \n*   Louis Souyave 07904 276704\n    \n\nOn site plans [https://drive.google.com/drive/folders/1PALITVbyNrl5ByRfuvH0bA2lBCmLTZz9?usp=drive\\_link](https://drive.google.com/drive/folders/1PALITVbyNrl5ByRfuvH0bA2lBCmLTZz9?usp=drive_link)"
+  },
   "debug": false,
+  "UserId": "JwAOVyJUSwGKh1mD8Z1ovg",
+  "userEmail": "andrew@flair.london",
+  "glideAppName": "VS Creative",
+  "groupMeta": {
+    "scheduleDates": [
+      {
+        "date": "2025-09-26",
+        "data": {
+          "title": "Friday, 26 September 2025",
+          "above": "Install day 1"
+        }
+      },
+      {
+        "date": "2025-09-28",
+        "data": {
+          "title": "Sunday, 28 September 2025",
+          "above": "Live day"
+        }
+      },
+      {
+        "date": "2025-09-29",
+        "data": {
+          "title": "Monday, 29 September 2025",
+          "above": "Derig",
+          "below": "Venue to be clear"
+        }
+      },
+      {
+        "date": "2025-09-25",
+        "data": {
+          "title": "Thursday, 25 September 2025"
+        }
+      },
+      {
+        "date": "2025-09-27",
+        "data": {
+          "title": "Saturday, 27 September 2025",
+          "above": "Install day 2"
+        }
+      },
+      {
+        "date": "2025-09-30",
+        "data": {
+          "title": "Tuesday, 30 September 2025"
+        }
+      }
+    ],
+    "trucks": "trucking Group Meta Data",
+    "contacts": "contacts Group Meta Data"
+  },
   "snapshots": [
     {
       "filename": "Full schedule",
       "type": "Master",
-      "groupBy": "byDate-1",
+      "groupPresetId": "byDate-1",
       "filterTagIds": [],
       "filterLocationIds": [],
       "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/Fullschedule.html",
@@ -15,7 +75,7 @@
     {
       "filename": "MP Squares schedule",
       "type": "By supplier",
-      "groupBy": "byDate-1",
+      "groupPresetId": "byDate-1",
       "filterTagIds": [
         "ra8Z47n-QwCffoTVDR19nw"
       ],
@@ -26,7 +86,7 @@
     {
       "filename": "HCP schedule",
       "type": "Venue",
-      "groupBy": "byDate-1",
+      "groupPresetId": "byDate-1",
       "filterTagIds": [
         "DonIXlE.SeqzQAe5V0GXLA"
       ],
@@ -37,7 +97,7 @@
     {
       "filename": "Kerb schedule",
       "type": "By supplier",
-      "groupBy": "byDate-1",
+      "groupPresetId": "byDate-1",
       "filterTagIds": [
         "a.A-QALuWT46KS8nX8kh8wg"
       ],
@@ -48,7 +108,7 @@
     {
       "filename": "Insite schedule",
       "type": "By supplier",
-      "groupBy": "byDate-1",
+      "groupPresetId": "byDate-1",
       "filterTagIds": [
         "unC3zBAMQy-pLki5bgQdmA"
       ],
@@ -59,7 +119,7 @@
     {
       "filename": "AAC Power schedule",
       "type": "By supplier",
-      "groupBy": "byDate-1",
+      "groupPresetId": "byDate-1",
       "filterTagIds": [
         "Xi8rOuVnRs-ihhFiHGv8kg"
       ],
@@ -70,7 +130,7 @@
     {
       "filename": "Deliveries - All gates",
       "type": "Deliveries",
-      "groupBy": "byDate-1",
+      "groupPresetId": "byDate-1",
       "filterTagIds": [
         "TAtz-oeITKeLO4-uxu.DPw"
       ],
@@ -81,7 +141,7 @@
     {
       "filename": "Garden Catering",
       "type": "By supplier",
-      "groupBy": "byDate-1",
+      "groupPresetId": "byDate-1",
       "filterTagIds": [
         "c6D39RzGRmq.aMahe-g-yQ"
       ],
@@ -92,7 +152,7 @@
     {
       "filename": "Deliveries - Cart Track Gate",
       "type": "Deliveries",
-      "groupBy": "byDate-1",
+      "groupPresetId": "byDate-1",
       "filterTagIds": [
         "TAtz-oeITKeLO4-uxu.DPw"
       ],
@@ -105,7 +165,7 @@
     {
       "filename": "Deliveries - Flower Pot Gate",
       "type": "Deliveries",
-      "groupBy": "byDate-1",
+      "groupPresetId": "byDate-1",
       "filterTagIds": [],
       "filterLocationIds": [
         "Ko4msj1HS2aCTlQg0iiZPA"
@@ -116,71 +176,26 @@
     {
       "filename": "Deliveries - Adams Gate",
       "type": "Deliveries",
-      "groupBy": "byDate-1",
+      "groupPresetId": "byDate-1",
       "filterTagIds": [],
       "filterLocationIds": [
         "rfWMwhqyQZeGYkkW.NXLZQ"
       ],
       "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/Deliveries-AdamsGate.html",
       "isFiltered": true
+    },
+    {
+      "filename": "Trophy Gate",
+      "type": "Deliveries",
+      "groupPresetId": "byDate-1",
+      "filterTagIds": [],
+      "filterLocationIds": [
+        "lWsc3CHhT9eVCCcvaCkIeQ"
+      ],
+      "urlTemp": "https://vox.capcom.london/VSCreative/BloombergDay2025/TrophyGate.html",
+      "isFiltered": true
     }
   ],
-  "groupMeta": [
-    {
-      "date": "2025-09-26",
-      "data": {
-        "title": "Friday, 26 September 2025",
-        "above": "Install day 1"
-      }
-    },
-    {
-      "date": "2025-09-28",
-      "data": {
-        "title": "Sunday, 28 September 2025",
-        "above": "Live day"
-      }
-    },
-    {
-      "date": "2025-09-29",
-      "data": {
-        "title": "Monday, 29 September 2025",
-        "above": "Derig",
-        "below": "Venue to be clear"
-      }
-    },
-    {
-      "date": "2025-09-25",
-      "data": {
-        "title": "Thursday, 25 September 2025"
-      }
-    },
-    {
-      "date": "2025-09-27",
-      "data": {
-        "title": "Saturday, 27 September 2025",
-        "above": "Install day 2"
-      }
-    },
-    {
-      "date": "2025-09-30",
-      "data": {
-        "title": "Tuesday, 30 September 2025"
-      }
-    }
-  ],
-  "logoUrl": "https://firebasestorage.googleapis.com/v0/b/flair-pdf-generator.firebasestorage.app/o/logos%2FDzhLnf64Vv_logotype-footer.png?alt=media&token=19313b2d-a76e-40d2-80ac-f3939131c4c5",
-  "glideAppName": "VS Creative",
-  "UserId": "JwAOVyJUSwGKh1mD8Z1ovg",
-  "userEmail": "andrew@flair.london",
-  "eventName": "Bloomberg Day 2025",
-  "eventVenue": "Hampton Court Palace",
-  "eventDates": "Sunday, 28 September 2025",
-  "header": [
-    "Bloomberg Day 2025",
-    "Hampton Court Palace",
-    "Sunday, 28 September 2025"
-  ],
-  "keyInfo": "**Hampton Court Palace** - East Molesey, Surrey, KT8 9AU (Main entrance to Hampton Court)\n\n**Crew Check-in (on foot) - via Trophy Gate**  \n[https://w3w.co/settle.blows.alert, then](https://w3w.co/settle.blows.alert) check in at Reception [https://w3w.co/shin.beams.mutual](https://w3w.co/shin.beams.mutual)\n\n**Delivery Address (Trucks < 7.5T) - Flowerpot Gate**  \nA308 (South Side), Opp. Clarence Lodge, Hampton Ct.Road [https://w3w.co/visual.talent.spoke](https://w3w.co/slam.rank.apples)\n\n**Delivery Address (Trucks > 7.5T) - Cart Track Gate**  \n[https://w3w.co/rushed.design.fortunate **\\-**](https://w3w.co/rushed.design.fortunate) Via Home Park Terrace, Off A308 (South Side) Hampton Ct Rd [https://w3w.co/gentle.visits.cover](https://w3w.co/gentle.visits.cover)\n\n**Delivery Address (Trucks <  7.5T) - Adam's Gate. (Tiltyard & Wilderness areas)**  \nHampton Court Palace, East Molesey, Surrey, KT8 9DD    \n[https://w3w.co/luck.castle.wages](https://w3w.co/luck.castle.wages)\n\n**Site safety induction form** - [https://safetyinduction.co.uk/bloomberg-bbg-25/](https://safetyinduction.co.uk/bloomberg-bbg-25/)\n\n**VS Creative Site Contacts (for crew / deliveries etc)**\n\n*   Charlie Webster 07913 516001\n    \n*   Andrew Davies 07725 191913\n    \n*   Chris Brown 07958 710901\n    \n*   Louis Souyave 07904 276704\n    \n\nOn site plans [https://drive.google.com/drive/folders/1PALITVbyNrl5ByRfuvH0bA2lBCmLTZz9?usp=drive\\_link](https://drive.google.com/drive/folders/1PALITVbyNrl5ByRfuvH0bA2lBCmLTZz9?usp=drive_link)",
   "data": [
     {
       "date": "2025-09-25",
@@ -194,13 +209,28 @@
       ],
       "subLocationIds": [],
       "notes": "Using existing HCP barriers",
-      "format": "default",
+      "format": "past",
       "tags": [
         "HCP"
       ],
       "locations": [
         "East Front Palace Gardens"
       ]
+    },
+    {
+      "date": "2025-09-25",
+      "time": "13:00 tbc",
+      "description": "Deliver x21 Lebanese wraps to Terry/Rob @Carbonite - location tbc",
+      "tagIds": [
+        "a.A-QALuWT46KS8nX8kh8wg"
+      ],
+      "locationIds": [],
+      "subLocationIds": [],
+      "format": "past",
+      "tags": [
+        "KERB"
+      ],
+      "locations": []
     },
     {
       "date": "2025-09-26",
@@ -213,7 +243,7 @@
         "wa2tC2s3S0GTJi1eSYlsOg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "VS Creative"
       ],
@@ -230,7 +260,7 @@
       ],
       "locationIds": [],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Sunrise / set"
       ],
@@ -247,7 +277,7 @@
         "wa2tC2s3S0GTJi1eSYlsOg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "MP Squares"
       ],
@@ -268,7 +298,7 @@
       ],
       "subLocationIds": [],
       "notes": "Arranged with HCP, Kitty and Amber to take delivery\n1 x 4 seater\n3 x utility buggies\nPower charging on Tennis Court Lane + KERB BOH if poss (couple of loose 16's)\n",
-      "format": "default",
+      "format": "past",
       "tags": [
         "OBH Buggy Hire"
       ],
@@ -289,7 +319,7 @@
       ],
       "subLocationIds": [],
       "notes": "3 x hiabs dropping two built containers each (approximately 30 minutes per drop)\nDelivery",
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -309,7 +339,7 @@
       ],
       "subLocationIds": [],
       "notes": "Refer to separate EEP Security Schedule.\nDaphne Dean, Supervisor ",
-      "format": "default",
+      "format": "past",
       "tags": [
         "EEP Security"
       ],
@@ -328,7 +358,7 @@
         "WndxCJoyQ.SwnfUN88EeFg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "HCP"
       ],
@@ -349,7 +379,7 @@
       ],
       "subLocationIds": [],
       "notes": "7 x Tower Lights, 1 x Fork Lifts, x1 Telehandler, PED Fencing and Heras Fencing\nDelivery",
-      "format": "default",
+      "format": "past",
       "tags": [
         "CW Event Hire"
       ],
@@ -368,7 +398,7 @@
         "zhaAVFHHRROpG26JLMOk5g"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "VS Creative"
       ],
@@ -388,7 +418,7 @@
         "avDh6Lx0QwG941DZ.ed0Og"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "HCP",
         "VS Creative"
@@ -409,7 +439,7 @@
         "pk5s0iFQQqiuDO01uGxmSA"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "HCP",
         "VS Creative"
@@ -431,7 +461,7 @@
       ],
       "subLocationIds": [],
       "notes": "Van will stay in TCL - RV23 HMC (comes and goes with deliveries)\nCar reg: KAY 9 \nSet up gazebo, trestles (chairs to come Sat)\nSet up T&C in Production office ready for Sat am",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Garden Catering (Crew)"
       ],
@@ -452,7 +482,7 @@
       ],
       "subLocationIds": [],
       "notes": "Clore (Signage store/Security), RND (Production Office), APT 15 (Site Office)",
-      "format": "default",
+      "format": "past",
       "tags": [
         "HCP",
         "VS Creative"
@@ -473,7 +503,7 @@
       ],
       "subLocationIds": [],
       "notes": "Charlie bringing to site.",
-      "format": "default",
+      "format": "past",
       "tags": [
         "VS Creative"
       ],
@@ -493,7 +523,7 @@
         "wa2tC2s3S0GTJi1eSYlsOg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "HCP",
         "VS Creative"
@@ -513,7 +543,7 @@
         "wa2tC2s3S0GTJi1eSYlsOg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Garden Catering (Crew)"
       ],
@@ -534,7 +564,7 @@
       ],
       "subLocationIds": [],
       "notes": "Transit sized van with distro panels.\nDelivery",
-      "format": "default",
+      "format": "past",
       "tags": [
         "AAC Power"
       ],
@@ -555,7 +585,7 @@
       ],
       "subLocationIds": [],
       "notes": "Artic with generators, cable, cable ramp\nDelivery",
-      "format": "default",
+      "format": "past",
       "tags": [
         "AAC Power"
       ],
@@ -576,7 +606,7 @@
       ],
       "subLocationIds": [],
       "notes": "Delivery",
-      "format": "default",
+      "format": "past",
       "tags": [
         "AAC Power"
       ],
@@ -595,7 +625,7 @@
         "zhaAVFHHRROpG26JLMOk5g"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "VS Creative"
       ],
@@ -614,7 +644,7 @@
       "locationIds": [],
       "subLocationIds": [],
       "notes": "Install of Signage in Home Park for Truck Wayfinding - must be complete by 17:30",
-      "format": "default",
+      "format": "past",
       "tags": [
         "InSite Graphics"
       ],
@@ -631,7 +661,7 @@
         "WndxCJoyQ.SwnfUN88EeFg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Old Skool"
       ],
@@ -652,7 +682,7 @@
       ],
       "subLocationIds": [],
       "notes": "Fencing scrim, tarps etc",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Focus"
       ],
@@ -674,7 +704,7 @@
       ],
       "subLocationIds": [],
       "notes": "Prod / Site kit (PA Kit, VSC flight case, Scrim, Tarps etc) into Production/Site Office.  \n\nCollects from Focus during the day (Luton van). On standby from 17:30 to enter via Trophy Gate. Focus driver assist with unloading.\nDriver departs 21:00 & leaves van with keys with VSC Site Mgmt.",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Focus",
         "Old Skool"
@@ -695,7 +725,7 @@
       ],
       "subLocationIds": [],
       "notes": "Clear grass (geese issue) ",
-      "format": "default",
+      "format": "past",
       "tags": [
         "HCP"
       ],
@@ -717,7 +747,7 @@
       ],
       "subLocationIds": [],
       "notes": "Chicken x 9\nFish x 4\nSalt Beef x 10\nVegetarian x 1 ",
-      "format": "default",
+      "format": "past",
       "tags": [
         "HCP",
         "Hermolis"
@@ -737,7 +767,7 @@
         "wa2tC2s3S0GTJi1eSYlsOg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "HCP"
       ],
@@ -757,7 +787,7 @@
       ],
       "subLocationIds": [],
       "notes": "This should be already installed (HCP confirmed 13 Sep)",
-      "format": "default",
+      "format": "past",
       "tags": [
         "HCP"
       ],
@@ -778,7 +808,7 @@
       ],
       "subLocationIds": [],
       "notes": "Store until VSC tenancy starts",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Walker Fire & Security Solutions"
       ],
@@ -799,7 +829,7 @@
       ],
       "subLocationIds": [],
       "notes": "2 x lutons\n\nLoad into Mrs Neal's Garden 6-10pm\nx4           Mrs Neal's Garden - Entertainers\nx2           Smoking Gdn - VSC Crew\n\nKERB to put up:\nx2           Mrs Neal's Garden - KERB Crew\nx1           East Gdn - Kids Packed Lunch\nx1           Flowerpot - Kosher Tent\nx2.         KERB BOH",
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -819,7 +849,7 @@
       ],
       "subLocationIds": [],
       "notes": "Set up 2 x KERB Gazebo's in Smoking Garden",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Old Skool"
       ],
@@ -839,34 +869,12 @@
       ],
       "subLocationIds": [],
       "notes": "Jenna, Tami, B, Marianne, Elodie, Christopher, Joanna, Katlyn",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Bloomberg"
       ],
       "locations": [
         "RND"
-      ]
-    },
-    {
-      "date": "2025-09-26",
-      "time": "18:30",
-      "description": "1st Job - AAC Power & Bullens install HCP power for Garden Catering in TCL",
-      "tagIds": [
-        "Xi8rOuVnRs-ihhFiHGv8kg",
-        "DonIXlE.SeqzQAe5V0GXLA"
-      ],
-      "locationIds": [
-        "wa2tC2s3S0GTJi1eSYlsOg"
-      ],
-      "subLocationIds": [],
-      "notes": "Tennis Court Lane",
-      "format": "new",
-      "tags": [
-        "AAC Power",
-        "HCP"
-      ],
-      "locations": [
-        "Tennis Court lane"
       ]
     },
     {
@@ -882,7 +890,7 @@
       ],
       "subLocationIds": [],
       "notes": "Consumables and equipment for Team Challenges / office supplies etc\nAladdin's counter in Clore\nDelivery through Tennis CL",
-      "format": "new",
+      "format": "past",
       "tags": [
         "Bloomberg"
       ],
@@ -902,7 +910,7 @@
       ],
       "subLocationIds": [],
       "notes": "Sandra, Gary, Kerry",
-      "format": "new",
+      "format": "past",
       "tags": [
         "VS Creative"
       ],
@@ -924,7 +932,7 @@
       ],
       "subLocationIds": [],
       "notes": "Victoria Swift, Sandra Ewart, Kelly Graves, Charlie Webster, Louis Souyave, Chris Brown, Chris Burke, Andrew Davies, Janet Noles, Kerry Stewart, Isaac Stephenson, Anya Watson, Roz England, Ian Lamb, Gigi De Courcey Swoffer, Gary Collins, Isa Watson",
-      "format": "new",
+      "format": "past",
       "tags": [
         "VS Creative",
         "Rock Safely",
@@ -936,20 +944,23 @@
     },
     {
       "date": "2025-09-26",
-      "time": "18:01",
-      "description": "Edible postcards delivered - store in RND (Production office)",
+      "time": "18:30",
+      "description": "1st Job - AAC Power & Bullens install HCP power for Garden Catering in TCL",
       "tagIds": [
-        "pDXUww6IRfCeVV6ej8n--Q",
-        "TAtz-oeITKeLO4-uxu.DPw"
+        "Xi8rOuVnRs-ihhFiHGv8kg",
+        "c6D39RzGRmq.aMahe-g-yQ",
+        "DonIXlE.SeqzQAe5V0GXLA"
       ],
       "locationIds": [
         "wa2tC2s3S0GTJi1eSYlsOg"
       ],
       "subLocationIds": [],
-      "notes": "Edible postcards etc\nDelivery through Tennis CL",
-      "format": "new",
+      "notes": "Tennis Court Lane",
+      "format": "past",
       "tags": [
-        "Bombas & Parr"
+        "AAC Power",
+        "HCP",
+        "Garden Catering (Crew)"
       ],
       "locations": [
         "Tennis Court lane"
@@ -962,7 +973,7 @@
       "tagIds": [],
       "locationIds": [],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [],
       "locations": []
     },
@@ -978,7 +989,7 @@
       ],
       "subLocationIds": [],
       "notes": "Roz and Rory (show caller) to share running order and talk through show",
-      "format": "default",
+      "format": "past",
       "tags": [
         "VS Creative"
       ],
@@ -998,7 +1009,7 @@
       ],
       "subLocationIds": [],
       "notes": "All outdoor music to finish no later than 21:00 hrs. Maximum 87dB",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Focus"
       ],
@@ -1017,7 +1028,7 @@
         "BCSTWTmNQjuZfZGD7goaIg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Just Loos"
       ],
@@ -1036,7 +1047,7 @@
         "WndxCJoyQ.SwnfUN88EeFg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "VS Creative"
       ],
@@ -1053,7 +1064,7 @@
       ],
       "locationIds": [],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Sunrise / set"
       ],
@@ -1070,7 +1081,7 @@
         "wa2tC2s3S0GTJi1eSYlsOg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Garden Catering (Crew)"
       ],
@@ -1089,7 +1100,7 @@
         "wa2tC2s3S0GTJi1eSYlsOg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Garden Catering (Crew)"
       ],
@@ -1108,7 +1119,7 @@
         "WndxCJoyQ.SwnfUN88EeFg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "History Riot"
       ],
@@ -1128,7 +1139,7 @@
       ],
       "subLocationIds": [],
       "notes": "Victoria to join if available or catch up post walk through to ensure all cleaning areas approved for all parties.",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Falcon Cleaning"
       ],
@@ -1149,7 +1160,7 @@
       ],
       "subLocationIds": [],
       "notes": "Falcon bringing own golf buggy & parking van by compactor.",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Falcon Cleaning"
       ],
@@ -1169,7 +1180,7 @@
         "wa2tC2s3S0GTJi1eSYlsOg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Garden Catering (Crew)"
       ],
@@ -1189,7 +1200,7 @@
         "BCSTWTmNQjuZfZGD7goaIg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Garden Catering (Crew)"
       ],
@@ -1210,7 +1221,7 @@
       ],
       "subLocationIds": [],
       "notes": "Bobby with his trailer",
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -1231,7 +1242,7 @@
       ],
       "subLocationIds": [],
       "notes": "Drinks stock and equipment",
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -1252,7 +1263,7 @@
       ],
       "subLocationIds": [],
       "notes": "Drinks stock and equipment",
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -1273,7 +1284,7 @@
       ],
       "subLocationIds": [],
       "notes": "Cart Track Gate",
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -1294,7 +1305,7 @@
       ],
       "subLocationIds": [],
       "notes": "milk, staff snacks etc",
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -1315,7 +1326,7 @@
       ],
       "subLocationIds": [],
       "notes": "12 water coolers and extra bottles",
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -1335,7 +1346,7 @@
         "Ko4msj1HS2aCTlQg0iiZPA"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -1356,7 +1367,7 @@
       ],
       "subLocationIds": [],
       "notes": "Cart Track - eventhire Modular Fridge, Freezer, Various Kit/Equipment",
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -1377,7 +1388,7 @@
       ],
       "subLocationIds": [],
       "notes": "Run 3",
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -1398,7 +1409,7 @@
       ],
       "subLocationIds": [],
       "notes": "Run 3",
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -1419,7 +1430,7 @@
       ],
       "subLocationIds": [],
       "notes": "Run 3",
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -1440,7 +1451,7 @@
       ],
       "subLocationIds": [],
       "notes": "Run 3",
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -1461,7 +1472,7 @@
       ],
       "subLocationIds": [],
       "notes": "Run 4",
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -1482,7 +1493,7 @@
       ],
       "subLocationIds": [],
       "notes": "Run 2",
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -1503,7 +1514,7 @@
       ],
       "subLocationIds": [],
       "notes": "Run 4",
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -1524,7 +1535,7 @@
       ],
       "subLocationIds": [],
       "notes": "Run 5",
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -1545,7 +1556,7 @@
       ],
       "subLocationIds": [],
       "notes": "Run 5",
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -1566,7 +1577,7 @@
       ],
       "subLocationIds": [],
       "notes": "Run 5",
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -1587,7 +1598,7 @@
       ],
       "subLocationIds": [],
       "notes": "Run 5",
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -1608,7 +1619,7 @@
       ],
       "subLocationIds": [],
       "notes": "Run 1",
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -1629,7 +1640,7 @@
       ],
       "subLocationIds": [],
       "notes": "Run 1",
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -1650,7 +1661,7 @@
       ],
       "subLocationIds": [],
       "notes": "Run 1",
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -1671,7 +1682,7 @@
       ],
       "subLocationIds": [],
       "notes": "Run 6",
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -1692,7 +1703,7 @@
       ],
       "subLocationIds": [],
       "notes": "Run 6",
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -1713,7 +1724,7 @@
       ],
       "subLocationIds": [],
       "notes": "Run 2",
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -1734,7 +1745,7 @@
       ],
       "subLocationIds": [],
       "notes": "Run 4",
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -1753,7 +1764,7 @@
         "WndxCJoyQ.SwnfUN88EeFg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "HCP"
       ],
@@ -1774,7 +1785,7 @@
       ],
       "subLocationIds": [],
       "notes": "3 x buggies from Bradshaw delivered",
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -1794,33 +1805,12 @@
       ],
       "subLocationIds": [],
       "notes": "NB Kettles and not urns",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Garden Catering (Crew)"
       ],
       "locations": [
         "RND"
-      ]
-    },
-    {
-      "date": "2025-09-27",
-      "time": "12:00",
-      "description": "Bins and IBC for Kerb delivered",
-      "tagIds": [
-        "9EuTqFF2Ty-Gm.jEoXW9SA",
-        "TAtz-oeITKeLO4-uxu.DPw"
-      ],
-      "locationIds": [
-        "BCSTWTmNQjuZfZGD7goaIg"
-      ],
-      "subLocationIds": [],
-      "notes": "40 x 1100L bins, 100 x 240L bins, 50 x Feminine hygiene bins\nIBC for KERB boneyard",
-      "format": "default",
-      "tags": [
-        "Falcon Cleaning"
-      ],
-      "locations": [
-        "East Front Palace Gardens"
       ]
     },
     {
@@ -1832,7 +1822,7 @@
       ],
       "locationIds": [],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Rock Safely"
       ],
@@ -1850,7 +1840,7 @@
       ],
       "subLocationIds": [],
       "notes": "Pastries, fruit\nT&C",
-      "format": "default",
+      "format": "past",
       "tags": [
         "VS Creative"
       ],
@@ -1870,7 +1860,7 @@
       ],
       "subLocationIds": [],
       "notes": "NB Urns take 45 m to heat up\nCrew base in Smoking garden / Mrs Neals Yard",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Garden Catering (Crew)"
       ],
@@ -1890,7 +1880,7 @@
         "BCSTWTmNQjuZfZGD7goaIg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "HCP",
         "VS Creative"
@@ -1911,7 +1901,7 @@
         "avDh6Lx0QwG941DZ.ed0Og"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Victorian Bandstands Ltd"
       ],
@@ -1931,7 +1921,7 @@
       ],
       "subLocationIds": [],
       "notes": "Led by Sandra & Roz",
-      "format": "default",
+      "format": "past",
       "tags": [
         "VS Creative"
       ],
@@ -1951,7 +1941,7 @@
         "avDh6Lx0QwG941DZ.ed0Og"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Focus"
       ],
@@ -1972,7 +1962,7 @@
       ],
       "subLocationIds": [],
       "notes": "URNS need 45m to heat up. \nFalcon Waste to supply green and black 1200 bins",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Garden Catering (Crew)"
       ],
@@ -1992,7 +1982,7 @@
       ],
       "subLocationIds": [],
       "notes": "Palace out of bounds (inc Tilt Yard, Wilderness, Privy Garden etc)",
-      "format": "default",
+      "format": "past",
       "tags": [
         "HCP"
       ],
@@ -2011,7 +2001,7 @@
         "BCSTWTmNQjuZfZGD7goaIg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Falcon Cleaning"
       ],
@@ -2031,7 +2021,7 @@
       ],
       "subLocationIds": [],
       "notes": "Check final bunting positions with Victoria/Kerry due to sprinkler system & layout of furniture.\nHand over spare bunting to Kerry for Tiltyard tent dressing.  ",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Event Flag Hire"
       ],
@@ -2050,7 +2040,7 @@
         "sJwYUzY.RXmdwTyDhG2.Qg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Focus"
       ],
@@ -2070,7 +2060,7 @@
       ],
       "subLocationIds": [],
       "notes": "Bags can be left in \"Mrs Neal's\" yard",
-      "format": "default",
+      "format": "past",
       "tags": [
         "MP Squares"
       ],
@@ -2088,7 +2078,7 @@
       ],
       "locationIds": [],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "HCP",
         "VS Creative"
@@ -2106,7 +2096,7 @@
         "wa2tC2s3S0GTJi1eSYlsOg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "EEP Security"
       ],
@@ -2125,7 +2115,7 @@
         "wa2tC2s3S0GTJi1eSYlsOg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Garden Catering (Crew)"
       ],
@@ -2146,7 +2136,7 @@
       ],
       "subLocationIds": [],
       "notes": "Team of 4/5.  Van and trailer. \nHandover 4 x flags for Wristband tent to Louis",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Event Flag Hire"
       ],
@@ -2166,7 +2156,7 @@
       ],
       "subLocationIds": [],
       "notes": "Saturday confirming wet weather plan and install",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Sunbrella"
       ],
@@ -2186,7 +2176,7 @@
         "avDh6Lx0QwG941DZ.ed0Og"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Eco Furniture"
       ],
@@ -2206,7 +2196,7 @@
         "avDh6Lx0QwG941DZ.ed0Og"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Eco Furniture"
       ],
@@ -2227,7 +2217,7 @@
       ],
       "subLocationIds": [],
       "notes": "Ready for load in at 6pm\nKomex Kitchen / Duck Shed / Only Jerkin",
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -2247,7 +2237,7 @@
       ],
       "subLocationIds": [],
       "notes": "Base Court, Clock Court and Fountain Court to set up HELP! (Sunbrella) and Guest arrival areas.",
-      "format": "default",
+      "format": "past",
       "tags": [
         "HCP"
       ],
@@ -2267,7 +2257,7 @@
       ],
       "subLocationIds": [],
       "notes": "Move all signage into Palace Courtyards for install",
-      "format": "default",
+      "format": "past",
       "tags": [
         "InSite Graphics"
       ],
@@ -2286,7 +2276,7 @@
       "locationIds": [],
       "subLocationIds": [],
       "notes": "Tiltyard Garden, Wilderness, Privy Garden, Apartment 14, Apartment 14 Locker and Adjacent Space, Apartment 14 Community Room, 32A, Albermarle Suite, Members Room Access",
-      "format": "default",
+      "format": "past",
       "tags": [
         "HCP",
         "VS Creative"
@@ -2303,7 +2293,7 @@
       ],
       "locationIds": [],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "HCP"
       ],
@@ -2321,7 +2311,7 @@
         "WndxCJoyQ.SwnfUN88EeFg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "HCP",
         "Rock Safely"
@@ -2342,7 +2332,7 @@
         "avDh6Lx0QwG941DZ.ed0Og"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "InSite Graphics"
       ],
@@ -2361,7 +2351,7 @@
         "BCSTWTmNQjuZfZGD7goaIg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "InSite Graphics"
       ],
@@ -2381,7 +2371,7 @@
       ],
       "subLocationIds": [],
       "notes": "Install large maps into Wilderness and overlays on HCP signs, totems and flags",
-      "format": "default",
+      "format": "past",
       "tags": [
         "InSite Graphics"
       ],
@@ -2401,7 +2391,7 @@
       ],
       "subLocationIds": [],
       "notes": "Driver departs 18:00 & leaves van with keys with VSC Site Mgmt.",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Focus"
       ],
@@ -2420,7 +2410,7 @@
         "BCSTWTmNQjuZfZGD7goaIg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "HCP"
       ],
@@ -2440,7 +2430,7 @@
       ],
       "subLocationIds": [],
       "notes": "Flower Pot, Cart Track, Kingston Gates and East Front Gardens x 2 marshalling.\nRefer to separate Carbonite Schedule for details.",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Carbonite - Traffic Management"
       ],
@@ -2461,7 +2451,7 @@
       ],
       "subLocationIds": [],
       "notes": "Run 2\nvehicle has trailer",
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -2482,7 +2472,7 @@
       ],
       "subLocationIds": [],
       "notes": "Storage for furniture inc Aladdin's counter",
-      "format": "default",
+      "format": "past",
       "tags": [
         "HCP",
         "VS Creative"
@@ -2504,7 +2494,7 @@
       ],
       "subLocationIds": [],
       "notes": "Photograph any damage / keep wrapping. Eco provide their own installation team",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Eco Furniture"
       ],
@@ -2522,7 +2512,7 @@
       ],
       "locationIds": [],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Bloomberg"
       ],
@@ -2540,7 +2530,7 @@
       ],
       "subLocationIds": [],
       "notes": "Ready by 10am for Palace opening to the public",
-      "format": "default",
+      "format": "past",
       "tags": [
         "MP Squares"
       ],
@@ -2560,7 +2550,7 @@
       ],
       "subLocationIds": [],
       "notes": "Prioritise in order of trader arrival",
-      "format": "default",
+      "format": "past",
       "tags": [
         "MP Squares"
       ],
@@ -2580,7 +2570,7 @@
       ],
       "subLocationIds": [],
       "notes": "Bags can be left in Mrs Neal's yard.\nWork with Kerry re: furniture / props deliveries.\nBuild GJS Gazebo's by early afternoon - for Artists",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Old Skool"
       ],
@@ -2600,7 +2590,7 @@
       ],
       "subLocationIds": [],
       "notes": "Mrs Neals Garden x 4 - from KERB",
-      "format": "default",
+      "format": "past",
       "tags": [
         "MP Squares"
       ],
@@ -2621,7 +2611,7 @@
       ],
       "subLocationIds": [],
       "notes": "4/5 people deliver, drop and return to depot - leaving 2 on site to set up. Leave through Flowerpot\nUrinal unit - position in the NORTH",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Just Loos"
       ],
@@ -2642,7 +2632,7 @@
       ],
       "subLocationIds": [],
       "notes": "Connection to mains water by Governors Gate. Leave through Flowerpot",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Just Loos"
       ],
@@ -2663,7 +2653,7 @@
       ],
       "subLocationIds": [],
       "notes": "Leave through Flowerpot",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Just Loos"
       ],
@@ -2683,7 +2673,7 @@
         "BCSTWTmNQjuZfZGD7goaIg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "MP Squares",
         "Focus"
@@ -2704,7 +2694,7 @@
       ],
       "subLocationIds": [],
       "notes": "Brandon Gee 07830 817645\nJordane Whynes 07368 379 572",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Falcon Cleaning"
       ],
@@ -2725,7 +2715,7 @@
       ],
       "subLocationIds": [],
       "notes": "Final order is:\nRoller Ball, Coconut shy, Dartboard, Hook a Duck, Ring toss, Tin Pan Alley, Hoopla, The High Striker/ Test of Strength\n\n4 games on Cheese 1 with High Striker\n3 games on Cheese 3",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Irvin Leisure"
       ],
@@ -2744,7 +2734,7 @@
         "BCSTWTmNQjuZfZGD7goaIg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Focus"
       ],
@@ -2766,7 +2756,7 @@
       ],
       "subLocationIds": [],
       "notes": "Basic works outside Privy Gate 10mx3m inc. van until 18:00, then moving into Privy Gardens at 18:00",
-      "format": "default",
+      "format": "past",
       "tags": [
         "MP Squares",
         "Lime Blue"
@@ -2787,7 +2777,7 @@
         "avDh6Lx0QwG941DZ.ed0Og"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Perudo"
       ],
@@ -2806,7 +2796,7 @@
         "BCSTWTmNQjuZfZGD7goaIg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "MP Squares"
       ],
@@ -2827,7 +2817,7 @@
       ],
       "subLocationIds": [],
       "notes": "WORKING LIGHT FROM VS CREATIVE - VIA LOUIS\nCheck final bunting positions with Victoria to ensure in correct positions with tents.  \nLeave spare with Louis for Stage Mgrs to dress tents.",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Old Skool",
         "Event Flag Hire"
@@ -2849,7 +2839,7 @@
       ],
       "subLocationIds": [],
       "notes": "JJ delivering to Baked Bird",
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -2870,7 +2860,7 @@
       ],
       "subLocationIds": [],
       "notes": "Crowbond delivering to multiple traders",
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -2888,7 +2878,7 @@
       ],
       "locationIds": [],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "MP Squares"
       ],
@@ -2905,7 +2895,7 @@
         "BCSTWTmNQjuZfZGD7goaIg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "InSite Graphics"
       ],
@@ -2926,7 +2916,7 @@
       ],
       "subLocationIds": [],
       "notes": "(Menu signs and tools) - stay on site",
-      "format": "default",
+      "format": "past",
       "tags": [
         "InSite Graphics"
       ],
@@ -2947,7 +2937,7 @@
       ],
       "subLocationIds": [],
       "notes": "3 x Luton Vans with trailers",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Sunbrella"
       ],
@@ -2968,7 +2958,7 @@
       ],
       "subLocationIds": [],
       "notes": "Run 2",
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -2989,7 +2979,7 @@
       ],
       "subLocationIds": [],
       "notes": "Run 6",
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -3010,7 +3000,7 @@
       ],
       "subLocationIds": [],
       "notes": "Delivery first to East Front (Help! Team Challenges)\nThen Adam's Gate - Tiltyard Gardens (Help!), Wilderness (Volunteering Check-in), \nThen Trophy Drive - West Front (Scanners), Clock Court (Help!)\n",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Options Great Hire"
       ],
@@ -3030,7 +3020,7 @@
       ],
       "subLocationIds": [],
       "notes": "2 KERB Gazebo's",
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -3050,7 +3040,7 @@
       ],
       "subLocationIds": [],
       "notes": "Maximum 87dB\nCarpenters from DSA",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Focus"
       ],
@@ -3071,7 +3061,7 @@
       ],
       "subLocationIds": [],
       "notes": "See Furniture Plan",
-      "format": "default",
+      "format": "past",
       "tags": [
         "VS Creative",
         "Old Skool"
@@ -3093,7 +3083,7 @@
       ],
       "subLocationIds": [],
       "notes": "Grey Bins and Pallets\n18 Tonne curtain sider\nIncluding 4 x pallets for GO letters",
-      "format": "default",
+      "format": "past",
       "tags": [
         "GJS"
       ],
@@ -3114,7 +3104,7 @@
       ],
       "subLocationIds": [],
       "notes": "Ready for Crew Lunch ",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Eco Furniture",
         "Old Skool"
@@ -3135,7 +3125,7 @@
       ],
       "subLocationIds": [],
       "notes": "Justin to handover keys to VSC production management team on departure.",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Focus"
       ],
@@ -3154,7 +3144,7 @@
         "rfWMwhqyQZeGYkkW.NXLZQ"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Focus"
       ],
@@ -3174,7 +3164,7 @@
       ],
       "subLocationIds": [],
       "notes": "Focus van to drive & tip at Tiltyard",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Focus"
       ],
@@ -3194,7 +3184,7 @@
       ],
       "subLocationIds": [],
       "notes": "WORKING LIGHT FROM VS CREATIVE - VIA LOUIS\n1 x Colonial for Help! in Clock Court - needs hand balling from Tennis Court Lane\n5m Sunbrella for Help! in Tiltyard Gardens \n4m Sunbrella for Volunteering Check-in in Wilderness \n2 x Colonials in Privy Garden ",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Sunbrella"
       ],
@@ -3214,7 +3204,7 @@
       ],
       "subLocationIds": [],
       "notes": "Jenna, Tami, B, Marianne, Elodie, Christopher, Joanna, Katlyn",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Bloomberg"
       ],
@@ -3234,7 +3224,7 @@
       ],
       "subLocationIds": [],
       "notes": "Dan, Kim",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Bloomberg"
       ],
@@ -3256,7 +3246,7 @@
       ],
       "subLocationIds": [],
       "notes": "BES booked via Bloomberg - Rob & Jonathan\nVW Campervan staying overnight in Green Car park",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Bloomberg",
         "BES"
@@ -3277,7 +3267,7 @@
       "locationIds": [],
       "subLocationIds": [],
       "notes": "4 staff",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Bloomberg",
         "Restaurant Associates"
@@ -3295,7 +3285,7 @@
         "zhaAVFHHRROpG26JLMOk5g"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Bloomberg"
       ],
@@ -3316,7 +3306,7 @@
       ],
       "subLocationIds": [],
       "notes": "WORKING LIGHT FROM VS CREATIVE - VIA LOUIS\nLandrovers & trailers. -2 teams\nDrop at West Front Apron, then access Tiltyard via Tennis Court Lane\nEmergency contact - Jesse Powell 07590 046552",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Perfect Pitch"
       ],
@@ -3326,68 +3316,13 @@
     },
     {
       "date": "2025-09-27",
-      "time": "18:00",
-      "description": "Install power to outside Traders in Tiltyard cafe",
-      "tagIds": [
-        "Xi8rOuVnRs-ihhFiHGv8kg"
-      ],
-      "locationIds": [
-        "COHsc-VZRWqGTuT9BR136A"
-      ],
-      "subLocationIds": [],
-      "notes": "32a x 3 socket from back of Garden Room. 60m of cable required.     See Power schedule",
-      "format": "new",
-      "tags": [
-        "AAC Power"
-      ],
-      "locations": [
-        "Tiltyard"
-      ]
-    },
-    {
-      "date": "2025-09-27",
-      "time": "All day",
-      "description": "Mowing of East Front Gardens lawns ",
-      "tagIds": [
-        "DonIXlE.SeqzQAe5V0GXLA"
-      ],
-      "locationIds": [
-        "BCSTWTmNQjuZfZGD7goaIg"
-      ],
-      "subLocationIds": [],
-      "notes": "Clear grass (geese issue) \nBadminton & Table Tennis Lawns to be complete by 2pm Saturday ready for Team Challenges set up by GL&F",
-      "format": "new",
-      "tags": [
-        "HCP"
-      ],
-      "locations": [
-        "East Front Palace Gardens"
-      ]
-    },
-    {
-      "date": "2025-09-27",
       "time": "09:00",
       "description": "Joe Collins on site - brief with Roz - location tba",
       "tagIds": [],
       "locationIds": [],
       "subLocationIds": [],
-      "format": "new",
+      "format": "past",
       "tags": [],
-      "locations": []
-    },
-    {
-      "date": "2025-09-27",
-      "time": "08:00",
-      "description": "Phoebe Collins on site - Production Office ",
-      "tagIds": [
-        "2vyf4cICQt-Nh35ALy0KbA"
-      ],
-      "locationIds": [],
-      "subLocationIds": [],
-      "format": "new",
-      "tags": [
-        "VS Creative"
-      ],
       "locations": []
     },
     {
@@ -3399,7 +3334,7 @@
       ],
       "locationIds": [],
       "subLocationIds": [],
-      "format": "new",
+      "format": "past",
       "tags": [
         "VS Creative"
       ],
@@ -3417,7 +3352,7 @@
         "rfWMwhqyQZeGYkkW.NXLZQ"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "important",
       "tags": [
         "Brick by Brick (Steve",
         "Obby",
@@ -3439,7 +3374,7 @@
         "rfWMwhqyQZeGYkkW.NXLZQ"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "important",
       "tags": [
         "Brick by Brick (Steve",
         "Obby",
@@ -3462,7 +3397,7 @@
       ],
       "subLocationIds": [],
       "notes": "Unload props into Clore - park in car park",
-      "format": "new",
+      "format": "past",
       "tags": [
         "Get Lost & Found"
       ],
@@ -3482,7 +3417,7 @@
         "KHWNal9JQy6EJLD9mjcMxg"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "past",
       "tags": [
         "Get Lost & Found"
       ],
@@ -3502,7 +3437,7 @@
         "bkARDFAjQnayKPdJ8PoK1A"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "past",
       "tags": [
         "VS Creative",
         "Get Lost & Found"
@@ -3524,33 +3459,12 @@
       ],
       "subLocationIds": [],
       "notes": "Needs 2 hours to setup",
-      "format": "new",
+      "format": "past",
       "tags": [
         "The Bug Club"
       ],
       "locations": [
         "Flower Pot Gate"
-      ]
-    },
-    {
-      "date": "2025-09-27",
-      "time": "18:15-20:00",
-      "description": "Lime Blue, Bubble Bar& Edible Postcards counters load into Privy Garden",
-      "tagIds": [
-        "a.A-QALuWT46KS8nX8kh8wg",
-        "TAtz-oeITKeLO4-uxu.DPw"
-      ],
-      "locationIds": [
-        "avDh6Lx0QwG941DZ.ed0Og"
-      ],
-      "subLocationIds": [],
-      "notes": "2 x Velvet Living Counters 1.8m long",
-      "format": "new",
-      "tags": [
-        "KERB"
-      ],
-      "locations": [
-        "Cart Track Gate"
       ]
     },
     {
@@ -3564,12 +3478,33 @@
         "BCSTWTmNQjuZfZGD7goaIg"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "past",
       "tags": [
         "VS Creative"
       ],
       "locations": [
         "East Front Palace Gardens"
+      ]
+    },
+    {
+      "date": "2025-09-27",
+      "time": "18:01",
+      "description": "Edible postcards delivered - store in RND (Production office)",
+      "tagIds": [
+        "pDXUww6IRfCeVV6ej8n--Q",
+        "TAtz-oeITKeLO4-uxu.DPw"
+      ],
+      "locationIds": [
+        "wa2tC2s3S0GTJi1eSYlsOg"
+      ],
+      "subLocationIds": [],
+      "notes": "Edible postcards etc\nDelivery through Tennis CL",
+      "format": "past",
+      "tags": [
+        "Bombas & Parr"
+      ],
+      "locations": [
+        "Tennis Court lane"
       ]
     },
     {
@@ -3583,12 +3518,215 @@
         "rfWMwhqyQZeGYkkW.NXLZQ"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "past",
       "tags": [
         "Focus"
       ],
       "locations": [
         "Adams Gate"
+      ]
+    },
+    {
+      "date": "2025-09-27",
+      "time": "18:00",
+      "description": "2 x Velvet Living Counters 1.8m long for Bubble Bar",
+      "tagIds": [
+        "a.A-QALuWT46KS8nX8kh8wg",
+        "TAtz-oeITKeLO4-uxu.DPw"
+      ],
+      "locationIds": [
+        "Ko4msj1HS2aCTlQg0iiZPA"
+      ],
+      "subLocationIds": [],
+      "notes": "2 x Velvet Living Counters 1.8m long",
+      "format": "past",
+      "tags": [
+        "KERB"
+      ],
+      "locations": [
+        "Flower Pot Gate"
+      ]
+    },
+    {
+      "date": "2025-09-27",
+      "time": "18:15-20:00",
+      "description": "Lime Blue & Edible Postcards counters load into Privy Garden",
+      "tagIds": [
+        "a.A-QALuWT46KS8nX8kh8wg",
+        "TAtz-oeITKeLO4-uxu.DPw"
+      ],
+      "locationIds": [
+        "avDh6Lx0QwG941DZ.ed0Og"
+      ],
+      "subLocationIds": [],
+      "notes": "2 x Velvet Living Counters 1.8m long",
+      "format": "past",
+      "tags": [
+        "KERB"
+      ],
+      "locations": [
+        "Cart Track Gate"
+      ]
+    },
+    {
+      "date": "2025-09-27",
+      "time": "18:00",
+      "description": "Load into kiosks and cafes",
+      "tagIds": [
+        "a.A-QALuWT46KS8nX8kh8wg"
+      ],
+      "locationIds": [
+        "COHsc-VZRWqGTuT9BR136A"
+      ],
+      "subLocationIds": [],
+      "format": "past",
+      "tags": [
+        "KERB"
+      ],
+      "locations": [
+        "Tiltyard"
+      ]
+    },
+    {
+      "date": "2025-09-27",
+      "time": "08:00",
+      "description": "Phoebe Collins on site - Production Office, orientation with Sandra",
+      "tagIds": [
+        "2vyf4cICQt-Nh35ALy0KbA"
+      ],
+      "locationIds": [],
+      "subLocationIds": [],
+      "format": "past",
+      "tags": [
+        "VS Creative"
+      ],
+      "locations": []
+    },
+    {
+      "date": "2025-09-27",
+      "time": "12:00",
+      "description": "Bins, cardboard 1 tonne bags and IBC for Kerb delivered",
+      "tagIds": [
+        "9EuTqFF2Ty-Gm.jEoXW9SA",
+        "TAtz-oeITKeLO4-uxu.DPw"
+      ],
+      "locationIds": [
+        "BCSTWTmNQjuZfZGD7goaIg"
+      ],
+      "subLocationIds": [],
+      "notes": "40 x 1100L bins, 100 x 240L bins, 50 x Feminine hygiene bins\nIBC for KERB boneyard\nCardboard bags to help reduce waste - for traders to use",
+      "format": "past",
+      "tags": [
+        "Falcon Cleaning"
+      ],
+      "locations": [
+        "East Front Palace Gardens"
+      ]
+    },
+    {
+      "date": "2025-09-27",
+      "time": "All day",
+      "description": "Mowing of East Front Gardens lawns ",
+      "tagIds": [
+        "DonIXlE.SeqzQAe5V0GXLA"
+      ],
+      "locationIds": [
+        "BCSTWTmNQjuZfZGD7goaIg"
+      ],
+      "subLocationIds": [],
+      "notes": "Clear grass (geese issue) \nBadminton & Table Tennis Lawns to be complete by 2pm Saturday ready for Team Challenges set up by GL&F",
+      "format": "past",
+      "tags": [
+        "HCP"
+      ],
+      "locations": [
+        "East Front Palace Gardens"
+      ]
+    },
+    {
+      "date": "2025-09-27",
+      "time": "12:00",
+      "description": "Tennis Court Lane and Trophy Gate security walkthrough - Victoria, Janet, Sandra, Ella, HCP, EEP",
+      "tagIds": [
+        "2ZI6vFm.Qly3z.9b6VLMZw",
+        "DonIXlE.SeqzQAe5V0GXLA",
+        "2vyf4cICQt-Nh35ALy0KbA"
+      ],
+      "locationIds": [
+        "KHWNal9JQy6EJLD9mjcMxg"
+      ],
+      "subLocationIds": [],
+      "format": "past",
+      "tags": [
+        "HCP",
+        "VS Creative",
+        "EEP Security"
+      ],
+      "locations": [
+        "Trophy Gate"
+      ]
+    },
+    {
+      "date": "2025-09-27",
+      "time": "10:00",
+      "description": "Stage Managers on site - briefing with Sandra and Marianne (2hrs)",
+      "tagIds": [
+        "2vyf4cICQt-Nh35ALy0KbA"
+      ],
+      "locationIds": [],
+      "subLocationIds": [],
+      "format": "past",
+      "tags": [
+        "VS Creative"
+      ],
+      "locations": []
+    },
+    {
+      "date": "2025-09-27",
+      "time": "12:00",
+      "description": "Meeting to discuss Show day access, artists etc",
+      "tagIds": [
+        "2ZI6vFm.Qly3z.9b6VLMZw",
+        "DonIXlE.SeqzQAe5V0GXLA",
+        "2vyf4cICQt-Nh35ALy0KbA"
+      ],
+      "locationIds": [
+        "fNQ9WhVdRle3iqLvJ4Wpiw"
+      ],
+      "subLocationIds": [
+        "plikfAQhQ84osQZNyEoU"
+      ],
+      "notes": "Victoria, Sandra, Janet, Kitty, Emily, Daphne",
+      "format": "past",
+      "tags": [
+        "HCP",
+        "VS Creative",
+        "EEP Security"
+      ],
+      "locations": [
+        "West Front of Palace"
+      ]
+    },
+    {
+      "date": "2025-09-27",
+      "time": "18:00",
+      "description": "Install power to outside Traders in Tiltyard cafe",
+      "tagIds": [
+        "Xi8rOuVnRs-ihhFiHGv8kg",
+        "a.A-QALuWT46KS8nX8kh8wg"
+      ],
+      "locationIds": [
+        "COHsc-VZRWqGTuT9BR136A"
+      ],
+      "subLocationIds": [],
+      "notes": "32a x 3 socket from back of Garden Room. 60m of cable required.     See Power schedule",
+      "format": "past",
+      "tags": [
+        "AAC Power",
+        "KERB"
+      ],
+      "locations": [
+        "Tiltyard"
       ]
     },
     {
@@ -3598,7 +3736,7 @@
       "tagIds": [],
       "locationIds": [],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [],
       "locations": []
     },
@@ -3614,7 +3752,7 @@
       ],
       "subLocationIds": [],
       "notes": "Mike Robbins at Trophy Gate to direct team through the Golden Door to Clore Centre (Use Clore Centre as base).",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Bloomberg Security"
       ],
@@ -3634,7 +3772,7 @@
       ],
       "subLocationIds": [],
       "notes": "During show live",
-      "format": "default",
+      "format": "past",
       "tags": [
         "MP Squares"
       ],
@@ -3652,7 +3790,7 @@
       ],
       "subLocationIds": [],
       "notes": "Contact Ella Jarman for detailed information",
-      "format": "default",
+      "format": "past",
       "tags": [],
       "locations": [
         "ALL of Palace"
@@ -3670,7 +3808,7 @@
       ],
       "subLocationIds": [],
       "notes": "Backline to go with Focus",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Focus"
       ],
@@ -3690,7 +3828,7 @@
       ],
       "subLocationIds": [],
       "notes": "Removed by the two Just Loos stand by crew",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Just Loos"
       ],
@@ -3708,7 +3846,7 @@
       ],
       "subLocationIds": [],
       "notes": "To Tiltyard Cafe. Call Sandra. KRM to open gate",
-      "format": "default",
+      "format": "past",
       "tags": [],
       "locations": [
         "Adams Gate"
@@ -3725,7 +3863,7 @@
         "avDh6Lx0QwG941DZ.ed0Og"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "LMS"
       ],
@@ -3744,7 +3882,7 @@
         "WndxCJoyQ.SwnfUN88EeFg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "VS Creative"
       ],
@@ -3761,31 +3899,11 @@
       ],
       "locationIds": [],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Sunrise / set"
       ],
       "locations": []
-    },
-    {
-      "date": "2025-09-28",
-      "time": "11:00-12:00",
-      "description": "Trayed Food Service & Hawkers live for initial rush (30m)",
-      "tagIds": [
-        "a.A-QALuWT46KS8nX8kh8wg"
-      ],
-      "locationIds": [
-        "BCSTWTmNQjuZfZGD7goaIg"
-      ],
-      "subLocationIds": [],
-      "notes": "Judge time according to guest arrivals",
-      "format": "default",
-      "tags": [
-        "KERB"
-      ],
-      "locations": [
-        "East Front Palace Gardens"
-      ]
     },
     {
       "date": "2025-09-28",
@@ -3799,7 +3917,7 @@
       ],
       "subLocationIds": [],
       "notes": "Crew base: Privy Kitchen",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Garden Catering (Crew)"
       ],
@@ -3819,7 +3937,7 @@
       ],
       "subLocationIds": [],
       "notes": "NB Urns take 45 m to heat up\nCrew base in smoking garden / Mrs Neals Yard",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Garden Catering (Crew)"
       ],
@@ -3838,7 +3956,7 @@
         "WndxCJoyQ.SwnfUN88EeFg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -3858,7 +3976,7 @@
       ],
       "subLocationIds": [],
       "notes": "With exception of Hanoi Kitchen 1, will leave when ready and signed off",
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -3878,7 +3996,7 @@
         "Ko4msj1HS2aCTlQg0iiZPA"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -3897,7 +4015,7 @@
         "WndxCJoyQ.SwnfUN88EeFg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Rock Safely"
       ],
@@ -3916,7 +4034,7 @@
         "WndxCJoyQ.SwnfUN88EeFg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "HCP"
       ],
@@ -3934,7 +4052,7 @@
       ],
       "subLocationIds": [],
       "notes": "Site Wide",
-      "format": "default",
+      "format": "past",
       "tags": [],
       "locations": [
         "ALL of Palace"
@@ -3952,7 +4070,7 @@
       ],
       "subLocationIds": [],
       "notes": "Exc BBG Security - dropped off directly to Clore\nx1 Garden staff with list to check off - not wristbands",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Garden Catering (Crew)"
       ],
@@ -3972,7 +4090,7 @@
       ],
       "subLocationIds": [],
       "notes": "NB Urns take 45 m to heat up\nCrew base in smoking garden / Mrs Neals Yard",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Garden Catering (Crew)"
       ],
@@ -3992,7 +4110,7 @@
         "WndxCJoyQ.SwnfUN88EeFg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB",
         "VS Creative"
@@ -4011,7 +4129,7 @@
       ],
       "locationIds": [],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Falcon Cleaning"
       ],
@@ -4027,7 +4145,7 @@
       ],
       "locationIds": [],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Patrick Yeboah"
       ],
@@ -4043,7 +4161,7 @@
       "locationIds": [],
       "subLocationIds": [],
       "notes": "Clear after event - trailers and vehicle need to return for loading ",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Irvin Leisure"
       ],
@@ -4060,7 +4178,7 @@
         "WndxCJoyQ.SwnfUN88EeFg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Falcon Cleaning"
       ],
@@ -4080,7 +4198,7 @@
       ],
       "subLocationIds": [],
       "notes": "13 cleaners total for show & de-rig",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Falcon Cleaning"
       ],
@@ -4099,7 +4217,7 @@
         "atr0TYaXT0OaK3gih2NIPg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Garden Catering (Crew)"
       ],
@@ -4119,7 +4237,7 @@
         "KHWNal9JQy6EJLD9mjcMxg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Garden Catering (Crew)"
       ],
@@ -4139,7 +4257,7 @@
         "KHWNal9JQy6EJLD9mjcMxg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Garden Catering (Crew)"
       ],
@@ -4159,7 +4277,7 @@
         "WndxCJoyQ.SwnfUN88EeFg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "HCP",
         "Bloomberg Security"
@@ -4179,7 +4297,7 @@
         "Ko4msj1HS2aCTlQg0iiZPA"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Carnival Collective"
       ],
@@ -4199,7 +4317,7 @@
         "Ko4msj1HS2aCTlQg0iiZPA"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "The Bug Club"
       ],
@@ -4216,7 +4334,7 @@
         "gMLEotaySbO6n3souIRTGw"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [],
       "locations": [
         "HCP Home Park"
@@ -4234,7 +4352,7 @@
       ],
       "subLocationIds": [],
       "notes": "Organised by HCP - time TBC",
-      "format": "default",
+      "format": "past",
       "tags": [
         "HCP"
       ],
@@ -4254,7 +4372,7 @@
       ],
       "subLocationIds": [],
       "notes": "Coconut shy, Dart Board Game, Hook a duck, High Striker\n\n2 hours to install",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Irvin Leisure"
       ],
@@ -4273,7 +4391,7 @@
         "WndxCJoyQ.SwnfUN88EeFg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Falcon Cleaning"
       ],
@@ -4292,7 +4410,7 @@
         "BCSTWTmNQjuZfZGD7goaIg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Just Loos"
       ],
@@ -4311,7 +4429,7 @@
         "fNQ9WhVdRle3iqLvJ4Wpiw"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "HCP"
       ],
@@ -4330,7 +4448,7 @@
         "avDh6Lx0QwG941DZ.ed0Og"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Focus"
       ],
@@ -4350,7 +4468,7 @@
         "Ko4msj1HS2aCTlQg0iiZPA"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Lime Blue"
       ],
@@ -4370,7 +4488,7 @@
       ],
       "subLocationIds": [],
       "notes": "LMS arrive - Vehicle DM69 LMS\nLMS providing 6m x 3m tent for medics\nClaire Waller Paramedic 07907380234\nDuncan Anderson and Darcy Thomas.",
-      "format": "default",
+      "format": "past",
       "tags": [
         "LMS"
       ],
@@ -4391,7 +4509,7 @@
       ],
       "subLocationIds": [],
       "notes": "Puppets with Guts - quick chat with sound HOD and stage familiarisation with Roz",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Focus",
         "Entertainers Main Stage"
@@ -4411,7 +4529,7 @@
         "sJwYUzY.RXmdwTyDhG2.Qg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Focus"
       ],
@@ -4430,7 +4548,7 @@
         "sJwYUzY.RXmdwTyDhG2.Qg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Focus"
       ],
@@ -4447,7 +4565,7 @@
       ],
       "locationIds": [],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Entertainers Main Stage"
       ],
@@ -4462,7 +4580,7 @@
       ],
       "locationIds": [],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Entertainers Main Stage"
       ],
@@ -4477,7 +4595,7 @@
       ],
       "locationIds": [],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Entertainers Main Stage"
       ],
@@ -4492,7 +4610,7 @@
       ],
       "locationIds": [],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Entertainers Main Stage"
       ],
@@ -4507,7 +4625,7 @@
       ],
       "locationIds": [],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Entertainers Main Stage"
       ],
@@ -4522,7 +4640,7 @@
       ],
       "locationIds": [],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Entertainers Main Stage"
       ],
@@ -4539,7 +4657,7 @@
         "sJwYUzY.RXmdwTyDhG2.Qg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Sunbrella"
       ],
@@ -4558,7 +4676,7 @@
         "wa2tC2s3S0GTJi1eSYlsOg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Garden Catering (Crew)"
       ],
@@ -4578,7 +4696,7 @@
       ],
       "subLocationIds": [],
       "notes": "Kettles not urns\nJugs of water not Kilner jars",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Garden Catering (Crew)"
       ],
@@ -4597,7 +4715,7 @@
         "rYoMb0eQQW-Py94ZMvvF3A"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Garden Catering (Crew)"
       ],
@@ -4616,7 +4734,7 @@
         "COHsc-VZRWqGTuT9BR136A"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Old Skool"
       ],
@@ -4635,7 +4753,7 @@
         "gMLEotaySbO6n3souIRTGw"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Carbonite - Traffic Management"
       ],
@@ -4655,7 +4773,7 @@
       ],
       "subLocationIds": [],
       "notes": "Flower Pot, Cart Track Gates and East Front Gardens x 2 marshalling.\nRefer to separate Carbonite Schedule for details.",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Carbonite - Traffic Management"
       ],
@@ -4675,7 +4793,7 @@
         "fgAjF3huSEmWJG533DZmEg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "HCP",
         "VS Creative"
@@ -4696,7 +4814,7 @@
         "WndxCJoyQ.SwnfUN88EeFg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "HCP",
         "VS Creative"
@@ -4717,7 +4835,7 @@
         "rYoMb0eQQW-Py94ZMvvF3A"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "HCP",
         "VS Creative"
@@ -4738,7 +4856,7 @@
         "WndxCJoyQ.SwnfUN88EeFg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "HCP",
         "VS Creative"
@@ -4759,7 +4877,7 @@
       ],
       "subLocationIds": [],
       "notes": "East Front Gardens",
-      "format": "default",
+      "format": "past",
       "tags": [
         "VS Creative"
       ],
@@ -4777,7 +4895,7 @@
       ],
       "locationIds": [],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "HCP",
         "VS Creative"
@@ -4797,7 +4915,7 @@
       ],
       "subLocationIds": [],
       "notes": "Chicken x 9\nFish x 4\nSalt Beef x 10\nVegetarian x 1",
-      "format": "default",
+      "format": "past",
       "tags": [
         "MP Squares",
         "VS Creative"
@@ -4817,7 +4935,7 @@
       "locationIds": [],
       "subLocationIds": [],
       "notes": "Insite need to remove graphics prior",
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -4834,7 +4952,7 @@
       "locationIds": [],
       "subLocationIds": [],
       "notes": "BBG to advise",
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -4851,7 +4969,7 @@
         "COHsc-VZRWqGTuT9BR136A"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -4870,7 +4988,7 @@
         "BCSTWTmNQjuZfZGD7goaIg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -4889,30 +5007,13 @@
         "WndxCJoyQ.SwnfUN88EeFg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB"
       ],
       "locations": [
         "ALL of Palace"
       ]
-    },
-    {
-      "date": "2025-09-28",
-      "time": "10:00",
-      "description": "KERB Agency Staff Arrive onsite x250 - Gemma KERB Staffing Manager to oversee",
-      "tagIds": [
-        "a.A-QALuWT46KS8nX8kh8wg",
-        "TAtz-oeITKeLO4-uxu.DPw"
-      ],
-      "locationIds": [],
-      "subLocationIds": [],
-      "notes": "Intro Gemma to Ella",
-      "format": "default",
-      "tags": [
-        "KERB"
-      ],
-      "locations": []
     },
     {
       "date": "2025-09-28",
@@ -4927,7 +5028,7 @@
       ],
       "subLocationIds": [],
       "notes": "TENANCY FOR INSIDE PALACE ONLY TILL 20:00",
-      "format": "default",
+      "format": "past",
       "tags": [
         "InSite Graphics"
       ],
@@ -4942,7 +5043,7 @@
       "tagIds": [],
       "locationIds": [],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [],
       "locations": []
     },
@@ -4958,7 +5059,7 @@
       ],
       "subLocationIds": [],
       "notes": "Driver departs 19:00 & leaves van with keys with VSC Site Mgmt.",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Focus"
       ],
@@ -4981,7 +5082,7 @@
         "WndxCJoyQ.SwnfUN88EeFg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "HCP",
         "VS Creative",
@@ -5009,7 +5110,7 @@
       ],
       "subLocationIds": [],
       "notes": "Guest Exit through Wilderness via Rose Garden - can exit via West Front on cue from Bloomberg Security (subject to guest numbers)",
-      "format": "default",
+      "format": "past",
       "tags": [
         "HCP",
         "VS Creative",
@@ -5033,7 +5134,7 @@
       ],
       "subLocationIds": [],
       "notes": "\n",
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -5051,7 +5152,7 @@
       "locationIds": [],
       "subLocationIds": [],
       "notes": "Any cars remaining - alert HCP Control ",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Carbonite - Traffic Management"
       ],
@@ -5069,7 +5170,7 @@
       ],
       "subLocationIds": [],
       "notes": "Flower Pot, Cart Track Gates and East Front Gardens x 2 marshalling.\nRefer to separate Carbonite Schedule for details.",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Carbonite - Traffic Management"
       ],
@@ -5087,7 +5188,7 @@
       "locationIds": [],
       "subLocationIds": [],
       "notes": "05:30 Mark out Green Car Park leaving 150 Production spaces at HCP end.",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Carbonite - Traffic Management"
       ],
@@ -5106,7 +5207,7 @@
       ],
       "subLocationIds": [],
       "notes": "Pastries in the room and then we can call in a bacon roll/rolls when she gets here? \n",
-      "format": "default",
+      "format": "past",
       "tags": [
         "VS Creative",
         "Garden Catering (Crew)"
@@ -5126,7 +5227,7 @@
         "BCSTWTmNQjuZfZGD7goaIg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "MP Squares"
       ],
@@ -5147,7 +5248,7 @@
       ],
       "subLocationIds": [],
       "notes": "Long wheel base sprinter",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Lime Blue"
       ],
@@ -5167,7 +5268,7 @@
       ],
       "subLocationIds": [],
       "notes": "Including 1 x forklift driver 1 x telehandler - Sandra and Roz need 1 x driver for the buggy 8.45-11.30am and on call in the afternoon during the event as performers end ",
-      "format": "default",
+      "format": "past",
       "tags": [
         "MP Squares"
       ],
@@ -5185,7 +5286,7 @@
       "locationIds": [],
       "subLocationIds": [],
       "notes": "4 to help Sandra and Roz",
-      "format": "default",
+      "format": "past",
       "tags": [
         "MP Squares"
       ],
@@ -5203,7 +5304,7 @@
       ],
       "subLocationIds": [],
       "notes": "Including Family Wristband tent\nMagic Garden, Wilderness and Tiltyard",
-      "format": "default",
+      "format": "past",
       "tags": [
         "InSite Graphics"
       ],
@@ -5220,7 +5321,7 @@
       ],
       "locationIds": [],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "InSite Graphics"
       ],
@@ -5238,7 +5339,7 @@
         "COHsc-VZRWqGTuT9BR136A"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Old Skool"
       ],
@@ -5258,7 +5359,7 @@
       ],
       "subLocationIds": [],
       "notes": "HCP Have a set area TBC ",
-      "format": "default",
+      "format": "past",
       "tags": [
         "MP Squares"
       ],
@@ -5279,7 +5380,7 @@
       ],
       "subLocationIds": [],
       "notes": "Local crew assist",
-      "format": "default",
+      "format": "past",
       "tags": [
         "MP Squares",
         "Focus"
@@ -5299,7 +5400,7 @@
         "BCSTWTmNQjuZfZGD7goaIg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "MP Squares"
       ],
@@ -5320,7 +5421,7 @@
       ],
       "subLocationIds": [],
       "notes": "BES booked via Bloomberg - Rob & Jonathan\n\nTrophy Drive - West Front (Scanners)\nClock Court (Help!)\nTiltyard Gardens (Help!)\nWilderness (Volunteering Check-in)\nEast Front (Help!, Team Challenges)",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Bloomberg",
         "BES"
@@ -5341,7 +5442,7 @@
       ],
       "subLocationIds": [],
       "notes": "Collect via Adam's Gate - Tiltyard Gardens (Help!), Wilderness (Volunteering Check-in), \nThen Trophy Drive - West Front (Scanners), Clock Court (Help!)\nThen East Front (Help! Team Challenges)\nBES remove all vinyls first!!!\n",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Options Great Hire"
       ],
@@ -5361,7 +5462,7 @@
       ],
       "subLocationIds": [],
       "notes": "Focus van to pick up at Tiltyard",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Focus"
       ],
@@ -5381,7 +5482,7 @@
         "KHWNal9JQy6EJLD9mjcMxg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Garden Catering (Crew)"
       ],
@@ -5403,7 +5504,7 @@
       ],
       "subLocationIds": [],
       "notes": "Position tensa (from Eco furniture) along drive.\n4 x flags (from Event Flag Co) attached to Wristband tent poles. \nTables for Wristband tent (from Eco furniture). \n2 x Black plinths for Scanners (Options Hire)\n2 x MP Squares. \nScanners from Bloomberg, RA team - Room 39, CEO Office to charge scanners",
-      "format": "default",
+      "format": "past",
       "tags": [
         "MP Squares",
         "VS Creative",
@@ -5425,7 +5526,7 @@
       ],
       "subLocationIds": [],
       "notes": "Work with Kerry re: furniture layouts / wiping down if wet (paper towel from Falcon).",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Old Skool"
       ],
@@ -5442,7 +5543,7 @@
       ],
       "locationIds": [],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Old Skool"
       ],
@@ -5461,7 +5562,7 @@
       ],
       "subLocationIds": [],
       "notes": "Store bunting/hooks for Event Flag Hire",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Focus",
         "Old Skool"
@@ -5481,7 +5582,7 @@
         "COHsc-VZRWqGTuT9BR136A"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Old Skool"
       ],
@@ -5502,7 +5603,7 @@
       ],
       "subLocationIds": [],
       "notes": "MP Squares Crew",
-      "format": "default",
+      "format": "past",
       "tags": [
         "MP Squares",
         "VS Creative"
@@ -5524,7 +5625,7 @@
       ],
       "subLocationIds": [],
       "notes": "Collate tensa & 4 x flags (to Kerry) attached to Wristband tent poles. Plus tables for wristbands (to Kerry).\nForklift back to East Front.\nCollect bunting & shepherd's hooks from Tiltyard",
-      "format": "default",
+      "format": "past",
       "tags": [
         "MP Squares",
         "VS Creative"
@@ -5548,7 +5649,7 @@
         "WndxCJoyQ.SwnfUN88EeFg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "HCP",
         "VS Creative",
@@ -5572,7 +5673,7 @@
       ],
       "subLocationIds": [],
       "notes": "VS Creative to assist where possible",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Bloomberg"
       ],
@@ -5590,7 +5691,7 @@
       "locationIds": [],
       "subLocationIds": [],
       "notes": "CLOCK COURT A PRIORITY - TENANCY ONLY TILL 20:00\nVS Creative, Louis assist where possible.",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Bloomberg"
       ],
@@ -5607,7 +5708,7 @@
         "ruJ5-1fGTcWDskkx42Sq5w"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Old Skool"
       ],
@@ -5626,7 +5727,7 @@
         "WndxCJoyQ.SwnfUN88EeFg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Sunbrella"
       ],
@@ -5645,7 +5746,7 @@
         "fgAjF3huSEmWJG533DZmEg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Sunbrella"
       ],
@@ -5665,7 +5766,7 @@
       ],
       "subLocationIds": [],
       "notes": "Jenna, Tami, B, Marianne, Elodie, Christopher, Joanna, Katlyn",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Bloomberg"
       ],
@@ -5685,7 +5786,7 @@
       ],
       "subLocationIds": [],
       "notes": "Team of 13",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Bloomberg"
       ],
@@ -5704,7 +5805,7 @@
       "locationIds": [],
       "subLocationIds": [],
       "notes": "Various timings for teams as follows:\nHelp! 09:00-18:00\nFOH Staff 09:00-17:00\nTeam Challenges 09:00-17:30\nBBG Connects 09:00-17:00\nVolunteering 11:00-16:00\nBag Check 09:00-19:00\nTattoos 10:00-17:00",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Bloomberg",
         "Restaurant Associates"
@@ -5722,7 +5823,7 @@
         "zhaAVFHHRROpG26JLMOk5g"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Bloomberg"
       ],
@@ -5741,7 +5842,7 @@
         "zhaAVFHHRROpG26JLMOk5g"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Bloomberg"
       ],
@@ -5758,7 +5859,7 @@
         "WndxCJoyQ.SwnfUN88EeFg"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "past",
       "tags": [],
       "locations": [
         "ALL of Palace"
@@ -5775,7 +5876,7 @@
         "lWsc3CHhT9eVCCcvaCkIeQ"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "important",
       "tags": [
         "Adam Kelly (Poseur DJ)"
       ],
@@ -5794,7 +5895,7 @@
         "lWsc3CHhT9eVCCcvaCkIeQ"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "important",
       "tags": [
         "Scarlet Entertainment (Roaming Ducks)"
       ],
@@ -5813,7 +5914,7 @@
         "lWsc3CHhT9eVCCcvaCkIeQ"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "past",
       "tags": [
         "Get Lost & Found"
       ],
@@ -5832,7 +5933,7 @@
         "lWsc3CHhT9eVCCcvaCkIeQ"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "past",
       "tags": [
         "The Bug Club"
       ],
@@ -5851,7 +5952,7 @@
         "lWsc3CHhT9eVCCcvaCkIeQ"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "past",
       "tags": [
         "Patrick Yeboah"
       ],
@@ -5870,7 +5971,7 @@
         "lWsc3CHhT9eVCCcvaCkIeQ"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "past",
       "tags": [
         "Get Lost & Found"
       ],
@@ -5889,7 +5990,7 @@
         "lWsc3CHhT9eVCCcvaCkIeQ"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "important",
       "tags": [
         "Sadlers Wells (Leila",
         "Charlie and Paradis)"
@@ -5909,7 +6010,7 @@
         "lWsc3CHhT9eVCCcvaCkIeQ"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "important",
       "tags": [
         "Scarlet Entertainment  (John Godbalt and James Guiver)"
       ],
@@ -5930,7 +6031,7 @@
       ],
       "subLocationIds": [],
       "notes": "Richard Clarke and Harry Hammond. Vehicle is a Vauxhall Movano, DN72 UCH",
-      "format": "new",
+      "format": "past",
       "tags": [
         "Putter Fingers"
       ],
@@ -5950,7 +6051,7 @@
         "Ko4msj1HS2aCTlQg0iiZPA"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -5971,7 +6072,7 @@
       ],
       "subLocationIds": [],
       "notes": "Refrigerated luton",
-      "format": "new",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -5990,7 +6091,7 @@
         "lWsc3CHhT9eVCCcvaCkIeQ"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "past",
       "tags": [
         "Greenhouse Sports"
       ],
@@ -6010,7 +6111,7 @@
         "rfWMwhqyQZeGYkkW.NXLZQ"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "past",
       "tags": [
         "VS Creative"
       ],
@@ -6030,7 +6131,7 @@
         "rfWMwhqyQZeGYkkW.NXLZQ"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "past",
       "tags": [
         "Science Museum"
       ],
@@ -6050,7 +6151,7 @@
         "rfWMwhqyQZeGYkkW.NXLZQ"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "important",
       "tags": [
         "Brick by Brick (Steve",
         "Obby",
@@ -6072,7 +6173,7 @@
         "rfWMwhqyQZeGYkkW.NXLZQ"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "important",
       "tags": [
         "Brick by Brick (Steve",
         "Obby",
@@ -6094,7 +6195,7 @@
         "rfWMwhqyQZeGYkkW.NXLZQ"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "past",
       "tags": [
         "Science Museum"
       ],
@@ -6111,7 +6212,7 @@
       ],
       "locationIds": [],
       "subLocationIds": [],
-      "format": "new",
+      "format": "past",
       "tags": [
         "VS Creative"
       ],
@@ -6129,7 +6230,7 @@
       ],
       "subLocationIds": [],
       "notes": "Clear grass (geese issue) for Games & Team Challenges (Golf)",
-      "format": "new",
+      "format": "past",
       "tags": [
         "HCP"
       ],
@@ -6149,7 +6250,7 @@
         "KHWNal9JQy6EJLD9mjcMxg"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "past",
       "tags": [
         "Carnival Collective"
       ],
@@ -6170,7 +6271,7 @@
       ],
       "subLocationIds": [],
       "notes": "Transit - hired.  Drop instruments in 3 x 3 gazebo by main stage",
-      "format": "new",
+      "format": "past",
       "tags": [
         "Carnival Collective"
       ],
@@ -6191,7 +6292,7 @@
       ],
       "subLocationIds": [],
       "notes": "Minibus",
-      "format": "new",
+      "format": "important",
       "tags": [
         "Rajhastan Brass Band (ArifKhan",
         "Dharu",
@@ -6218,7 +6319,7 @@
         "KHWNal9JQy6EJLD9mjcMxg"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "past",
       "tags": [
         "Carnival Collective"
       ],
@@ -6237,7 +6338,7 @@
         "lWsc3CHhT9eVCCcvaCkIeQ"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "important",
       "tags": [
         "Scarlet Entertainment (Fleur de Reve 1 & 2)"
       ],
@@ -6256,7 +6357,7 @@
         "lWsc3CHhT9eVCCcvaCkIeQ"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "important",
       "tags": [
         "Roameo Band (Kahaya Maseko",
         "Alexander Shad",
@@ -6266,17 +6367,6 @@
       "locations": [
         "use Trophy Gate "
       ]
-    },
-    {
-      "date": "2025-09-28",
-      "time": "8:50",
-      "description": "Bandstage Performer Amy Gadiga arrives",
-      "tagIds": [],
-      "locationIds": [],
-      "subLocationIds": [],
-      "format": "new",
-      "tags": [],
-      "locations": []
     },
     {
       "date": "2025-09-28",
@@ -6290,7 +6380,7 @@
         "lWsc3CHhT9eVCCcvaCkIeQ"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "past",
       "tags": [
         "Bloomberg Security",
         "EEP Security"
@@ -6310,7 +6400,7 @@
         "lWsc3CHhT9eVCCcvaCkIeQ"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "past",
       "tags": [
         "Patrick Yeboah"
       ],
@@ -6329,7 +6419,7 @@
         "lWsc3CHhT9eVCCcvaCkIeQ"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "past",
       "tags": [
         "Carnival Collective"
       ],
@@ -6348,7 +6438,7 @@
         "lWsc3CHhT9eVCCcvaCkIeQ"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "important",
       "tags": [
         "Scarlet Entertainment (Ivaylo Danailov and Isus Rose)"
       ],
@@ -6368,7 +6458,7 @@
         "Ko4msj1HS2aCTlQg0iiZPA"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -6388,7 +6478,7 @@
         "Ko4msj1HS2aCTlQg0iiZPA"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -6408,7 +6498,7 @@
         "Ko4msj1HS2aCTlQg0iiZPA"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -6427,7 +6517,7 @@
         "lWsc3CHhT9eVCCcvaCkIeQ"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "past",
       "tags": [
         "Entertainers Main Stage"
       ],
@@ -6446,7 +6536,7 @@
         "lWsc3CHhT9eVCCcvaCkIeQ"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "past",
       "tags": [
         "Carnival Collective"
       ],
@@ -6465,7 +6555,7 @@
         "lWsc3CHhT9eVCCcvaCkIeQ"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "important",
       "tags": [
         "Scarlet Entertainment (Rob Aitkin",
         "Rachel Ojo Tokun Boh",
@@ -6487,7 +6577,7 @@
         "lWsc3CHhT9eVCCcvaCkIeQ"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "important",
       "tags": [
         "Scarlet Entertainment (Rick Allen",
         "Stuart Lodge)"
@@ -6507,7 +6597,7 @@
         "lWsc3CHhT9eVCCcvaCkIeQ"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "important",
       "tags": [
         "Chloe August and Cerry Tolliday"
       ],
@@ -6526,7 +6616,7 @@
         "lWsc3CHhT9eVCCcvaCkIeQ"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "important",
       "tags": [
         "Kirk-Ann Roberts"
       ],
@@ -6543,7 +6633,7 @@
       ],
       "locationIds": [],
       "subLocationIds": [],
-      "format": "new",
+      "format": "important",
       "tags": [
         "Scarlet Entertainment (Roaming Ducks)"
       ],
@@ -6561,7 +6651,7 @@
         "lWsc3CHhT9eVCCcvaCkIeQ"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "important",
       "tags": [
         "Scarlet Entertainment (Roaming Ducks)",
         "Scarlet Entertainment (Bubble Rogue - Roo)"
@@ -6581,7 +6671,7 @@
         "lWsc3CHhT9eVCCcvaCkIeQ"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "important",
       "tags": [
         "Matheus Kamla"
       ],
@@ -6601,7 +6691,7 @@
       ],
       "subLocationIds": [],
       "notes": "WORKING LIGHT FROM VS CREATIVE - VIA LOUIS\nLandrovers & trailers. -2 teams\nStart at West Front Apron, then access Tiltyard via Tennis Court Lane\nEmergency contact - Jesse Powell 07590 046552",
-      "format": "new",
+      "format": "past",
       "tags": [
         "Perfect Pitch"
       ],
@@ -6621,7 +6711,7 @@
       ],
       "subLocationIds": [],
       "notes": "Car",
-      "format": "new",
+      "format": "past",
       "tags": [
         "Carnival Collective"
       ],
@@ -6641,7 +6731,7 @@
       ],
       "subLocationIds": [],
       "notes": "Car",
-      "format": "new",
+      "format": "past",
       "tags": [
         "Get Lost & Found"
       ],
@@ -6661,7 +6751,7 @@
       ],
       "subLocationIds": [],
       "notes": "Car",
-      "format": "new",
+      "format": "important",
       "tags": [
         "Scarlet Entertainment - Charlee Oakton"
       ],
@@ -6681,7 +6771,7 @@
       ],
       "subLocationIds": [],
       "notes": "2 cars",
-      "format": "new",
+      "format": "important",
       "tags": [
         "Sofia Gillani (Asif Gillani",
         "Chris Kane)"
@@ -6702,7 +6792,7 @@
       ],
       "subLocationIds": [],
       "notes": "Parking at Green Car Park",
-      "format": "new",
+      "format": "past",
       "tags": [
         "History Riot"
       ],
@@ -6722,7 +6812,7 @@
       ],
       "subLocationIds": [],
       "notes": "Mini bus",
-      "format": "new",
+      "format": "important",
       "tags": [
         "Rajhastan Brass Band (ArifKhan",
         "Dharu",
@@ -6749,7 +6839,7 @@
       ],
       "subLocationIds": [],
       "notes": "Train",
-      "format": "new",
+      "format": "important",
       "tags": [
         "Amy Gadiaga"
       ],
@@ -6769,7 +6859,7 @@
       ],
       "subLocationIds": [],
       "notes": "uber",
-      "format": "new",
+      "format": "important",
       "tags": [
         "Luke Manchester"
       ],
@@ -6788,7 +6878,7 @@
         "lWsc3CHhT9eVCCcvaCkIeQ"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "important",
       "tags": [
         "Sadlers Wells (Leila",
         "Charlie and Paradis)"
@@ -6798,13 +6888,140 @@
       ]
     },
     {
+      "date": "2025-09-28",
+      "time": "17:00",
+      "description": "Privy Garden Closes",
+      "tagIds": [
+        "a.A-QALuWT46KS8nX8kh8wg",
+        "J3ZQqxaaSXiZl0M8Wu5IcQ"
+      ],
+      "locationIds": [
+        "ruJ5-1fGTcWDskkx42Sq5w"
+      ],
+      "subLocationIds": [],
+      "format": "past",
+      "tags": [
+        "KERB",
+        "Eco Furniture"
+      ],
+      "locations": [
+        "Privy and Pond Garden"
+      ]
+    },
+    {
+      "date": "2025-09-28",
+      "time": "10:00",
+      "description": "KERB Agency (110 approx) & Traders Staff Arrive onsite x250 - Gemma KERB Staffing Manager to oversee",
+      "tagIds": [
+        "a.A-QALuWT46KS8nX8kh8wg",
+        "TAtz-oeITKeLO4-uxu.DPw"
+      ],
+      "locationIds": [
+        "KHWNal9JQy6EJLD9mjcMxg"
+      ],
+      "subLocationIds": [],
+      "notes": "Intro Gemma to Ella",
+      "format": "past",
+      "tags": [
+        "KERB"
+      ],
+      "locations": [
+        "Trophy Gate"
+      ]
+    },
+    {
+      "date": "2025-09-28",
+      "time": "17:00",
+      "description": "Push to distribute any remaining kids packed lunches as guests leave",
+      "tagIds": [
+        "a.A-QALuWT46KS8nX8kh8wg",
+        "J3ZQqxaaSXiZl0M8Wu5IcQ"
+      ],
+      "locationIds": [],
+      "subLocationIds": [],
+      "format": "past",
+      "tags": [
+        "KERB",
+        "Eco Furniture"
+      ],
+      "locations": []
+    },
+    {
+      "date": "2025-09-28",
+      "time": "13:00",
+      "description": "Greenhouse Sports VIP arriving Donald Barrell  and John Quintero Donoso  (car reg EK22-FYO) ",
+      "tagIds": [
+        "1L6LKPbJRsS4epdntVpwtg",
+        "VxMdsyuBRLChmfrHCuFUig"
+      ],
+      "locationIds": [
+        "lWsc3CHhT9eVCCcvaCkIeQ"
+      ],
+      "subLocationIds": [],
+      "format": "past",
+      "tags": [
+        "Bloomberg",
+        "Greenhouse Sports"
+      ],
+      "locations": [
+        "use Trophy Gate "
+      ]
+    },
+    {
+      "date": "2025-09-28",
+      "time": "11:00-12:00",
+      "description": "Trayed Food Service for initial rush (30m)",
+      "tagIds": [
+        "a.A-QALuWT46KS8nX8kh8wg"
+      ],
+      "locationIds": [
+        "BCSTWTmNQjuZfZGD7goaIg"
+      ],
+      "subLocationIds": [],
+      "notes": "Judge time according to guest arrivals",
+      "format": "past",
+      "tags": [
+        "KERB"
+      ],
+      "locations": [
+        "East Front Palace Gardens"
+      ]
+    },
+    {
+      "date": "2025-09-28",
+      "time": "08:50",
+      "description": "Bandstage Performer Amy Gadiga arrives",
+      "tagIds": [],
+      "locationIds": [],
+      "subLocationIds": [],
+      "format": "past",
+      "tags": [],
+      "locations": []
+    },
+    {
+      "date": "2025-09-28",
+      "time": "12:00",
+      "description": "Hawkers with alcohol live",
+      "tagIds": [
+        "a.A-QALuWT46KS8nX8kh8wg",
+        "TAtz-oeITKeLO4-uxu.DPw"
+      ],
+      "locationIds": [],
+      "subLocationIds": [],
+      "format": "new",
+      "tags": [
+        "KERB"
+      ],
+      "locations": []
+    },
+    {
       "date": "2025-09-29",
       "time": "06:59",
       "description": "Sunrise - confirmed on Metcheck",
       "tagIds": [],
       "locationIds": [],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [],
       "locations": []
     },
@@ -6817,7 +7034,7 @@
       ],
       "locationIds": [],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Sunrise / set"
       ],
@@ -6834,7 +7051,7 @@
         "wa2tC2s3S0GTJi1eSYlsOg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Garden Catering (Crew)"
       ],
@@ -6854,7 +7071,7 @@
         "avDh6Lx0QwG941DZ.ed0Og"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -6875,7 +7092,7 @@
       ],
       "subLocationIds": [],
       "notes": "2 of 2 vehicles collecting equipment and any leftover stock",
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -6896,7 +7113,7 @@
       ],
       "subLocationIds": [],
       "notes": "1 of 2 vehicles collecting equipment and any leftover stock",
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -6916,7 +7133,7 @@
         "Ko4msj1HS2aCTlQg0iiZPA"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -6936,7 +7153,7 @@
         "avDh6Lx0QwG941DZ.ed0Og"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -6957,7 +7174,7 @@
       ],
       "subLocationIds": [],
       "notes": "flat packed containers (4 lifts at approx 30 min each. Bars near each other are lifted together)",
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -6976,7 +7193,7 @@
         "WndxCJoyQ.SwnfUN88EeFg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Rock Safely"
       ],
@@ -6995,7 +7212,7 @@
         "WndxCJoyQ.SwnfUN88EeFg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Old Skool"
       ],
@@ -7015,7 +7232,7 @@
       ],
       "subLocationIds": [],
       "notes": "NB Urns take 45 m to heat up\nCrew base in smoking garden / Mrs Neals Yard",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Garden Catering (Crew)"
       ],
@@ -7034,7 +7251,7 @@
         "zhaAVFHHRROpG26JLMOk5g"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Garden Catering (Crew)"
       ],
@@ -7054,7 +7271,7 @@
         "KHWNal9JQy6EJLD9mjcMxg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Garden Catering (Crew)"
       ],
@@ -7074,7 +7291,7 @@
         "avDh6Lx0QwG941DZ.ed0Og"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -7091,7 +7308,7 @@
         "WndxCJoyQ.SwnfUN88EeFg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [],
       "locations": [
         "ALL of Palace"
@@ -7105,7 +7322,7 @@
       "locationIds": [],
       "subLocationIds": [],
       "notes": "Palace not open to the public",
-      "format": "default",
+      "format": "past",
       "tags": [],
       "locations": []
     },
@@ -7120,7 +7337,7 @@
         "wa2tC2s3S0GTJi1eSYlsOg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Garden Catering (Crew)"
       ],
@@ -7139,7 +7356,7 @@
         "BCSTWTmNQjuZfZGD7goaIg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "MP Squares"
       ],
@@ -7158,7 +7375,7 @@
         "WndxCJoyQ.SwnfUN88EeFg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "HCP"
       ],
@@ -7179,7 +7396,7 @@
       ],
       "subLocationIds": [],
       "notes": "flat packed containers (4 lifts at approx 30 min each. Bars near each other are lifted together)",
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB"
       ],
@@ -7199,7 +7416,7 @@
       ],
       "subLocationIds": [],
       "notes": "Radios - Back to Charlie, PA kit, Giveaways, Costumes etc",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Focus"
       ],
@@ -7220,7 +7437,7 @@
       ],
       "subLocationIds": [],
       "notes": "Kerry needs to have carbon pole flags from Wristband tent and bunting from Tiltyard ready for collection",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Event Flag Hire"
       ],
@@ -7240,7 +7457,7 @@
         "avDh6Lx0QwG941DZ.ed0Og"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Victorian Bandstands Ltd"
       ],
@@ -7260,7 +7477,7 @@
         "BCSTWTmNQjuZfZGD7goaIg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Eco Furniture"
       ],
@@ -7280,7 +7497,7 @@
         "BCSTWTmNQjuZfZGD7goaIg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Falcon Cleaning"
       ],
@@ -7300,7 +7517,7 @@
         "BCSTWTmNQjuZfZGD7goaIg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Eco Furniture"
       ],
@@ -7320,7 +7537,7 @@
         "avDh6Lx0QwG941DZ.ed0Og"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Just Loos"
       ],
@@ -7340,7 +7557,7 @@
         "avDh6Lx0QwG941DZ.ed0Og"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "AAC Power"
       ],
@@ -7358,7 +7575,7 @@
       ],
       "locationIds": [],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "AAC Power"
       ],
@@ -7374,7 +7591,7 @@
       ],
       "locationIds": [],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "AAC Power"
       ],
@@ -7393,7 +7610,7 @@
       ],
       "subLocationIds": [],
       "notes": "Leave on Tennis Court Lane for OBH to collect",
-      "format": "default",
+      "format": "past",
       "tags": [
         "OBH Buggy Hire"
       ],
@@ -7413,29 +7630,9 @@
         "BCSTWTmNQjuZfZGD7goaIg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Walker Fire & Security Solutions"
-      ],
-      "locations": [
-        "East Front Palace Gardens"
-      ]
-    },
-    {
-      "date": "2025-09-29",
-      "time": "13:00",
-      "description": "GJS collect Bloomberg Furniture",
-      "tagIds": [
-        "3wVZufekRG2owppu2BaWoQ",
-        "TAtz-oeITKeLO4-uxu.DPw"
-      ],
-      "locationIds": [
-        "BCSTWTmNQjuZfZGD7goaIg"
-      ],
-      "subLocationIds": [],
-      "format": "default",
-      "tags": [
-        "GJS"
       ],
       "locations": [
         "East Front Palace Gardens"
@@ -7452,7 +7649,7 @@
         "rYoMb0eQQW-Py94ZMvvF3A"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Garden Catering (Crew)"
       ],
@@ -7472,7 +7669,7 @@
         "BCSTWTmNQjuZfZGD7goaIg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "HCP",
         "VS Creative"
@@ -7493,7 +7690,7 @@
       ],
       "subLocationIds": [],
       "notes": "Flower Pot, Cart Track, Kingston Gates and East Front Gardens x 2 marshalling.\nRefer to separate Carbonite Schedule for details.",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Carbonite - Traffic Management"
       ],
@@ -7510,7 +7707,7 @@
       ],
       "locationIds": [],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "VS Creative"
       ],
@@ -7528,7 +7725,7 @@
       ],
       "subLocationIds": [],
       "notes": "Prioritise bulk waste collation before skips depart.  \nFinal clean of Green car park by EOD (NB: Access to HCP commences officially at 09:00)",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Falcon Cleaning"
       ],
@@ -7548,7 +7745,7 @@
         "BCSTWTmNQjuZfZGD7goaIg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "CW Event Hire"
       ],
@@ -7568,7 +7765,7 @@
         "BCSTWTmNQjuZfZGD7goaIg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "CW Event Hire"
       ],
@@ -7589,7 +7786,7 @@
       ],
       "subLocationIds": [],
       "notes": "All areas cleared and HCP Bus Stop signage back to store",
-      "format": "default",
+      "format": "past",
       "tags": [
         "InSite Graphics"
       ],
@@ -7610,7 +7807,7 @@
       ],
       "subLocationIds": [],
       "notes": "Use 4 x Pallets to load onto truck",
-      "format": "default",
+      "format": "past",
       "tags": [
         "GJS"
       ],
@@ -7630,7 +7827,7 @@
       ],
       "subLocationIds": [],
       "notes": "DO NOT EVACUATE THE SITE - TEST ONLY!",
-      "format": "default",
+      "format": "past",
       "tags": [
         "HCP"
       ],
@@ -7651,7 +7848,7 @@
       ],
       "subLocationIds": [],
       "notes": "4 x Banksman required",
-      "format": "default",
+      "format": "past",
       "tags": [
         "Eco Furniture"
       ],
@@ -7672,7 +7869,7 @@
       ],
       "subLocationIds": [],
       "notes": "KERB pack up x6\nLocal Crew pack up x6",
-      "format": "default",
+      "format": "past",
       "tags": [
         "KERB",
         "MP Squares"
@@ -7693,7 +7890,7 @@
         "BCSTWTmNQjuZfZGD7goaIg"
       ],
       "subLocationIds": [],
-      "format": "default",
+      "format": "past",
       "tags": [
         "Sunbrella"
       ],
@@ -7713,7 +7910,7 @@
       ],
       "subLocationIds": [],
       "notes": "Richard Clarke and Harry Hammond. Vehicle is a Vauxhall Movano, DN72 UCH",
-      "format": "new",
+      "format": "past",
       "tags": [
         "Putter Fingers"
       ],
@@ -7732,7 +7929,7 @@
         "lWsc3CHhT9eVCCcvaCkIeQ"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "past",
       "tags": [
         "Focus"
       ],
@@ -7751,12 +7948,32 @@
         "lWsc3CHhT9eVCCcvaCkIeQ"
       ],
       "subLocationIds": [],
-      "format": "new",
+      "format": "past",
       "tags": [
         "Focus"
       ],
       "locations": [
         "use Trophy Gate "
+      ]
+    },
+    {
+      "date": "2025-09-29",
+      "time": "13:00",
+      "description": "GJS collect Bloomberg Furniture - 26T & 18T",
+      "tagIds": [
+        "3wVZufekRG2owppu2BaWoQ",
+        "TAtz-oeITKeLO4-uxu.DPw"
+      ],
+      "locationIds": [
+        "BCSTWTmNQjuZfZGD7goaIg"
+      ],
+      "subLocationIds": [],
+      "format": "past",
+      "tags": [
+        "GJS"
+      ],
+      "locations": [
+        "East Front Palace Gardens"
       ]
     }
   ]

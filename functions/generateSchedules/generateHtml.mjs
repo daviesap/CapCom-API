@@ -7,11 +7,11 @@
  * This is the v2 HTML renderer that pairs with generatepdfv2.mjs.
  *
  * Expected input (jsonInput):
- * - header: array of strings (root-level; required in v2)
- * - document.header.logo or logoUrl: optional logo
+ * - event.header: array of strings (required in v2)
+ * - event.logoUrl: optional logo URL
  * - columns: ordered array { field, label, width, showLabel }
  * - groups: array of { title, metadata?, entries: [{ fields: {...}, format? }] }
- * - keyInfo: optional markdown string (rendered into an accordion block)
+ * - event.keyInfo: optional markdown string (rendered into an accordion block)
  * - document.footer: optional plain string
  *
  * What this module does:
@@ -40,7 +40,7 @@ import { marked } from "marked";
 import sanitizeHtml from "sanitize-html";
 
 // Fancy London timestamp like: Wednesday 27th August 2025 at 6.17pm
-(function(){
+(function () {
   const now = new Date();
   const parts = new Intl.DateTimeFormat('en-GB', {
     weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
@@ -97,18 +97,18 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
   // - jsonInput.document.footer is a plain string (optional)
   // - All values already validated/sanitized upstream where needed
 
-  // Header lines (v2: root-level array). Fallback to mirrored document.header.textLines if present.
-  const headerLines = Array.isArray(jsonInput.header)
-    ? jsonInput.header
-    : (Array.isArray(jsonInput?.document?.header?.textLines) ? jsonInput.document.header.textLines : []);
+  // Header lines (v2: event.header array). Fallback to empty array if not present.
+  const headerLines = Array.isArray(jsonInput?.event?.header)
+    ? jsonInput.event.header
+    : [];
 
-  const title = jsonInput.document?.title || jsonInput.eventName || "Schedule";
+  const title = jsonInput?.document?.title || jsonInput?.event?.eventName || "Schedule";
 
   // Header (left: text lines + “As at…”, right: logo)
   const headerTextHtml = headerLines.map(escapeHtml).join("<br/>");
   const subtitleBlock =
     `${headerTextHtml}<br/><span class="asAtDate">As at ${prettyTimestamp}</span>`;
-  const logoSource = jsonInput?.document?.header?.logo || (jsonInput.logoUrl ? { url: jsonInput.logoUrl } : null);
+  const logoSource = jsonInput?.event?.logoUrl ? { url: jsonInput.event.logoUrl } : null;
   const logoHtml = renderLogo(logoSource);
   const subtitleWithLogo = `
     <div style="display:flex; align-items:center; gap:12px;">
@@ -119,15 +119,16 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
 
   // Optional Key Info accordion (markdown -> safe HTML)
   let keyInfoBlock = "";
-  if (typeof jsonInput.keyInfo === "string" && jsonInput.keyInfo.trim().length) {
-    const rawHtml = marked.parse(jsonInput.keyInfo, { mangle: false, headerIds: false });
+
+  if (typeof jsonInput?.event?.keyInfo === "string" && jsonInput?.event?.keyInfo.trim().length) {
+    const rawHtml = marked.parse(jsonInput.event.keyInfo, { mangle: false, headerIds: false });
     const safeHtml = sanitizeHtml(rawHtml, {
       allowedTags: [
-        "h1","h2","h3","h4","h5","h6",
-        "p","strong","em","ul","ol","li",
-        "blockquote","code","pre","br","hr","a","span"
+        "h1", "h2", "h3", "h4", "h5", "h6",
+        "p", "strong", "em", "ul", "ol", "li",
+        "blockquote", "code", "pre", "br", "hr", "a", "span"
       ],
-      allowedAttributes: { a: ["href","title","target","rel"], span: ["class"] },
+      allowedAttributes: { a: ["href", "title", "target", "rel"], span: ["class"] },
       transformTags: {
         a: (tagName, attribs) => ({
           tagName: "a",
@@ -135,20 +136,21 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
         })
       }
     });
+
     keyInfoBlock = `
-      <details class="accordion key-info">
-        <summary>
-          <span>Key info</span>
-          <svg class="acc-chevron" xmlns="http://www.w3.org/2000/svg" fill="none"
-               viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"
-               width="18" height="18" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-          </svg>
-        </summary>
-        <div class="acc-body markdown">
-          ${safeHtml}
-        </div>
-      </details>`;
+    <details class="accordion key-info">
+      <summary>
+        <span>Key info</span>
+        <svg class="acc-chevron" xmlns="http://www.w3.org/2000/svg" fill="none"
+             viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"
+             width="18" height="18" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+        </svg>
+      </summary>
+      <div class="acc-body markdown">
+        ${safeHtml}
+      </div>
+    </details>`;
   }
 
   // Columns & widths (assumed present)
@@ -168,11 +170,11 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
     const groupHeading = escapeHtml(g.title ?? g.rawKey ?? "");
     const headerHtml = showHeader
       ? `<tr>${columnHeaders.map((h, i) => {
-          const w = htmlWidths[i];
-          const widthAttr = ` style="width:${w.toFixed(4)}%"`;
-          const cellText = showFlags[i] ? escapeHtml(h) : "";
-          return `<th${widthAttr}>${cellText}</th>`;
-        }).join("")}</tr>`
+        const w = htmlWidths[i];
+        const widthAttr = ` style="width:${w.toFixed(4)}%"`;
+        const cellText = showFlags[i] ? escapeHtml(h) : "";
+        return `<th${widthAttr}>${cellText}</th>`;
+      }).join("")}</tr>`
       : "";
 
     const rowsHtml = g.entries.map(r => {
@@ -252,7 +254,7 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
     : "";
 
   // Footer content (always shown at the very bottom)
-  const baseName = jsonInput.document?.filename || jsonInput.eventName || title || "schedule";
+  const baseName = jsonInput?.document?.filename || jsonInput?.event?.eventName || title || "schedule";
   const footerHtml = `
     <div class="footer">
       <div>${escapeHtml(baseName)}</div>

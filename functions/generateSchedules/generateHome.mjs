@@ -13,11 +13,8 @@
  *    stable, human-friendly order on the Home page.
  * 2) Splits the list into **unfiltered** (Master) and **filtered** snapshots,
  *    then renders each set into responsive button grids.
- * 3) Builds header content from `jsonInput.header` (or eventName fallback) and
- *    renders an optional **Key Info** accordion from `keyInfo`/`document.keyInfo`
- *    using `marked` + `sanitize-html`.
- * 4) Resolves a header logo from `jsonInput.logoUrl`, `document.header.logo.url`,
- *    or a derived storage path based on `profileId`.
+ * 3) Builds header content from event.header (or event name fallback) and renders an optional Key Info accordion from event.keyInfo using marked + sanitize-html.
+ * 4) Resolves a header logo from event.logoUrl, or a derived storage path based on event.profileId (or a snapshot's profileId).
  * 5) Emits a complete HTML page, saving it **locally** when emulated or to the
  *    default GCS bucket when running in the cloud.
  * 6) Logs the publish event via `logPdfEvent` (including the computed URL).
@@ -82,7 +79,12 @@ export async function generateHome({
   logToGlide
 }) {
   const safeAppName = sanitiseUrl(req.body?.appName || jsonInput.glideAppName || "App");
-  const safeEventName = sanitiseUrl(req.body?.eventName || jsonInput.eventName || "Event");
+  const safeEventName = sanitiseUrl(
+    req.body?.event?.name ||
+    jsonInput?.event?.name ||
+    jsonInput?.event?.eventName ||
+    "Event"
+  );
   const bucket = getStorage().bucket();
   // Normalise userId: prefer request body "UserId", then jsonInput (userId/UserId), else empty
   const userId = (req?.body?.UserId ?? jsonInput?.userId ?? jsonInput?.UserId ?? "");
@@ -174,24 +176,21 @@ export async function generateHome({
   const filteredGroupsHtml = renderGroupsHtml(groupByType(filtered));
 
   // Header/meta
-  const title = `${jsonInput.eventName || "Event"} – Home`;
+  const title = `${jsonInput.event.name || "Event"} – Home`;
   // Build Key Info using marked + sanitize-html (to match schedule rendering)
-  const keyInfoMd =
-    (jsonInput?.document?.keyInfo && typeof jsonInput.document.keyInfo === "string")
-      ? jsonInput.document.keyInfo
-      : (typeof jsonInput?.keyInfo === "string" ? jsonInput.keyInfo : "");
+  const keyInfoMd = jsonInput?.event?.keyInfo || "";
 
   let keyInfoSection = "";
   if (keyInfoMd) {
     const rawHtml = marked.parse(keyInfoMd, { mangle: false, headerIds: false });
     const safeHtml = sanitizeHtml(rawHtml, {
       allowedTags: [
-        "h1","h2","h3","h4","h5","h6",
-        "p","strong","em","ul","ol","li",
-        "blockquote","code","pre","br","hr","a","span"
+        "h1", "h2", "h3", "h4", "h5", "h6",
+        "p", "strong", "em", "ul", "ol", "li",
+        "blockquote", "code", "pre", "br", "hr", "a", "span"
       ],
       allowedAttributes: {
-        a: ["href","title","target","rel"],
+        a: ["href", "title", "target", "rel"],
         span: ["class"]
       },
       transformTags: {
@@ -215,22 +214,22 @@ export async function generateHome({
     </details>`;
   }
 
-  // Support document.header.text for header left content
-  const headerLeftHtml = Array.isArray(jsonInput.header)
-  ? jsonInput.header.map((line, i) =>
-      i === 0
-        ? `<h1>${escapeHtml(line)}</h1>`   // first line big
-        : `<div class="sub">${escapeHtml(line)}</div>` // others smaller
-    ).join("")
-  : `<h1>${escapeHtml(jsonInput.eventName || "Event")}</h1>`;
+  // Build left-side header: prefer event.header array, else event name
+  const headerLeftHtml = Array.isArray(jsonInput?.event?.header)
+    ? jsonInput.event.header.map((line, i) =>
+        i === 0
+          ? `<h1>${escapeHtml(line)}</h1>`
+          : `<div class="sub">${escapeHtml(line)}</div>`
+      ).join("")
+    : `<h1>${escapeHtml(jsonInput?.event?.name || jsonInput?.event?.eventName || "Event")}</h1>`;
 
   // Resolve logo for header with sensible fallbacks:
   // 1) jsonInput.logoUrl (explicit)
   // 2) jsonInput.document.header.logo.url
   // 3) derived from profileId -> logos/{profileId}_logotype-footer.png
   const explicitLogoUrl =
-    (typeof jsonInput.logoUrl === "string" && jsonInput.logoUrl.trim())
-      ? jsonInput.logoUrl.trim()
+    (typeof jsonInput.event.logoUrl === "string" && jsonInput.event.logoUrl.trim())
+      ? jsonInput.event.logoUrl.trim()
       : (typeof jsonInput?.document?.header?.logo?.url === "string" && jsonInput.document.header.logo.url.trim())
         ? jsonInput.document.header.logo.url.trim()
         : "";
@@ -509,9 +508,9 @@ export async function generateHome({
     </div>
     <div class="header-logo">
       ${logoUrl
-        ? `<img src="${logoUrl}" alt="" decoding="async" referrerpolicy="no-referrer"
+      ? `<img src="${logoUrl}" alt="" decoding="async" referrerpolicy="no-referrer"
                onerror="this.closest('div').style.display='none'">`
-        : ""}
+      : ""}
     </div>
   </div>
 </header>
@@ -521,13 +520,13 @@ export async function generateHome({
     <section>
       ${unfilteredGroupsHtml ? `<div class="master-box">${unfilteredGroupsHtml}</div>` : ""}
       ${filtered.length
-        ? `
+      ? `
         <div class="section-title">Filtered Views</div>
         <div class="filtered-box">
           ${filteredGroupsHtml}
         </div>`
-        : (unfilteredGroupsHtml ? "" : '<div class="sub">No snapshots defined.</div>')
-      }
+      : (unfilteredGroupsHtml ? "" : '<div class="sub">No snapshots defined.</div>')
+    }
     </section>
 
     <footer>
@@ -552,29 +551,45 @@ export async function generateHome({
   const homeUrl = makePublicUrl(`public/${safeAppName}/${safeEventName}/${safeHomeName}`, bucket);
 
   const executionTimeSeconds = (Date.now() - startTime) / 1000;
+  // Build an array of snapshot objects with name + URLs
+  const snapshotsOut = snapshots.map(s => {
+    const htmlUrl = (typeof s.realHtmlUrl === "string" && s.realHtmlUrl.trim())
+      ? s.realHtmlUrl.trim()
+      : (typeof s.urlTemp === "string" && s.urlTemp.trim() ? s.urlTemp.trim() : "");
+
+    const pdfUrl = (typeof s.realPdfUrl === "string" && s.realPdfUrl.trim())
+      ? s.realPdfUrl.trim()
+      : "";
+
+    return {
+      name: String(s.filename || "Snapshot"),
+      htmlUrl,
+      pdfUrl
+    };
+  });
 
 
   await logToGlide({
-  timestamp,
-  glideAppName,
-  filename: safeHomeName,
-  htmlUrl: homeUrl,
-  userId,
-  userEmail,
-  profileId,
-  success: true,
-  type: "MOM",
-  message: "MOM page generated",
-  executionTimeSeconds : executionTimeSeconds
-});
+    timestamp,
+    glideAppName,
+    filename: safeHomeName,
+    htmlUrl: homeUrl,
+    userId,
+    userEmail,
+    profileId,
+    success: true,
+    type: "MOM",
+    message: "MOM page generated",
+    executionTimeSeconds: executionTimeSeconds
+  });
 
   return {
     status: 200,
     body: {
       success: true,
       message: "✅ MOM page generated",
-      url: homeUrl,
       htmlUrl: homeUrl,
+      snapshots: snapshotsOut,
       timestamp,
       executionTimeSeconds
     }

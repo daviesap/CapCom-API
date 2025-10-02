@@ -145,16 +145,16 @@ export async function logToGlide({
   success,
   message,
   type,
-  executionTimeSeconds}) {
+  executionTimeSeconds }) {
   try {
     // Resolve token: Secret in prod, env fallback in emulator
     const token = runningEmulated
       ? (process.env.GLIDE_LOGS_TOKEN || process.env.GLIDE_API_KEY || process.env.LOCAL_GLIDE_API_KEY || "")
       : GLIDE_LOGS_TOKEN.value();
-    let app   = process.env.GLIDE_LOGS_APP;
+    let app = process.env.GLIDE_LOGS_APP;
     let table = process.env.GLIDE_LOGS_TABLE;
 
-     // Debug current Glide logging configuration
+    // Debug current Glide logging configuration
     console.log("Glide log config:", {
       hasToken: !!token,
       app,
@@ -177,17 +177,17 @@ export async function logToGlide({
       columns: {
         // existing column IDs from your sample
         //type:         { type: "string",    name: "Name" },
-        timestamp:    { type: "date-time", name: "Name" },
+        timestamp: { type: "date-time", name: "Name" },
         type: { type: "string", name: "2DORE" },
-        htmlUrl:      { type: "uri",       name: "Tuty3" },
-        pdfUrl:       { type: "uri",       name: "dfncB" },
-        userId:       { type: "string",    name: "0KZ2q" },
-        userEmail:    { type: "string",    name: "uNiQn" },
-        glideAppName: { type: "string",    name: "u0Fsq" },
-        success:      { type: "boolean",   name: "8t3Kn" },
-        message:      { type: "string",    name: "7FlAG" },
-        profileId:    { type: "string",    name: "wboxm" },
-        filename:     { type: "string",    name: "filename" },
+        htmlUrl: { type: "uri", name: "Tuty3" },
+        pdfUrl: { type: "uri", name: "dfncB" },
+        userId: { type: "string", name: "0KZ2q" },
+        userEmail: { type: "string", name: "uNiQn" },
+        glideAppName: { type: "string", name: "u0Fsq" },
+        success: { type: "boolean", name: "8t3Kn" },
+        message: { type: "string", name: "7FlAG" },
+        profileId: { type: "string", name: "wboxm" },
+        filename: { type: "string", name: "filename" },
         executionTimeSeconds: { type: "number", name: "fWoD7" }
       }
     });
@@ -342,7 +342,7 @@ export const v2 = onRequest({
 
   // --- Normalise identifiers once for all actions ---
   const rawAppName = (req.body?.glideAppName ?? "").toString();
-  const rawEventName = (req.body?.eventName ?? "").toString();
+  const rawEventName = (req.body?.event?.name ?? "").toString();
 
   const safeAppNameBody = sanitiseUrl(rawAppName || "App");
   const safeEventName = sanitiseUrl(rawEventName || "Event");
@@ -380,7 +380,8 @@ export const v2 = onRequest({
 
   // Shared metadata
   const userEmail = req.body.userEmail || "unknown email";
-  const profileId = req.body.profileId || "unknown profileId";
+  const profileId = req.body.event?.profileId || "unknown profileId";
+  console.log(`Profile ID ${profileId}`);
 
   try {
     // Load JSON input: prefer request body; when emulated, optionally overlay local JSON if present
@@ -431,7 +432,7 @@ export const v2 = onRequest({
     if (action === ACTIONS.GENERATE_HOME) {
 
       // Load and merge profile once for GENERATE_HOME using root profileId
-      const rootProfileId = jsonInput.profileId || req.body.profileId;
+      const rootProfileId = jsonInput.event.profileId || "";
       let rootProfileDoc = {};
       if (rootProfileId) {
         try {
@@ -493,7 +494,7 @@ export const v2 = onRequest({
         console.log(`   • Groups final (after filter): ${groupsCount} (groupBy=${presetId})`);
 
         // 3) Use root profile (loaded once above) for all snapshots in GENERATE_HOME
-        const effectiveProfileId = rootProfileId || jsonInput.profileId || profileId;
+        const effectiveProfileId = rootProfileId || profileId;
         const profileDoc = rootProfileDoc || {};
 
         // 4) Build prepared JSON for renderer (HTML/PDF)
@@ -523,8 +524,8 @@ export const v2 = onRequest({
             jsonInput.columns ||
             profileDoc.columns ||
             [],
-          // Header will always be an array at root; append filename for this snapshot
-          header: [...jsonInput.header, snap.filename].filter(Boolean),
+          // Header will always be an array at event; append filename for this snapshot
+          header: [...(jsonInput?.event?.header ?? []), snap.filename].filter(Boolean),
           profileId: effectiveProfileId,
         };
 
@@ -536,9 +537,9 @@ export const v2 = onRequest({
         };
 
         // 4b) Pass through a logo if present at root (keeps v2 renderers simple)
-        if (jsonInput.logoUrl && !prepared.document?.header?.logo?.url) {
+        if (jsonInput.event.logoUrl && !prepared.document?.header?.logo?.url) {
           prepared.document.header.logo = {
-            url: jsonInput.logoUrl,
+            url: jsonInput.event.logoUrl,
           };
         }
 
@@ -629,11 +630,12 @@ export const v2 = onRequest({
       timestamp,
       glideAppName: (req.body?.glideAppName || "Missing Glide App Name"),
       filename: "not generated",
-      url: "",
+      htmlUrl: "",
+      pdfUrl: "",
       userEmail,
       profileId,
       success: false,
-      errorMessage: err.message,
+      message: err.message,
     });
     return res.status(500).json({ success: false, message: `Operation failed: ${err.message}`, executionTimeSeconds });
   }

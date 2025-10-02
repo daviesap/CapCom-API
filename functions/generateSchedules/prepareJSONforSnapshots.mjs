@@ -30,8 +30,8 @@ export async function prepareJSONGroups(
     if (!preset?.groupBy) continue;
 
     const groupBy = preset.groupBy;                 // "date" | "tagId" | "locationId"
-    const outKey  = preset.id || preset.label || groupBy;
-    const groups  = groupRows(rows, groupBy);
+    const outKey = preset.id || preset.label || groupBy;
+    const groups = groupRows(rows, groupBy);
 
     // Attach date meta only (extend later if you add other meta types)
     if (groupBy === "date") {
@@ -65,8 +65,8 @@ function indexDateMeta(payload) {
   const meta = Object.create(null);
 
   // Array form: [{ date, data: { title, above, below } }]
-  if (Array.isArray(payload?.groupMeta)) {
-    for (const it of payload.groupMeta) {
+  if (Array.isArray(payload?.groupMeta?.scheduleDates)) {
+    for (const it of payload.groupMeta.scheduleDates) {
       if (!it?.date) continue;
       const { title = "", above = "", below = "" } = it.data || {};
       meta[it.date] = { title, above, below };
@@ -143,10 +143,10 @@ function sortGroupsInPlace(groups, preset) {
   const cmp = buildComparator(tokens, (g, field) => {
     switch (field) {
       case "date":
-      case "dateKey":   return g.rawKey;
+      case "dateKey": return g.rawKey;
       case "tagName":
       case "locationName":
-      default:          return g.title ?? g.rawKey;
+      default: return g.title ?? g.rawKey;
     }
   });
   groups.sort(cmp);
@@ -161,10 +161,10 @@ function sortEntriesInPlace(entries, groupBy, preset) {
 
   const cmp = buildComparator(tokens, (e, field) => {
     switch (field) {
-      case "date":        return e.date;                     // "YYYY-MM-DD"
-      case "time":        return (e.time ?? "").toLowerCase(); // lexical sort
+      case "date": return e.date;                     // "YYYY-MM-DD"
+      case "time": return (e.time ?? "").toLowerCase(); // lexical sort
       case "description": return (e.description ?? "").toLowerCase();
-      default:            return e[field];
+      default: return e[field];
     }
   });
   entries.sort(cmp);
