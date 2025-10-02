@@ -74,6 +74,7 @@ export async function generateSnapshotOutputsv2({
   profileId,
   makePublicUrl,
   logPdfEvent,
+  logToGlide,
   // 👇 easy toggle: set to "" when promoting to prod paths
   extraSubdir = "",  //was "v2"
 }) {
@@ -141,6 +142,20 @@ export async function generateSnapshotOutputsv2({
     userEmail,
     profileId,
     success: true,
+  });
+
+  await logToGlide({
+    timestamp,
+    glideAppName,
+    filename: filename,
+    htmlUrl: htmlUrl,
+    pdfUrl: pdfUrl,
+    userEmail,
+    profileId,
+    success: true,
+    type: "snapshot",
+    message: "snapshot generated",
+    executionTimeSeconds: executionTimeSeconds
   });
 
   return { pdfUrl, htmlUrl, pdfName, htmlName, executionTimeSeconds };

@@ -1,27 +1,41 @@
-import { defineSecret } from "firebase-functions/params";
-// declare the secret names as they exist in Secret Manager
-const API_KEY = defineSecret("api_key");
-const GLIDE_API_KEY = defineSecret("glideApiKey");
+// ===== Imports — Node built-ins =====
+import fs from "fs";
+import path from "path";
+import { readFile } from "fs/promises";
+import { fileURLToPath } from "url";
+import process from "process";
 
+// ===== Imports — Third-party =====
+import { merge } from "lodash-es";
+
+// ===== Imports — Firebase =====
+import { defineSecret } from "firebase-functions/params";
 import { onRequest } from "firebase-functions/v2/https";
 import { initializeApp, applicationDefault } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
 import { getStorage } from "firebase-admin/storage";
-import { readFile } from "fs/promises";
-import fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
-import process from "process";
-import { merge } from "lodash-es";
+
+
+// ===== Imports — Local modules =====
 import { sanitiseUrl } from "./utils/sanitiseUrl.mjs";
-import { filterJson } from "./utils/filterJSON.mjs";
-import { sanitiseText } from "./utils/sanitiseText.mjs";
-import { deriveDetectedFieldsFromGroups } from "./utils/detectFields.mjs";
 import { generateHome } from "./generateSchedules/generateHome.mjs";
 import { applySnapshotFiltersToView } from "./generateSchedules/applyFilters.mjs";
+import { generateSnapshotOutputsv2 } from "./generateSchedules/generateSnapshots.mjs";
+import { prepareJSONGroups } from "./generateSchedules/prepareJSONforSnapshots.mjs";
+
+// ===== Secrets =====
+// Declare the secret names as they exist in Secret Manager
+const API_KEY = defineSecret("api_key");
+const GLIDE_API_KEY = defineSecret("glideApiKey");
+const GLIDE_LOGS_TOKEN = defineSecret("GLIDE_LOGS_TOKEN");
 
 
-// Adapt grouped entries to renderer v2 shape: each entry should have a `fields` object.
+// ===== Helpers — data shaping =====
+/**
+ * Ensure each group entry has a v2 `fields` object without mutating originals.
+ * @param {Array<any>} groups
+ * @returns {Array<any>}
+ */
 function adaptGroupsForRendererV2(groups) {
   if (!Array.isArray(groups)) return [];
   return groups.map(g => {
@@ -49,8 +63,6 @@ function adaptGroupsForRendererV2(groups) {
     };
   });
 }
-import { generateSnapshotOutputsv2 } from "./generateSchedules/generateSnapshots.mjs";
-import { prepareJSONGroups } from "./generateSchedules/prepareJSONforSnapshots.mjs";
 
 initializeApp({
   credential: applicationDefault(),
@@ -68,6 +80,14 @@ const ACTIONS = {
   GENERATE_HOME: "generateHome" // New action to generate home page
 };
 
+// ===== Helpers — URLs & logging =====
+/**
+ * Build a public URL for a given GCS object path, honoring local emulation and
+ * custom domain mappings for `public/` and `snapshots/` prefixes.
+ * @param {string} objectPath
+ * @param {{name:string}} bucket
+ * @returns {string}
+ */
 function makePublicUrl(objectPath, bucket) {
   const encoded = encodeURIComponent(objectPath);
   if (runningEmulated) {
@@ -104,6 +124,129 @@ async function logPdfEvent({ timestamp, glideAppName, filename, url, userEmail, 
   await db.collection("pdfCreationLog").add(logData);
 }
 
+
+
+/**
+ * Write a creation log row to a Glide Big Table.
+ *
+ * Secrets:
+ *   - GLIDE_LOGS_TOKEN  (from Secret Manager)
+ * Env vars (less sensitive, can be in .env or functions config):
+ *   - GLIDE_LOGS_APP    (Glide App ID)
+ *   - GLIDE_LOGS_TABLE  (Glide table ID)
+ *
+ * @param {Object} p
+ * @param {string} p.timestamp   ISO timestamp
+ * @param {string} p.glideAppName
+ * @param {string} p.filename
+ * @param {string} [p.htmlUrl]   MOM/Home page URL
+ * @param {string} [p.pdfUrl]    Snapshot PDF URL
+ * @param {string} [p.userId]
+ * @param {string} [p.userEmail]
+ * @param {string} [p.profileId]
+ * @param {boolean} p.success
+ * @param {string} [p.message]
+ * @param {string} [p.type]      e.g. "MOM" | "Snapshot"
+ * @returns {Promise<string|null>} The created Glide row ID or null
+ */
+export async function logToGlide({
+  timestamp,
+  glideAppName,
+  filename,
+  htmlUrl,
+  pdfUrl,
+  userId,
+  userEmail,
+  profileId,
+  success,
+  message,
+  type,
+  executionTimeSeconds}) {
+  try {
+    // Resolve token: Secret in prod, env fallback in emulator
+    const token = runningEmulated
+      ? (process.env.GLIDE_LOGS_TOKEN || process.env.GLIDE_API_KEY || process.env.LOCAL_GLIDE_API_KEY || "")
+      : GLIDE_LOGS_TOKEN.value();
+    let app   = process.env.GLIDE_LOGS_APP;
+    let table = process.env.GLIDE_LOGS_TABLE;
+
+     // Debug current Glide logging configuration
+    console.log("Glide log config:", {
+      hasToken: !!token,
+      app,
+      table,
+      runningEmulated
+    });
+
+    if (!token || !app || !table) {
+      if (runningEmulated) {
+        console.warn("ℹ️ Glide logging skipped: missing token/app/table");
+      }
+      return null;
+    }
+
+    const { table: glideTable } = await import("@glideapps/tables");
+    const apiLogCreationTable = glideTable({
+      token,
+      app,
+      table,
+      columns: {
+        // existing column IDs from your sample
+        //type:         { type: "string",    name: "Name" },
+        timestamp:    { type: "date-time", name: "Name" },
+        type: { type: "string", name: "2DORE" },
+        htmlUrl:      { type: "uri",       name: "Tuty3" },
+        pdfUrl:       { type: "uri",       name: "dfncB" },
+        userId:       { type: "string",    name: "0KZ2q" },
+        userEmail:    { type: "string",    name: "uNiQn" },
+        glideAppName: { type: "string",    name: "u0Fsq" },
+        success:      { type: "boolean",   name: "8t3Kn" },
+        message:      { type: "string",    name: "7FlAG" },
+        profileId:    { type: "string",    name: "wboxm" },
+        filename:     { type: "string",    name: "filename" },
+        executionTimeSeconds: { type: "number", name: "fWoD7" }
+      }
+    });
+
+    // Log payload for troubleshooting (remove later if too noisy)
+    const _payload = {
+      timestamp,
+      htmlUrl: htmlUrl || "",
+      pdfUrl: pdfUrl || "",
+      userId: userId || "",
+      userEmail: userEmail || "",
+      glideAppName: glideAppName || "",
+      success: !!success,
+      message: message || "",
+      profileId: profileId || "",
+      type: type || "",
+      filename: filename || "",
+      executionTimeSeconds: executionTimeSeconds
+    };
+    console.log("➡️  Glide addRow payload:", _payload);
+    const createdId = await apiLogCreationTable.addRow(_payload);
+
+    if (runningEmulated) console.log("✅ Glide log row created:", createdId);
+    return createdId;
+  } catch (e) {
+    console.warn("⚠️ Glide logging failed:", e?.message || e);
+    return null;
+  }
+}
+//****END LOGGING TO GLIDE FUNCTION */
+
+
+
+
+/**
+ * Write a JSON payload to the local emulator output for debugging.
+ * Creates a per-app folder and a timestamped file.
+ * No-ops safely when writing fails.
+ * @param {unknown} jsonInput
+ * @param {string} appNameOrSafe
+ * @param {string} [label="request"]
+ * @returns {string|null} Absolute path to the debug file or null on failure.
+ */
 function writeDebugJson(jsonInput, appNameOrSafe, label = "request") {
   try {
     const safe = sanitiseUrl(appNameOrSafe || "app");
@@ -119,25 +262,8 @@ function writeDebugJson(jsonInput, appNameOrSafe, label = "request") {
   }
 }
 
-function sanitiseJsonFields(jsonData) {
-  if (jsonData?.document?.title) {
-    jsonData.document.title = sanitiseText(jsonData.document.title);
-  }
-  if (Array.isArray(jsonData.groups)) {
-    jsonData.groups.forEach((group) => {
-      if (group?.title) group.title = sanitiseText(group.title);
-      if (Array.isArray(group.entries)) {
-        group.entries.forEach((entry) => {
-          if (entry?.fields?.description) {
-            entry.fields.description = sanitiseText(entry.fields.description);
-          }
-        });
-      }
-    });
-  }
-}
-
-//Get Package version from package.json or default to 0.0.0
+// ===== Version helper =====
+// Get version from package.json (fallback to 0.0.0)
 async function getPkgVersion() {
   try {
     const pkgPath = path.resolve(__dirname, "package.json");
@@ -149,14 +275,14 @@ async function getPkgVersion() {
 }
 
 
-// ---------- main handler ----------
+// ===== Main handler =====
 export const v2 = onRequest({
   region: "europe-west2",
   //minInstances: 1,    // keep one warm
   memory: "1GiB",     // PDF/Excel need headroom
   cpu: 2,             // faster processing
   concurrency: 10,     // handle multiple requests per instance
-  secrets: [API_KEY, GLIDE_API_KEY],
+  secrets: [API_KEY, GLIDE_API_KEY, GLIDE_LOGS_TOKEN],
 }, async (req, res) => {
   const startTime = Date.now();
   const timestamp = new Date().toISOString();
@@ -207,6 +333,14 @@ export const v2 = onRequest({
 
 
 
+  // Debug: compare expected API key vs. provided (prefix only)
+  console.log("API key check:", {
+    runningEmulated,
+    expectedKey_pfx: String(expectedKey).slice(0, 4),
+    bodyKey_pfx: String(req.body?.api_key || "").slice(0, 4)
+  });
+  // --- API key gating ---
+  // All actions except 'version' require a valid api_key in the request body.
   if (!req.body?.api_key || req.body.api_key !== expectedKey) {
     return res.status(403).json({ success: false, message: "Invalid or missing API key" });
   }
@@ -221,20 +355,6 @@ export const v2 = onRequest({
     `snapshots.len=${Array.isArray(req.body?.snapshots) ? req.body.snapshots.length : "n/a"}`
   );
 
-  // --- Glide API key (Secret Manager) ---
-  // In production (Gen 2), use the bound secret "glideApiKey".
-  // When running locally/emulated, allow LOCAL_GLIDE_API_KEY or an existing GLIDE_API_KEY.
-  const glideKey = runningEmulated
-    ? (process.env.LOCAL_GLIDE_API_KEY || process.env.GLIDE_API_KEY || "")
-    : GLIDE_API_KEY.value();
-
-  if (!glideKey) {
-    console.error("❌ Missing Glide API key: ensure Secret Manager secret 'glideApiKey' is set and bound, or set LOCAL_GLIDE_API_KEY for emulator.");
-    return res.status(500).json({ success: false, message: "Server missing glideApiKey configuration" });
-  }
-
-  // Normalise for legacy code paths that expect process.env.GLIDE_API_KEY
-  process.env.GLIDE_API_KEY = glideKey;
 
   // --- Normalise identifiers once for all actions ---
   const rawAppName = (req.body?.glideAppName ?? "").toString();
@@ -251,6 +371,19 @@ export const v2 = onRequest({
 
   // UPDATE_DATES
   if (action === ACTIONS.UPDATE_DATES) {
+    // --- Glide API key (Secret Manager) ---
+    // Only required for UPDATE_DATES. Other actions shouldn't resolve this.
+    const glideKey = runningEmulated
+      ? (process.env.LOCAL_GLIDE_API_KEY || process.env.GLIDE_API_KEY || "")
+      : GLIDE_API_KEY.value();
+
+    if (!glideKey) {
+      console.error("❌ Missing Glide API key: ensure Secret Manager secret 'glideApiKey' is set and bound, or set LOCAL_GLIDE_API_KEY for emulator.");
+      return res.status(500).json({ success: false, message: "Server missing glideApiKey configuration" });
+    }
+    // Normalise for code paths that expect process.env.GLIDE_API_KEY
+    process.env.GLIDE_API_KEY = glideKey;
+
     const { updateDatesHandler } = await import("./updateDates/updateDates.js");
     return await updateDatesHandler(req, res, db);
   }
@@ -285,46 +418,8 @@ export const v2 = onRequest({
 
     const glideAppName = jsonInput.glideAppName || "No Glide app name defined";
 
-    // Optional profile merge from Firestore
-    let profileData = {};
-    let firestoreStyles = {};
-
-    if (action !== ACTIONS.GENERATE_HOME && jsonInput.profileId) {
-      try {
-        const profileRef = db.collection("styleProfiles").doc(jsonInput.profileId);
-        const profileSnap = await profileRef.get();
-
-        if (profileSnap.exists) {
-          profileData = profileSnap.data();
-          firestoreStyles = profileData.styles || {};
-
-          jsonInput.styles = merge({}, firestoreStyles, jsonInput.styles || {});
-          jsonInput.document = merge({}, profileData.document || {}, jsonInput.document || {});
-          jsonInput.columns = profileData.columns || [];
-
-          jsonInput = filterJson(jsonInput);
-          sanitiseJsonFields(jsonInput);
-
-          if (runningEmulated || jsonInput.debug === true) {
-            try {
-              const appNameForDump = jsonInput.glideAppName || "Flair PDF Generator";
-              const dumpPath = writeDebugJson(jsonInput, appNameForDump, action);
-              if (dumpPath) console.log("📝 Wrote debug JSON to", dumpPath);
-              if (dumpPath) jsonInput.__debugDumpPath = dumpPath;
-            } catch (e) {
-              console.warn("⚠️ Unable to write debug JSON:", e?.message || e);
-            }
-          }
-        } else {
-          const msg = `⚠️ No Firestore profile found for profileId "${jsonInput.profileId}"`;
-          console.warn(msg);
-          await logPdfEvent({ timestamp, glideAppName, filename: "not generated", url: "", userEmail, profileId, success: false, errorMessage: msg });
-          return res.status(404).json({ success: false, message: msg });
-        }
-      } catch (err) {
-        console.error("🔥 Error fetching Firestore profile:", err);
-      }
-    } else if (action === ACTIONS.GENERATE_HOME) {
+    // Optional profile merge from Firestore is now handled only in GENERATE_HOME or downstream.
+    if (action === ACTIONS.GENERATE_HOME) {
       // For GENERATE_HOME we intentionally skip pre-merging and pre-filtering here.
       // Optional: still dump the *base* JSON for debugging.
       if (runningEmulated || jsonInput.debug === true) {
@@ -338,43 +433,12 @@ export const v2 = onRequest({
       }
     }
 
-    // Auto-refresh detectedFields for this profile based on the filtered groups
-    try {
-      if (action !== ACTIONS.GENERATE_HOME) {
-        if (profileId && Array.isArray(jsonInput?.groups) && jsonInput.groups.length) {
-          const detected = deriveDetectedFieldsFromGroups(jsonInput.groups);
-          if (detected && detected.length) {
-            const ref = db.collection("styleProfiles").doc(jsonInput.profileId || profileId);
-            const snap = await ref.get();
-            const prev = (snap.exists && Array.isArray(snap.data().detectedFields))
-              ? snap.data().detectedFields
-              : [];
-
-            // Order-sensitive comparison to avoid unnecessary writes
-            const changed =
-              detected.length !== prev.length ||
-              detected.some((k, i) => k !== prev[i]);
-
-            if (changed) {
-              await ref.update({
-                detectedFields: detected,
-                fieldsLastUpdated: new Date().toISOString(),
-              });
-              if (jsonInput?.debug === true) console.log("🔄 detectedFields updated:", detected);
-            } else if (jsonInput?.debug === true) {
-              console.log("ℹ️ detectedFields unchanged");
-            }
-          } else if (jsonInput?.debug === true) {
-            console.log("ℹ️ No detected fields derived from groups.");
-          }
-        }
-      }
-    } catch (e) {
-      console.warn("⚠️ Failed to update detectedFields:", e?.message || e);
-    }
+    // (Auto-refresh detectedFields for this profile block removed)
 
     const safeAppName = sanitiseUrl(req.body?.appName || glideAppName);
     const bucket = getStorage().bucket();
+    // Normalise userId for downstream logging (prefer request then JSON)
+    const userId = (req?.body?.UserId ?? req?.body?.userId ?? jsonInput?.userId ?? jsonInput?.UserId ?? "");
 
 
     //////////////////////////////////////////////////////////////////////////////////////
@@ -520,9 +584,11 @@ export const v2 = onRequest({
           startTime,
           timestamp,
           userEmail,
+          userId,
           profileId: effectiveProfileId,
           makePublicUrl,
           logPdfEvent,
+          logToGlide,
           extraSubdir: "", //was "v2"
         });
 
@@ -563,6 +629,7 @@ export const v2 = onRequest({
         glideAppName,
         req,
         logPdfEvent,
+        logToGlide,
         bucket,
         safeAppName,
         safeEventName

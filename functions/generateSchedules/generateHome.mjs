@@ -79,11 +79,14 @@ export async function generateHome({
   profileId,
   glideAppName,
   req,
-  logPdfEvent
+  logPdfEvent,
+  logToGlide
 }) {
   const safeAppName = sanitiseUrl(req.body?.appName || jsonInput.glideAppName || "App");
   const safeEventName = sanitiseUrl(req.body?.eventName || jsonInput.eventName || "Event");
   const bucket = getStorage().bucket();
+  // Normalise userId: prefer request body "UserId", then jsonInput (userId/UserId), else empty
+  const userId = (req?.body?.UserId ?? jsonInput?.userId ?? jsonInput?.UserId ?? "");
 
   // Sort snapshots by sortOrder (missing sortOrder => Infinity)
   const snapshots = Array.isArray(jsonInput.snapshots) ? [...jsonInput.snapshots] : [];
@@ -226,7 +229,6 @@ export async function generateHome({
   // 1) jsonInput.logoUrl (explicit)
   // 2) jsonInput.document.header.logo.url
   // 3) derived from profileId -> logos/{profileId}_logotype-footer.png
-  const bucketRef = getStorage().bucket();
   const explicitLogoUrl =
     (typeof jsonInput.logoUrl === "string" && jsonInput.logoUrl.trim())
       ? jsonInput.logoUrl.trim()
@@ -240,7 +242,7 @@ export async function generateHome({
     "";
 
   const derivedLogoUrl = profileIdForLogo
-    ? makePublicUrl(`logos/${profileIdForLogo}_logotype-footer.png`, bucketRef)
+    ? makePublicUrl(`logos/${profileIdForLogo}_logotype-footer.png`, bucket)
     : "";
 
   const logoUrl = explicitLogoUrl || derivedLogoUrl;
@@ -560,6 +562,20 @@ export async function generateHome({
     profileId,
     success: true
   });
+
+  await logToGlide({
+  timestamp,
+  glideAppName,
+  filename: safeHomeName,
+  htmlUrl: homeUrl,
+  userId,
+  userEmail,
+  profileId,
+  success: true,
+  type: "MOM",
+  message: "MOM page generated",
+  executionTimeSeconds : executionTimeSeconds
+});
 
   return {
     status: 200,

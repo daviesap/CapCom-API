@@ -3,7 +3,7 @@
 ## RUNNING LOCAL EMULATOR
 To start the emulator
 cd /Users/apndavies/Coding/flair-pdf-generator
-LOCAL_API_KEY='Sausages2025!!' LOCAL_GLIDE_API_KEY="my-local-glide-key" firebase emulators:start --only functions
+LOCAL_API_KEY='Sausages2025!!' GLIDE_LOGS_APP="rIeUzfTQpgK4ComVOanX" GLIDE_LOGS_TABLE="native-table-EXf6OrHFQHS6x7kVCQ10" LOCAL_GLIDE_API_KEY="my-local-glide-key" GLIDE_LOGS_TOKEN="c5389e75-ed50-4e6c-b61d-3d94bfe8deaa" firebase emulators:start --only functions
 
 ## Curl commands
 To test
