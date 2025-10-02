@@ -73,7 +73,6 @@ export async function generateSnapshotOutputsv2({
   userEmail,
   profileId,
   makePublicUrl,
-  logPdfEvent,
   logToGlide,
   // 👇 easy toggle: set to "" when promoting to prod paths
   extraSubdir = "",  //was "v2"
@@ -133,16 +132,6 @@ export async function generateSnapshotOutputsv2({
   // 5) Log + return
   const executionTimeSeconds = (Date.now() - startTime) / 1000;
   const glideAppName = prepared.glideAppName || "Glide App Name Missing";
-
-  await logPdfEvent({
-    timestamp,
-    glideAppName,
-    filename: pdfName,
-    url: pdfUrl,
-    userEmail,
-    profileId,
-    success: true,
-  });
 
   await logToGlide({
     timestamp,

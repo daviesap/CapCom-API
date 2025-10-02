@@ -110,22 +110,6 @@ function makePublicUrl(objectPath, bucket) {
   return `https://storage.googleapis.com/${bucket.name}/${objectPath}`;
 }
 
-async function logPdfEvent({ timestamp, glideAppName, filename, url, userEmail, profileId, success, errorMessage }) {
-  const logData = {
-    timestamp,
-    glideAppName,
-    filename,
-    url,
-    userEmail,
-    profileId,
-    success,
-    errorMessage: errorMessage || null,
-  };
-  await db.collection("pdfCreationLog").add(logData);
-}
-
-
-
 /**
  * Write a creation log row to a Glide Big Table.
  *
@@ -587,7 +571,6 @@ export const v2 = onRequest({
           userId,
           profileId: effectiveProfileId,
           makePublicUrl,
-          logPdfEvent,
           logToGlide,
           extraSubdir: "", //was "v2"
         });
@@ -628,7 +611,6 @@ export const v2 = onRequest({
         profileId,
         glideAppName,
         req,
-        logPdfEvent,
         logToGlide,
         bucket,
         safeAppName,
@@ -643,7 +625,7 @@ export const v2 = onRequest({
   } catch (err) {
     const executionTimeSeconds = (Date.now() - startTime) / 1000;
     console.error("❌ Cloud Function error:", err);
-    await logPdfEvent({
+    await logToGlide({
       timestamp,
       glideAppName: (req.body?.glideAppName || "Missing Glide App Name"),
       filename: "not generated",

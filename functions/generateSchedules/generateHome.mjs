@@ -79,7 +79,6 @@ export async function generateHome({
   profileId,
   glideAppName,
   req,
-  logPdfEvent,
   logToGlide
 }) {
   const safeAppName = sanitiseUrl(req.body?.appName || jsonInput.glideAppName || "App");
@@ -553,15 +552,7 @@ export async function generateHome({
   const homeUrl = makePublicUrl(`public/${safeAppName}/${safeEventName}/${safeHomeName}`, bucket);
 
   const executionTimeSeconds = (Date.now() - startTime) / 1000;
-  await logPdfEvent({
-    timestamp,
-    glideAppName,
-    filename: safeHomeName,
-    url: homeUrl,
-    userEmail,
-    profileId,
-    success: true
-  });
+
 
   await logToGlide({
   timestamp,
