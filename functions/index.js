@@ -12,7 +12,6 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import process from "process";
-import { Buffer } from "node:buffer";
 import { merge } from "lodash-es";
 import { sanitiseUrl } from "./utils/sanitiseUrl.mjs";
 import { filterJson } from "./utils/filterJSON.mjs";
@@ -59,37 +58,15 @@ initializeApp({
 });
 
 const db = getFirestore();
-
 const LOCAL_OUTPUT_DIR = path.join(process.cwd(), "local-emulator", "output");
 const runningEmulated = !!process.env.FUNCTIONS_EMULATOR || !!process.env.FIREBASE_EMULATOR_HUB;
 
-
 const ACTIONS = {
-  GET_PROFILE_IDS: "getProfileIds",
   VERSION: "version",
-  GENERATE_SNAPSHOT: "generateScheduleSnapshot",
   UPDATE_DATES: "updateDates",
   MEALS_PIVOT: "mealsPivot",
-  GENERATE_PDF: "generatePdf", // now behaves the same as GENERATE_SNAPSHOT
   GENERATE_HOME: "generateHome" // New action to generate home page
 };
-
-// ---------- helpers ----------
-function formatYYYYMMDD(d = new Date()) {
-  // Europe/London time (handles BST/GMT automatically)
-  const fmt = new Intl.DateTimeFormat('en-GB', {
-    year: 'numeric', month: '2-digit', day: '2-digit',
-    hour: '2-digit', minute: '2-digit', hour12: false,
-    timeZone: 'Europe/London'
-  });
-  const parts = Object.fromEntries(fmt.formatToParts(d).map(p => [p.type, p.value]));
-  const yyyy = parts.year;
-  const mm = parts.month;
-  const dd = parts.day;
-  const hh = parts.hour;
-  const min = parts.minute;
-  return `${yyyy}${mm}${dd}-${hh}${min}`;
-}
 
 function makePublicUrl(objectPath, bucket) {
   const encoded = encodeURIComponent(objectPath);
@@ -158,103 +135,6 @@ function sanitiseJsonFields(jsonData) {
       }
     });
   }
-}
-
-// Shared routine: generate PDF (date-stamped) + HTML (fixed), return both URLs
-async function generateSnapshotOutputs(jsonInput, safeAppName, safeEventName, bucket, startTime, timestamp, userEmail, profileId) {
-  // 1) Generate PDF bytes
-  const { generatePdfBuffer } = await import("./generatepdf.mjs");
-  const { bytes } = await generatePdfBuffer(jsonInput);
-
-  // Names
-  const pdfDate = formatYYYYMMDD();
-  // Derive PDF filename from document.filename (fallback "schedule")
-  const rawPdfBase = (jsonInput?.document?.filename || "schedule").toString();
-  const baseNoExt = rawPdfBase.replace(/\.[a-zA-Z0-9]+$/, "");
-  const safeBase = sanitiseUrl(baseNoExt);
-  const safePdfName = `${safeBase}-${pdfDate}.pdf`;
-  // Derive HTML filename from document.filename (fallback "schedule")
-  const rawHtmlBase = (jsonInput?.document?.filename || "schedule").toString();
-  // strip any existing extension, then sanitise (handles spaces etc.), then append .html
-  const safeHtmlBase = sanitiseUrl(rawHtmlBase.replace(/\.[a-zA-Z0-9]+$/, ""));
-  const safeHtmlName = `${safeHtmlBase}.html`;
-  // Get Glide app name
-  const glideAppName = jsonInput.glideAppName || "Glide App Name Missing";
-
-
-  // 2) Save PDF (immutable caching)
-  if (runningEmulated) {
-    const pdfDir = path.join(LOCAL_OUTPUT_DIR, "public", safeAppName, safeEventName);
-    fs.mkdirSync(pdfDir, { recursive: true });
-    fs.writeFileSync(path.join(pdfDir, safePdfName), bytes);
-  } else {
-    const pdfFile = bucket.file(`public/${safeAppName}/${safeEventName}/${safePdfName}`);
-    await pdfFile.save(bytes, {
-      metadata: {
-        contentType: "application/pdf",
-        cacheControl: "public, max-age=31536000, immutable",
-      },
-    });
-  }
-  const pdfUrl = makePublicUrl(`public/${safeAppName}/${safeEventName}/${safePdfName}`, bucket);
-
-  // 3) Build HTML with link to THIS run’s PDF
-  let htmlString;
-  try {
-    const { generateHtmlString } = await import("./generateHtml.mjs");
-    const htmlResult = await generateHtmlString(jsonInput, { pdfUrl });
-    htmlString = htmlResult.htmlString;
-  } catch (importErr) {
-    console.error("⚠️ generateHtml.mjs not available:", importErr);
-    return {
-      status: 501,
-      body: {
-        success: false,
-        message: "generateScheduleSnapshot requires ./generateHtml.mjs (export generateHtmlString).",
-        hint: "Create functions/generateHtml.mjs and export async function generateHtmlString(jsonInput, { pdfUrl })",
-        timestamp,
-      },
-    };
-  }
-
-  // 4) Save HTML (revalidate on each load)
-  if (runningEmulated) {
-    const htmlDir = path.join(LOCAL_OUTPUT_DIR, "public", safeAppName, safeEventName);
-    fs.mkdirSync(htmlDir, { recursive: true });
-    fs.writeFileSync(path.join(htmlDir, safeHtmlName), Buffer.from(htmlString, "utf8"));
-  } else {
-    const htmlFile = bucket.file(`public/${safeAppName}/${safeEventName}/${safeHtmlName}`);
-    await htmlFile.save(Buffer.from(htmlString, "utf8"), {
-      metadata: { contentType: "text/html; charset=utf-8", cacheControl: "public, max-age=0, must-revalidate" },
-    });
-  }
-  const htmlUrl = makePublicUrl(`public/${safeAppName}/${safeEventName}/${safeHtmlName}`, bucket);
-
-  // 5) Log + response
-  const executionTimeSeconds = (Date.now() - startTime) / 1000;
-  await logPdfEvent({ timestamp, glideAppName, filename: safePdfName, url: pdfUrl, userEmail, profileId, success: true });
-
-  return {
-    status: 200,
-    body: {
-      success: true,
-      message: "✅ HTML and date-stamped PDF generated",
-      urls: { html: htmlUrl, pdf_versioned: pdfUrl },
-      // Convenience top-level fields for clients like Glide
-      pdfUrl: pdfUrl,
-      htmlUrl: htmlUrl,
-      timestamp,
-      executionTimeSeconds,
-      ...(jsonInput?.debug === true
-        ? {
-          debug: {
-            mergedJson: jsonInput,
-            debugDumpPath: jsonInput.__debugDumpPath || null,
-          },
-        }
-        : {}),
-    },
-  };
 }
 
 //Get Package version from package.json or default to 0.0.0
@@ -368,23 +248,6 @@ export const v2 = onRequest({
   req.body.eventNameRaw = rawEventName;
   req.body.appName = safeAppNameBody;
   req.body.eventName = safeEventName;
-
-
-
-  // GET_PROFILE_IDS
-  if (action === ACTIONS.GET_PROFILE_IDS) {
-    try {
-      const snapshot = await db.collection("styleProfiles").get();
-      const ids = snapshot.docs.map((doc) => ({
-        profileId: doc.id,
-        name: doc.data()?.name || "(Unnamed)",
-      }));
-      return res.status(200).json({ success: true, message: "✅ Success", count: ids.length, profiles: ids, timestamp });
-    } catch (err) {
-      console.error("❌ Error fetching profile IDs:", err);
-      return res.status(500).json({ success: false, message: "Failed to fetch profile IDs", error: err.message, timestamp });
-    }
-  }
 
   // UPDATE_DATES
   if (action === ACTIONS.UPDATE_DATES) {
@@ -513,20 +376,6 @@ export const v2 = onRequest({
     const safeAppName = sanitiseUrl(req.body?.appName || glideAppName);
     const bucket = getStorage().bucket();
 
-    // ALWAYS generate both (HTML + PDF) for either action
-    if (action === ACTIONS.GENERATE_SNAPSHOT || action === ACTIONS.GENERATE_PDF) {
-      const result = await generateSnapshotOutputs(
-        jsonInput,
-        safeAppName,
-        safeEventName,
-        bucket,
-        startTime,
-        timestamp,
-        userEmail,
-        profileId
-      );
-      return res.status(result.status).json(result.body);
-    }
 
     //////////////////////////////////////////////////////////////////////////////////////
     //Generate all snapshots and mom page/////////////////////////////////////////////////
@@ -580,29 +429,6 @@ export const v2 = onRequest({
         const snap = snapshots[idx];
         const label = snap.filename || `(unnamed #${idx + 1})`;
         console.log(`▶️  Starting snapshot ${idx + 1}/${snapshots.length}: ${label}`);
-
-        // Per-snapshot filters (empty array means "no filter" for that dimension)
-        //const filterTagIds = snap.filterTagIds || [];
-        //const filterLocationIds = snap.filterLocationIds || [];
-        //const filterSubLocationIds = snap.filterSubLocationIds || [];
-
-        // // 1) Filter
-        // const filteredData = filterJSON({
-        //   data: jsonDataRaw,
-        //   filterTagIds,
-        //   filterLocationIds,
-        //   filterSubLocationIds,
-        // });
-        // console.log(`   • Filtered entries: ${filteredData.length}`);
-
-        // // 2) Group + sort
-        // const groupBy = snap.groupBy || "date";
-        // const sortOrder = Array.isArray(snap.sortOrder) ? snap.sortOrder : [];
-        // const processedJSON = groupAndSortJSON({
-        //   jsonDataRaw: filteredData,
-        //   groupBy,
-        //   sortOrder,
-        // });
 
         // Select the precomputed view by groupPresetId (required)
         const presetId = snap.groupPresetId;
