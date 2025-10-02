@@ -92,7 +92,7 @@ export async function generateSnapshotOutputsv2({
   const prepared = applyHeader({ ...jsonInput }, displayBase);
 
   // 1) PDF bytes
-  const { generatePdfBuffer } = await import("../generateSchedules/generatepdfv2.mjs");
+  const { generatePdfBuffer } = await import("./generatepdf.mjs");
   const { bytes, filename } = await generatePdfBuffer(prepared);
   console.log(`Filename ${filename}`);
 
@@ -115,7 +115,7 @@ export async function generateSnapshotOutputsv2({
   const pdfUrl = makePublicUrl(joinCloudPath(pdfName), bucket);
 
   // 4) HTML that links to *this* PDF
-  const { generateHtmlString } = await import("../generateSchedules/generateHtmlv2.mjs");
+  const { generateHtmlString } = await import("./generateHtml.mjs");
   const { htmlString } = await generateHtmlString(prepared, { pdfUrl });
 
   if (runningEmulated) {
