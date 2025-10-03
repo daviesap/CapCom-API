@@ -22,6 +22,7 @@ import { generateHome } from "./generateSchedules/generateHome.mjs";
 import { applySnapshotFiltersToView } from "./generateSchedules/applyFilters.mjs";
 import { generateSnapshotOutputsv2 } from "./generateSchedules/generateSnapshots.mjs";
 import { prepareJSONGroups } from "./generateSchedules/prepareJSONforSnapshots.mjs";
+//import { generateHomeHandler } from "./generateSchedules/generateHomeHandler.mjs";
 
 // ===== Secrets =====
 // Declare the secret names as they exist in Secret Manager
