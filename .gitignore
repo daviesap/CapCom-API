@@ -52,4 +52,6 @@ local.settings.json
 
 # No need to upload generated PDFs
 /pdfoutput
+# Local emulator output (debug JSON, temporary HTML/PDF files). Ignored to avoid
+# committing large or frequently-changing artifacts produced during local runs.
 functions/local-emulator/output/
