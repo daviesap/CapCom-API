@@ -4,42 +4,18 @@
  * Purpose
  * -------
  * Build and publish the **Home / MOM** page for an event. This page lists all
- * snapshots (unfiltered “Master” and filtered views), grouped visually by type,
- * and links to the generated HTML/PDF for each snapshot when available.
- *
- * What this module does
- * ---------------------
- * 1) Sorts snapshots by `sortOrder`, then by `type`, then by `filename` for a
- *    stable, human-friendly order on the Home page.
- * 2) Splits the list into **unfiltered** (Master) and **filtered** snapshots,
- *    then renders each set into responsive button grids.
- * 3) Builds header content from event.header (or event name fallback) and renders an optional Key Info accordion from event.keyInfo using marked + sanitize-html.
- * 4) Resolves a header logo from event.logoUrl, or a derived storage path based on event.profileId (or a snapshot's profileId).
- * 5) Emits a complete HTML page, saving it **locally** when emulated or to the
- *    default GCS bucket when running in the cloud.
- * 6) Logs the publish event via `logPdfEvent` (including the computed URL).
- *
- * Inputs (via function params)
- * ----------------------------
- * - jsonInput: overall event metadata and the `snapshots` array (each with
- *   filename/type/urls and optional filter flags).
- * - makePublicUrl: function to construct a public URL for a given GCS path.
- * - runningEmulated, LOCAL_OUTPUT_DIR: control local writes when emulating.
- * - startTime, timestamp, userEmail, profileId, glideAppName: metadata used for
- *   logging and page chrome.
- * - req: used to derive `safeAppName`/`safeEventName` slugs (and to keep
- *   makePublicUrl in index.js for now).
- * - logPdfEvent: callback used to persist an audit trail entry.
+ * snapshots grouped by the JSON `group` key, with **group order** controlled
+ * by the group's `sortOrder` (ascending). Items inside each group retain their
+ * original input order (no item re-sorting).
  *
  * Notes
  * -----
- * - This module does **not** generate snapshots itself; it only renders the Home
- *   page that links to them. The snapshot generation happens upstream and
- *   populates `realHtmlUrl` / `realPdfUrl` on each snapshot.
- * - No filtering/grouping logic for schedules lives here; this file focuses on
- *   the Home page UX and publishing only.
+ * - The old `filtered` boolean is not used anymore.
+ * - This module does **not** generate snapshots; it only renders the Home page.
+ * - Upstream snapshot generation populates `realHtmlUrl` / `realPdfUrl` when ready.
  */
-// functions/handlers/generateHome.mjs
+
+// functions/generateSchedules/generateHome.mjs
 import { getStorage } from "firebase-admin/storage";
 import fs from "fs";
 import path from "path";
@@ -48,6 +24,8 @@ import { sanitiseUrl } from "../utils/sanitiseUrl.mjs";
 
 import { marked } from "marked";
 import sanitizeHtml from "sanitize-html";
+
+/* ---------- utils ---------- */
 
 function escapeHtml(text = "") {
   return text.replace(/[&<>"']/g, (match) => {
@@ -62,9 +40,40 @@ function escapeHtml(text = "") {
   });
 }
 
+/**
+ * Group snapshots by the `group` key and order groups by `sortOrder` (ascending).
+ * - Group key default: "Other".
+ * - A group's sortOrder is the **lowest** numeric sortOrder seen among its items;
+ *   non-numeric/missing values are treated as Infinity.
+ * - Items inside each group retain their original input order (no sorting).
+ */
+function groupSnapshotsByGroup(snapshots = []) {
+  const groupsMap = new Map();
 
-// We keep using index.js's makePublicUrl via a param to avoid moving that util right now.
-// If you prefer, later extract makePublicUrl into utils and import it here instead.
+  for (const s of snapshots) {
+    const key = (s.group ?? "Other").toString();
+    const sOrder = Number.isFinite(s?.sortOrder) ? s.sortOrder : Number.POSITIVE_INFINITY;
+
+    if (!groupsMap.has(key)) {
+      groupsMap.set(key, { key, sortOrder: sOrder, items: [] });
+    }
+
+    const grp = groupsMap.get(key);
+    if (sOrder < grp.sortOrder) grp.sortOrder = sOrder; // keep smallest seen
+    grp.items.push(s); // preserve original input order
+  }
+
+  const groups = Array.from(groupsMap.values());
+  groups.sort((a, b) => {
+    const diff = (a.sortOrder ?? Number.POSITIVE_INFINITY) - (b.sortOrder ?? Number.POSITIVE_INFINITY);
+    if (diff) return diff;
+    return a.key.localeCompare(b.key);
+  });
+  return groups;
+}
+
+/* ---------- main ---------- */
+
 export async function generateHome({
   jsonInput,
   makePublicUrl,
@@ -78,78 +87,39 @@ export async function generateHome({
   req,
   logToGlide
 }) {
-  const safeAppName = sanitiseUrl(req.body?.appName || jsonInput.glideAppName || "App");
+  const safeAppName = sanitiseUrl(req?.body?.appName || jsonInput?.glideAppName || "App");
   const safeEventName = sanitiseUrl(
-    req.body?.event?.name ||
+    req?.body?.event?.name ||
     jsonInput?.event?.name ||
     jsonInput?.event?.eventName ||
     "Event"
   );
   const bucket = getStorage().bucket();
-  // Normalise userId: prefer request body "UserId", then jsonInput (userId/UserId), else empty
   const userId = (req?.body?.UserId ?? jsonInput?.userId ?? jsonInput?.UserId ?? "");
 
-  // Sort snapshots by sortOrder (missing sortOrder => Infinity)
-  const snapshots = Array.isArray(jsonInput.snapshots) ? [...jsonInput.snapshots] : [];
-  snapshots.sort((a, b) => {
-    const ao = (typeof a.sortOrder === "number") ? a.sortOrder : Number.POSITIVE_INFINITY;
-    const bo = (typeof b.sortOrder === "number") ? b.sortOrder : Number.POSITIVE_INFINITY;
-    if (ao !== bo) return ao - bo;
-    const at = (a.type || "").toString().toLowerCase();
-    const bt = (b.type || "").toString().toLowerCase();
-    if (at !== bt) return at.localeCompare(bt);
-    const af = (a.filename || "").toString().toLowerCase();
-    const bf = (b.filename || "").toString().toLowerCase();
-    return af.localeCompare(bf);
-  });
+  // Snapshots as given (no re-sorting at item level)
+  const snapshots = Array.isArray(jsonInput.snapshots) ? jsonInput.snapshots.slice() : [];
 
-  // Split into unfiltered (Master) and filtered views.
-  const isFilteredFn = (s) => {
-    if (typeof s.isFiltered === "boolean") return s.isFiltered;
-    const t = (s.type || "").toString().trim().toLowerCase();
-    return t !== "master"; // default inference
-  };
-  const unfiltered = snapshots.filter(s => !isFilteredFn(s));
-  const filtered = snapshots.filter(s => isFilteredFn(s));
+  // Build grouped structure (groups ordered by sortOrder; items retain input order)
+  const groupsArr = groupSnapshotsByGroup(snapshots);
 
-  // Helper: group a list of snapshots by type in current order
-  function groupByType(list) {
-    const out = [];
-    let currentType = null;
-    let currentItems = [];
-    for (const s of list) {
-      const t = (s.type || "").toString();
-      if (t !== currentType) {
-        if (currentItems.length) out.push({ type: currentType, items: currentItems });
-        currentType = t;
-        currentItems = [];
-      }
-      currentItems.push(s);
-    }
-    if (currentItems.length) out.push({ type: currentType, items: currentItems });
-    return out;
-  }
+  // ---------- Render ----------
 
-  // Helper: render groups -> HTML sections with buttons
-  function renderGroupsHtml(groupsArr) {
-    return groupsArr.map(g => {
-      const head = g.type ? `<div class="group-head">${escapeHtml(g.type)}</div>` : "";
+  function renderGroupsHtml(groups) {
+    return groups.map(g => {
+      const head = `<div class="group-head">${escapeHtml(g.key ?? "")}</div>`;
       const items = g.items.map(s => {
-        const labelRaw = (s.filename || "Snapshot").toString();
+        const labelRaw = (s.name ?? s.displayName ?? s.title ?? s.filename ?? "Snapshot").toString();
         const label = escapeHtml(labelRaw);
-        // Prefer the real generated HTML URL when present; otherwise fall back to the temporary URL.
-        const realUrl = (typeof s.realHtmlUrl === "string" && s.realHtmlUrl.trim())
-          ? s.realHtmlUrl.trim()
-          : "";
-        const tempUrl = (typeof s.urlTemp === "string" && s.urlTemp.trim())
-          ? s.urlTemp.trim()
-          : "";
+
+        const realUrl = (typeof s.realHtmlUrl === "string" && s.realHtmlUrl.trim()) ? s.realHtmlUrl.trim() : "";
+        const tempUrl = (typeof s.urlTemp === "string" && s.urlTemp.trim()) ? s.urlTemp.trim() : "";
         const targetUrl = realUrl || tempUrl;
 
-        // If we have a URL, link it; otherwise render as a disabled-style button.
         const hrefAttr = targetUrl
           ? ` href="${escapeHtml(targetUrl)}" target="_blank" rel="noopener"`
           : ` role="button" aria-disabled="true"`;
+
         return `
           <a class="snap-btn"${hrefAttr}>
             <div class="left">
@@ -161,6 +131,7 @@ export async function generateHome({
           </a>
         `;
       }).join("\n");
+
       return `
         <section class="group">
           ${head}
@@ -172,14 +143,11 @@ export async function generateHome({
     }).join("\n");
   }
 
-  const unfilteredGroupsHtml = renderGroupsHtml(groupByType(unfiltered));
-  const filteredGroupsHtml = renderGroupsHtml(groupByType(filtered));
-
   // Header/meta
-  const title = `${jsonInput.event.name || "Event"} – Home`;
-  // Build Key Info using marked + sanitize-html (to match schedule rendering)
-  const keyInfoMd = jsonInput?.event?.keyInfo || "";
+  const title = `${jsonInput?.event?.name || "Event"} – Home`;
 
+  // Key Info (Markdown -> HTML, sanitized)
+  const keyInfoMd = jsonInput?.event?.keyInfo || "";
   let keyInfoSection = "";
   if (keyInfoMd) {
     const rawHtml = marked.parse(keyInfoMd, { mangle: false, headerIds: false });
@@ -189,10 +157,7 @@ export async function generateHome({
         "p", "strong", "em", "ul", "ol", "li",
         "blockquote", "code", "pre", "br", "hr", "a", "span"
       ],
-      allowedAttributes: {
-        a: ["href", "title", "target", "rel"],
-        span: ["class"]
-      },
+      allowedAttributes: { a: ["href", "title", "target", "rel"], span: ["class"] },
       transformTags: {
         a: (tagName, attribs) => ({
           tagName: "a",
@@ -214,21 +179,18 @@ export async function generateHome({
     </details>`;
   }
 
-  // Build left-side header: prefer event.header array, else event name
+  // Left-side header (title + optional sublines from event.header)
   const headerLeftHtml = Array.isArray(jsonInput?.event?.header)
     ? jsonInput.event.header.map((line, i) =>
-        i === 0
-          ? `<h1>${escapeHtml(line)}</h1>`
-          : `<div class="sub">${escapeHtml(line)}</div>`
-      ).join("")
+      i === 0
+        ? `<h1>${escapeHtml(line)}</h1>`
+        : `<div class="sub">${escapeHtml(line)}</div>`
+    ).join("")
     : `<h1>${escapeHtml(jsonInput?.event?.name || jsonInput?.event?.eventName || "Event")}</h1>`;
 
-  // Resolve logo for header with sensible fallbacks:
-  // 1) jsonInput.logoUrl (explicit)
-  // 2) jsonInput.document.header.logo.url
-  // 3) derived from profileId -> logos/{profileId}_logotype-footer.png
+  // Resolve header logo
   const explicitLogoUrl =
-    (typeof jsonInput.event.logoUrl === "string" && jsonInput.event.logoUrl.trim())
+    (typeof jsonInput?.event?.logoUrl === "string" && jsonInput.event.logoUrl.trim())
       ? jsonInput.event.logoUrl.trim()
       : (typeof jsonInput?.document?.header?.logo?.url === "string" && jsonInput.document.header.logo.url.trim())
         ? jsonInput.document.header.logo.url.trim()
@@ -236,7 +198,7 @@ export async function generateHome({
 
   const profileIdForLogo =
     (snapshots.find(s => s.profileId)?.profileId) ||
-    jsonInput.profileId ||
+    jsonInput?.profileId ||
     "";
 
   const derivedLogoUrl = profileIdForLogo
@@ -244,6 +206,8 @@ export async function generateHome({
     : "";
 
   const logoUrl = explicitLogoUrl || derivedLogoUrl;
+
+  const groupsHtml = renderGroupsHtml(groupsArr);
 
   const html = `<!doctype html>
 <html lang="en">
@@ -260,274 +224,118 @@ export async function generateHome({
     --ring: rgba(239,68,68,.25);
     --card: #fafafa;
   }
-  * {
-    box-sizing: border-box;
-  }
+  * { box-sizing: border-box; }
   body {
     margin: 0;
     font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
     color: var(--ink);
     background: var(--bg);
   }
-  .wrap {
-    width: 100%;
-    margin: 0;
-    padding: 16px;
-  }
+  .wrap { width: 100%; margin: 0; padding: 16px; }
   header { padding: 8px 0 16px; }
   .header-row { display: flex; align-items: flex-start; gap: 12px; }
   .header-col { min-width: 0; flex: 1 1 auto; }
   .header-logo { flex: 0 0 auto; margin-left: auto; }
   .header-logo img { max-height: 80px; height: auto; width: auto; display: block; }
-  h1 {
-    margin: 0 0 4px;
-    font-size: 1.5rem;
-    line-height: 1.2;
-  }
-  .sub {
-    color: var(--muted);
-    font-size: .95rem;
-  }
-  .key-info {
-    background: var(--card);
-    border: 1px solid #eee;
-    border-radius: 12px;
-    padding: 16px;
-    margin: 16px 0 20px;
-  }
-  .key-info p {
-    margin: .5em 0;
-  }
-  /* Accordion treatment for key info */
+  h1 { margin: 0 0 4px; font-size: 1.5rem; line-height: 1.2; }
+  .sub { color: var(--muted); font-size: .95rem; }
+
+  /* Accordion styling */
   .accordion.key-info {
     background: var(--card);
     border: 1px solid #eee;
     border-radius: 12px;
     margin: 16px 0 20px;
-    padding: 0; /* we pad summary/body instead */
+    padding: 0;
     overflow: hidden;
   }
   .accordion.key-info summary {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    cursor: pointer;
-    list-style: none;
-    padding: 12px 16px;
-    font-weight: 700;
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    cursor: pointer; list-style: none; padding: 12px 16px; font-weight: 700;
   }
   .accordion.key-info summary::-webkit-details-marker { display: none; }
-  .accordion.key-info .acc-body {
-    padding: 12px 16px;
-    border-top: 1px solid #eee;
-  }
-  .accordion.key-info .acc-chevron {
-    flex: 0 0 auto;
-    color: var(--muted);
-    transition: transform .18s ease;
-  }
-  .accordion.key-info[open] .acc-chevron {
-    transform: rotate(90deg);
-  }
-  /* Key info readability tweaks (works for both inline block and accordion body) */
-  .markdown.key-info,
-  .accordion.key-info .acc-body {
-    line-height: 1.6;
-    font-size: 0.98rem;
-  }
-  .markdown.key-info h1,
-  .markdown.key-info h2,
-  .markdown.key-info h3,
-  .accordion.key-info .acc-body h1,
-  .accordion.key-info .acc-body h2,
-  .accordion.key-info .acc-body h3 {
-    margin-top: 0.6em;
-    margin-bottom: 0.35em;
-    font-weight: 700;
-  }
-  .markdown.key-info h4,
-  .markdown.key-info h5,
-  .markdown.key-info h6,
-  .accordion.key-info .acc-body h4,
-  .accordion.key-info .acc-body h5,
-  .accordion.key-info .acc-body h6 {
-    margin-top: 0.6em;
-    margin-bottom: 0.35em;
-    font-weight: 600;
-  }
-  .markdown.key-info ul,
-  .markdown.key-info ol,
-  .accordion.key-info .acc-body ul,
-  .accordion.key-info .acc-body ol {
-    margin: 0.4em 0 0.8em 1.25em;
-  }
-  .markdown.key-info li,
-  .accordion.key-info .acc-body li {
-    margin: 0.25em 0;
-  }
-  .markdown.key-info strong,
-  .accordion.key-info .acc-body strong {
-    font-weight: 700;
-  }
-  /* Make links readable and consistent */
-  .markdown.key-info a,
-  .accordion.key-info .acc-body a {
-    color: inherit;
-    text-decoration: underline;
-    text-underline-offset: 2px;
-  }
-  .markdown.key-info a:hover,
-  .accordion.key-info .acc-body a:hover {
-    text-decoration-thickness: 2px;
-  }
-  /* Special styling for what3words links without requiring authors to add classes */
-  .markdown.key-info a[href*="w3w.co"],
-  .accordion.key-info .acc-body a[href*="w3w.co"] {
-    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-    background: rgba(59,130,246,0.10); /* blue tint */
-    border: 1px solid rgba(59,130,246,0.25);
-    border-radius: 6px;
-    padding: 0.08em 0.35em;
-    text-decoration: none; /* pill looks cleaner */
-    white-space: nowrap;
-  }
-  .markdown.key-info a[href*="w3w.co"]:hover,
-  .accordion.key-info .acc-body a[href*="w3w.co"]:hover {
-    background: rgba(59,130,246,0.16);
-    border-color: rgba(59,130,246,0.35);
-  }
-  /* Compact horizontal rule for visual breaks users may add */
-  .markdown.key-info hr,
-  .accordion.key-info .acc-body hr {
-    border: 0;
-    height: 1px;
-    background: #e5e7eb;
-    margin: 12px 0;
-  }
+  .accordion.key-info .acc-body { padding: 12px 16px; border-top: 1px solid #eee; }
+  .accordion.key-info .acc-chevron { flex: 0 0 auto; color: var(--muted); transition: transform .18s ease; }
+  .accordion.key-info[open] .acc-chevron { transform: rotate(90deg); }
+
   /* Markdown basics */
   .markdown h1,.markdown h2,.markdown h3,.markdown h4,.markdown h5,.markdown h6{margin:.2em 0 .4em; line-height:1.25}
   .markdown p{margin:.5em 0}
   .markdown ul,.markdown ol{margin:.5em 0 .5em 1.25em; padding-left:1em}
   .markdown li{margin:.25em 0}
   .markdown a{text-decoration:underline; color:inherit}
-  /* Group headings (category blocks) */
-  .group{margin: 18px 0 22px;}
-  .group-head{
-    display:flex; align-items:center; gap:10px;
-    font-size:12px; font-weight:700; letter-spacing:.04em;
-    color: var(--muted); text-transform: uppercase;
-    margin: 6px 0 10px;
-  }
-  .group-head::after{
-    content:""; flex:1 1 auto; height:1px; background:#e5e7eb;
-  }
-/* Master (full schedule) */
-.master-box {
-  background: #EFF6FF;   /* subtle blue highlight */
+
+  /* Group headings */
+.group {
+  margin: 28px 0;                   /* spacing between groups */
+  padding: 16px 20px;
   border-radius: 12px;
-  padding: 16px;
-  margin: 8px 0 20px;
+  background: var(--group-bg, #fafafa);
+  border: 1px solid #e5e7eb;        /* subtle border */
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05); /* soft shadow */
 }
 
-.master-box .group-head {
-  color: #3B82F6;        /* accent blue for the section heading */
-  font-weight: 600;
+.group-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin: 0 0 12px;
 }
-  .section-title{
-    font-size:12px; font-weight:700; letter-spacing:.04em;
-    color: var(--muted); text-transform: uppercase;
-    margin: 16px 0 6px;
-  }
-  .filtered-box{
-    border:1px solid #FDE68A;  /* amber-300 */
-    border-radius:12px;
-    background:#FFFBEB;        /* amber-50 */
-    padding:16px;
-    box-shadow: 0 2px 6px rgba(0,0,0,.04);
-  }
-  .filtered-box .group-head{
-    color:#92400E;             /* amber-800 for title */
-    font-weight:600;
-  }
-  .filtered-box .group{ margin:12px 0 0; }
+
+.group-head::after {
+  content: "";
+  flex: 1 1 auto;
+  height: 1px;
+  background: #e5e7eb;
+  opacity: .7;
+}
+
   /* Buttons grid */
   .grid{display:grid; grid-template-columns:1fr; gap:12px}
   @media(min-width:560px){ .grid{grid-template-columns:repeat(2,1fr)} }
   @media(min-width:900px){ .grid{grid-template-columns:repeat(3,1fr)} }
   .snap-btn {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 14px 16px;
-    text-decoration: none;
-    border: 1px solid #eee;
-    border-radius: 12px;
-    background: #fff;
-    box-shadow: 0 1px 1px rgba(0,0,0,.03);
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 16px; text-decoration:none; border:1px solid #eee;
+    border-radius:12px; background:#fff; box-shadow:0 1px 1px rgba(0,0,0,.03);
     transition: transform .06s ease, box-shadow .15s ease, border-color .15s ease;
     color: var(--ink);
   }
   .snap-btn .left{display:flex; align-items:center; gap:0; min-width:0}
-  .snap-btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 8px 20px rgba(0,0,0,.06);
-    border-color: #e5e7eb;
-  }
-  .snap-btn[aria-disabled="true"] {
-    opacity: 0.6;
-    cursor: not-allowed;
-    pointer-events: none;
-  }
-  .snap-label {
-    font-weight: 600;
-  }
-  .subtitle {
-    font-size: 0.85rem;
-    color: var(--muted);
-    margin-left: 8px;
-    flex-grow: 1;
-  }
-  .chevron {
-    flex-shrink: 0;
-    color: var(--accent);
-  }
-  footer {
-    color: var(--muted);
-    font-size: .85rem;
-    padding: 16px 0 8px;
-  }
+  .snap-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(0,0,0,.06); border-color: #e5e7eb; }
+  .snap-btn[aria-disabled="true"] { opacity: 0.6; cursor: not-allowed; pointer-events: none; }
+  .snap-label { font-weight:600; }
+  .chevron { flex-shrink:0; color: var(--accent); }
+
+  footer { color: var(--muted); font-size: .85rem; padding: 16px 0 8px; }
 </style>
 </head>
 <body>
   <div class="wrap">
-<header>
-  <div class="header-row">
-    <div class="header-col">
-      ${headerLeftHtml}
-    </div>
-    <div class="header-logo">
-      ${logoUrl
+    <header>
+      <div class="header-row">
+        <div class="header-col">
+          ${headerLeftHtml}
+        </div>
+        <div class="header-logo">
+          ${logoUrl
       ? `<img src="${logoUrl}" alt="" decoding="async" referrerpolicy="no-referrer"
-               onerror="this.closest('div').style.display='none'">`
+                     onerror="this.closest('div').style.display='none'">`
       : ""}
-    </div>
-  </div>
-</header>
+        </div>
+      </div>
+    </header>
 
     ${keyInfoSection || ""}
 
-    <section>
-      ${unfilteredGroupsHtml ? `<div class="master-box">${unfilteredGroupsHtml}</div>` : ""}
-      ${filtered.length
-      ? `
-        <div class="section-title">Filtered Views</div>
-        <div class="filtered-box">
-          ${filteredGroupsHtml}
-        </div>`
-      : (unfilteredGroupsHtml ? "" : '<div class="sub">No snapshots defined.</div>')
-    }
-    </section>
+    <main>
+      ${groupsHtml || '<div class="sub">No snapshots defined.</div>'}
+    </main>
 
     <footer>
       <div>Generated ${new Date().toLocaleString("en-GB", { timeZone: "Europe/London" })}</div>
@@ -536,7 +344,7 @@ export async function generateHome({
 </body>
 </html>`;
 
-  // Write to Storage
+  // ---------- Write to Storage ----------
   const safeHomeName = "mom.html";
   if (runningEmulated) {
     const htmlDir = path.join(LOCAL_OUTPUT_DIR, "public", safeAppName, safeEventName);
@@ -550,12 +358,13 @@ export async function generateHome({
   }
   const homeUrl = makePublicUrl(`public/${safeAppName}/${safeEventName}/${safeHomeName}`, bucket);
 
+  // ---------- Log + return ----------
   const executionTimeSeconds = (Date.now() - startTime) / 1000;
-  // Build an array of snapshot objects with name + URLs
+
   const snapshotsOut = snapshots.map(s => {
     const htmlUrl = (typeof s.realHtmlUrl === "string" && s.realHtmlUrl.trim())
       ? s.realHtmlUrl.trim()
-      : (typeof s.urlTemp === "string" && s.urlTemp.trim() ? s.urlTemp.trim() : "");
+      : ((typeof s.urlTemp === "string" && s.urlTemp.trim()) ? s.urlTemp.trim() : "");
 
     const pdfUrl = (typeof s.realPdfUrl === "string" && s.realPdfUrl.trim())
       ? s.realPdfUrl.trim()
@@ -568,7 +377,6 @@ export async function generateHome({
     };
   });
 
-
   await logToGlide({
     timestamp,
     glideAppName,
@@ -580,7 +388,7 @@ export async function generateHome({
     success: true,
     type: "MOM",
     message: "MOM page generated",
-    executionTimeSeconds: executionTimeSeconds
+    executionTimeSeconds
   });
 
   return {

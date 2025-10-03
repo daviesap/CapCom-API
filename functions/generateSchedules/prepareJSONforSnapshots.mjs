@@ -22,7 +22,9 @@ export async function prepareJSONGroups(
   const metaByDate = indexDateMeta(payload);
 
   // 3) Materialize rows (no normalization needed per your guarantees)
-  const rows = Array.isArray(payload?.data) ? payload.data.slice() : [];
+  const rows = Array.isArray(payload?.data?.scheduleDetail)
+    ? payload.data.scheduleDetail.slice()
+    : [];
 
   // 4) For each preset, group + sort + attach meta
   const result = {};
