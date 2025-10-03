@@ -1,3 +1,13 @@
+/*
+ * functions/utils/sanitiseUrl.mjs
+ * --------------------------------
+ * Create a filesystem/URL-safe slug from user-provided strings.
+ * Intended uses: object names for GCS, filenames, local output directories.
+ * No external dependencies.
+ *
+ * Input: a free-text string.
+ * Output: a compact string containing only letters, digits, dot, dash, underscore.
+ */
 /**
  * Sanitises strings for safe use in URLs, filenames, storage paths.
  * - Removes spaces, brackets, and unsafe characters.

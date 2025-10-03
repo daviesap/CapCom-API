@@ -1,11 +1,10 @@
-// functions/utils/filterJSON.mjs
-
-/**
- * Filter the merged schedule JSON by tagIds/locationIds and ALWAYS keep groups.
- * If a group has no matching entries, insert a single placeholder:
- *   { fields: { description: "No entries", ... }, isPlaceholder: true }
+/*
+ * functions/utils/filterJSON.mjs
+ * --------------------------------
+ * Apply tag/location filters to merged schedule JSON. Ensures groups are retained
+ * even if all entries are filtered out by inserting a placeholder row.
  *
- * Expects the input to follow your merged shape:
+ * Input shape:
  * {
  *   filters: { tagIds: string[], locationIds: string[] },
  *   groups: [{ title, metadata?, entries: [{ fields: {...} }] }]

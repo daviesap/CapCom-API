@@ -8,7 +8,10 @@ import { getStorage } from 'firebase-admin/storage';
 (async () => {
   try {
     // Make working dir the functions folder so relative asset paths resolve the same as runtime
-    process.chdir(path.join(process.cwd(), 'functions'));
+    // Only change dir if we're not already in the functions folder (avoid functions/functions)
+    if (path.basename(process.cwd()) !== 'functions') {
+      process.chdir(path.join(process.cwd(), 'functions'));
+    }
     const req = {
       body: {
         glideAppName: 'TestApp',

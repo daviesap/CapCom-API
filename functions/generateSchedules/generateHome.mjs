@@ -1,18 +1,13 @@
-/**
- * generateHome.mjs
- *
- * Purpose
- * -------
- * Build and publish the **Home / MOM** page for an event. This page lists all
- * snapshots grouped by the JSON `group` key, with **group order** controlled
- * by the group's `sortOrder` (ascending). Items inside each group retain their
- * original input order (no item re-sorting).
- *
- * Notes
- * -----
- * - The old `filtered` boolean is not used anymore.
- * - This module does **not** generate snapshots; it only renders the Home page.
- * - Upstream snapshot generation populates `realHtmlUrl` / `realPdfUrl` when ready.
+/*
+ * functions/generateSchedules/generateHome.mjs
+ * -------------------------------------------
+ * Build and publish the Home / MOM HTML page for an event.
+ * Responsibilities:
+ *  - Accept prepared JSON (snapshots with realHtmlUrl/realPdfUrl) and render an index page grouping snapshots.
+ *  - Write the resulting HTML to the provided Storage bucket or to the local emulator filesystem.
+ * Requirements:
+ *  - `makePublicUrl` function to map storage paths to public URLs (passed by caller)
+ *  - When invoked in emulation mode, `LOCAL_OUTPUT_DIR` is used for local writes.
  */
 
 // functions/generateSchedules/generateHome.mjs

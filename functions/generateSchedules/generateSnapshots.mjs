@@ -1,27 +1,14 @@
-// functions/generateSchedules/generateSnapshots.mjs
-/**
- * generateSnapshots.mjs
- *
- * This module is responsible for generating per-snapshot outputs (PDF + HTML) for schedules.
- *
- * High-level flow:
- * 1. Enrich the incoming snapshot JSON with a proper header using `applyHeader`.
- * 2. Generate a PDF buffer from the prepared JSON using `generatepdfv2.mjs`.
- * 3. Save the PDF either locally (when emulated) or to the configured GCS bucket.
- * 4. Generate an HTML version of the schedule using `generateHtmlv2.mjs`,
- *    linking it to the freshly generated PDF.
- * 5. Save the HTML either locally or to the bucket.
- * 6. Log the event to Firestore (via `logPdfEvent`) including metadata such as
- *    filename, urls, userEmail, and profileId.
- *
- * Utility functions:
- * - formatYYYYMMDD: creates a timestamp string for filenames.
- * - applyHeader: appends the snapshot filename into the header and ensures
- *   the prepared JSON contains a document.header object for downstream renderers.
- *
- * Exports:
- * - generateSnapshotOutputsv2: the main async function called with a prepared JSON
- *   and environment info, returning the URLs and names of the generated files.
+/*
+ * functions/generateSchedules/generateSnapshots.mjs
+ * --------------------------------------------------
+ * Generate per-snapshot outputs (PDF + HTML) from a prepared JSON object.
+ * Responsibilities:
+ *  - Generate a PDF via `generatepdf.mjs` and an HTML via `generateHtml.mjs`.
+ *  - Persist outputs either to the local emulator filesystem or to the configured GCS bucket.
+ *  - Use `makePublicUrl` (provided by the caller) to produce public URLs to the stored files.
+ * Requirements:
+ *  - `generatePdfBuffer` (from generatepdf.mjs) must be available and functional.
+ *  - Caller must provide `bucket`, `runningEmulated`, `LOCAL_OUTPUT_DIR`, and `makePublicUrl`.
  */
 import fs from "fs";
 import path from "path";

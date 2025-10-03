@@ -1,3 +1,17 @@
+/*
+ * functions/index.js
+ * ------------------
+ * Main Cloud Function router for the Flair PDF Generator project.
+ * Responsibilities:
+ *  - Expose a single HTTP entrypoint (`v2`) which routes actions (version, updateDates, mealsPivot, generateHome).
+ *  - Perform common validation (API key gating), environment wiring (secrets), and shared helpers (makePublicUrl, logToGlide).
+ * Requirements / runtime expectations:
+ *  - Firebase Admin must be initialised (the module calls initializeApp at import-time).
+ *  - Secrets: API_KEY, GLIDE_API_KEY, GLIDE_LOGS_TOKEN are expected to be bound to the function in production.
+ *  - The handler delegates heavy work to files under `functions/generateSchedules` which in turn may call Storage/Firestore.
+ *  - When running locally the emulator flags (FUNCTIONS_EMULATOR / FIREBASE_EMULATOR_HUB) should be set and LOCAL_API_KEY or LOCAL_GLIDE_API_KEY may be used.
+ */
+
 // ===== Imports — Node built-ins =====
 import path from "path";
 import { readFile } from "fs/promises";

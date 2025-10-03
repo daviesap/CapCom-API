@@ -1,6 +1,18 @@
-// prepareJSONGroups.mjs
+/*
+ * functions/generateSchedules/prepareJSONforSnapshots.mjs
+ * -------------------------------------------------------
+ * Build grouped and sorted views for each group preset. This module reads a
+ * `groupPresets.json` file and materializes groups (e.g., date/tag/location) from
+ * an incoming payload of schedule rows.
+ * Requirements:
+ *  - The module loads a presets JSON file; the path should be resolved relative to
+ *    this module (not to process.cwd()) to avoid working-dir issues.
+ *  - The payload shape expected: payload.data.scheduleDetail is an array of rows.
+ */
+
 import fs from "node:fs/promises";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 /**
  * Build grouped & sorted views for each preset.
@@ -12,10 +24,15 @@ import path from "node:path";
  */
 export async function prepareJSONGroups(
   payload,
-  { presetsPath = "./generateSchedules/assets/groupPresets.json" } = {}
+  { presetsPath } = {}
 ) {
+  // Resolve presets path relative to this module to avoid depending on process.cwd()
+  const __dirname = path.dirname(fileURLToPath(import.meta.url));
+  const defaultPresets = path.join(__dirname, "assets", "groupPresets.json");
+  const presetsAbs = path.isAbsolute(presetsPath || "")
+    ? (presetsPath || defaultPresets)
+    : path.resolve(__dirname, presetsPath || defaultPresets);
   // 1) Load presets
-  const presetsAbs = path.resolve(presetsPath);
   const { groupPresets } = JSON.parse(await fs.readFile(presetsAbs, "utf8"));
 
   // 2) Build quick meta index by dateKey (strings only)

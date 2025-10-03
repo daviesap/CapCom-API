@@ -1,5 +1,12 @@
+/*
+ * functions/utils/prettyDate.mjs
+ * -------------------------------
+ * Date formatting helpers used across the functions codebase.
+ * Provides a few lightweight, locale-aware helpers for rendering human-friendly dates.
+ * No external dependencies.
+ */
 
-//I think this function is obsolete
+// NOTE: formatPrettyDate may be unused; keep until callers are audited.
 export function formatPrettyDate(isoString) {
   const d = new Date(isoString);
   return d.toLocaleString("en-GB", {

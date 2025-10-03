@@ -1,4 +1,9 @@
-// utils/timestamp.mjs
+/*
+ * functions/utils/timestamp.mjs
+ * ------------------------------
+ * Time / timestamp helpers for human-readable strings used in PDF/HTML footers
+ * and logs. Uses Intl.DateTimeFormat with a default timezone of Europe/London.
+ */
 
 export function getOrdinalSuffix(day) {
   if (day > 3 && day < 21) return 'th';

@@ -1,4 +1,22 @@
-// Handler that encapsulates the GENERATE_HOME action previously in index.js
+/*
+ * functions/generateSchedules/generateHomeHandler.mjs
+ * --------------------------------------------------
+ * Encapsulates the logic previously implemented inline in `functions/index.js` for the
+ * `generateHome` action. Responsibilities:
+ *  - Load a root profile from Firestore (if provided)
+ *  - Prepare grouped views via `prepareJSONGroups`
+ *  - Apply per-snapshot filters and build prepared JSON objects for rendering
+ *  - Invoke `generateSnapshotOutputsv2` for each snapshot
+ *  - Call `generateHome` to build and publish the MOM/Home page
+ * Requirements / dependencies:
+ *  - `db` (Firestore instance) passed in to read styleProfiles
+ *  - `bucket` (Storage bucket) passed in for publishing and for URL construction
+ *  - `makePublicUrl` function (provided by the caller) to create public URLs
+ *  - `generateSnapshotOutputsv2` and `generateHome` from sibling modules
+ * Notes:
+ *  - Writes debug JSON under the configured LOCAL_OUTPUT_DIR when running emulated.
+ */
+
 import path from "path";
 import fs from "fs";
 import { merge } from "lodash-es";

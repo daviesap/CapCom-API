@@ -1,5 +1,9 @@
-// utils/sanitiseText.mjs
-
+/*
+ * functions/utils/sanitiseText.mjs
+ * --------------------------------
+ * Prepare text for rendering into PDFs by removing line breaks and control characters
+ * that some PDF encoders (WinAnsi) cannot handle.
+ */
 /**
  * Removes characters that WinAnsi encoding cannot handle, including:
  * - Line breaks (\n, \r)

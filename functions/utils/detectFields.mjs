@@ -1,6 +1,11 @@
+/*
+ * functions/utils/detectFields.mjs
+ * ---------------------------------
+ * Inspect grouped schedule entries and return a list of field keys detected in the
+ * data. Used to auto-generate column lists or detect missing fields.
+ */
 const ignoredFields = ["tagIds", "locationIds"];
 
-// functions/utils/detectFields.mjs
 export function deriveDetectedFieldsFromGroups(groups) {
   const detected = new Set();
 

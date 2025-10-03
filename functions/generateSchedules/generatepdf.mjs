@@ -67,6 +67,15 @@ function toWinAnsi(str) {
   const s = String(str);
   // Replace anything outside the basic Latin + common punctuation range.
   // (You can refine the allowlist as needed.)
+/*
+ * functions/generateSchedules/generatepdf.mjs
+ * -------------------------------------------
+ * Generate PDF bytes from a prepared schedule JSON. This module encapsulates
+ * the PDF rendering logic and returns a bytes buffer and filename metadata.
+ * Requirements:
+ *  - Any rendering dependencies (Puppeteer, PDF library) should be installed and
+ *    available in the runtime environment.
+ */
   return s.replace(/[^\x20-\x7E]/g, ''); // drop unsupported chars
   // If you prefer to visualise removals, swap '' for '□' or '?'.
 }
