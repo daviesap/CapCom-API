@@ -62,6 +62,7 @@ export async function generateSnapshotOutputsv2({
   logToGlide,
   // 👇 easy toggle: set to "" when promoting to prod paths
   extraSubdir = "",  //was "v2"
+  runId,
 }) {
   // Build a path under: public/<app>/<event>/<maybe v2>/<file>
   const joinCloudPath = (filename) =>
@@ -130,7 +131,8 @@ export async function generateSnapshotOutputsv2({
     success: true,
     type: "snapshot",
     message: "snapshot generated",
-    executionTimeSeconds: executionTimeSeconds
+    executionTimeSeconds: executionTimeSeconds,
+    runId
   });
 
   return { pdfUrl, htmlUrl, pdfName, htmlName, executionTimeSeconds };

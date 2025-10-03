@@ -84,7 +84,8 @@ export async function generateHomeHandler({
   logToGlide,
   safeAppName,
   safeEventName,
-  makePublicUrl
+  makePublicUrl,
+  runId
 }) {
   // Use the LOCAL_OUTPUT_DIR defined here (keeps parity with previous behaviour)
   try {
@@ -213,6 +214,7 @@ export async function generateHomeHandler({
         makePublicUrl,
         logToGlide,
         extraSubdir: "",
+        runId,
       });
 
       console.log(`   • Done HTML: ${htmlUrl}`);
@@ -251,7 +253,8 @@ export async function generateHomeHandler({
       logToGlide,
       bucket,
       safeAppName,
-      safeEventName
+      safeEventName,
+      runId
     });
     return res.status(result.status).json(result.body);
   } catch (err) {

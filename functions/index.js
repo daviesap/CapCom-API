@@ -95,6 +95,32 @@ function makePublicUrl(objectPath, bucket) {
 }
 
 /**
+ * Generate a per-request run identifier so related logs can be grouped.
+ * Accepts optional overrides from the request body (`runId`, `runID`, `run_id`).
+ * Falls back to a timestamp-derived identifier when none provided.
+ * @param {any} body
+ * @param {string} timestamp
+ * @returns {string}
+ */
+function deriveRunId(body, timestamp) {
+  const candidates = [
+    body?.runId,
+    body?.runID,
+    body?.run_id,
+  ];
+
+  for (const candidate of candidates) {
+    if (candidate === undefined || candidate === null) continue;
+    const asString = String(candidate).trim();
+    if (asString) return asString;
+  }
+
+  const ts = String(timestamp || new Date().toISOString());
+  const safeTs = ts.replace(/[:.]/g, "-");
+  return `run_${safeTs}`;
+}
+
+/**
  * Write a creation log row to a Glide Big Table.
  *
  * Secrets:
@@ -115,6 +141,7 @@ function makePublicUrl(objectPath, bucket) {
  * @param {boolean} p.success
  * @param {string} [p.message]
  * @param {string} [p.type]      e.g. "MOM" | "Snapshot"
+ * @param {string} [p.runId]     identifier shared by related log entries
  * @returns {Promise<string|null>} The created Glide row ID or null
  */
 export async function logToGlide({
@@ -129,7 +156,8 @@ export async function logToGlide({
   success,
   message,
   type,
-  executionTimeSeconds }) {
+  executionTimeSeconds,
+  runId }) {
   try {
     // Resolve token: Secret in prod, env fallback in emulator
     const token = runningEmulated
@@ -154,26 +182,26 @@ export async function logToGlide({
     }
 
     const { table: glideTable } = await import("@glideapps/tables");
+    const glideColumns = {
+      timestamp: { type: "date-time", name: process.env.GLIDE_COL_TIMESTAMP || "Name" },
+      runId: { type: "string", name: process.env.GLIDE_COL_RUNID || "BaZYc" },
+      type: { type: "string", name: process.env.GLIDE_COL_TYPE || "2DORE" },
+      htmlUrl: { type: "uri", name: process.env.GLIDE_COL_HTML_URL || "Tuty3" },
+      pdfUrl: { type: "uri", name: process.env.GLIDE_COL_PDF_URL || "dfncB" },
+      userId: { type: "string", name: process.env.GLIDE_COL_USER_ID || "0KZ2q" },
+      filename: { type: "string", name: process.env.GLIDE_COL_FILENAME || "44Wdw" },
+      userEmail: { type: "string", name: process.env.GLIDE_COL_USER_EMAIL || "uNiQn" },
+      glideAppName: { type: "string", name: process.env.GLIDE_COL_APP_NAME || "u0Fsq" },
+      success: { type: "boolean", name: process.env.GLIDE_COL_SUCCESS || "8t3Kn" },
+      message: { type: "string", name: process.env.GLIDE_COL_MESSAGE || "7FlAG" },
+      profileId: { type: "string", name: process.env.GLIDE_COL_PROFILE_ID || "wboxm" },
+      executionTimeSeconds: { type: "number", name: process.env.GLIDE_COL_EXEC_TIME || "fWoD7" }
+    };
     const apiLogCreationTable = glideTable({
       token,
       app,
       table,
-      columns: {
-        // existing column IDs from your sample
-        //type:         { type: "string",    name: "Name" },
-        timestamp: { type: "date-time", name: "Name" },
-        type: { type: "string", name: "2DORE" },
-        htmlUrl: { type: "uri", name: "Tuty3" },
-        pdfUrl: { type: "uri", name: "dfncB" },
-        userId: { type: "string", name: "0KZ2q" },
-        userEmail: { type: "string", name: "uNiQn" },
-        glideAppName: { type: "string", name: "u0Fsq" },
-        success: { type: "boolean", name: "8t3Kn" },
-        message: { type: "string", name: "7FlAG" },
-        profileId: { type: "string", name: "wboxm" },
-        filename: { type: "string", name: "filename" },
-        executionTimeSeconds: { type: "number", name: "fWoD7" }
-      }
+      columns: glideColumns
     });
 
     // Log payload for troubleshooting (remove later if too noisy)
@@ -189,7 +217,8 @@ export async function logToGlide({
       profileId: profileId || "",
       type: type || "",
       filename: filename || "",
-      executionTimeSeconds: executionTimeSeconds
+      executionTimeSeconds: executionTimeSeconds,
+      runId: runId || ""
     };
     console.log("➡️  Glide addRow payload:", _payload);
     const createdId = await apiLogCreationTable.addRow(_payload);
@@ -241,6 +270,7 @@ export const v2 = onRequest({
 }, async (req, res) => {
   const startTime = Date.now();
   const timestamp = new Date().toISOString();
+  let runId = deriveRunId(req.body, timestamp);
 
   const action = String(req.query?.action || "").trim();
   const allowed = new Set(Object.values(ACTIONS));
@@ -285,6 +315,8 @@ export const v2 = onRequest({
       });
     }
   }
+
+  runId = deriveRunId(req.body, timestamp);
 
 
 
@@ -398,13 +430,14 @@ export const v2 = onRequest({
         timestamp,
         userEmail,
         userId,
-        profileId,
-        glideAppName,
-        logToGlide,
-        safeAppName,
-        safeEventName
-      });
-    }
+      profileId,
+      glideAppName,
+      logToGlide,
+      safeAppName,
+      safeEventName,
+      runId,
+    });
+  }
 
 
     // Shouldn't reach here
@@ -422,6 +455,7 @@ export const v2 = onRequest({
       profileId,
       success: false,
       message: err.message,
+      runId,
     });
     return res.status(500).json({ success: false, message: `Operation failed: ${err.message}`, executionTimeSeconds });
   }
