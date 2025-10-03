@@ -18,8 +18,8 @@ import { fileURLToPath } from "node:url";
  * Build grouped & sorted views for each preset.
  * Assumptions:
  * - payload.data[].date is "YYYY-MM-DD"
- * - payload.groupMeta is an array: [{ date:"YYYY-MM-DD", data:{ above:"", below:"" } }, ...]
- *   OR payload.dicts.groupMeta.date is a map: { "YYYY-MM-DD": { above:"", below:"" }, ... }
+ * - payload.groupMeta.scheduleDetail is an array: [{ date:"YYYY-MM-DD", data:{ above:"", below:"" } }, ...]
+ * - payload.dicts.groupMeta.scheduleDetail is a map: { "YYYY-MM-DD": { above:"", below:"" }, ... }
  * - Time is text; sort lexicographically when needed.
  */
 export async function prepareJSONGroups(
@@ -84,16 +84,17 @@ function indexDateMeta(payload) {
   const meta = Object.create(null);
 
   // Array form: [{ date, data: { title, above, below } }]
-  if (Array.isArray(payload?.groupMeta?.scheduleDates)) {
-    for (const it of payload.groupMeta.scheduleDates) {
+  const arrayForm = payload?.groupMeta?.scheduleDetail;
+  if (Array.isArray(arrayForm)) {
+    for (const it of arrayForm) {
       if (!it?.date) continue;
       const { title = "", above = "", below = "" } = it.data || {};
       meta[it.date] = { title, above, below };
     }
   }
 
-  // Map form: dicts.groupMeta.date = { [dateKey]: { title, above, below } }
-  const mapForm = payload?.dicts?.groupMeta?.date;
+  // Map form: dicts.groupMeta.scheduleDetail = { [dateKey]: { title, above, below } }
+  const mapForm = payload?.dicts?.groupMeta?.scheduleDetail;
   if (mapForm && typeof mapForm === "object") {
     for (const k of Object.keys(mapForm)) {
       const { title = "", above = "", below = "" } = mapForm[k] || {};

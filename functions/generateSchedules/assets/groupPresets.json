@@ -3,6 +3,7 @@
     {
       "id": "byDate-1",
       "label": "Group by date. Columns for time, description, tags, location and notes",
+      "dataset": "scheduleDetail",
       "groupBy": "date",
       "groupSort": ["date:asc"],
       "entrySort": ["time:asc", "description:asc"],
@@ -17,6 +18,7 @@
     {
       "id": "byTag-1",
       "label": "Group by tag. Columns for time, description, tags, location and notes",
+      "dataset": "scheduleDetail",
       "groupBy": "tagId",
       "groupSort": ["tagName:asc"],
       "entrySort": ["dateKey:asc", "time:desc", "description:asc"],
@@ -31,6 +33,7 @@
     {
       "id": "byLocation-1",
       "label": "Group by location. Columns for time, description, tags, location and notes",
+      "dataset": "scheduleDetail",
       "groupBy": "locationId",
       "groupSort": ["locationName:asc"],
       "entrySort": ["dateKey:asc", "time:asc", "description:asc"],

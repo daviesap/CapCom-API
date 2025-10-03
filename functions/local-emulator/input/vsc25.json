@@ -16,7 +16,7 @@
   "userEmail": "andrew@flair.london",
   "glideAppName": "VS Creative",
   "groupMeta": {
-    "scheduleDates": [
+    "scheduleDetail": [
       {
         "date": "2025-09-26",
         "data": {
@@ -57,9 +57,21 @@
         "data": {
           "title": "Tuesday, 30 September 2025"
         }
+      },
+      {
+        "date": "2025-10-02",
+        "data": {
+          "title": "Thursday, 2 October 2025"
+        }
+      },
+      {
+        "date": "2025-10-01",
+        "data": {
+          "title": "Wednesday, 1 October 2025"
+        }
       }
     ],
-    "trucks": "trucking Group Meta Data",
+    "truckingDetail": "trucking Group Meta Data",
     "contacts": "contacts Group Meta Data"
   },
   "snapshots": [
@@ -70,7 +82,8 @@
       "filterLocationIds": [],
       "filterSubLocationIds": [],
       "group": "Full schedule",
-      "sortOrder": 1
+      "sortOrder": 1,
+      "dataset": "scheduleDetail"
     },
     {
       "name": "MP Squares schedule",
@@ -81,7 +94,8 @@
       "filterLocationIds": [],
       "filterSubLocationIds": [],
       "group": "Suppliers",
-      "sortOrder": 2
+      "sortOrder": 2,
+      "dataset": "scheduleDetail"
     },
     {
       "name": "HCP schedule",
@@ -92,7 +106,8 @@
       "filterLocationIds": [],
       "filterSubLocationIds": [],
       "group": "Venue",
-      "sortOrder": 4
+      "sortOrder": 4,
+      "dataset": "scheduleDetail"
     },
     {
       "name": "Kerb schedule",
@@ -103,7 +118,8 @@
       "filterLocationIds": [],
       "filterSubLocationIds": [],
       "group": "Suppliers",
-      "sortOrder": 2
+      "sortOrder": 2,
+      "dataset": "scheduleDetail"
     },
     {
       "name": "Insite schedule",
@@ -114,7 +130,8 @@
       "filterLocationIds": [],
       "filterSubLocationIds": [],
       "group": "Suppliers",
-      "sortOrder": 2
+      "sortOrder": 2,
+      "dataset": "scheduleDetail"
     },
     {
       "name": "AAC Power schedule",
@@ -125,7 +142,8 @@
       "filterLocationIds": [],
       "filterSubLocationIds": [],
       "group": "Suppliers",
-      "sortOrder": 2
+      "sortOrder": 2,
+      "dataset": "scheduleDetail"
     },
     {
       "name": "Deliveries - All gates",
@@ -136,7 +154,8 @@
       "filterLocationIds": [],
       "filterSubLocationIds": [],
       "group": "Delivery",
-      "sortOrder": 3
+      "sortOrder": 3,
+      "dataset": "scheduleDetail"
     },
     {
       "name": "Garden Catering",
@@ -147,7 +166,8 @@
       "filterLocationIds": [],
       "filterSubLocationIds": [],
       "group": "Suppliers",
-      "sortOrder": 2
+      "sortOrder": 2,
+      "dataset": "scheduleDetail"
     },
     {
       "name": "Deliveries - Cart Track Gate",
@@ -160,7 +180,8 @@
       ],
       "filterSubLocationIds": [],
       "group": "Delivery",
-      "sortOrder": 3
+      "sortOrder": 3,
+      "dataset": "scheduleDetail"
     },
     {
       "name": "Deliveries - Flower Pot Gate",
@@ -171,7 +192,8 @@
       ],
       "filterSubLocationIds": [],
       "group": "Delivery",
-      "sortOrder": 3
+      "sortOrder": 3,
+      "dataset": "scheduleDetail"
     },
     {
       "name": "Deliveries - Adams Gate",
@@ -182,7 +204,8 @@
       ],
       "filterSubLocationIds": [],
       "group": "Delivery",
-      "sortOrder": 3
+      "sortOrder": 3,
+      "dataset": "scheduleDetail"
     },
     {
       "name": "Trophy Gate",
@@ -193,7 +216,8 @@
       ],
       "filterSubLocationIds": [],
       "group": "Delivery",
-      "sortOrder": 3
+      "sortOrder": 3,
+      "dataset": "scheduleDetail"
     }
   ],
   "data": {
@@ -7978,7 +8002,7 @@
         ]
       }
     ],
-    "trucking": "trucking data",
+    "truckingDetail": "trucking data",
     "contacts": "contacts Data"
   }
 }

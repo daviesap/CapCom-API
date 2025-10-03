@@ -12,9 +12,14 @@ curl "http://127.0.0.1:5001/flair-pdf-generator/europe-west2/v2?action=version"
 ## To generate home
 curl -X POST \
   -H "Content-Type: application/json" \
-  --data-binary @/Users/apndavies/Coding/flair-pdf-generator/functions/local-emulator/input/vsc25NEW.json \
+  --data-binary @/Users/apndavies/Coding/flair-pdf-generator/functions/local-emulator/input/vsc25.json \
   "http://127.0.0.1:5001/flair-pdf-generator/europe-west2/v2?action=generateHome"
 
+
+### JSON payload conventions
+- Every snapshot in the request must declare a `dataset`. Current accepted values: `scheduleDetail`, `truckingDetail`, `contacts`.
+- Group presets (`functions/generateSchedules/assets/groupPresets.json`) also include a `dataset` so snapshots can inherit the correct source without extra configuration.
+- Matching metadata for grouping lives under `groupMeta.<dataset>` (e.g. `groupMeta.scheduleDetail`). If the payload supplies dictionary-style metadata, it should live under `dicts.groupMeta.<dataset>`.
 
 ## 0) Prerequisites
 
