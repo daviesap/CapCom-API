@@ -1,5 +1,4 @@
 // ===== Imports — Node built-ins =====
-import fs from "fs";
 import path from "path";
 import { readFile } from "fs/promises";
 import { fileURLToPath } from "url";
@@ -18,11 +17,7 @@ import { getStorage } from "firebase-admin/storage";
 
 // ===== Imports — Local modules =====
 import { sanitiseUrl } from "./utils/sanitiseUrl.mjs";
-import { generateHome } from "./generateSchedules/generateHome.mjs";
-import { applySnapshotFiltersToView } from "./generateSchedules/applyFilters.mjs";
-import { generateSnapshotOutputsv2 } from "./generateSchedules/generateSnapshots.mjs";
-import { prepareJSONGroups } from "./generateSchedules/prepareJSONforSnapshots.mjs";
-//import { generateHomeHandler } from "./generateSchedules/generateHomeHandler.mjs";
+import { generateHomeHandler } from "./generateSchedules/generateHomeHandler.mjs";
 
 // ===== Secrets =====
 // Declare the secret names as they exist in Secret Manager
@@ -37,33 +32,7 @@ const GLIDE_LOGS_TOKEN = defineSecret("GLIDE_LOGS_TOKEN");
  * @param {Array<any>} groups
  * @returns {Array<any>}
  */
-function adaptGroupsForRendererV2(groups) {
-  if (!Array.isArray(groups)) return [];
-  return groups.map(g => {
-    const entries = Array.isArray(g.entries) ? g.entries : [];
-    const adaptedEntries = entries.map(e => {
-      // If already in v2 shape, leave as-is
-      if (e && typeof e === "object" && e.fields && typeof e.fields === "object") return e;
-      // Otherwise, adapt common fields
-      const fields = {
-        date: e?.date ?? e?.dateKey ?? "",
-        time: e?.time ?? "",
-        description: e?.description ?? e?.fields?.description ?? "",
-        notes: e?.notes ?? e?.fields?.notes ?? "",
-        // Pass-through simple display strings if present
-        tags: Array.isArray(e?.tags) ? e.tags.join(", ") : (e?.tags ?? ""),
-        locations: Array.isArray(e?.locations) ? e.locations.join(", ") : (e?.locations ?? "")
-      };
-      return { ...e, fields };
-    });
-    return {
-      rawKey: g.rawKey,
-      title: g.title,
-      meta: g.meta,
-      entries: adaptedEntries,
-    };
-  });
-}
+// helper functions moved to generateSchedules/generateHomeHandler.mjs
 
 initializeApp({
   credential: applicationDefault(),
@@ -232,20 +201,7 @@ export async function logToGlide({
  * @param {string} [label="request"]
  * @returns {string|null} Absolute path to the debug file or null on failure.
  */
-function writeDebugJson(jsonInput, appNameOrSafe, label = "request") {
-  try {
-    const safe = sanitiseUrl(appNameOrSafe || "app");
-    const root = path.join(LOCAL_OUTPUT_DIR, "json", safe);
-    fs.mkdirSync(root, { recursive: true });
-    const ts = new Date().toISOString().replace(/[:.]/g, "-");
-    const filePath = path.join(root, `${ts}-${label}.json`);
-    fs.writeFileSync(filePath, JSON.stringify(jsonInput, null, 2), "utf8");
-    return filePath;
-  } catch (err) {
-    console.error("⚠️ Failed to write debug JSON:", err);
-    return null;
-  }
-}
+// helper functions moved to generateSchedules/generateHomeHandler.mjs
 
 // ===== Version helper =====
 // Get version from package.json (fallback to 0.0.0)
@@ -405,19 +361,6 @@ export const v2 = onRequest({
     const glideAppName = jsonInput.glideAppName || "No Glide app name defined";
 
     // Optional profile merge from Firestore is now handled only in GENERATE_HOME or downstream.
-    if (action === ACTIONS.GENERATE_HOME) {
-      // For GENERATE_HOME we intentionally skip pre-merging and pre-filtering here.
-      // Optional: still dump the *base* JSON for debugging.
-      if (runningEmulated || jsonInput.debug === true) {
-        try {
-          const appNameForDump = jsonInput.glideAppName || "Flair PDF Generator";
-          const dumpPath = writeDebugJson(jsonInput, appNameForDump, `${action}-base`);
-          if (dumpPath) console.log("📝 Wrote base debug JSON to", dumpPath);
-        } catch (e) {
-          console.warn("⚠️ Unable to write base debug JSON:", e?.message || e);
-        }
-      }
-    }
 
     // (Auto-refresh detectedFields for this profile block removed)
 
@@ -427,198 +370,26 @@ export const v2 = onRequest({
     const userId = (req?.body?.UserId ?? req?.body?.userId ?? jsonInput?.userId ?? jsonInput?.UserId ?? "");
 
 
-    //////////////////////////////////////////////////////////////////////////////////////
-    //Generate all snapshots and mom page/////////////////////////////////////////////////
-    //////////////////////////////////////////////////////////////////////////////////////
+    // Delegate GENERATE_HOME to the extracted handler
     if (action === ACTIONS.GENERATE_HOME) {
-
-      // Load and merge profile once for GENERATE_HOME using root profileId
-      const rootProfileId = jsonInput.event.profileId || "";
-      let rootProfileDoc = {};
-      if (rootProfileId) {
-        try {
-          const ref = db.collection("styleProfiles").doc(rootProfileId);
-          const snap = await ref.get();
-          if (snap.exists) {
-            rootProfileDoc = snap.data() || {};
-            // Merge into the main JSON once (styles/document). Columns: prefer body columns if present
-            jsonInput.styles = merge({}, rootProfileDoc.styles || {}, jsonInput.styles || {});
-            jsonInput.document = merge({}, rootProfileDoc.document || {}, jsonInput.document || {});
-            if (!Array.isArray(jsonInput.columns) || jsonInput.columns.length === 0) {
-              jsonInput.columns = rootProfileDoc.columns || [];
-            }
-          } else {
-            console.warn(`⚠️ No Firestore profile found for root profileId "${rootProfileId}" (GENERATE_HOME).`);
-          }
-        } catch (e) {
-          console.warn(`⚠️ Failed to load root profile "${rootProfileId}" for GENERATE_HOME:`, e?.message || e);
-        }
-      }
-
-
-      // Build all groupings once from the incoming JSON
-      const groupedViews = await prepareJSONGroups(req.body);
-
-      // (Optional debug dump when running locally/emulated)
-      if (runningEmulated || req.body.debug === true) {
-        const dumpPath = writeDebugJson(
-          groupedViews,
-          req.body.glideAppName || "Flair PDF Generator",
-          "grouped-views-pre-snapshot"
-        );
-        if (dumpPath) console.log(`📝 Wrote grouped views to ${dumpPath}`);
-      }
-
-
-      // Process ALL snapshots sequentially so we don't overload the instance and to preserve order.
-      const snapshots = Array.isArray(req.body.snapshots) ? req.body.snapshots : [];
-
-      console.log(`🧩 GENERATE_HOME: processing ${snapshots.length} snapshot(s) sequentially...`);
-
-      for (let idx = 0; idx < snapshots.length; idx++) {
-        const snap = snapshots[idx];
-        const label = snap.name || `(unnamed #${idx + 1})`;
-        console.log(`▶️  Starting snapshot ${idx + 1}/${snapshots.length}: ${label}`);
-
-        // Select the precomputed view by groupPresetId (required)
-        const presetId = snap.groupPresetId;
-        const baseView = groupedViews[presetId] || { groupBy: "", groups: [], columns: [] };
-
-        // Apply per-snapshot filters to the precomputed groups
-        const processedJSON = applySnapshotFiltersToView(baseView, {
-          filterTagIds: snap.filterTagIds || [],
-          filterLocationIds: snap.filterLocationIds || [],
-          filterSubLocationIds: snap.filterSubLocationIds || [],
-        });
-
-        const groupsCount = Array.isArray(processedJSON?.groups) ? processedJSON.groups.length : 0;
-        console.log(`   • Groups final (after filter): ${groupsCount} (groupBy=${presetId})`);
-
-        // 3) Use root profile (loaded once above) for all snapshots in GENERATE_HOME
-        const effectiveProfileId = rootProfileId || profileId;
-        const profileDoc = rootProfileDoc || {};
-
-        // 4) Build prepared JSON for renderer (HTML/PDF)
-        // Ensure friendly group titles from meta override raw titles,
-        // and expose meta.above to the HTML renderer as `metadata`.
-        const adaptedGroups = adaptGroupsForRendererV2(processedJSON.groups);
-        const finalGroups = adaptedGroups.map(g => {
-          const friendlyTitle = g?.meta?.title ? g.meta.title : g.title;
-          // above may be a string (current) or array (future); support both
-          const above = g?.meta?.above;
-          const metadata = Array.isArray(above) ? above.filter(Boolean).join("\n") : (above ?? "");
-          const originalRawKey = g.rawKey;
-          return { ...g, title: friendlyTitle, rawKey: friendlyTitle, rawKeyCanonical: originalRawKey, metadata };
-        });
-        const prepared = {
-          ...jsonInput, // retain event meta (glideAppName, eventName, etc.)
-          groups: finalGroups,
-          styles: merge({}, profileDoc.styles || {}, jsonInput.styles || {}),
-          document: merge(
-            {},
-            profileDoc.document || {},
-            jsonInput.document || {},
-            { filename: snap.name || (jsonInput.document?.filename || "schedule") }
-          ),
-          columns:
-            (Array.isArray(baseView.columns) && baseView.columns.length ? baseView.columns : null) ||
-            jsonInput.columns ||
-            profileDoc.columns ||
-            [],
-          // Header will always be an array at event; append filename for this snapshot
-          header: [...(jsonInput?.event?.header ?? []), snap.filename].filter(Boolean),
-          profileId: effectiveProfileId,
-        };
-
-        // 4a) Ensure document.header for v2 renderers
-        prepared.document = prepared.document || {};
-        prepared.document.header = {
-          textLines: prepared.header,
-          text: prepared.header.join("\n"),
-        };
-
-        // 4b) Pass through a logo if present at root (keeps v2 renderers simple)
-        if (jsonInput.event.logoUrl && !prepared.document?.header?.logo?.url) {
-          prepared.document.header.logo = {
-            url: jsonInput.event.logoUrl,
-          };
-        }
-
-        // Optional debug dump per snapshot when emulated
-        if (runningEmulated || jsonInput.debug === true) {
-          try {
-            const appNameForDump = jsonInput.glideAppName || "Flair PDF Generator";
-            const dumpPath = writeDebugJson(
-              { prepared },
-              appNameForDump,
-              `prepared-${idx + 1}-${sanitiseUrl(label)}`
-            );
-            if (dumpPath) console.log(`   • 📝 Wrote prepared JSON to ${dumpPath}`);
-          } catch (e) {
-            console.warn("   • ⚠️ Unable to write prepared JSON:", e?.message || e);
-          }
-        }
-
-        // 5) Render snapshot (v2 paths)
-        const { pdfUrl, htmlUrl } = await generateSnapshotOutputsv2({
-          jsonInput: prepared,
-          safeAppName,
-          safeEventName,
-          bucket,
-          runningEmulated,
-          LOCAL_OUTPUT_DIR,
-          startTime,
-          timestamp,
-          userEmail,
-          userId,
-          profileId: effectiveProfileId,
-          makePublicUrl,
-          logToGlide,
-          extraSubdir: "", //was "v2"
-        });
-
-        console.log(`   • Done HTML: ${htmlUrl}`);
-        console.log(`   • Done  PDF: ${pdfUrl}`);
-        console.log(`✅ Done snapshot ${idx + 1}/${snapshots.length}: ${label}`);
-
-        // 6) Attach real URLs back to the snapshot for the home page
-        snap.realHtmlUrl = htmlUrl;
-        snap.realPdfUrl = pdfUrl;
-      }
-
-      // Keep top-level JSON in sync
-      if (Array.isArray(req.body.snapshots)) {
-        jsonInput.snapshots = req.body.snapshots;
-      }
-
-      // Optional: write a loop summary when emulated
-      if (runningEmulated || jsonInput.debug === true) {
-        try {
-          const appNameForDump = jsonInput.glideAppName || "Flair PDF Generator";
-          const dumpPath = writeDebugJson(jsonInput, appNameForDump, "generateHome-after-loop");
-          if (dumpPath) console.log(`📝 Wrote post-loop JSON to ${dumpPath}`);
-        } catch (e) {
-          console.warn("⚠️ Unable to write post-loop JSON:", e?.message || e);
-        }
-      }
-
-      const result = await generateHome({
-        jsonInput,
-        makePublicUrl,
+      return await generateHomeHandler({
+        req,
+        res,
+        db,
+        bucket,
         runningEmulated,
         LOCAL_OUTPUT_DIR,
+        makePublicUrl,
         startTime,
         timestamp,
         userEmail,
+        userId,
         profileId,
         glideAppName,
-        req,
         logToGlide,
-        bucket,
         safeAppName,
         safeEventName
       });
-      return res.status(result.status).json(result.body);
     }
 
 
