@@ -14,8 +14,6 @@ firebase-debug.log
 # Runtime files
 dist/
 build/
-.env
-.env.*
 
 # Optional npm cache directory
 .npm/
@@ -29,7 +27,6 @@ Thumbs.db
 # Google Cloud Functions
 functions/node_modules/
 functions/lib/
-functions/.env
 
 # Firebase/Cloud related (optional)
 .firebaserc
