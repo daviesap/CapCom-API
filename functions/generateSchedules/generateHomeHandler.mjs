@@ -19,6 +19,7 @@
 
 import path from "path";
 import fs from "fs";
+import { FieldValue } from "firebase-admin/firestore";
 import { merge } from "lodash-es";
 import { sanitiseUrl } from "../utils/sanitiseUrl.mjs";
 import { prepareJSONGroups } from "./prepareJSONforSnapshots.mjs";
@@ -104,6 +105,11 @@ export async function generateHomeHandler({
           jsonInput.document = merge({}, rootProfileDoc.document || {}, jsonInput.document || {});
           if (!Array.isArray(jsonInput.columns) || jsonInput.columns.length === 0) {
             jsonInput.columns = rootProfileDoc.columns || [];
+          }
+          try {
+            await ref.update({ lastUsed: FieldValue.serverTimestamp() });
+          } catch (err) {
+            console.warn(`⚠️ Failed to update lastUsed for profile "${rootProfileId}":`, err?.message || err);
           }
         } else {
           console.warn(`⚠️ No Firestore profile found for root profileId "${rootProfileId}" (GENERATE_HOME).`);

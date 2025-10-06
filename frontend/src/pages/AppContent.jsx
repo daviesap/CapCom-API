@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useAuth } from "../AuthProvider";
 import ProfileList from "./ProfileList"; // already inside `pages/`
-import PdfCreationLog from '../components/pdfCreationLog';
 
 export default function AppContent() {
   const { user, authLoading, loginWithEmail, logout } = useAuth();
@@ -59,11 +58,9 @@ export default function AppContent() {
       <button
         onClick={logout}
         className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-700 transition"
-
-      >Logout</button>
-      <div className="mt-6">
-        <PdfCreationLog />
-      </div>
+      >
+        Logout
+      </button>
     </>
   );
 }

@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { 
-  collection, getDocs, query, where, orderBy, limit, getDoc, doc, deleteDoc 
+import {
+  collection,
+  getDocs,
+  getDoc,
+  doc,
+  deleteDoc
 } from 'firebase/firestore';
 import { db } from '../services/firebase';
 import { nanoid } from 'nanoid';
@@ -17,35 +21,32 @@ export default function ProfileList() {
   const fetchProfiles = async () => {
     const querySnapshot = await getDocs(collection(db, 'styleProfiles'));
 
-    const data = await Promise.all(
-      querySnapshot.docs.map(async (docSnap) => {
-        const profileId = docSnap.id;
-        const profileName = docSnap.data()?.name || "(Unnamed Profile)";
+    const data = querySnapshot.docs.map((docSnap) => {
+      const profileId = docSnap.id;
+      const docData = docSnap.data() || {};
+      const profileName = docData.name || "(Unnamed Profile)";
 
-        // Query latest log for this profileId
-        const logsRef = collection(db, 'pdfCreationLog');
-        const logsQuery = query(
-          logsRef,
-          where("profileId", "==", profileId),
-          orderBy("timestamp", "desc"),
-          limit(1)
-        );
-
-        const logsSnapshot = await getDocs(logsQuery);
-        let lastUsed = null;
-
-        if (!logsSnapshot.empty) {
-          const logDoc = logsSnapshot.docs[0].data();
-          lastUsed = logDoc.timestamp;
+      let lastUsed = null;
+      const rawLastUsed = docData.lastUsed;
+      if (rawLastUsed) {
+        if (typeof rawLastUsed.toDate === 'function') {
+          lastUsed = rawLastUsed.toDate();
+        } else if (rawLastUsed instanceof Date) {
+          lastUsed = rawLastUsed;
+        } else {
+          const parsed = new Date(rawLastUsed);
+          if (!Number.isNaN(parsed.getTime())) {
+            lastUsed = parsed;
+          }
         }
+      }
 
-        return {
-          profileId,
-          profileName,
-          lastUsed,
-        };
-      })
-    );
+      return {
+        profileId,
+        profileName,
+        lastUsed,
+      };
+    });
 
     setProfiles(data);
   };
@@ -134,7 +135,7 @@ export default function ProfileList() {
                 <td className="border border-gray-300 px-4 py-2">{profile.profileId}</td>
                 <td className="border border-gray-300 px-4 py-2">
                   {profile.lastUsed
-                    ? `${formatDistanceToNow(new Date(profile.lastUsed), { addSuffix: true })}`
+                    ? formatDistanceToNow(profile.lastUsed, { addSuffix: true })
                     : "Never used"}
                 </td>
                 <td className="border border-gray-300 px-4 py-2">
