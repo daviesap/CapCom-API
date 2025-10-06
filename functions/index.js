@@ -287,7 +287,7 @@ export const v2 = onRequest({
     const version = await getPkgVersion();
     return res.status(200).json({
       success: true,
-      message: '👋 Hello Big \'Un! From Capcom API #UTB.  Available Actions = ' + [...allowed].join(", "),
+      message: '👋 Hello Big \'Un! From CapCom API #UTB.  Available Actions = ' + [...allowed].join(", "),
       version,
       timestamp,
     });
@@ -345,7 +345,7 @@ export const v2 = onRequest({
 
   // --- Normalise identifiers once for all actions ---
   const rawAppName = (req.body?.glideAppName ?? "").toString();
-  const rawEventName = (req.body?.event?.name ?? "").toString();
+  const rawEventName = (req.body?.event?.name ?? req.body?.eventName ?? "").toString();
 
   const safeAppNameBody = sanitiseUrl(rawAppName || "App");
   const safeEventName = sanitiseUrl(rawEventName || "Event");

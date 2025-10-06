@@ -533,7 +533,7 @@ export const generatePdfBuffer = async (jsonInput) => {
       const safePgText = toWinAnsi(pgText);
       const tText    = `Document generated ${ts}`;
       const safeTText = toWinAnsi(tText);
-      const creditText = `Capcom – https://www.capcom.london`;
+      const creditText = `CapCom – https://www.capcom.london`;
       const safeCredit = toWinAnsi(creditText);
 
       // Left: filename

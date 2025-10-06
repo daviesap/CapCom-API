@@ -258,7 +258,7 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
     <div class="footer">
       <div>${escapeHtml(baseName)}</div>
       <div>Document generated at ${escapeHtml(prettyTimestamp)}</div>
-      <div>Capcom – <a href="https://www.capcom.london" target="_blank" rel="noopener">https://www.capcom.london</a></div>
+      <div>CapCom – <a href="https://www.capcom.london" target="_blank" rel="noopener">https://www.capcom.london</a></div>
     </div>
   `;
 

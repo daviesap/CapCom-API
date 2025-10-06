@@ -30,6 +30,8 @@ export async function mealsPivotHandler(req, res) {
     const startedAt = new Date().toISOString();
 
     const { eventName = "Event", dates = [], slots = [], names = [], tags = [], data = [] } = req.body;
+    const eventNameRaw = typeof req.body?.eventNameRaw === 'string' ? req.body.eventNameRaw : '';
+    const displayEventName = eventNameRaw.trim() ? eventNameRaw.trim() : eventName;
 
     // --- Basic validation of inbound JSON ---
     if (!Array.isArray(slots) || !Array.isArray(data)) {
@@ -147,7 +149,7 @@ export async function mealsPivotHandler(req, res) {
 
       await buildExcel({
         outputPath: localXlsxPath,
-        eventName,
+        eventName: displayEventName,
         allDates,
         dateLabels,
         sortedSlots,
@@ -196,7 +198,7 @@ export async function mealsPivotHandler(req, res) {
       const htmlStart = nowNs();
 
       const htmlString = await buildHtml({
-        eventName,
+        eventName: displayEventName,
         dateLabels,
         allDates,
         sortedSlots,
