@@ -36,9 +36,56 @@ h1 { font-size: 20px; margin: 0 0 8px 0; color: var(--header); }
 
 .meta { font-size: 11px; color: var(--muted); margin-bottom: 16px; }
 
-.download { margin: 12px 0 0; }
-.download a { color: var(--accent); text-decoration: none; word-break: break-all; }
-.download a:hover { text-decoration: underline; }
+.utility-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 14px 0 0;
+}
+
+.utility-links-footer {
+  justify-content: flex-start;
+  margin-top: 18px;
+}
+
+.utility-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: #fffaf5;
+  box-shadow: 0 4px 12px rgba(90, 52, 20, 0.12);
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--accent);
+  text-decoration: none;
+  transition: transform .12s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease;
+}
+
+.utility-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(90, 52, 20, 0.16);
+  border-color: rgba(194, 65, 12, 0.35);
+  background: #fff2e2;
+}
+
+.utility-btn .utility-icon,
+.utility-btn span[aria-hidden="true"] {
+  flex: 0 0 auto;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.utility-btn .utility-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.utility-btn span:last-child {
+  flex: 0 0 auto;
+}
 
 .header-text {
   font-size: 18px;
@@ -214,7 +261,7 @@ tbody tr:nth-child(2n) td { background: var(--row-alt); }
 /* ---------- Print Tweaks ---------- */
 @media print {
   body { padding: 0; }
-  .download, .meta { display: none; }
+  .utility-links, .meta { display: none; }
 }
 
 /* Markdown block at top */
