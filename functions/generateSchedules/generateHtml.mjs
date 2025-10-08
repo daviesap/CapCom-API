@@ -162,10 +162,46 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
   const totalPdfWidth = pdfWidths.reduce((a, b) => a + b, 0) || 1;
   const htmlWidths = pdfWidths.map(w => (w / totalPdfWidth) * 100);
 
+  const filterableColumnsMap = new Map();
+  cols.forEach((col, index) => {
+    if (!col || typeof col.field !== "string") return;
+    const fieldName = col.field.trim();
+    if (!fieldName) return;
+    const lower = fieldName.toLowerCase();
+    if (lower !== "tags" && lower !== "locations") return;
+    if (filterableColumnsMap.has(fieldName)) return;
+    const attrSlug = fieldName
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "") || `field-${index}`;
+    filterableColumnsMap.set(fieldName, {
+      field: fieldName,
+      label: col.label ?? fieldName,
+      attrName: `filter-${attrSlug}`,
+      values: new Set(),
+    });
+  });
+  const filterableColumns = Array.from(filterableColumnsMap.values());
+
+  const findFilterByField = (field) =>
+    filterableColumns.find(col => col.field?.toLowerCase() === field);
+  const tagsFilterCol = findFilterByField("tags");
+  const locationsFilterCol = findFilterByField("locations");
+
+  if (locationsFilterCol) {
+    locationsFilterCol.label = "Locations";
+  }
+  if (tagsFilterCol && !locationsFilterCol) {
+    tagsFilterCol.label = "Locations";
+  }
+
   const groupsArr = Array.isArray(jsonInput.groups) ? jsonInput.groups : [];
+  let totalRowCount = 0;
 
   // Build groups → tables
   const groupsHtml = groupsArr.map(g => {
+    const entries = Array.isArray(g.entries) ? g.entries : [];
+    totalRowCount += entries.length;
     const groupHeading = escapeHtml(g.title ?? g.rawKey ?? "");
     const headerHtml = showHeader
       ? `<tr>${columnHeaders.map((h, i) => {
@@ -176,11 +212,30 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
       }).join("")}</tr>`
       : "";
 
-    const rowsHtml = g.entries.map(r => {
+    const rowsHtml = entries.map(r => {
       const data = r.fields;
       const fmt = typeof r.format === "string" ? r.format.toLowerCase() : "default";
       const classMap = { default: "row-default", new: "row-new", important: "row-important", past: "row-past" };
       const rowClassName = classMap[fmt] || "row-default";
+
+      const rowFilterAttrParts = [];
+      for (const filterCol of filterableColumns) {
+        const rawValue = data?.[filterCol.field];
+        const tokens = Array.isArray(rawValue)
+          ? rawValue.map(v => String(v).trim())
+          : typeof rawValue === "string"
+            ? String(rawValue).split(",").map(v => v.trim())
+            : [];
+        const cleanedTokens = tokens.filter(Boolean);
+        if (cleanedTokens.length) {
+          cleanedTokens.forEach(token => filterCol.values.add(token));
+          const normalised = cleanedTokens.map(token => token.toLowerCase());
+          rowFilterAttrParts.push(` data-${filterCol.attrName}="${escapeHtml(normalised.join("||"))}"`);
+        } else {
+          rowFilterAttrParts.push(` data-${filterCol.attrName}=""`);
+        }
+      }
+      const rowDataAttrs = rowFilterAttrParts.join("");
 
       const tds = columnKeys.map((k, i) => {
         const w = htmlWidths[i];
@@ -194,7 +249,7 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
         return `<td${widthAttr}>${withBadge}</td>`;
       }).join("");
 
-      return `<tr class="${rowClassName}">${tds}</tr>`;
+      return `<tr class="${rowClassName}"${rowDataAttrs}>${tds}</tr>`;
     }).join("");
 
     return `
@@ -209,6 +264,90 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
     `;
   }).join("");
 
+  const filterControlsHtml = (() => {
+    if (!totalRowCount) return "";
+
+    const controlBlocks = filterableColumns.map(filterCol => {
+      const sortedValues = Array.from(filterCol.values).sort((a, b) =>
+        a.localeCompare(b, undefined, { sensitivity: "base" })
+      );
+      const options = [
+        `<option value="">All ${escapeHtml(filterCol.label)}</option>`,
+        ...sortedValues.map(value => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`)
+      ].join("");
+      return `
+<label class="filter">
+  <span class="filter-label">${escapeHtml(filterCol.label)}</span>
+  <select data-filter-target="${escapeHtml(filterCol.attrName)}">
+    ${options}
+  </select>
+</label>`.trim();
+    });
+
+    controlBlocks.push(`
+<label class="filter filter-search">
+  <span class="filter-label">Search</span>
+  <input type="search" placeholder="Search rows" data-filter-text>
+</label>`.trim());
+
+    const controlsMarkup = controlBlocks.filter(Boolean).join("\n");
+    if (!controlsMarkup) return "";
+
+    const scriptBlock = `
+<script>
+(function(){
+  function initFilters(){
+    const container = document.querySelector('.filters');
+    if (!container) return;
+    const selects = container.querySelectorAll('select[data-filter-target]');
+    const searchBox = container.querySelector('[data-filter-text]');
+    if (!selects.length && !searchBox) return;
+    const normalise = (value) => String(value || "").trim().toLowerCase();
+
+    function applyFilters() {
+      const rows = Array.from(document.querySelectorAll('section.group tbody tr'));
+      if (!rows.length) return;
+      const searchValue = searchBox ? normalise(searchBox.value) : "";
+      rows.forEach(row => {
+        let visible = true;
+        selects.forEach(select => {
+          if (!visible) return;
+          const selected = normalise(select.value);
+          if (!selected) return;
+          const target = select.dataset.filterTarget;
+          const attr = row.getAttribute('data-' + target);
+          if (!attr) {
+            visible = false;
+            return;
+          }
+          const tokens = attr.split('||').filter(Boolean);
+          if (!tokens.includes(selected)) {
+            visible = false;
+          }
+        });
+        if (visible && searchValue) {
+          visible = row.textContent.toLowerCase().includes(searchValue);
+        }
+        row.hidden = !visible;
+      });
+    }
+
+    selects.forEach(select => select.addEventListener('change', applyFilters));
+    if (searchBox) searchBox.addEventListener('input', applyFilters);
+    applyFilters();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initFilters);
+  } else {
+    initFilters();
+  }
+})();
+</script>`.trim();
+
+    return `<div class="filters">\n${controlsMarkup}\n</div>\n${scriptBlock}`;
+  })();
+
   // CSS + template (local assets)
   const cssPath = path.resolve(process.cwd(), "htmlutils/schedule.css");
   const tplPath = path.resolve(process.cwd(), "htmlutils/template.html");
@@ -221,28 +360,28 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
   const cssExtra = `
   /* --- Key Info Accordion (injected by generateHtmlv2.mjs) --- */
   .accordion.key-info{
-    background:#fafafa; border:1px solid #d1d5db; border-radius:8px;
-    margin:16px 0 20px; padding:0; overflow:hidden; box-shadow:0 2px 6px rgba(0,0,0,0.08);
+    background:#fff8ef; border:1px solid #f3c9a6; border-radius:10px;
+    margin:16px 0 20px; padding:0; overflow:hidden; box-shadow:0 6px 18px rgba(90,52,20,0.12);
   }
   .accordion.key-info summary{
     display:flex; align-items:center; justify-content:space-between;
-    gap:8px; cursor:pointer; list-style:none; padding:12px 16px; font-weight:700;
-    font-size:.95rem; color:#1F2937; background:#E0F2FE; border-bottom:1px solid #93C5FD;
+    gap:8px; cursor:pointer; list-style:none; padding:12px 18px; font-weight:700;
+    font-size:.95rem; color:#4a2a12; background:#fde4c8; border-bottom:1px solid #f3c9a6;
   }
   .accordion.key-info summary::-webkit-details-marker{ display:none; }
-  .accordion.key-info .acc-body{ padding:12px 16px; border-top:1px solid #eee; }
+  .accordion.key-info .acc-body{ padding:14px 18px; border-top:1px solid #f3c9a6; background:#fffaf3; }
   .accordion.key-info[open] .acc-body{
-    background:#F8FAFC; box-shadow: inset 3px 0 0 #3B82F6;
+    background:#fff5e6; box-shadow: inset 3px 0 0 #d97706;
   }
-  .accordion.key-info .acc-chevron{ flex:0 0 auto; color:#3B82F6; transition: transform .18s ease; }
+  .accordion.key-info .acc-chevron{ flex:0 0 auto; color:#c2410c; transition: transform .18s ease; }
   .accordion.key-info .acc-body{ line-height:1.6; font-size:.98rem; }
   .accordion.key-info .acc-body a[href*="w3w.co"]{
     font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-    background: rgba(59,130,246,0.10); border:1px solid rgba(59,130,246,0.25);
+    background: rgba(214,120,28,0.14); border:1px solid rgba(214,120,28,0.28);
     border-radius:6px; padding:.08em .35em; text-decoration:none; white-space:nowrap;
   }
   .accordion.key-info .acc-body a[href*="w3w.co"]:hover{
-    background: rgba(59,130,246,0.16); border-color: rgba(59,130,246,0.35);
+    background: rgba(214,120,28,0.22); border-color: rgba(214,120,28,0.38);
   }
   `;
 
@@ -262,6 +401,12 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
     </div>
   `;
 
+  const groupsSection = [
+    keyInfoBlock,
+    filterControlsHtml,
+    groupsHtml,
+  ].filter(Boolean).join("\n");
+
   // Template fill
   const html = tpl
     .replaceAll("{{CSS}}", css + "\n" + cssExtra)
@@ -269,7 +414,7 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
     .replaceAll("{{SUBTITLE}}", subtitleWithLogo)
     .replaceAll("{{DOWNLOAD}}", downloadBlock)
     .replaceAll("{{DEBUG}}", "") // no debug in v2
-    .replaceAll("{{GROUPS}}", (keyInfoBlock ? `${keyInfoBlock}\n` : "") + groupsHtml)
+    .replaceAll("{{GROUPS}}", groupsSection)
     .replaceAll("{{FOOTER}}", footerHtml);
 
   return { htmlString: html, htmlFilenameBase: slugify(baseName) };
