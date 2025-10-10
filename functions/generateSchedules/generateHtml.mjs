@@ -264,8 +264,8 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
     `;
   }).join("");
 
-  const filterControlsHtml = (() => {
-    if (!totalRowCount) return "";
+  const filterControlsConfig = (() => {
+    if (!totalRowCount) return null;
 
     const controlBlocks = filterableColumns.map(filterCol => {
       const sortedValues = Array.from(filterCol.values).sort((a, b) =>
@@ -291,18 +291,48 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
 </label>`.trim());
 
     const controlsMarkup = controlBlocks.filter(Boolean).join("\n");
-    if (!controlsMarkup) return "";
+    if (!controlsMarkup) return null;
+
+    const toggleMarkup = `
+<div class="filters-toggle-holder">
+  <button type="button" class="filters-toggle" data-filters-toggle aria-expanded="true" aria-controls="filters-panel" aria-label="Hide filters">
+    <svg class="filters-toggle-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false">
+      <path d="M3 5.25A.75.75 0 0 1 3.75 4.5h16.5a.75.75 0 0 1 .53 1.28l-6.78 6.77v5.82a.75.75 0 0 1-1.12.66l-3-1.8a.75.75 0 0 1-.38-.66v-4.02L3.22 5.78A.75.75 0 0 1 3 5.25Z" fill="currentColor" />
+    </svg>
+    <span class="filters-toggle-label" data-filters-toggle-label>Hide filters</span>
+  </button>
+</div>`.trim();
+
+    const panelMarkup = `<div class="filters" id="filters-panel">\n${controlsMarkup}\n</div>`;
 
     const scriptBlock = `
 <script>
 (function(){
   function initFilters(){
     const container = document.querySelector('.filters');
-    if (!container) return;
+    const toggle = document.querySelector('[data-filters-toggle]');
+    const labelEl = toggle ? toggle.querySelector('[data-filters-toggle-label]') : null;
+    if (!container) {
+      if (toggle) toggle.style.display = 'none';
+      return;
+    }
     const selects = container.querySelectorAll('select[data-filter-target]');
     const searchBox = container.querySelector('[data-filter-text]');
-    if (!selects.length && !searchBox) return;
+    if (!selects.length && !searchBox) {
+      if (toggle) toggle.style.display = 'none';
+      return;
+    }
     const normalise = (value) => String(value || "").trim().toLowerCase();
+    const toggleLabel = (label) => {
+      if (labelEl) {
+        labelEl.textContent = label;
+      } else if (toggle) {
+        toggle.textContent = label;
+      }
+      if (toggle) {
+        toggle.setAttribute('aria-label', label);
+      }
+    };
 
     function applyFilters() {
       const rows = Array.from(document.querySelectorAll('section.group tbody tr'));
@@ -334,6 +364,27 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
 
     selects.forEach(select => select.addEventListener('change', applyFilters));
     if (searchBox) searchBox.addEventListener('input', applyFilters);
+
+    function updateToggleState() {
+      if (!toggle) return;
+      const isHidden = container.hasAttribute('hidden');
+      const label = isHidden ? 'Show filters' : 'Hide filters';
+      toggle.setAttribute('aria-expanded', String(!isHidden));
+      toggleLabel(label);
+    }
+
+    if (toggle) {
+      toggle.addEventListener('click', () => {
+        if (container.hasAttribute('hidden')) {
+          container.removeAttribute('hidden');
+        } else {
+          container.setAttribute('hidden', '');
+        }
+        updateToggleState();
+      });
+      updateToggleState();
+    }
+
     applyFilters();
   }
 
@@ -345,8 +396,13 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
 })();
 </script>`.trim();
 
-    return `<div class="filters">\n${controlsMarkup}\n</div>\n${scriptBlock}`;
+    return { toggleMarkup, panelMarkup, scriptBlock };
   })();
+
+  const filterToggleHtml = filterControlsConfig?.toggleMarkup ?? "";
+  const filterControlsHtml = filterControlsConfig
+    ? [filterControlsConfig.panelMarkup, filterControlsConfig.scriptBlock].filter(Boolean).join("\n")
+    : "";
 
   // CSS + template (local assets)
   const cssPath = path.resolve(process.cwd(), "htmlutils/schedule.css");
@@ -416,6 +472,7 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
   const html = tpl
     .replaceAll("{{CSS}}", css + "\n" + cssExtra)
     .replaceAll("{{TITLE}}", escapeHtml(title))
+    .replaceAll("{{FILTER_TOGGLE}}", filterToggleHtml)
     .replaceAll("{{SUBTITLE}}", subtitleWithLogo)
     .replaceAll("{{DOWNLOAD}}", utilityBlock)
     .replaceAll("{{DEBUG}}", "") // no debug in v2

@@ -103,6 +103,63 @@ h1 { font-size: 20px; margin: 0 0 8px 0; color: var(--header); }
 
 /* ---------- Filters ---------- */
 
+.filters-toggle-holder {
+  position: sticky;
+  top: 16px;
+  z-index: 110;
+  display: flex;
+  justify-content: center;
+  max-width: 960px;
+  margin: 0 auto 10px;
+  padding: 0 20px;
+}
+
+.filters-toggle {
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 13px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  box-shadow: 0 6px 18px var(--shadow);
+  transition: transform .12s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease;
+}
+
+.filters-toggle-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.filters-toggle-label {
+  line-height: 1;
+}
+
+.filters-toggle:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 28px var(--shadow-strong);
+  border-color: rgba(37, 99, 235, 0.28);
+  background: #eef2ff;
+}
+
+.filters-toggle:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 28px var(--shadow-strong);
+  border-color: rgba(37, 99, 235, 0.28);
+  background: #eef2ff;
+  outline: 2px solid rgba(37, 99, 235, 0.45);
+  outline-offset: 3px;
+}
+
+.filters[hidden] {
+  display: none;
+}
+
 .filters {
   display: flex;
   flex-wrap: wrap;
@@ -119,6 +176,7 @@ h1 { font-size: 20px; margin: 0 0 8px 0; color: var(--header); }
   position: sticky;
   top: 16px;
   z-index: 100;
+  margin-top: 12px;
 }
 
 .filters .filter {
@@ -157,6 +215,15 @@ h1 { font-size: 20px; margin: 0 0 8px 0; color: var(--header); }
 }
 
 @media (max-width: 640px) {
+  .filters-toggle-holder {
+    padding: 0 16px;
+    top: 12px;
+  }
+
+  .filters-toggle {
+    width: 100%;
+  }
+
   .filters {
     flex-direction: column;
     align-items: stretch;
