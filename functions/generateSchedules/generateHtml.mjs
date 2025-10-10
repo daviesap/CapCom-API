@@ -360,28 +360,28 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
   const cssExtra = `
   /* --- Key Info Accordion (injected by generateHtmlv2.mjs) --- */
   .accordion.key-info{
-    background:#fff8ef; border:1px solid #f3c9a6; border-radius:10px;
-    margin:16px 0 20px; padding:0; overflow:hidden; box-shadow:0 6px 18px rgba(90,52,20,0.12);
+    background:var(--card-alt); border:1px solid var(--border); border-radius:12px;
+    margin:16px 0 20px; padding:0; overflow:hidden; box-shadow:0 10px 26px var(--shadow);
   }
   .accordion.key-info summary{
     display:flex; align-items:center; justify-content:space-between;
-    gap:8px; cursor:pointer; list-style:none; padding:12px 18px; font-weight:700;
-    font-size:.95rem; color:#4a2a12; background:#fde4c8; border-bottom:1px solid #f3c9a6;
+    gap:8px; cursor:pointer; list-style:none; padding:12px 18px; font-weight:600;
+    font-size:.95rem; color:var(--header); background:#eef2ff; border-bottom:1px solid rgba(37,99,235,0.18);
   }
   .accordion.key-info summary::-webkit-details-marker{ display:none; }
-  .accordion.key-info .acc-body{ padding:14px 18px; border-top:1px solid #f3c9a6; background:#fffaf3; }
+  .accordion.key-info .acc-body{ padding:14px 18px; border-top:1px solid var(--border); background:var(--card); }
   .accordion.key-info[open] .acc-body{
-    background:#fff5e6; box-shadow: inset 3px 0 0 #d97706;
+    background:#e0e7ff; box-shadow: inset 3px 0 0 rgba(37,99,235,0.35);
   }
-  .accordion.key-info .acc-chevron{ flex:0 0 auto; color:#c2410c; transition: transform .18s ease; }
-  .accordion.key-info .acc-body{ line-height:1.6; font-size:.98rem; }
+  .accordion.key-info .acc-chevron{ flex:0 0 auto; color:var(--accent); transition: transform .18s ease; }
+  .accordion.key-info .acc-body{ line-height:1.6; font-size:.98rem; color:var(--text); }
   .accordion.key-info .acc-body a[href*="w3w.co"]{
     font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-    background: rgba(214,120,28,0.14); border:1px solid rgba(214,120,28,0.28);
+    background: rgba(37,99,235,0.1); border:1px solid rgba(37,99,235,0.22);
     border-radius:6px; padding:.08em .35em; text-decoration:none; white-space:nowrap;
   }
   .accordion.key-info .acc-body a[href*="w3w.co"]:hover{
-    background: rgba(214,120,28,0.22); border-color: rgba(214,120,28,0.38);
+    background: rgba(37,99,235,0.16); border-color: rgba(37,99,235,0.32);
   }
   `;
 

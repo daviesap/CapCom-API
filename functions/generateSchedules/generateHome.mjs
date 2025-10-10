@@ -213,12 +213,15 @@ export async function generateHome({
 <title>${title}</title>
 <style>
   :root {
-    --bg: #ffffff;
-    --ink: #111;
+    --bg: #f5f6f8;
+    --ink: #1b1d21;
     --muted: #6b7280;
-    --accent: #ef4444;
-    --ring: rgba(239,68,68,.25);
-    --card: #fafafa;
+    --accent: #2563eb;
+    --ring: rgba(37, 99, 235, 0.18);
+    --card: #ffffff;
+    --card-alt: #f9fafb;
+    --border: #e2e5ec;
+    --shadow: rgba(15, 23, 42, 0.06);
   }
   * { box-sizing: border-box; }
   body {
@@ -233,25 +236,27 @@ export async function generateHome({
   .header-col { min-width: 0; flex: 1 1 auto; }
   .header-logo { flex: 0 0 auto; margin-left: auto; }
   .header-logo img { max-height: 80px; height: auto; width: auto; display: block; }
-  h1 { margin: 0 0 4px; font-size: 1.5rem; line-height: 1.2; }
+  h1 { margin: 0 0 4px; font-size: 1.5rem; line-height: 1.2; color: var(--ink); }
   .sub { color: var(--muted); font-size: .95rem; }
 
   /* Accordion styling */
   .accordion.key-info {
-    background: var(--card);
-    border: 1px solid #eee;
+    background: var(--card-alt);
+    border: 1px solid var(--border);
     border-radius: 12px;
     margin: 16px 0 20px;
     padding: 0;
     overflow: hidden;
+    box-shadow: 0 10px 26px var(--shadow);
   }
   .accordion.key-info summary {
     display: flex; align-items: center; justify-content: space-between; gap: 8px;
-    cursor: pointer; list-style: none; padding: 12px 16px; font-weight: 700;
+    cursor: pointer; list-style: none; padding: 12px 16px; font-weight: 600;
+    color: var(--ink);
   }
   .accordion.key-info summary::-webkit-details-marker { display: none; }
-  .accordion.key-info .acc-body { padding: 12px 16px; border-top: 1px solid #eee; }
-  .accordion.key-info .acc-chevron { flex: 0 0 auto; color: var(--muted); transition: transform .18s ease; }
+  .accordion.key-info .acc-body { padding: 12px 16px; border-top: 1px solid var(--border); background: var(--card); }
+  .accordion.key-info .acc-chevron { flex: 0 0 auto; color: var(--accent); transition: transform .18s ease; }
   .accordion.key-info[open] .acc-chevron { transform: rotate(90deg); }
 
   /* Markdown basics */
@@ -262,34 +267,34 @@ export async function generateHome({
   .markdown a{text-decoration:underline; color:inherit}
 
   /* Group headings */
-.group {
-  margin: 28px 0;                   /* spacing between groups */
-  padding: 16px 20px;
-  border-radius: 12px;
-  background: var(--group-bg, #fafafa);
-  border: 1px solid #e5e7eb;        /* subtle border */
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05); /* soft shadow */
-}
+  .group {
+    margin: 28px 0;
+    padding: 18px 22px;
+    border-radius: 14px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    box-shadow: 0 12px 28px var(--shadow);
+  }
 
 .group-head {
   display: flex;
   align-items: center;
   gap: 10px;
   font-size: 12px;
-  font-weight: 700;
-  letter-spacing: .04em;
-  color: var(--muted);
+  font-weight: 600;
+  letter-spacing: .08em;
+  color: var(--accent);
   text-transform: uppercase;
   margin: 0 0 12px;
 }
 
-.group-head::after {
-  content: "";
-  flex: 1 1 auto;
-  height: 1px;
-  background: #e5e7eb;
-  opacity: .7;
-}
+  .group-head::after {
+    content: "";
+    flex: 1 1 auto;
+    height: 1px;
+    background: var(--border);
+    opacity: .7;
+  }
 
   /* Buttons grid */
   .grid{display:grid; grid-template-columns:1fr; gap:12px}
@@ -297,13 +302,18 @@ export async function generateHome({
   @media(min-width:900px){ .grid{grid-template-columns:repeat(3,1fr)} }
   .snap-btn {
     display:flex; align-items:center; justify-content:space-between;
-    padding:14px 16px; text-decoration:none; border:1px solid #eee;
-    border-radius:12px; background:#fff; box-shadow:0 1px 1px rgba(0,0,0,.03);
-    transition: transform .06s ease, box-shadow .15s ease, border-color .15s ease;
+    padding:14px 18px; text-decoration:none; border:1px solid var(--border);
+    border-radius:12px; background:var(--card-alt); box-shadow:0 6px 18px var(--shadow);
+    transition: transform .12s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease;
     color: var(--ink);
   }
   .snap-btn .left{display:flex; align-items:center; gap:0; min-width:0}
-  .snap-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(0,0,0,.06); border-color: #e5e7eb; }
+  .snap-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.14);
+    border-color: rgba(37, 99, 235, 0.32);
+    background: #eef2ff;
+  }
   .snap-btn[aria-disabled="true"] { opacity: 0.6; cursor: not-allowed; pointer-events: none; }
   .snap-label { font-weight:600; }
   .chevron { flex-shrink:0; color: var(--accent); }
