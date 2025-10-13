@@ -1,0 +1,626 @@
+{
+  "glideAppName": "GWC",
+  "eventName": "Gartner Winners Circle 2025 - Maui",
+  "api_key": "Sausages2025!!",
+  "dates": [
+    {
+      "date": "2026-04-14T00:00:00.000Z",
+      "description": "Circle Lounge opens"
+    },
+    {
+      "date": "2026-04-20T00:00:00.000Z",
+      "description": "W2 Gala Dinner"
+    },
+    {
+      "date": "2026-04-13T00:00:00.000Z",
+      "description": "Build"
+    },
+    {
+      "date": "2026-04-15T00:00:00.000Z",
+      "description": "W1 Welcome Reception"
+    },
+    {
+      "date": "2026-04-17T00:00:00.000Z",
+      "description": "W1 Gala Dinner"
+    },
+    {
+      "date": "2026-04-19T00:00:00.000Z",
+      "description": "W1 Kick Off and Theme"
+    },
+    {
+      "date": "2026-04-21T00:00:00.000Z",
+      "description": "De-rig - Circle Lounge closes EOD"
+    },
+    {
+      "date": "2026-04-16T00:00:00.000Z",
+      "description": "W1 Kick Off and Theme"
+    },
+    {
+      "date": "2026-04-12T00:00:00.000Z",
+      "description": "Build"
+    },
+    {
+      "date": "2026-04-18T00:00:00.000Z",
+      "description": "W2 Welcome Reception"
+    },
+    {
+      "date": "2026-04-11T00:00:00.000Z",
+      "description": "Crew arrivals / Pre-con"
+    },
+    {
+      "date": "2026-04-22T00:00:00.000Z",
+      "description": "Crew fly home"
+    },
+    {
+      "date": "2026-04-09T00:00:00.000Z"
+    },
+    {
+      "date": "2026-04-08T00:00:00.000Z"
+    },
+    {
+      "date": "2026-04-10T00:00:00.000Z",
+      "description": "PMs arrive Maui"
+    },
+    {
+      "date": "2026-04-23T00:00:00.000Z"
+    },
+    {
+      "date": "2026-04-24T00:00:00.000Z",
+      "description": "UK Crew land home"
+    },
+    {
+      "date": "2026-04-25T00:00:00.000Z"
+    }
+  ],
+  "slots": [
+    {
+      "slot": 1,
+      "name": "Breakfast",
+      "abb": "B",
+      "location": "tbc"
+    },
+    {
+      "slot": 2,
+      "name": "Lunch",
+      "abb": "L",
+      "location": "tbc"
+    },
+    {
+      "slot": 3,
+      "name": "Dinner",
+      "abb": "D",
+      "location": "tbc"
+    },
+    {
+      "slot": 4,
+      "name": "Drinks",
+      "abb": "T/C",
+      "location": "tbc"
+    },
+    {
+      "slot": 5,
+      "name": "Spare",
+      "abb": " ",
+      "location": "tbc"
+    },
+    {
+      "slot": 6,
+      "name": "Spare",
+      "abb": " ",
+      "location": "tbc"
+    }
+  ],
+  "tags": [
+    {
+      "id": "8yUM-5uLSNSF.uxQPG8J.A",
+      "name": "AVS"
+    },
+    {
+      "id": "rUiP8.CxQtmfbFrE1K2pFQ",
+      "name": "Hawaii S&L"
+    },
+    {
+      "id": "A5Dkj1-dRXW2hL9PcgrMIQ",
+      "name": "Show Imaging"
+    }
+  ],
+  "names": [
+    {
+      "id": "J8L.PcWITPSMpXa639CKEA",
+      "name": "Louis Souyave",
+      "role": "PM2"
+    },
+    {
+      "id": "o-GuPuumS7eg3xA3y64jKA",
+      "name": "Andrew Davies",
+      "role": "TD",
+      "company": "Carss"
+    },
+    {
+      "id": "QkcK.65bQwK5LT1pQoNKtw",
+      "name": "James Holt",
+      "role": "Crew Lead",
+      "company": "AVS"
+    }
+  ],
+  "data": [
+    {
+      "Date": "2026-04-10T00:00:00.000Z",
+      "accommodated": false,
+      "name": "J8L.PcWITPSMpXa639CKEA",
+      "slot1": 20,
+      "slot2": 20,
+      "slot3": 20,
+      "slot4": 20,
+      "slot5": 0,
+      "slot6": 0
+    },
+    {
+      "Date": "2026-04-11T00:00:00.000Z",
+      "accommodated": false,
+      "name": "J8L.PcWITPSMpXa639CKEA",
+      "slot1": 0,
+      "slot2": 0,
+      "slot3": 0,
+      "slot4": 0,
+      "slot5": 0,
+      "slot6": 0
+    },
+    {
+      "Date": "2026-04-12T00:00:00.000Z",
+      "accommodated": false,
+      "name": "J8L.PcWITPSMpXa639CKEA",
+      "slot1": 0,
+      "slot2": 0,
+      "slot3": 0,
+      "slot4": 0,
+      "slot5": 0,
+      "slot6": 0
+    },
+    {
+      "Date": "2026-04-13T00:00:00.000Z",
+      "accommodated": false,
+      "name": "J8L.PcWITPSMpXa639CKEA",
+      "slot1": 0,
+      "slot2": 0,
+      "slot3": 0,
+      "slot4": 0,
+      "slot5": 0,
+      "slot6": 0
+    },
+    {
+      "Date": "2026-04-10T00:00:00.000Z",
+      "accommodated": false,
+      "name": "o-GuPuumS7eg3xA3y64jKA",
+      "slot1": 0,
+      "slot2": 0,
+      "slot3": 0,
+      "slot4": 0,
+      "slot5": 0,
+      "slot6": 0
+    },
+    {
+      "Date": "2026-04-15T00:00:00.000Z",
+      "accommodated": false,
+      "name": "J8L.PcWITPSMpXa639CKEA",
+      "slot1": 0,
+      "slot2": 0,
+      "slot3": 0,
+      "slot4": 0,
+      "slot5": 0,
+      "slot6": 0
+    },
+    {
+      "Date": "2026-04-14T00:00:00.000Z",
+      "accommodated": false,
+      "name": "J8L.PcWITPSMpXa639CKEA",
+      "slot1": 0,
+      "slot2": 0,
+      "slot3": 0,
+      "slot4": 0,
+      "slot5": 0,
+      "slot6": 0
+    },
+    {
+      "Date": "2026-04-16T00:00:00.000Z",
+      "accommodated": false,
+      "name": "J8L.PcWITPSMpXa639CKEA",
+      "slot1": 0,
+      "slot2": 0,
+      "slot3": 0,
+      "slot4": 0,
+      "slot5": 0,
+      "slot6": 0
+    },
+    {
+      "Date": "2026-04-17T00:00:00.000Z",
+      "accommodated": false,
+      "name": "J8L.PcWITPSMpXa639CKEA",
+      "slot1": 0,
+      "slot2": 0,
+      "slot3": 0,
+      "slot4": 0,
+      "slot5": 0,
+      "slot6": 0
+    },
+    {
+      "Date": "2026-04-11T00:00:00.000Z",
+      "accommodated": false,
+      "name": "o-GuPuumS7eg3xA3y64jKA",
+      "slot1": 0,
+      "slot2": 0,
+      "slot3": 0,
+      "slot4": 0,
+      "slot5": 0,
+      "slot6": 0
+    },
+    {
+      "Date": "2026-04-18T00:00:00.000Z",
+      "accommodated": false,
+      "name": "J8L.PcWITPSMpXa639CKEA",
+      "slot1": 0,
+      "slot2": 0,
+      "slot3": 0,
+      "slot4": 0,
+      "slot5": 0,
+      "slot6": 0
+    },
+    {
+      "Date": "2026-04-12T00:00:00.000Z",
+      "accommodated": false,
+      "name": "o-GuPuumS7eg3xA3y64jKA",
+      "slot1": 0,
+      "slot2": 0,
+      "slot3": 0,
+      "slot4": 0,
+      "slot5": 0,
+      "slot6": 0
+    },
+    {
+      "Date": "2026-04-19T00:00:00.000Z",
+      "accommodated": false,
+      "name": "J8L.PcWITPSMpXa639CKEA",
+      "slot1": 0,
+      "slot2": 0,
+      "slot3": 0,
+      "slot4": 0,
+      "slot5": 0,
+      "slot6": 0
+    },
+    {
+      "Date": "2026-04-13T00:00:00.000Z",
+      "accommodated": false,
+      "name": "o-GuPuumS7eg3xA3y64jKA",
+      "slot1": 0,
+      "slot2": 0,
+      "slot3": 0,
+      "slot4": 0,
+      "slot5": 0,
+      "slot6": 0
+    },
+    {
+      "Date": "2026-04-20T00:00:00.000Z",
+      "accommodated": false,
+      "name": "J8L.PcWITPSMpXa639CKEA",
+      "slot1": 0,
+      "slot2": 0,
+      "slot3": 0,
+      "slot4": 0,
+      "slot5": 0,
+      "slot6": 0
+    },
+    {
+      "Date": "2026-04-21T00:00:00.000Z",
+      "accommodated": false,
+      "name": "J8L.PcWITPSMpXa639CKEA",
+      "slot1": 0,
+      "slot2": 0,
+      "slot3": 0,
+      "slot4": 0,
+      "slot5": 0,
+      "slot6": 0
+    },
+    {
+      "Date": "2026-04-22T00:00:00.000Z",
+      "accommodated": false,
+      "name": "J8L.PcWITPSMpXa639CKEA",
+      "slot1": 0,
+      "slot2": 0,
+      "slot3": 0,
+      "slot4": 0,
+      "slot5": 0,
+      "slot6": 0
+    },
+    {
+      "Date": "2026-04-14T00:00:00.000Z",
+      "accommodated": false,
+      "name": "o-GuPuumS7eg3xA3y64jKA",
+      "slot1": 0,
+      "slot2": 0,
+      "slot3": 0,
+      "slot4": 0,
+      "slot5": 0,
+      "slot6": 0
+    },
+    {
+      "Date": "2026-04-15T00:00:00.000Z",
+      "accommodated": false,
+      "name": "o-GuPuumS7eg3xA3y64jKA",
+      "slot1": 0,
+      "slot2": 0,
+      "slot3": 0,
+      "slot4": 0,
+      "slot5": 0,
+      "slot6": 0
+    },
+    {
+      "Date": "2026-04-16T00:00:00.000Z",
+      "accommodated": false,
+      "name": "o-GuPuumS7eg3xA3y64jKA",
+      "slot1": 0,
+      "slot2": 0,
+      "slot3": 0,
+      "slot4": 0,
+      "slot5": 0,
+      "slot6": 0
+    },
+    {
+      "Date": "2026-04-23T00:00:00.000Z",
+      "accommodated": false,
+      "name": "J8L.PcWITPSMpXa639CKEA",
+      "slot1": 0,
+      "slot2": 0,
+      "slot3": 0,
+      "slot4": 0,
+      "slot5": 0,
+      "slot6": 0
+    },
+    {
+      "Date": "2026-04-24T00:00:00.000Z",
+      "accommodated": false,
+      "name": "J8L.PcWITPSMpXa639CKEA",
+      "slot1": 0,
+      "slot2": 0,
+      "slot3": 0,
+      "slot4": 0,
+      "slot5": 0,
+      "slot6": 0
+    },
+    {
+      "Date": "2026-04-17T00:00:00.000Z",
+      "accommodated": false,
+      "name": "o-GuPuumS7eg3xA3y64jKA",
+      "slot1": 0,
+      "slot2": 0,
+      "slot3": 0,
+      "slot4": 0,
+      "slot5": 0,
+      "slot6": 0
+    },
+    {
+      "Date": "2026-04-18T00:00:00.000Z",
+      "accommodated": false,
+      "name": "o-GuPuumS7eg3xA3y64jKA",
+      "slot1": 0,
+      "slot2": 0,
+      "slot3": 0,
+      "slot4": 0,
+      "slot5": 0,
+      "slot6": 0
+    },
+    {
+      "Date": "2026-04-20T00:00:00.000Z",
+      "accommodated": false,
+      "name": "o-GuPuumS7eg3xA3y64jKA",
+      "slot1": 0,
+      "slot2": 0,
+      "slot3": 0,
+      "slot4": 0,
+      "slot5": 0,
+      "slot6": 0
+    },
+    {
+      "Date": "2026-04-19T00:00:00.000Z",
+      "accommodated": false,
+      "name": "o-GuPuumS7eg3xA3y64jKA",
+      "slot1": 0,
+      "slot2": 0,
+      "slot3": 0,
+      "slot4": 0,
+      "slot5": 0,
+      "slot6": 0
+    },
+    {
+      "Date": "2026-04-21T00:00:00.000Z",
+      "accommodated": false,
+      "name": "o-GuPuumS7eg3xA3y64jKA",
+      "slot1": 0,
+      "slot2": 0,
+      "slot3": 0,
+      "slot4": 0,
+      "slot5": 0,
+      "slot6": 0
+    },
+    {
+      "Date": "2026-04-22T00:00:00.000Z",
+      "accommodated": false,
+      "name": "o-GuPuumS7eg3xA3y64jKA",
+      "slot1": 0,
+      "slot2": 0,
+      "slot3": 0,
+      "slot4": 0,
+      "slot5": 0,
+      "slot6": 0
+    },
+    {
+      "Date": "2026-04-23T00:00:00.000Z",
+      "accommodated": false,
+      "name": "o-GuPuumS7eg3xA3y64jKA",
+      "slot1": 0,
+      "slot2": 0,
+      "slot3": 0,
+      "slot4": 0,
+      "slot5": 0,
+      "slot6": 0
+    },
+    {
+      "Date": "2026-04-24T00:00:00.000Z",
+      "accommodated": false,
+      "name": "o-GuPuumS7eg3xA3y64jKA",
+      "slot1": 0,
+      "slot2": 0,
+      "slot3": 0,
+      "slot4": 0,
+      "slot5": 0,
+      "slot6": 0
+    },
+    {
+      "Date": "2026-04-11T00:00:00.000Z",
+      "accommodated": false,
+      "name": "QkcK.65bQwK5LT1pQoNKtw",
+      "slot1": 0,
+      "slot2": 0,
+      "slot3": 0,
+      "slot4": 0,
+      "slot5": 0,
+      "slot6": 0
+    },
+    {
+      "Date": "2026-04-12T00:00:00.000Z",
+      "accommodated": false,
+      "name": "QkcK.65bQwK5LT1pQoNKtw",
+      "slot1": 0,
+      "slot2": 0,
+      "slot3": 0,
+      "slot4": 0,
+      "slot5": 0,
+      "slot6": 0
+    },
+    {
+      "Date": "2026-04-14T00:00:00.000Z",
+      "accommodated": false,
+      "name": "QkcK.65bQwK5LT1pQoNKtw",
+      "slot1": 0,
+      "slot2": 0,
+      "slot3": 0,
+      "slot4": 0,
+      "slot5": 0,
+      "slot6": 0
+    },
+    {
+      "Date": "2026-04-13T00:00:00.000Z",
+      "accommodated": false,
+      "name": "QkcK.65bQwK5LT1pQoNKtw",
+      "slot1": 0,
+      "slot2": 0,
+      "slot3": 0,
+      "slot4": 0,
+      "slot5": 0,
+      "slot6": 0
+    },
+    {
+      "Date": "2026-04-16T00:00:00.000Z",
+      "accommodated": false,
+      "name": "QkcK.65bQwK5LT1pQoNKtw",
+      "slot1": 0,
+      "slot2": 0,
+      "slot3": 0,
+      "slot4": 0,
+      "slot5": 0,
+      "slot6": 0
+    },
+    {
+      "Date": "2026-04-15T00:00:00.000Z",
+      "accommodated": false,
+      "name": "QkcK.65bQwK5LT1pQoNKtw",
+      "slot1": 0,
+      "slot2": 0,
+      "slot3": 0,
+      "slot4": 0,
+      "slot5": 0,
+      "slot6": 0
+    },
+    {
+      "Date": "2026-04-17T00:00:00.000Z",
+      "accommodated": false,
+      "name": "QkcK.65bQwK5LT1pQoNKtw",
+      "slot1": 0,
+      "slot2": 0,
+      "slot3": 0,
+      "slot4": 0,
+      "slot5": 0,
+      "slot6": 0
+    },
+    {
+      "Date": "2026-04-18T00:00:00.000Z",
+      "accommodated": false,
+      "name": "QkcK.65bQwK5LT1pQoNKtw",
+      "slot1": 0,
+      "slot2": 0,
+      "slot3": 0,
+      "slot4": 0,
+      "slot5": 0,
+      "slot6": 0
+    },
+    {
+      "Date": "2026-04-19T00:00:00.000Z",
+      "accommodated": false,
+      "name": "QkcK.65bQwK5LT1pQoNKtw",
+      "slot1": 0,
+      "slot2": 0,
+      "slot3": 0,
+      "slot4": 0,
+      "slot5": 0,
+      "slot6": 0
+    },
+    {
+      "Date": "2026-04-20T00:00:00.000Z",
+      "accommodated": false,
+      "name": "QkcK.65bQwK5LT1pQoNKtw",
+      "slot1": 0,
+      "slot2": 0,
+      "slot3": 0,
+      "slot4": 0,
+      "slot5": 0,
+      "slot6": 0
+    },
+    {
+      "Date": "2026-04-21T00:00:00.000Z",
+      "accommodated": false,
+      "name": "QkcK.65bQwK5LT1pQoNKtw",
+      "slot1": 0,
+      "slot2": 0,
+      "slot3": 0,
+      "slot4": 0,
+      "slot5": 0,
+      "slot6": 0
+    },
+    {
+      "Date": "2026-04-22T00:00:00.000Z",
+      "accommodated": false,
+      "name": "QkcK.65bQwK5LT1pQoNKtw",
+      "slot1": 0,
+      "slot2": 0,
+      "slot3": 0,
+      "slot4": 0,
+      "slot5": 0,
+      "slot6": 0
+    },
+    {
+      "Date": "2026-04-13T00:00:00.000Z",
+      "accommodated": false,
+      "name": "8yUM-5uLSNSF.uxQPG8J.A",
+      "slot3": 0
+    },
+    {
+      "Date": "2026-04-13T00:00:00.000Z",
+      "accommodated": false,
+      "name": "rUiP8.CxQtmfbFrE1K2pFQ"
+    },
+    {
+      "Date": "2026-04-12T00:00:00.000Z",
+      "accommodated": false,
+      "name": "A5Dkj1-dRXW2hL9PcgrMIQ"
+    }
+  ]
+}

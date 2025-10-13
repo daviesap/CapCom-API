@@ -19,7 +19,7 @@ curl -X POST \
   ## Meals Pivot
 curl -X POST \
   -H "Content-Type: application/json" \
-  --data-binary @/Users/apndavies/Coding/flair-pdf-generator/functions/local-emulator/input/meals.json \
+  --data-binary @/Users/apndavies/Coding/flair-pdf-generator/functions/local-emulator/input/meals2.json \
   "http://127.0.0.1:5001/flair-pdf-generator/europe-west2/v2?action=mealsPivot"
 
 

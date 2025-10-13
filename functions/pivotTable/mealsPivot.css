@@ -165,16 +165,14 @@ th {
   padding: 6px 8px;
 }
 
-/* Fixed width for all numeric columns using a CSS variable */
+/* Responsive width for all meal slot columns */
 :root {
-  --num-col-width: 0px; /* tweak as needed */
+  --slot-col-width: clamp(22px, 22px);
 }
 
-.table-wrap table th.meal-num,
-.table-wrap table td.meal-num,
-.table-wrap table th.num,
-.table-wrap table td.num {
-  width: var(--num-col-width);
+.table-wrap table th.slot-col,
+.table-wrap table td.slot-col {
+  width: var(--slot-col-width);
 }
 
 .totals-row {
