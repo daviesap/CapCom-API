@@ -71,6 +71,71 @@ const escapeHtml = (s) =>
 const slugify = (s) =>
   String(s).trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
+const collectMatchTokens = (value) => {
+  if (typeof value !== "string") return [];
+  const trimmed = value.trim();
+  if (!trimmed) return [];
+  const lower = trimmed.toLowerCase();
+  const withoutExt = lower.replace(/\.[a-z0-9]+$/, "");
+  const slug = slugify(trimmed);
+  const tokens = new Set([lower, withoutExt, slug]);
+  return Array.from(tokens).filter(Boolean);
+};
+
+function shouldRenderFiltersForSnapshot(jsonInput = {}) {
+  const snapshots = Array.isArray(jsonInput?.snapshots) ? jsonInput.snapshots : null;
+  if (!snapshots || snapshots.length === 0) {
+    return true;
+  }
+
+  const currentTokens = new Set([
+    jsonInput?.document?.filename,
+    jsonInput?.document?.title,
+    jsonInput?.filename,
+    jsonInput?.name,
+  ].flatMap(collectMatchTokens));
+
+  if (!currentTokens.size) {
+    return false;
+  }
+
+  const matched = snapshots.find((snap) => {
+    if (!snap || typeof snap !== "object") return false;
+    const snapTokens = new Set([
+      snap.name,
+      snap.displayName,
+      snap.title,
+      snap.filename,
+      snap.document?.filename,
+    ].flatMap(collectMatchTokens));
+    if (!snapTokens.size) return false;
+    for (const token of snapTokens) {
+      if (currentTokens.has(token)) return true;
+    }
+    return false;
+  });
+
+  if (!matched) {
+    return false;
+  }
+
+  if (typeof matched.filterBox === "boolean") {
+    return matched.filterBox;
+  }
+
+  if (typeof matched.filterBox === "string") {
+    const normalised = matched.filterBox.trim().toLowerCase();
+    if (normalised === "true") return true;
+    if (normalised === "false") return false;
+  }
+
+  if (matched.filterBox == null) {
+    return false;
+  }
+
+  return Boolean(matched.filterBox);
+}
+
 function renderLogo(logo = {}) {
   const url = logo?.url;
   if (!url) return "";
@@ -197,6 +262,7 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
 
   const groupsArr = Array.isArray(jsonInput.groups) ? jsonInput.groups : [];
   let totalRowCount = 0;
+  const renderFilterControls = shouldRenderFiltersForSnapshot(jsonInput);
 
   // Build groups → tables
   const groupsHtml = groupsArr.map(g => {
@@ -264,7 +330,7 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
     `;
   }).join("");
 
-  const filterControlsConfig = (() => {
+  const filterControlsConfig = renderFilterControls ? (() => {
     if (!totalRowCount) return null;
 
     const controlBlocks = filterableColumns.map(filterCol => {
@@ -392,7 +458,7 @@ ${controlsBlock}
 </script>`.trim();
 
     return { panelMarkup, scriptBlock };
-  })();
+  })() : null;
 
   const filterToggleHtml = "";
   const filterControlsHtml = filterControlsConfig

@@ -78,6 +78,7 @@
     {
       "name": "Full schedule",
       "groupPresetId": "byDate-1",
+      "filterBox": true,
       "filterTagIds": [],
       "filterLocationIds": [],
       "filterSubLocationIds": [],
@@ -88,6 +89,7 @@
     {
       "name": "MP Squares schedule",
       "groupPresetId": "byDate-1",
+      "filterBox": false,
       "filterTagIds": [
         "ra8Z47n-QwCffoTVDR19nw"
       ],
@@ -100,6 +102,7 @@
     {
       "name": "HCP schedule",
       "groupPresetId": "byDate-1",
+      "filterBox": false,
       "filterTagIds": [
         "DonIXlE.SeqzQAe5V0GXLA"
       ],
@@ -112,6 +115,7 @@
     {
       "name": "Kerb schedule",
       "groupPresetId": "byDate-1",
+      "filterBox": false,
       "filterTagIds": [
         "a.A-QALuWT46KS8nX8kh8wg"
       ],
@@ -124,6 +128,7 @@
     {
       "name": "Insite schedule",
       "groupPresetId": "byDate-1",
+      "filterBox": false,
       "filterTagIds": [
         "unC3zBAMQy-pLki5bgQdmA"
       ],
@@ -136,6 +141,7 @@
     {
       "name": "AAC Power schedule",
       "groupPresetId": "byDate-1",
+      "filterBox": false,
       "filterTagIds": [
         "Xi8rOuVnRs-ihhFiHGv8kg"
       ],
@@ -148,6 +154,7 @@
     {
       "name": "Deliveries - All gates",
       "groupPresetId": "byDate-1",
+      "filterBox": false,
       "filterTagIds": [
         "TAtz-oeITKeLO4-uxu.DPw"
       ],
@@ -160,6 +167,7 @@
     {
       "name": "Garden Catering",
       "groupPresetId": "byDate-1",
+      "filterBox": false,
       "filterTagIds": [
         "c6D39RzGRmq.aMahe-g-yQ"
       ],
@@ -172,6 +180,7 @@
     {
       "name": "Deliveries - Cart Track Gate",
       "groupPresetId": "byDate-1",
+      "filterBox": false,
       "filterTagIds": [
         "TAtz-oeITKeLO4-uxu.DPw"
       ],
@@ -186,6 +195,7 @@
     {
       "name": "Deliveries - Flower Pot Gate",
       "groupPresetId": "byDate-1",
+      "filterBox": true,
       "filterTagIds": [],
       "filterLocationIds": [
         "Ko4msj1HS2aCTlQg0iiZPA"
@@ -198,6 +208,7 @@
     {
       "name": "Deliveries - Adams Gate",
       "groupPresetId": "byDate-1",
+      "filterBox": false,
       "filterTagIds": [],
       "filterLocationIds": [
         "rfWMwhqyQZeGYkkW.NXLZQ"
@@ -210,6 +221,7 @@
     {
       "name": "Trophy Gate",
       "groupPresetId": "byDate-1",
+      "filterBox": false,
       "filterTagIds": [],
       "filterLocationIds": [
         "lWsc3CHhT9eVCCcvaCkIeQ"
