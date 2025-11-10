@@ -1,0 +1,660 @@
+{
+  "api_key": "Sausages2025!!",
+  "event": {
+    "profileId": "0ha9w3GkYW",
+    "name": "CNC 2025 - New York",
+    "logoUrl": "https://storage.googleapis.com/glide-prod.appspot.com/uploads-v2/rS9O2hVbqWGQrmriKHuJ/pub/Bz05qbJi4OBfVE7JD0uN.png",
+    "header": [
+      "CNC 2025 - New York",
+      "Madison Square Gardens",
+      "24 November 2025 - 26 November 2025"
+    ]
+  },
+  "debug": false,
+  "UserId": "JwAOVyJUSwGKh1mD8Z1ovg",
+  "userEmail": "andrew@flair.london",
+  "glideAppName": "Schedule Demo",
+  "groupMeta": {
+    "scheduleDetail": [
+      {
+        "date": "2025-11-24",
+        "data": {
+          "title": "Monday, 24 November 2025",
+          "above": "Live day 1"
+        }
+      },
+      {
+        "date": "2025-11-25",
+        "data": {
+          "title": "Tuesday, 25 November 2025",
+          "above": "Live day 2"
+        }
+      },
+      {
+        "date": "2025-11-23",
+        "data": {
+          "title": "Sunday, 23 November 2025",
+          "above": "Rehearsals"
+        }
+      },
+      {
+        "date": "2025-11-29",
+        "data": {
+          "title": "Saturday, 29 November 2025",
+          "above": "Crew departures"
+        }
+      },
+      {
+        "date": "2025-11-21",
+        "data": {
+          "title": "Friday, 21 November 2025",
+          "above": "Build day 1/2"
+        }
+      },
+      {
+        "date": "2025-11-27",
+        "data": {
+          "title": "Thursday, 27 November 2025",
+          "above": "Derig day 1/2"
+        }
+      },
+      {
+        "date": "2025-11-28",
+        "data": {
+          "title": "Friday, 28 November 2025",
+          "above": "Derig day 2/2",
+          "below": "Venue to be clear"
+        }
+      },
+      {
+        "date": "2025-11-22",
+        "data": {
+          "title": "Saturday, 22 November 2025",
+          "above": "Build day 2/2"
+        }
+      },
+      {
+        "date": "2025-11-26",
+        "data": {
+          "title": "Wednesday, 26 November 2025",
+          "above": "Live day 3"
+        }
+      },
+      {
+        "date": "2025-11-20",
+        "data": {
+          "title": "Thursday, 20 November 2025",
+          "above": "Pre-con / supplier meetings"
+        }
+      },
+      {
+        "date": "2025-11-19",
+        "data": {
+          "title": "Wednesday, 19 November 2025",
+          "above": "Crew arrivals"
+        }
+      }
+    ],
+    "truckingDetail": [
+      {
+        "date": "2025-11-24",
+        "data": {
+          "title": "Monday, 24 November 2025",
+          "above": "Live day 1"
+        }
+      },
+      {
+        "date": "2025-11-25",
+        "data": {
+          "title": "Tuesday, 25 November 2025",
+          "above": "Live day 2"
+        }
+      },
+      {
+        "date": "2025-11-23",
+        "data": {
+          "title": "Sunday, 23 November 2025",
+          "above": "Rehearsals"
+        }
+      },
+      {
+        "date": "2025-11-29",
+        "data": {
+          "title": "Saturday, 29 November 2025",
+          "above": "Crew departures"
+        }
+      },
+      {
+        "date": "2025-11-21",
+        "data": {
+          "title": "Friday, 21 November 2025",
+          "above": "Build day 1/2"
+        }
+      },
+      {
+        "date": "2025-11-27",
+        "data": {
+          "title": "Thursday, 27 November 2025",
+          "above": "Derig day 1/2"
+        }
+      },
+      {
+        "date": "2025-11-28",
+        "data": {
+          "title": "Friday, 28 November 2025",
+          "above": "Derig day 2/2",
+          "below": "Venue to be clear"
+        }
+      },
+      {
+        "date": "2025-11-22",
+        "data": {
+          "title": "Saturday, 22 November 2025",
+          "above": "Build day 2/2"
+        }
+      },
+      {
+        "date": "2025-11-26",
+        "data": {
+          "title": "Wednesday, 26 November 2025",
+          "above": "Live day 3"
+        }
+      },
+      {
+        "date": "2025-11-20",
+        "data": {
+          "title": "Thursday, 20 November 2025",
+          "above": "Pre-con / supplier meetings"
+        }
+      },
+      {
+        "date": "2025-11-19",
+        "data": {
+          "title": "Wednesday, 19 November 2025",
+          "above": "Crew arrivals"
+        }
+      }
+    ],
+    "contacts": "contacts Group Meta Data"
+  },
+  "snapshots": [
+    {
+      "name": "Full schedule",
+      "filterBox": false,
+      "groupPresetId": "byDate-2",
+      "filterTagIds": [],
+      "filterLocationIds": [],
+      "filterSubLocationIds": [],
+      "group": "Full schedule",
+      "sortOrder": 1
+    },
+    {
+      "name": "Trucking Schedule",
+      "filterBox": false,
+      "groupPresetId": "byTag-2",
+      "filterTagIds": [
+        "n78QCdA6TTWMsm4gHXkbEQ",
+        "8UQSlslcQlSnMbP7AvbNzg",
+        "UcPBfu2jQCm6IBMdQPlWQw"
+      ],
+      "filterLocationIds": [],
+      "filterSubLocationIds": [],
+      "group": "By supplier",
+      "sortOrder": 3
+    }
+  ],
+  "data": {
+    "scheduleDetail": [
+      {
+        "date": "2025-11-21",
+        "time": "20:00",
+        "description": "AV Crew finish for the day",
+        "tagIds": [
+          "n78QCdA6TTWMsm4gHXkbEQ"
+        ],
+        "locationIds": [],
+        "subLocationIds": [],
+        "tags": [
+          "AVS"
+        ],
+        "locations": []
+      },
+      {
+        "date": "2025-11-20",
+        "time": "08:00",
+        "description": "Graphics Delivered",
+        "tagIds": [
+          "iHorpZWJRqGEldmrIMjyUg"
+        ],
+        "locationIds": [
+          "sGK4xY8VTcGZ6w10e2CK1g"
+        ],
+        "subLocationIds": [],
+        "tags": [
+          "Rock It Cargo"
+        ],
+        "locations": [
+          "Pierre Hotel, NY"
+        ]
+      },
+      {
+        "date": "2025-11-21",
+        "time": "08:00",
+        "description": "AV Crew on site",
+        "tagIds": [
+          "n78QCdA6TTWMsm4gHXkbEQ"
+        ],
+        "locationIds": [
+          "sGK4xY8VTcGZ6w10e2CK1g"
+        ],
+        "subLocationIds": [
+          "GtH2pe8lxoX82Jyg1Ex8"
+        ],
+        "tags": [
+          "AVS"
+        ],
+        "locations": [
+          "Pierre Hotel, NY"
+        ]
+      },
+      {
+        "date": "2025-11-21",
+        "time": "12:00",
+        "description": "Scenic crew on site",
+        "tagIds": [
+          "8UQSlslcQlSnMbP7AvbNzg"
+        ],
+        "locationIds": [
+          "sGK4xY8VTcGZ6w10e2CK1g"
+        ],
+        "subLocationIds": [
+          "GtH2pe8lxoX82Jyg1Ex8"
+        ],
+        "tags": [
+          "PLS Staging"
+        ],
+        "locations": [
+          "Pierre Hotel, NY"
+        ]
+      },
+      {
+        "date": "2025-11-21",
+        "time": "23:00 (tbc)",
+        "description": "Scenic finish - work until back wall up",
+        "tagIds": [
+          "8UQSlslcQlSnMbP7AvbNzg"
+        ],
+        "locationIds": [
+          "sGK4xY8VTcGZ6w10e2CK1g"
+        ],
+        "subLocationIds": [
+          "GtH2pe8lxoX82Jyg1Ex8"
+        ],
+        "tags": [
+          "PLS Staging"
+        ],
+        "locations": [
+          "Pierre Hotel, NY"
+        ]
+      },
+      {
+        "date": "2025-11-22",
+        "time": "10:00",
+        "description": "LX Focussing",
+        "tagIds": [
+          "n78QCdA6TTWMsm4gHXkbEQ"
+        ],
+        "locationIds": [
+          "sGK4xY8VTcGZ6w10e2CK1g"
+        ],
+        "subLocationIds": [
+          "GtH2pe8lxoX82Jyg1Ex8"
+        ],
+        "notes": "Apply graphics to back wall",
+        "tags": [
+          "AVS"
+        ],
+        "locations": [
+          "Pierre Hotel, NY"
+        ]
+      },
+      {
+        "date": "2025-11-22",
+        "time": "08:00",
+        "description": "Graphics installers on site",
+        "tagIds": [
+          "w74wogq8QbWDgyjqfsc4aA"
+        ],
+        "locationIds": [
+          "sGK4xY8VTcGZ6w10e2CK1g"
+        ],
+        "subLocationIds": [
+          "GtH2pe8lxoX82Jyg1Ex8"
+        ],
+        "notes": "Apply graphics to back wall",
+        "tags": [
+          "East Coast Graphics"
+        ],
+        "locations": [
+          "Pierre Hotel, NY"
+        ]
+      },
+      {
+        "date": "2025-11-23",
+        "time": "08:00 - 10:00",
+        "description": "Tech rehearsals",
+        "tagIds": [
+          "n78QCdA6TTWMsm4gHXkbEQ"
+        ],
+        "locationIds": [
+          "sGK4xY8VTcGZ6w10e2CK1g"
+        ],
+        "subLocationIds": [
+          "GtH2pe8lxoX82Jyg1Ex8"
+        ],
+        "tags": [
+          "AVS"
+        ],
+        "locations": [
+          "Pierre Hotel, NY"
+        ]
+      },
+      {
+        "date": "2025-11-23",
+        "time": "08:00 - 10:00",
+        "description": "Scenic on site for snagging",
+        "tagIds": [
+          "8UQSlslcQlSnMbP7AvbNzg"
+        ],
+        "locationIds": [
+          "sGK4xY8VTcGZ6w10e2CK1g"
+        ],
+        "subLocationIds": [
+          "GtH2pe8lxoX82Jyg1Ex8"
+        ],
+        "tags": [
+          "PLS Staging"
+        ],
+        "locations": [
+          "Pierre Hotel, NY"
+        ]
+      },
+      {
+        "date": "2025-11-24",
+        "time": "08:00",
+        "description": "Show crew on site",
+        "tagIds": [
+          "n78QCdA6TTWMsm4gHXkbEQ"
+        ],
+        "locationIds": [
+          "sGK4xY8VTcGZ6w10e2CK1g"
+        ],
+        "subLocationIds": [
+          "GtH2pe8lxoX82Jyg1Ex8"
+        ],
+        "tags": [
+          "AVS"
+        ],
+        "locations": [
+          "Pierre Hotel, NY"
+        ]
+      },
+      {
+        "date": "2025-11-24",
+        "time": "10:00",
+        "description": "Delegate arrivals",
+        "tagIds": [
+          "n78QCdA6TTWMsm4gHXkbEQ"
+        ],
+        "locationIds": [
+          "sGK4xY8VTcGZ6w10e2CK1g"
+        ],
+        "subLocationIds": [
+          "GtH2pe8lxoX82Jyg1Ex8"
+        ],
+        "tags": [
+          "AVS"
+        ],
+        "locations": [
+          "Pierre Hotel, NY"
+        ]
+      },
+      {
+        "date": "2025-11-24",
+        "time": "11:00 - 13:00",
+        "description": "Show live - plenary",
+        "tagIds": [
+          "W8TBFiQCQsSVITJax.OPJA"
+        ],
+        "locationIds": [
+          "sGK4xY8VTcGZ6w10e2CK1g"
+        ],
+        "subLocationIds": [
+          "GtH2pe8lxoX82Jyg1Ex8"
+        ],
+        "format": "important",
+        "tags": [
+          "Live"
+        ],
+        "locations": [
+          "Pierre Hotel, NY"
+        ]
+      },
+      {
+        "date": "2025-11-24",
+        "time": "14:00 - 16:00",
+        "description": "Breakouts",
+        "tagIds": [
+          "W8TBFiQCQsSVITJax.OPJA"
+        ],
+        "locationIds": [
+          "sGK4xY8VTcGZ6w10e2CK1g"
+        ],
+        "subLocationIds": [
+          "GtH2pe8lxoX82Jyg1Ex8"
+        ],
+        "format": "important",
+        "tags": [
+          "Live"
+        ],
+        "locations": [
+          "Pierre Hotel, NY"
+        ]
+      },
+      {
+        "date": "2025-11-24",
+        "time": "17:00 - 18:00",
+        "description": "Day one closing Keynote",
+        "tagIds": [
+          "W8TBFiQCQsSVITJax.OPJA"
+        ],
+        "locationIds": [
+          "sGK4xY8VTcGZ6w10e2CK1g"
+        ],
+        "subLocationIds": [
+          "GtH2pe8lxoX82Jyg1Ex8"
+        ],
+        "format": "important",
+        "tags": [
+          "Live"
+        ],
+        "locations": [
+          "Pierre Hotel, NY"
+        ]
+      },
+      {
+        "date": "2025-11-24",
+        "time": "19:00 - 23:00",
+        "description": "Gala Dinner",
+        "tagIds": [
+          "W8TBFiQCQsSVITJax.OPJA"
+        ],
+        "locationIds": [
+          "sGK4xY8VTcGZ6w10e2CK1g"
+        ],
+        "subLocationIds": [
+          "Yfh0IoSOx5wEonvoQHJW"
+        ],
+        "format": "important",
+        "tags": [
+          "Live"
+        ],
+        "locations": [
+          "Pierre Hotel, NY"
+        ]
+      },
+      {
+        "date": "2025-11-24",
+        "time": "10:00 - 12:00",
+        "description": "AV Install - Gala Dinner",
+        "tagIds": [
+          "n78QCdA6TTWMsm4gHXkbEQ"
+        ],
+        "locationIds": [
+          "sGK4xY8VTcGZ6w10e2CK1g"
+        ],
+        "subLocationIds": [
+          "Yfh0IoSOx5wEonvoQHJW"
+        ],
+        "tags": [
+          "AVS"
+        ],
+        "locations": [
+          "Pierre Hotel, NY"
+        ]
+      },
+      {
+        "date": "2025-11-25",
+        "time": "09:00",
+        "description": "Final Plenary",
+        "tagIds": [],
+        "locationIds": [
+          "sGK4xY8VTcGZ6w10e2CK1g"
+        ],
+        "subLocationIds": [
+          "GtH2pe8lxoX82Jyg1Ex8"
+        ],
+        "tags": [],
+        "locations": [
+          "Pierre Hotel, NY"
+        ]
+      },
+      {
+        "date": "2025-11-20",
+        "time": "14:00",
+        "description": "Pre-con meeting with hotel",
+        "tagIds": [],
+        "locationIds": [
+          "sGK4xY8VTcGZ6w10e2CK1g"
+        ],
+        "subLocationIds": [
+          "GtH2pe8lxoX82Jyg1Ex8"
+        ],
+        "format": "new",
+        "tags": [],
+        "locations": [
+          "Pierre Hotel, NY"
+        ]
+      },
+      {
+        "date": "2025-11-19",
+        "time": "18:00",
+        "description": "Leave warehouse for site",
+        "tagIds": [
+          "8UQSlslcQlSnMbP7AvbNzg"
+        ],
+        "locationIds": [],
+        "subLocationIds": [],
+        "format": "new",
+        "tags": [
+          "PLS Staging"
+        ],
+        "locations": []
+      },
+      {
+        "date": "2025-11-19",
+        "time": "08:00",
+        "description": "Load at warehouse",
+        "tagIds": [
+          "8UQSlslcQlSnMbP7AvbNzg"
+        ],
+        "locationIds": [],
+        "subLocationIds": [],
+        "format": "new",
+        "tags": [
+          "PLS Staging"
+        ],
+        "locations": []
+      },
+      {
+        "date": "2025-11-21",
+        "time": "08:00",
+        "description": "Deliver to site",
+        "tagIds": [
+          "w74wogq8QbWDgyjqfsc4aA"
+        ],
+        "locationIds": [],
+        "subLocationIds": [],
+        "format": "new",
+        "tags": [
+          "East Coast Graphics"
+        ],
+        "locations": []
+      },
+      {
+        "date": "2025-11-21",
+        "time": "08:00",
+        "description": "Truck 1 Delivers",
+        "tagIds": [
+          "n78QCdA6TTWMsm4gHXkbEQ"
+        ],
+        "locationIds": [
+          "sGK4xY8VTcGZ6w10e2CK1g"
+        ],
+        "subLocationIds": [
+          "GtH2pe8lxoX82Jyg1Ex8"
+        ],
+        "format": "new",
+        "tags": [
+          "AVS"
+        ],
+        "locations": [
+          "Pierre Hotel, NY"
+        ]
+      },
+      {
+        "date": "2025-11-19",
+        "time": "08:00",
+        "description": "Load at warehouse",
+        "tagIds": [
+          "n78QCdA6TTWMsm4gHXkbEQ"
+        ],
+        "locationIds": [],
+        "subLocationIds": [],
+        "notes": "Projection on first - off last",
+        "format": "new",
+        "tags": [
+          "AVS"
+        ],
+        "locations": []
+      },
+      {
+        "date": "2025-11-19",
+        "time": "10:00",
+        "description": "Collect rigging ",
+        "tagIds": [
+          "UcPBfu2jQCm6IBMdQPlWQw"
+        ],
+        "locationIds": [],
+        "subLocationIds": [],
+        "format": "new",
+        "tags": [
+          "Acme Trucking"
+        ],
+        "locations": []
+      }
+    ],
+    "truckingDetail": "trucking Group Meta Data",
+    "contacts": "contacts Group Meta Data"
+  }
+}

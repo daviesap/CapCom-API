@@ -37,6 +37,7 @@ function adaptGroupsForRendererV2(groups) {
       if (e && typeof e === "object" && e.fields && typeof e.fields === "object") return e;
       const fields = {
         date: e?.date ?? e?.dateKey ?? "",
+        dateKey: e?.dateKey ?? e?.date ?? "",
         time: e?.time ?? "",
         description: e?.description ?? e?.fields?.description ?? "",
         notes: e?.notes ?? e?.fields?.notes ?? "",

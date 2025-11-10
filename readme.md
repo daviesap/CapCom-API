@@ -27,6 +27,7 @@ curl -X POST \
 - Every snapshot in the request must declare a `dataset`. Current accepted values: `scheduleDetail`, `truckingDetail`, `contacts`.
 - Group presets (`functions/generateSchedules/assets/groupPresets.json`) also include a `dataset` so snapshots can inherit the correct source without extra configuration.
 - Matching metadata for grouping lives under `groupMeta.<dataset>` (e.g. `groupMeta.scheduleDetail`). If the payload supplies dictionary-style metadata, it should live under `dicts.groupMeta.<dataset>`.
+- `columns[].width` values in each preset control column proportions for **both** HTML and PDF outputs (percent ratios in HTML tables, point widths in the PDF renderer), so keep them aligned when editing presets.
 
 ## 0) Prerequisites
 
@@ -288,4 +289,3 @@ npm run cf:deploy
 ```
 
 **Jot future tweaks** in a simple `FUTURE_TWEAKS.md` instead of touching code.
-

@@ -38,9 +38,16 @@ export async function prepareJSONGroups(
   // 2) Build quick meta index by dateKey (strings only)
   const metaByDate = indexDateMeta(payload);
 
-  // 3) Materialize rows (no normalization needed per your guarantees)
+  // 3) Materialize rows (augment with friendly dateKey when available)
   const rows = Array.isArray(payload?.data?.scheduleDetail)
-    ? payload.data.scheduleDetail.slice()
+    ? payload.data.scheduleDetail.map(row => {
+        const cloned = { ...row };
+        if (cloned.date && !cloned.dateKey) {
+          const friendly = metaByDate[cloned.date]?.title;
+          cloned.dateKey = friendly || cloned.date;
+        }
+        return cloned;
+      })
     : [];
 
   // 4) For each preset, group + sort + attach meta
