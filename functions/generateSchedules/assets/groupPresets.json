@@ -6,6 +6,7 @@
       "dataset": "scheduleDetail",
       "groupBy": "date",
       "groupSort": ["date:asc"],
+      "groupMetaData": "dates",
       "entrySort": ["time:asc", "description:asc"],
       "columns": [
         { "label": "Time",        "showLabel": true, "field": "time",        "width": 75 },
@@ -20,6 +21,7 @@
       "label": "Group by tag. Columns for time, description, tags, location and notes",
       "dataset": "scheduleDetail",
       "groupBy": "tagId",
+      "groupMetaData": "tag",
       "groupSort": ["tagName:asc"],
       "entrySort": ["dateKey:asc", "time:desc", "description:asc"],
       "columns": [
@@ -31,10 +33,11 @@
       ]
     },
     {
-      "id": "byTag-2",
-      "label": "Group by tag. Columns for time, description, tags, location and notes",
+      "id": "trucking-1",
+      "label": "Group by truck. Columns for time, description, tags, location and notes",
       "dataset": "scheduleDetail",
-      "groupBy": "tagId",
+      "groupBy": "truckId",
+      "groupMetaData": "trucks",
       "groupSort": ["tagName:asc"],
       "entrySort": ["date:asc", "time:desc", "description:asc"],
       "columns": [
@@ -48,6 +51,7 @@
       "label": "Group by location. Columns for time, description, tags, location and notes",
       "dataset": "scheduleDetail",
       "groupBy": "locationId",
+      "groupMetaData": "tbc",
       "groupSort": ["locationName:asc"],
       "entrySort": ["date:asc", "time:asc", "description:asc"],
       "columns": [
@@ -63,6 +67,7 @@
       "label": "Group by date. Columns for time, description, tags",
       "dataset": "scheduleDetail",
       "groupBy": "date",
+      "groupMetaData": "dates",
       "groupSort": ["date:asc"],
       "entrySort": ["time:asc", "description:asc"],
       "columns": [

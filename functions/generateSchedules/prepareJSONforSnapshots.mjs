@@ -18,8 +18,8 @@ import { fileURLToPath } from "node:url";
  * Build grouped & sorted views for each preset.
  * Assumptions:
  * - payload.data[].date is "YYYY-MM-DD"
- * - payload.groupMeta.scheduleDetail is an array: [{ date:"YYYY-MM-DD", data:{ above:"", below:"" } }, ...]
- * - payload.dicts.groupMeta.scheduleDetail is a map: { "YYYY-MM-DD": { above:"", below:"" }, ... }
+ * - payload.groupMeta.<bucket> is an array: [{ id/tagId/truckId/date, data:{ above:"", below:"" } }, ...]
+ * - payload.dicts.groupMeta.<bucket> is a map: { "key": { above:"", below:"" }, ... }
  * - Time is text; sort lexicographically when needed.
  */
 export async function prepareJSONGroups(
@@ -35,8 +35,9 @@ export async function prepareJSONGroups(
   // 1) Load presets
   const { groupPresets } = JSON.parse(await fs.readFile(presetsAbs, "utf8"));
 
-  // 2) Build quick meta index by dateKey (strings only)
-  const metaByDate = indexDateMeta(payload);
+  // 2) Build quick meta indexes keyed by `groupMetaData`
+  const groupMetaIndexes = indexGroupMeta(payload);
+  const metaByDate = groupMetaIndexes.dates || groupMetaIndexes.scheduleDetail || {};
 
   // 3) Materialize rows (augment with friendly dateKey when available)
   const rows = Array.isArray(payload?.data?.scheduleDetail)
@@ -55,15 +56,18 @@ export async function prepareJSONGroups(
   for (const preset of (Array.isArray(groupPresets) ? groupPresets : [])) {
     if (!preset?.groupBy) continue;
 
-    const groupBy = preset.groupBy;                 // "date" | "tagId" | "locationId"
+    const groupBy = preset.groupBy;                 // "date" | "tagId" | "locationId" | "truckId"
     const outKey = preset.id || preset.label || groupBy;
     const groups = groupRows(rows, groupBy);
 
-    // Attach date meta only (extend later if you add other meta types)
-    if (groupBy === "date") {
+    // Attach metadata per preset bucket (fallback to dates for legacy presets)
+    const metaBucket =
+      (preset.groupMetaData && groupMetaIndexes[preset.groupMetaData]) ||
+      (groupBy === "date" ? metaByDate : null);
+    if (metaBucket) {
       for (const g of groups) {
-        const m = metaByDate[g.rawKey];
-        if (m) g.meta = m; // { above:"", below:"" }
+        const m = metaBucket[g.rawKey];
+        if (m) g.meta = m; // { title, above, below }
       }
     }
 
@@ -87,25 +91,43 @@ export async function prepareJSONGroups(
 
 /* ---------------- helpers (lean) ---------------- */
 
-function indexDateMeta(payload) {
+function indexGroupMeta(payload) {
   const meta = Object.create(null);
 
-  // Array form: [{ date, data: { title, above, below } }]
-  const arrayForm = payload?.groupMeta?.scheduleDetail;
-  if (Array.isArray(arrayForm)) {
-    for (const it of arrayForm) {
-      if (!it?.date) continue;
-      const { title = "", above = "", below = "" } = it.data || {};
-      meta[it.date] = { title, above, below };
+  const assign = (bucket, key, data) => {
+    if (!bucket || !key) return;
+    const { title = "", above = "", below = "" } = data || {};
+    if (!meta[bucket]) meta[bucket] = Object.create(null);
+    meta[bucket][key] = { title, above, below };
+  };
+
+  const arrayBuckets = payload?.groupMeta;
+  if (arrayBuckets && typeof arrayBuckets === "object") {
+    for (const [bucket, entries] of Object.entries(arrayBuckets)) {
+      if (!Array.isArray(entries)) continue;
+      for (const entry of entries) {
+        if (!entry || typeof entry !== "object") continue;
+        const data = (entry.data && typeof entry.data === "object") ? entry.data : entry;
+        const key =
+          entry.id ??
+          entry.date ??
+          entry.tagId ??
+          entry.locationId ??
+          entry.truckId ??
+          entry.key ??
+          entry.groupKey;
+        assign(bucket, key, data);
+      }
     }
   }
 
-  // Map form: dicts.groupMeta.scheduleDetail = { [dateKey]: { title, above, below } }
-  const mapForm = payload?.dicts?.groupMeta?.scheduleDetail;
-  if (mapForm && typeof mapForm === "object") {
-    for (const k of Object.keys(mapForm)) {
-      const { title = "", above = "", below = "" } = mapForm[k] || {};
-      meta[k] = { title, above, below };
+  const dictBuckets = payload?.dicts?.groupMeta;
+  if (dictBuckets && typeof dictBuckets === "object") {
+    for (const [bucket, mapForm] of Object.entries(dictBuckets)) {
+      if (!mapForm || typeof mapForm !== "object") continue;
+      for (const [key, data] of Object.entries(mapForm)) {
+        assign(bucket, key, data);
+      }
     }
   }
 
@@ -124,6 +146,8 @@ function groupRows(rows, groupBy) {
       keys = Array.isArray(r.tagIds) ? r.tagIds : [];
     } else if (groupBy === "locationId") {
       keys = Array.isArray(r.locationIds) ? r.locationIds : [];
+    } else if (groupBy === "truckId") {
+      keys = r.truckId ? [r.truckId] : [];
     } else {
       continue;
     }
@@ -151,6 +175,12 @@ function makeGroupTitle(rawKey, groupBy, entries) {
   if (groupBy === "date") return rawKey; // already yyyy-mm-dd
   if (groupBy === "tagId") {
     const name = entries?.find(e => Array.isArray(e.tags) && e.tags.length)?.tags?.[0];
+    return name || rawKey;
+  }
+  if (groupBy === "truckId") {
+    const name =
+      entries?.find(e => typeof e.truckName === "string" && e.truckName.trim())?.truckName?.trim() ||
+      entries?.find(e => Array.isArray(e.tags) && e.tags.length)?.tags?.[0];
     return name || rawKey;
   }
   if (groupBy === "locationId") {
