@@ -80,24 +80,24 @@ export async function buildHtml({
   const bodyRows = [];
   const renderPeople = (title, ids) => {
     if (!ids.length) return;
-    const sectionClass = (title && title.toLowerCase() === 'accommodated')
-      ? 'section-header accommodated'
-      : 'section-header others';
-    // Render section header row with 3 <td>s for the first columns, then <td>s for all slots across all dates with appropriate classes
-    const cells = [
-      `<td class="${sectionClass}">${esc(title)}</td>`,
-      `<td class="meal-num"></td>`,
-      `<td class="meal-num"></td>`
-    ];
-    for (let i = 0; i < allDates.length; i++) {
-      for (let j = 0; j < slotCount; j++) {
-        const extraClass = (j === 0) ? ' num first-slot' : ' num';
-        cells.push(`<td class="meal-num slot-col${extraClass}"></td>`);
-      }
-    }
-    // Totals column cell (blank in section header)
-    cells.push('<td class="meal-num total-col slot-col"></td>');
-    bodyRows.push(`<tr class="section-row">${cells.join('')}</tr>`);
+    // const sectionClass = (title && title.toLowerCase() === 'accommodated')
+    //   ? 'section-header accommodated'
+    //   : 'section-header others';
+    // // Render section header row with 3 <td>s for the first columns, then <td>s for all slots across all dates with appropriate classes
+    // const cells = [
+    //   `<td class="${sectionClass}">${esc(title)}</td>`,
+    //   `<td class="meal-num"></td>`,
+    //   `<td class="meal-num"></td>`
+    // ];
+    // for (let i = 0; i < allDates.length; i++) {
+    //   for (let j = 0; j < slotCount; j++) {
+    //     const extraClass = (j === 0) ? ' num first-slot' : ' num';
+    //     cells.push(`<td class="meal-num slot-col${extraClass}"></td>`);
+    //   }
+    // }
+    // // Totals column cell (blank in section header)
+    // cells.push('<td class="meal-num total-col slot-col"></td>');
+    // bodyRows.push(`<tr class="section-row">${cells.join('')}</tr>`);
     for (const pid of ids) {
       const p = peopleMap.get(pid) || { name: pid, company: '', role: '' };
       const cells = [
