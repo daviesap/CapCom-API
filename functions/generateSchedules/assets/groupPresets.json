@@ -39,7 +39,7 @@
       "groupBy": "truckId",
       "groupMetaData": "trucks",
       "groupSort": ["tagName:asc"],
-      "entrySort": ["date:asc", "time:desc", "description:asc"],
+      "entrySort": ["date:asc", "time:asc", "description:asc"],
       "columns": [
         { "label": "Date",        "showLabel": true, "field": "dateKey",     "width": 200 },
         { "label": "Time",        "showLabel": true, "field": "time",        "width": 60 },
