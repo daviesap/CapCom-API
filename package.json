@@ -27,6 +27,7 @@
     "@glideapps/tables": "^1.0.21",
     "@tailwindcss/vite": "^4.1.7",
     "date-fns": "^4.1.0",
+    "firebase-functions": "^7.0.3",
     "react-json-view": "^1.21.3"
   }
 }

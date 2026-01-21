@@ -269,6 +269,10 @@ export const generatePdfBuffer = async (jsonInput) => {
       console.warn('Logo load failed:', e?.message || e);
     }
   }
+  const logoDrawWidth = header.logo.width || 0;
+  const logoDrawHeight = embeddedLogo && logoDrawWidth > 0
+    ? (embeddedLogo.height / embeddedLogo.width) * logoDrawWidth
+    : (header.logo.height || 0);
 
   //const footer  = jsonData.document.footer;
   const columns = jsonData.columns || [];
@@ -283,7 +287,7 @@ export const generatePdfBuffer = async (jsonInput) => {
       const { lineHeight } = resolveStyle(styles.header || {}, boldFont, regularFont, italicFont, boldItalicFont, DEFAULT_LINE_SPACING);
       const lineCount = (header.text?.length || 0) + 1; // + "As at …"
       const headerTextHeight = lineCount * lineHeight;
-      const logoHeight = header.logo?.height || embeddedLogo?.height || 0;
+      const logoHeight = logoDrawHeight || 0;
       const maxHeaderBlockHeight = Math.max(headerTextHeight, logoHeight);
       y -= maxHeaderBlockHeight + headerPaddingBottom;
     }
@@ -506,7 +510,7 @@ export const generatePdfBuffer = async (jsonInput) => {
       const headerStyle = resolveStyle(styles.header || {}, boldFont, regularFont, italicFont, boldItalicFont, DEFAULT_LINE_SPACING);
       const lineCount = header.text.length + 1; // + "As at …"
       const headerTextHeight = lineCount * headerStyle.lineHeight;
-      const logoHeight = header.logo?.height || embeddedLogo?.height || 0;
+      const logoHeight = logoDrawHeight || 0;
       const maxHeaderBlockHeight = Math.max(headerTextHeight, logoHeight);
 
       let hy = pageHeight - topMargin - (maxHeaderBlockHeight - headerTextHeight);
@@ -520,10 +524,10 @@ export const generatePdfBuffer = async (jsonInput) => {
 
     if (embeddedLogo) {
       pg.drawImage(embeddedLogo, {
-        x: pageWidth - header.logo.width - rightMargin,
-        y: pageHeight - header.logo.height - topMargin,
-        width: header.logo.width,
-        height: header.logo.height,
+        x: pageWidth - logoDrawWidth - rightMargin,
+        y: pageHeight - logoDrawHeight - topMargin,
+        width: logoDrawWidth,
+        height: logoDrawHeight,
       });
     }
 
@@ -538,8 +542,8 @@ export const generatePdfBuffer = async (jsonInput) => {
       const safeFilename = toWinAnsi(filenameBase);
       const pgText   = `Page ${i + 1} of ${total}`;
       const safePgText = toWinAnsi(pgText);
-      const tText    = `Document generated ${ts}`;
-      const safeTText = toWinAnsi(tText);
+      //const tText    = `Document generated ${ts}`;
+      //const safeTText = toWinAnsi(tText);
       const creditText = `CapCom – https://www.capcom.london`;
       const safeCredit = toWinAnsi(creditText);
 
@@ -551,8 +555,8 @@ export const generatePdfBuffer = async (jsonInput) => {
       pg.drawText(safePgText, { x: (pageWidth - pgTextWidth) / 2, y: fyMain, size: fFS, font: fF, color: fC });
 
       // Right: timestamp
-      const tTextWidth = fF.widthOfTextAtSize(safeTText, fFS);
-      pg.drawText(safeTText, { x: pageWidth - rightMargin - tTextWidth, y: fyMain, size: fFS, font: fF, color: fC });
+      //const tTextWidth = fF.widthOfTextAtSize(safeTText, fFS);
+      //pg.drawText(safeTText, { x: pageWidth - rightMargin - tTextWidth, y: fyMain, size: fFS, font: fF, color: fC });
 
       // Line 2 (centre): credit
       const creditWidth = fF.widthOfTextAtSize(safeCredit, fFS);
