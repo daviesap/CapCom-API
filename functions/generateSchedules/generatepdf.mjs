@@ -241,7 +241,11 @@ export const generatePdfBuffer = async (jsonInput) => {
   const headerLines = Array.isArray(jsonData.header)
     ? jsonData.header
     : (jsonData.document?.header?.text || []);
-  const logoUrl = jsonData.logoUrl || jsonData.document?.header?.logo?.url || "";
+  const logoUrl =
+    jsonData.logoUrl ||
+    jsonData.document?.header?.logo?.url ||
+    jsonData.event?.logoUrl ||
+    "";
 
   const header = {
     text: headerLines,
@@ -256,10 +260,13 @@ export const generatePdfBuffer = async (jsonInput) => {
   if (header.logo.url) {
     try {
       const res = await fetch(header.logo.url);
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status} ${res.statusText}`);
+      }
       const buf = await res.arrayBuffer();
       embeddedLogo = await pdfDoc.embedPng(buf);
     } catch (e) {
-      console.warn('Logo load failed:', e.message);
+      console.warn('Logo load failed:', e?.message || e);
     }
   }
 
