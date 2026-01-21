@@ -11,7 +11,7 @@
  * - event.logoUrl: optional logo URL
  * - columns: ordered array { field, label, width, showLabel }
  * - groups: array of { title, metadata?, entries: [{ fields: {...}, format? }] }
- * - event.keyInfo: optional markdown string (rendered into an accordion block)
+ * - event.keyInfo: optional array of { title, text, sortOrder } (rendered into an accordion block)
  * - document.footer: optional plain string
  *
  * What this module does:
@@ -158,7 +158,7 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
   // - Logo may come from jsonInput.document.header.logo OR jsonInput.logoUrl (optional)
   // - jsonInput.columns is an ordered array with { field, label, width, showLabel }
   // - jsonInput.groups is an array of { title, metadata?, entries: [{ fields: {...}, format? }] }
-  // - jsonInput.keyInfo is markdown (string) (optional)
+  // - jsonInput.event.keyInfo is an array of { title, text, sortOrder } (optional)
   // - jsonInput.document.footer is a plain string (optional)
   // - All values already validated/sanitized upstream where needed
 
@@ -184,22 +184,66 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
   // Optional Key Info accordion (markdown -> safe HTML)
   let keyInfoBlock = "";
 
-  if (typeof jsonInput?.event?.keyInfo === "string" && jsonInput?.event?.keyInfo.trim().length) {
-    const rawHtml = marked.parse(jsonInput.event.keyInfo, { mangle: false, headerIds: false });
-    const safeHtml = sanitizeHtml(rawHtml, {
-      allowedTags: [
-        "h1", "h2", "h3", "h4", "h5", "h6",
-        "p", "strong", "em", "ul", "ol", "li",
-        "blockquote", "code", "pre", "br", "hr", "a", "span"
-      ],
-      allowedAttributes: { a: ["href", "title", "target", "rel"], span: ["class"] },
-      transformTags: {
-        a: (tagName, attribs) => ({
-          tagName: "a",
-          attribs: { ...attribs, target: "_blank", rel: "noopener" }
-        })
-      }
-    });
+  const keyInfoSanitizeOptions = {
+    allowedTags: [
+      "h1", "h2", "h3", "h4", "h5", "h6",
+      "p", "strong", "em", "ul", "ol", "li",
+      "blockquote", "code", "pre", "br", "hr", "a", "span"
+    ],
+    allowedAttributes: { a: ["href", "title", "target", "rel"], span: ["class"] },
+    transformTags: {
+      a: (tagName, attribs) => ({
+        tagName: "a",
+        attribs: { ...attribs, target: "_blank", rel: "noopener" }
+      })
+    }
+  };
+
+  const renderMarkdownSafe = (markdownText) => {
+    const rawHtml = marked.parse(markdownText, { mangle: false, headerIds: false });
+    return sanitizeHtml(rawHtml, keyInfoSanitizeOptions);
+  };
+
+  if (Array.isArray(jsonInput?.event?.keyInfo) && jsonInput.event.keyInfo.length) {
+    const keyInfoItems = jsonInput.event.keyInfo
+      .map((item, index) => ({
+        title: item?.title,
+        text: item?.text,
+        sortOrder: Number.isFinite(Number(item?.sortOrder)) ? Number(item.sortOrder) : 0,
+        index
+      }))
+      .filter((item) => (item.title && String(item.title).trim()) || (item.text && String(item.text).trim()))
+      .sort((a, b) => (a.sortOrder - b.sortOrder) || (a.index - b.index));
+
+    if (keyInfoItems.length) {
+      const itemsHtml = keyInfoItems.map((item) => {
+        const titleHtml = item.title ? `<h4>${escapeHtml(item.title)}</h4>` : "";
+        const textHtml = item.text ? renderMarkdownSafe(String(item.text)) : "";
+        return `
+          <div class="key-info-item">
+            ${titleHtml}
+            <div class="markdown">${textHtml}</div>
+          </div>
+        `;
+      }).join("");
+
+      keyInfoBlock = `
+      <details class="accordion key-info">
+        <summary>
+          <span>Key info</span>
+          <svg class="acc-chevron" xmlns="http://www.w3.org/2000/svg" fill="none"
+               viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"
+               width="18" height="18" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+        </summary>
+        <div class="acc-body">
+          ${itemsHtml}
+        </div>
+      </details>`;
+    }
+  } else if (typeof jsonInput?.event?.keyInfo === "string" && jsonInput?.event?.keyInfo.trim().length) {
+    const safeHtml = renderMarkdownSafe(jsonInput.event.keyInfo);
 
     keyInfoBlock = `
     <details class="accordion key-info">

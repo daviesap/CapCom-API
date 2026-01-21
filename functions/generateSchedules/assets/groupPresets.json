@@ -73,7 +73,8 @@
       "columns": [
         { "label": "Time",        "showLabel": true, "field": "time",        "width": 75 },
         { "label": "Description", "showLabel": true, "field": "description", "width": 250 },
-        { "label": "Tags",        "showLabel": true, "field": "tags",        "width": 100 }
+        { "label": "Location",    "showLabel": true, "field": "locations",   "width": 100 },
+        { "label": "Notes",       "showLabel": true, "field": "notes",       "width": 217 }
       ]
     }
   ]

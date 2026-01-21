@@ -26,7 +26,8 @@
  *     }>
  *   }>
  * - Optional:
- *     - jsonInput.keyInfo: markdown-ish string rendered in a shaded box on page 1
+ *     - jsonInput.event.keyInfo: markdown-ish string or array of { title, text, sortOrder }
+ *       rendered in shaded box(es) on page 1
  *     - jsonInput.debug: true to draw layout guides (margins, thresholds, etc.)
  *
  * What this module does
@@ -211,6 +212,36 @@ function drawKeyInfoBox({ page, pageWidth, leftMargin, rightMargin, currentY, te
   return currentY - boxHeight - marginBottom;
 }
 
+function drawKeyInfoBoxWithLines({ page, pageWidth, leftMargin, rightMargin, currentY, textStyle, boxStyle, lines }) {
+  const pad = (boxStyle?.padding ?? 10);
+  const bg = rgbHex(boxStyle?.backgroundColour || '#F7F7F7');
+  const border = rgbHex(boxStyle?.borderColour || '#CCCCCC');
+  const marginBottom = (boxStyle?.marginBottom ?? 16);
+  const width = pageWidth - leftMargin - rightMargin;
+
+  const textH = lines.length * textStyle.lineHeight;
+  const boxHeight = pad + textH + pad;
+  const rectY = currentY - boxHeight;
+
+  page.drawRectangle({
+    x: leftMargin, y: rectY, width, height: boxHeight,
+    color: bg, borderColor: border, borderWidth: 0.5,
+  });
+
+  let yCursor = currentY - pad;
+  for (const line of lines) {
+    page.drawText(toWinAnsi(line.text), {
+      x: leftMargin + pad,
+      y: yCursor - (textStyle.lineHeight - textStyle.fontSize),
+      size: textStyle.fontSize,
+      font: line.font || textStyle.font,
+      color: textStyle.color,
+    });
+    yCursor -= textStyle.lineHeight;
+  }
+  return currentY - boxHeight - marginBottom;
+}
+
 // ---------- main ----------
 export const generatePdfBuffer = async (jsonInput) => {
   // Input is assumed already sanitized/filtered/grouped/sorted
@@ -299,8 +330,10 @@ export const generatePdfBuffer = async (jsonInput) => {
   const resolvedFooterStyle = resolveStyle(styles.footer || {}, regularFont, regularFont, italicFont, boldItalicFont, DEFAULT_LINE_SPACING);
   const footerYLimit = bottomMargin + resolvedFooterStyle.lineHeight * footerLines;
 
-  const checkBreak = (neededHeight) => {
-    if (y - neededHeight < footerYLimit) {
+  const pageBottomLimit = bottomPageThreshold > 0 ? bottomPageThreshold : footerYLimit;
+
+  const checkBreak = (neededHeight, limitY = footerYLimit) => {
+    if (y - neededHeight < limitY) {
       currentPage = pdfDoc.addPage([pageWidth, pageHeight]);
       pages.push(currentPage);
       y = pageHeight - topMargin;
@@ -309,10 +342,11 @@ export const generatePdfBuffer = async (jsonInput) => {
   };
 
   // ---- Key Info box (optional) ----
-  if (jsonData.event.keyInfo) {
+  const keyInfoRaw = jsonData?.event?.keyInfo;
+  if (keyInfoRaw) {
     const textStyle = resolveStyle(
       styles.keyInfo?.text || { fontSize: 10, fontStyle: 'normal', fontColour: '#000000' },
-      boldFont, regularFont, italicFont, boldItalicFont, DEFAULT_LINE_SPACING
+      boldFont, regularFont, italicFont, boldItalicFont, 1
     );
     const boxStyle = styles.keyInfo?.box || {
       backgroundColour: '#F7F7F7',
@@ -321,21 +355,66 @@ export const generatePdfBuffer = async (jsonInput) => {
       marginBottom: 16,
     };
 
-    const lines = normaliseKeyInfoToLines(jsonData.event.keyInfo);
     const innerWidth = Math.max(1, (pageWidth - leftMargin - rightMargin) - (boxStyle.padding ?? 10) * 2);
-    const wrappedProbe = wrapLinesForWidth(lines, textStyle.font, textStyle.fontSize, innerWidth);
-    const neededHeight = (boxStyle.padding ?? 10) + (wrappedProbe.length * textStyle.lineHeight) + (boxStyle.padding ?? 10) + (boxStyle.marginBottom ?? 16);
 
-    checkBreak(neededHeight);
+    if (Array.isArray(keyInfoRaw)) {
+      const keyInfoItems = keyInfoRaw
+        .map((item, index) => ({
+          title: item?.title,
+          text: item?.text,
+          sortOrder: Number.isFinite(Number(item?.sortOrder)) ? Number(item.sortOrder) : 0,
+          index
+        }))
+        .filter((item) => (item.title && String(item.title).trim()) || (item.text && String(item.text).trim()))
+        .sort((a, b) => (a.sortOrder - b.sortOrder) || (a.index - b.index));
 
-    y = drawKeyInfoBox({
-      page: currentPage, pageWidth, leftMargin, rightMargin,
-      currentY: y, textStyle, boxStyle, contentLines: lines,
-    });
+      for (const item of keyInfoItems) {
+        const lines = [];
+        if (item.title && String(item.title).trim()) {
+          const title = stripInlineMd(String(item.title));
+          const titleLines = wrapLinesForWidth([title], boldFont, textStyle.fontSize, innerWidth);
+          titleLines.forEach((ln) => lines.push({ text: ln, font: boldFont }));
+        }
+
+        if (item.text && String(item.text).trim()) {
+          const textLines = normaliseKeyInfoToLines(item.text);
+          const wrappedText = wrapLinesForWidth(textLines, textStyle.font, textStyle.fontSize, innerWidth);
+          if (lines.length && wrappedText.length) {
+            lines.push({ text: "", font: textStyle.font });
+          }
+          wrappedText.forEach((ln) => lines.push({ text: ln, font: textStyle.font }));
+        }
+
+        if (!lines.length) continue;
+
+        const neededHeight = (boxStyle.padding ?? 10) +
+          (lines.length * textStyle.lineHeight) +
+          (boxStyle.padding ?? 10) +
+          (boxStyle.marginBottom ?? 16);
+
+        checkBreak(neededHeight, pageBottomLimit);
+
+        y = drawKeyInfoBoxWithLines({
+          page: currentPage, pageWidth, leftMargin, rightMargin,
+          currentY: y, textStyle, boxStyle, lines,
+        });
+      }
+    } else {
+      const lines = normaliseKeyInfoToLines(keyInfoRaw);
+      const wrappedProbe = wrapLinesForWidth(lines, textStyle.font, textStyle.fontSize, innerWidth);
+      const neededHeight = (boxStyle.padding ?? 10) + (wrappedProbe.length * textStyle.lineHeight) + (boxStyle.padding ?? 10) + (boxStyle.marginBottom ?? 16);
+
+      checkBreak(neededHeight, pageBottomLimit);
+
+      y = drawKeyInfoBox({
+        page: currentPage, pageWidth, leftMargin, rightMargin,
+        currentY: y, textStyle, boxStyle, contentLines: lines,
+      });
+    }
   }
 
   // If a Key Info box exists, start groups on a new page
-  const hasKeyInfo = !!jsonData.event.keyInfo;
+  const hasKeyInfo = Array.isArray(keyInfoRaw) ? keyInfoRaw.length > 0 : !!keyInfoRaw;
   let isFirstGroup = true;
 
   // ---- Groups ----
