@@ -12,7 +12,7 @@ curl "http://127.0.0.1:5001/flair-pdf-generator/europe-west2/v2?action=version"
 ## To generate home
 curl -X POST \
   -H "Content-Type: application/json" \
-  --data-binary @/Users/apndavies/Coding/flair-pdf-generator/functions/local-emulator/input/scheduleDemo.json \
+  --data-binary @/Users/apndavies/Coding/flair-pdf-generator/functions/local-emulator/input/schedule-sample.json \
   "http://127.0.0.1:5001/flair-pdf-generator/europe-west2/v2?action=generateHome"
 
 

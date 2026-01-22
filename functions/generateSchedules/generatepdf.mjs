@@ -151,6 +151,71 @@ function stripInlineMd(s) {
   return out.replace(/\s{2,}/g, ' ').trim();
 }
 
+function slugifyToken(s) {
+  return String(s).trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+}
+
+function collectMatchTokens(value) {
+  if (typeof value !== "string") return [];
+  const trimmed = value.trim();
+  if (!trimmed) return [];
+  const lower = trimmed.toLowerCase();
+  const withoutExt = lower.replace(/\.[a-z0-9]+$/, "");
+  const slug = slugifyToken(trimmed);
+  const tokens = new Set([lower, withoutExt, slug]);
+  return Array.from(tokens).filter(Boolean);
+}
+
+function shouldRenderKeyInfoForSnapshot(jsonData = {}) {
+  const snapshots = Array.isArray(jsonData?.snapshots) ? jsonData.snapshots : null;
+  if (!snapshots || snapshots.length === 0) {
+    return false;
+  }
+
+  const currentTokens = new Set([
+    jsonData?.document?.filename,
+    jsonData?.document?.title,
+    jsonData?.filename,
+    jsonData?.name,
+  ].flatMap(collectMatchTokens));
+
+  if (!currentTokens.size) {
+    return false;
+  }
+
+  const matched = snapshots.find((snap) => {
+    if (!snap || typeof snap !== "object") return false;
+    const snapTokens = new Set([
+      snap.name,
+      snap.displayName,
+      snap.title,
+      snap.filename,
+      snap.document?.filename,
+    ].flatMap(collectMatchTokens));
+    if (!snapTokens.size) return false;
+    for (const token of snapTokens) {
+      if (currentTokens.has(token)) return true;
+    }
+    return false;
+  });
+
+  if (!matched) {
+    return false;
+  }
+
+  if (typeof matched.showKeyInfo === "boolean") {
+    return matched.showKeyInfo;
+  }
+
+  if (typeof matched.showKeyInfo === "string") {
+    const normalised = matched.showKeyInfo.trim().toLowerCase();
+    if (normalised === "true") return true;
+    if (normalised === "false") return false;
+  }
+
+  return false;
+}
+
 function normaliseKeyInfoToLines(src) {
   const rawLines = String(src).replace(/\r\n/g, '\n').split('\n');
   return rawLines.map(l => {
@@ -341,8 +406,84 @@ export const generatePdfBuffer = async (jsonInput) => {
     }
   };
 
+  const renderKeyInfo = shouldRenderKeyInfoForSnapshot(jsonData);
+
+  // ---- Key People box (optional) ----
+  const keyPeopleRaw = renderKeyInfo ? jsonData?.event?.keyPeople : null;
+  if (Array.isArray(keyPeopleRaw) && keyPeopleRaw.length) {
+    const textStyle = resolveStyle(
+      styles.keyInfo?.text || { fontSize: 10, fontStyle: 'normal', fontColour: '#000000' },
+      boldFont, regularFont, italicFont, boldItalicFont, 1
+    );
+    const boxStyle = styles.keyInfo?.box || {
+      backgroundColour: '#F7F7F7',
+      borderColour: '#CCCCCC',
+      padding: 10,
+      marginBottom: 16,
+    };
+
+    const innerWidth = Math.max(1, (pageWidth - leftMargin - rightMargin) - (boxStyle.padding ?? 10) * 2);
+
+    const companyItems = keyPeopleRaw
+      .map((company, index) => ({
+        name: company?.company,
+        sortOrder: Number.isFinite(Number(company?.CompanySortOrder)) ? Number(company.CompanySortOrder) : 0,
+        people: Array.isArray(company?.people) ? company.people : [],
+        index,
+      }))
+      .filter((company) => company.name && String(company.name).trim())
+      .sort((a, b) => (a.sortOrder - b.sortOrder) || (a.index - b.index));
+
+    if (companyItems.length) {
+      const lines = [];
+      companyItems.forEach((company, companyIndex) => {
+        const companyName = stripInlineMd(String(company.name));
+        const companyLines = wrapLinesForWidth([companyName], boldFont, textStyle.fontSize, innerWidth);
+        companyLines.forEach((ln) => lines.push({ text: ln, font: boldFont }));
+
+        const peopleItems = company.people
+          .map((person, personIndex) => ({
+            name: person?.name,
+            role: person?.role,
+            sortOrder: Number.isFinite(Number(person?.sortOrder)) ? Number(person.sortOrder) : 0,
+            index: personIndex,
+          }))
+          .filter((person) => person.name && String(person.name).trim())
+          .sort((a, b) => (a.sortOrder - b.sortOrder) || (a.index - b.index));
+
+        peopleItems.forEach((person) => {
+          const name = stripInlineMd(String(person.name));
+          const role = person.role && String(person.role).trim()
+            ? ` - ${stripInlineMd(String(person.role))}`
+            : "";
+          const lineText = `• ${name}${role}`;
+          const wrapped = wrapLinesForWidth([lineText], textStyle.font, textStyle.fontSize, innerWidth);
+          wrapped.forEach((ln) => lines.push({ text: ln, font: textStyle.font }));
+        });
+
+        if (companyIndex < companyItems.length - 1) {
+          lines.push({ text: "", font: textStyle.font });
+        }
+      });
+
+      if (lines.length) {
+        const neededHeight = (boxStyle.padding ?? 10) +
+          (lines.length * textStyle.lineHeight) +
+          (boxStyle.padding ?? 10) +
+          (boxStyle.marginBottom ?? 16);
+
+        checkBreak(neededHeight, pageBottomLimit);
+
+        y = drawKeyInfoBoxWithLines({
+          page: currentPage, pageWidth, leftMargin, rightMargin,
+          currentY: y, textStyle, boxStyle, lines,
+        });
+      }
+    }
+  }
+
   // ---- Key Info box (optional) ----
-  const keyInfoRaw = jsonData?.event?.keyInfo;
+  const keyInfoRaw = renderKeyInfo ? jsonData?.event?.keyInfo : null;
   if (keyInfoRaw) {
     const textStyle = resolveStyle(
       styles.keyInfo?.text || { fontSize: 10, fontStyle: 'normal', fontColour: '#000000' },
@@ -414,7 +555,10 @@ export const generatePdfBuffer = async (jsonInput) => {
   }
 
   // If a Key Info box exists, start groups on a new page
-  const hasKeyInfo = Array.isArray(keyInfoRaw) ? keyInfoRaw.length > 0 : !!keyInfoRaw;
+  const hasKeyInfo = renderKeyInfo && (
+    (Array.isArray(keyPeopleRaw) ? keyPeopleRaw.length > 0 : !!keyPeopleRaw) ||
+    (Array.isArray(keyInfoRaw) ? keyInfoRaw.length > 0 : !!keyInfoRaw)
+  );
   let isFirstGroup = true;
 
   // ---- Groups ----
