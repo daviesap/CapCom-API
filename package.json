@@ -5,7 +5,7 @@
     "deploy:frontend": "cd frontend && npm run build && cd .. && firebase deploy --only hosting --project flair-pdf-generator",
     "deploy:functions": "firebase deploy --only functions --project flair-pdf-generator",
     "deploy:rules": "firebase deploy --only firestore:rules --project flair-pdf-generator",
-    "deploy:all": "npm run deploy:frontend && npm run deploy:functions && npm run deploy:rules",
+    "deploy:all": "cd frontend && npm run build && cd .. && firebase deploy --only hosting,functions,firestore:rules --project flair-pdf-generator",
     "preversion": "echo \"❌ Don't run 'npm version' in the repo root. Use 'npm run version:functions -- <patch|minor|major>'\" && exit 1",
     "version:functions": "npm --prefix functions version",
     "emulate:functions": "GLIDE_LOGS_APP='rIeUzfTQpgK4ComVOanX' GLIDE_LOGS_TABLE='native-table-EXf6OrHFQHS6x7kVCQ10' LOCAL_API_KEY='Sausages2025!!' firebase emulators:start --only functions",

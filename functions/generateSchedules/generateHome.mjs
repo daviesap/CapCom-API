@@ -95,6 +95,16 @@ export async function generateHome({
 
   // Snapshots as given (no re-sorting at item level)
   const snapshots = Array.isArray(jsonInput.snapshots) ? jsonInput.snapshots.slice() : [];
+  const showKeyInfo = (() => {
+    const v = jsonInput?.event?.momKeyInfo;
+    if (typeof v === "boolean") return v;
+    if (typeof v === "string") {
+      const normalised = v.trim().toLowerCase();
+      if (normalised === "true") return true;
+      if (normalised === "false") return false;
+    }
+    return false;
+  })();
 
   // Build grouped structure (groups ordered by sortOrder; items retain input order)
   const groupsArr = groupSnapshotsByGroup(snapshots);
@@ -142,6 +152,66 @@ export async function generateHome({
   // Header/meta
   const title = `${jsonInput?.event?.name || "Event"} – Home`;
 
+  // Key People (grouped by company)
+  let keyPeopleSection = "";
+
+  if (showKeyInfo && Array.isArray(jsonInput?.event?.keyPeople) && jsonInput.event.keyPeople.length) {
+    const companyItems = jsonInput.event.keyPeople
+      .map((company, index) => ({
+        name: company?.company,
+        sortOrder: Number.isFinite(Number(company?.CompanySortOrder)) ? Number(company.CompanySortOrder) : 0,
+        people: Array.isArray(company?.people) ? company.people : [],
+        index,
+      }))
+      .filter((company) => company.name && String(company.name).trim())
+      .sort((a, b) => (a.sortOrder - b.sortOrder) || (a.index - b.index));
+
+    if (companyItems.length) {
+      const companiesHtml = companyItems.map((company) => {
+        const peopleItems = company.people
+          .map((person, personIndex) => ({
+            name: person?.name,
+            role: person?.role,
+            sortOrder: Number.isFinite(Number(person?.sortOrder)) ? Number(person.sortOrder) : 0,
+            index: personIndex,
+          }))
+          .filter((person) => person.name && String(person.name).trim())
+          .sort((a, b) => (a.sortOrder - b.sortOrder) || (a.index - b.index));
+
+        const peopleHtml = peopleItems.length
+          ? `<ul class="key-people-list">${peopleItems
+            .map((person) => {
+              const role = person.role && String(person.role).trim()
+                ? ` <span class="key-people-role">– ${escapeHtml(String(person.role))}</span>`
+                : "";
+              return `<li>${escapeHtml(person.name)}${role}</li>`;
+            })
+            .join("")}</ul>`
+          : `<div class="key-people-empty">No contacts listed.</div>`;
+
+        return `
+          <div class="key-people-item">
+            <h4>${escapeHtml(company.name)}</h4>
+            ${peopleHtml}
+          </div>
+        `;
+      }).join("");
+
+      keyPeopleSection = `
+      <details class="accordion key-info key-people">
+        <summary>
+          <span>Key people</span>
+          <svg class="acc-chevron" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="18" height="18" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+        </summary>
+        <div class="acc-body">
+          ${companiesHtml}
+        </div>
+      </details>`;
+    }
+  }
+
   // Key Info (Markdown -> HTML, sanitized)
   let keyInfoSection = "";
   const keyInfoSanitizeOptions = {
@@ -164,7 +234,7 @@ export async function generateHome({
     return sanitizeHtml(rawHtml, keyInfoSanitizeOptions);
   };
 
-  if (Array.isArray(jsonInput?.event?.keyInfo) && jsonInput.event.keyInfo.length) {
+  if (showKeyInfo && Array.isArray(jsonInput?.event?.keyInfo) && jsonInput.event.keyInfo.length) {
     const keyInfoItems = jsonInput.event.keyInfo
       .map((item, index) => ({
         title: item?.title,
@@ -200,7 +270,7 @@ export async function generateHome({
         </div>
       </details>`;
     }
-  } else if (typeof jsonInput?.event?.keyInfo === "string" && jsonInput?.event?.keyInfo.trim().length) {
+  } else if (showKeyInfo && typeof jsonInput?.event?.keyInfo === "string" && jsonInput?.event?.keyInfo.trim().length) {
     const safeHtml = renderMarkdownSafe(jsonInput.event.keyInfo);
     keyInfoSection = `
     <details class="accordion key-info">
@@ -281,7 +351,8 @@ export async function generateHome({
   .sub { color: var(--muted); font-size: .95rem; }
 
   /* Accordion styling */
-  .accordion.key-info {
+  .accordion.key-info,
+  .accordion.key-people {
     background: var(--card-alt);
     border: 1px solid var(--border);
     border-radius: 12px;
@@ -290,15 +361,34 @@ export async function generateHome({
     overflow: hidden;
     box-shadow: 0 10px 26px var(--shadow);
   }
-  .accordion.key-info summary {
+  .accordion.key-info summary,
+  .accordion.key-people summary {
     display: flex; align-items: center; justify-content: space-between; gap: 8px;
     cursor: pointer; list-style: none; padding: 12px 16px; font-weight: 600;
     color: var(--ink);
   }
-  .accordion.key-info summary::-webkit-details-marker { display: none; }
-  .accordion.key-info .acc-body { padding: 12px 16px; border-top: 1px solid var(--border); background: var(--card); }
-  .accordion.key-info .acc-chevron { flex: 0 0 auto; color: var(--accent); transition: transform .18s ease; }
-  .accordion.key-info[open] .acc-chevron { transform: rotate(90deg); }
+  .accordion.key-info summary::-webkit-details-marker,
+  .accordion.key-people summary::-webkit-details-marker { display: none; }
+  .accordion.key-info .acc-body,
+  .accordion.key-people .acc-body { padding: 12px 16px; border-top: 1px solid var(--border); background: var(--card); }
+  .accordion.key-info .acc-chevron,
+  .accordion.key-people .acc-chevron { flex: 0 0 auto; color: var(--accent); transition: transform .18s ease; }
+  .accordion.key-info[open] .acc-chevron,
+  .accordion.key-people[open] .acc-chevron { transform: rotate(90deg); }
+  .accordion.key-people .key-people-item + .key-people-item{
+    margin-top:12px; padding-top:12px; border-top:1px solid var(--border);
+  }
+  .accordion.key-people .key-people-item h4{
+    margin:0 0 6px; font-size:1rem; color:var(--ink);
+  }
+  .accordion.key-people .key-people-list{
+    margin:0; padding-left:18px; display:grid; gap:4px;
+  }
+  .accordion.key-people .key-people-list li{ margin:0; }
+  .accordion.key-people .key-people-role{ color:var(--muted); font-size:.95em; }
+  .accordion.key-people .key-people-empty{
+    color:var(--muted); font-size:.92rem;
+  }
 
   /* Markdown basics */
   .markdown h1,.markdown h2,.markdown h3,.markdown h4,.markdown h5,.markdown h6{margin:.2em 0 .4em; line-height:1.25}
@@ -378,6 +468,7 @@ export async function generateHome({
       </div>
     </header>
 
+    ${keyPeopleSection || ""}
     ${keyInfoSection || ""}
 
     <main>
