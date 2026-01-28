@@ -64,7 +64,7 @@
     },
     {
       "id": "byDate-2",
-      "label": "Group by date. Columns for time, description, tags",
+      "label": "Group by date. Columns for time, description, Location",
       "dataset": "scheduleDetail",
       "groupBy": "date",
       "groupMetaData": "dates",
@@ -74,6 +74,21 @@
         { "label": "Time",        "showLabel": true, "field": "time",        "width": 75 },
         { "label": "Description", "showLabel": true, "field": "description", "width": 250 },
         { "label": "Location",    "showLabel": true, "field": "locations",   "width": 100 },
+        { "label": "Notes",       "showLabel": true, "field": "notes",       "width": 217 }
+      ]
+    },
+    {
+      "id": "byDate-3",
+      "label": "Group by date. Columns for time, description, Tags",
+      "dataset": "scheduleDetail",
+      "groupBy": "date",
+      "groupMetaData": "dates",
+      "groupSort": ["date:asc"],
+      "entrySort": ["time:asc", "description:asc"],
+      "columns": [
+        { "label": "Time",        "showLabel": true, "field": "time",        "width": 75 },
+        { "label": "Description", "showLabel": true, "field": "description", "width": 250 },
+        { "label": "Tags",    "showLabel": true, "field": "tags",   "width": 100 },
         { "label": "Notes",       "showLabel": true, "field": "notes",       "width": 217 }
       ]
     }
