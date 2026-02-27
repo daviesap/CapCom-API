@@ -17,7 +17,7 @@
       ]
     },
         {
-      "id": "byDate-3",
+      "id": "byDate-4",
       "label": "Group by date. Columns for time, description, resp, location and notes",
       "dataset": "scheduleDetail",
       "groupBy": "date",
