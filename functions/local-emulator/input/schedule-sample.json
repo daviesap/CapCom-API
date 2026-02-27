@@ -1,109 +1,180 @@
 {
   "api_key": "Sausages2025!!",
   "event": {
-    "profileId": "wKaUNpUBO8",
-    "momKeyInfo": true,
-    "name": "Event 1",
+    "profileId": "0ha9w3GkYW",
+    "name": "GWC 2025 - Maui",
+    "logoUrl": "https://storage.googleapis.com/glide-prod.appspot.com/uploads-v2/p9amI8oZ4G31RWl1rwqF/pub/5OZZI4jrgATmFspvSJY3.png",
     "header": [
-      "Event 1",
-      "TBC",
-      "6 February 2026 - 17 February 2026"
+      "GWC 2025 - Maui",
+      "Grand Wailea, Maui",
+      "14 April 2026 - 21 April 2026"
     ],
     "keyInfo": [
       {
-        "title": "Test",
-        "text": "Key Info"
+        "title": "Main Venue",
+        "text": "Grand Wailea, Maui, Hawaii - [https://www.grandwailea.com](https://www.grandwailea.com)"
       }
     ],
     "keyPeople": [
       {
-        "company": "Comnpany 1",
-        "CompanySortOrder": 1,
+        "company": "Gartner",
+        "CompanySortOrder": 10,
         "people": [
           {
-            "name": "dsadas",
-            "sortOrder": 1
+            "name": "Shiri Koren",
+            "sortOrder": 2
+          }
+        ]
+      },
+      {
+        "company": "Carss",
+        "CompanySortOrder": 20,
+        "people": [
+          {
+            "name": "Andrew Davies",
+            "role": "Technical Director",
+            "sortOrder": -2
+          },
+          {
+            "name": "Louis Souyave",
+            "role": "PM",
+            "sortOrder": -1.5
+          },
+          {
+            "name": "Gary Collins",
+            "role": "Lighting Designer",
+            "sortOrder": -1
+          },
+          {
+            "name": "Jon Fynn",
+            "role": "Technical Director - Marriott",
+            "sortOrder": -3
+          }
+        ]
+      },
+      {
+        "company": "Nteractive",
+        "CompanySortOrder": 30,
+        "people": [
+          {
+            "name": "Julia Page",
+            "role": "Senior Producer",
+            "sortOrder": 3
           }
         ]
       }
     ]
   },
   "debug": false,
-  "UserId": "KqvnX44nRUSes8UCa8DyMw",
-  "userEmail": "mark@mark-heaps.co.uk",
-  "glideAppName": "Mark Heaps",
+  "UserId": "JwAOVyJUSwGKh1mD8Z1ovg",
+  "userEmail": "andrew@flair.london",
+  "glideAppName": "GWC",
   "groupMeta": {
     "scheduleDetail": [
       {
-        "date": "2026-02-14",
+        "date": "2026-04-13",
         "data": {
-          "title": "Saturday, 14 February 2026"
+          "title": "Monday, 13 April 2026",
+          "above": "Build",
+          "below": "Circle Lounge ready"
         }
       },
       {
-        "date": "2026-02-10",
+        "date": "2026-04-22",
         "data": {
-          "title": "Tuesday, 10 February 2026"
+          "title": "Wednesday, 22 April 2026",
+          "above": "Crew departures"
         }
       },
       {
-        "date": "2026-02-16",
+        "date": "2026-04-17",
         "data": {
-          "title": "Monday, 16 February 2026"
+          "title": "Friday, 17 April 2026",
+          "above": "W1 Gala Dinner"
         }
       },
       {
-        "date": "2026-02-15",
+        "date": "2026-04-18",
         "data": {
-          "title": "Sunday, 15 February 2026"
+          "title": "Saturday, 18 April 2026",
+          "above": "W2 Welcome Reception"
         }
       },
       {
-        "date": "2026-02-19",
+        "date": "2026-04-10",
         "data": {
-          "title": "Thursday, 19 February 2026"
+          "title": "Friday, 10 April 2026",
+          "above": "PMs arrive Maui"
         }
       },
       {
-        "date": "2026-02-08",
+        "date": "2026-04-21",
         "data": {
-          "title": "Sunday, 8 February 2026"
+          "title": "Tuesday, 21 April 2026",
+          "above": "De-rig - Circle Lounge closes EOD",
+          "below": "Venue to be clear"
         }
       },
       {
-        "date": "2026-02-18",
+        "date": "2026-04-16",
         "data": {
-          "title": "Wednesday, 18 February 2026"
+          "title": "Thursday, 16 April 2026",
+          "above": "W1 Kick Off and Theme"
         }
       },
       {
-        "date": "2026-02-12",
+        "date": "2026-04-15",
         "data": {
-          "title": "Thursday, 12 February 2026"
+          "title": "Wednesday, 15 April 2026",
+          "above": "W1 Welcome Reception"
         }
       },
       {
-        "date": "2026-02-13",
+        "date": "2026-04-12",
         "data": {
-          "title": "Friday, 13 February 2026"
+          "title": "Sunday, 12 April 2026",
+          "above": "Build"
         }
       },
       {
-        "date": "2026-02-09",
+        "date": "2026-04-20",
         "data": {
-          "title": "Monday, 9 February 2026"
+          "title": "Monday, 20 April 2026",
+          "above": "W2 Gala Dinner"
         }
       },
       {
-        "date": "2026-02-17",
+        "date": "2026-04-14",
         "data": {
-          "title": "Tuesday, 17 February 2026"
+          "title": "Tuesday, 14 April 2026",
+          "above": "Circle Lounge opens"
         }
       },
       {
-        "date": "2026-02-11",
+        "date": "2026-04-23",
         "data": {
-          "title": "Wednesday, 11 February 2026"
+          "title": "Thursday, 23 April 2026",
+          "above": "UK Crew land home"
+        }
+      },
+      {
+        "date": "2026-04-11",
+        "data": {
+          "title": "Saturday, 11 April 2026",
+          "above": "Crew arrivals / Pre-con"
+        }
+      },
+      {
+        "date": "2026-04-09",
+        "data": {
+          "title": "Thursday, 9 April 2026"
+        }
+      },
+      {
+        "date": "2026-04-19",
+        "data": {
+          "title": "Sunday, 19 April 2026",
+          "above": "W2 Kick Off and Theme"
         }
       }
     ],
@@ -121,17 +192,1469 @@
       "filterSubLocationIds": [],
       "group": "Full schedule",
       "sortOrder": 1
+    },
+    {
+      "name": "Ballroom only",
+      "filterBox": false,
+      "showKeyInfo": true,
+      "groupPresetId": "byDate-1",
+      "filterTagIds": [],
+      "filterLocationIds": [
+        "tM4.684nSRaR-JkLheFsjQ"
+      ],
+      "filterSubLocationIds": [],
+      "group": "By location",
+      "sortOrder": 2
+    },
+    {
+      "name": "Circle Lounge and Registration",
+      "filterBox": false,
+      "showKeyInfo": true,
+      "groupPresetId": "byDate-1",
+      "filterTagIds": [],
+      "filterLocationIds": [
+        "DeNgxgw1TbOeCD.rVCXG5Q"
+      ],
+      "filterSubLocationIds": [],
+      "group": "By location",
+      "sortOrder": 2
+    },
+    {
+      "name": "Venue access and live dates",
+      "filterBox": false,
+      "showKeyInfo": true,
+      "groupPresetId": "byDate-1",
+      "filterTagIds": [
+        "TLMhG9O8R4ywTHUKwOrFFQ",
+        "CCiJ77SBRzumgEkveIHwrg"
+      ],
+      "filterLocationIds": [],
+      "filterSubLocationIds": [],
+      "group": "Other",
+      "sortOrder": 4
+    },
+    {
+      "name": "AVS",
+      "filterBox": false,
+      "showKeyInfo": true,
+      "groupPresetId": "byDate-1",
+      "filterTagIds": [
+        "8yUM-5uLSNSF.uxQPG8J.A"
+      ],
+      "filterLocationIds": [],
+      "filterSubLocationIds": [],
+      "group": "By supplier",
+      "sortOrder": 3
+    },
+    {
+      "name": "Test",
+      "filterBox": false,
+      "showKeyInfo": false,
+      "groupPresetId": "test",
+      "filterTagIds": [],
+      "filterLocationIds": [],
+      "filterSubLocationIds": [],
+      "group": "Full schedule",
+      "sortOrder": 1
     }
   ],
   "data": {
     "scheduleDetail": [
       {
-        "date": "2026-02-08",
+        "date": "2026-04-12",
+        "time": "10:00",
+        "description": "Access to Ballroom 4 & 5",
+        "tagIds": [
+          "TLMhG9O8R4ywTHUKwOrFFQ"
+        ],
+        "locationIds": [
+          "tM4.684nSRaR-JkLheFsjQ"
+        ],
+        "subLocationIds": [],
+        "tags": [
+          "Venue"
+        ],
+        "locations": [
+          "Haleakala Ballroom  "
+        ]
+      },
+      {
+        "date": "2026-04-13",
+        "time": "00:01",
+        "description": "Access to Ballroom 1 (Central)",
+        "tagIds": [],
+        "locationIds": [
+          "tM4.684nSRaR-JkLheFsjQ"
+        ],
+        "subLocationIds": [],
+        "tags": [],
+        "locations": [
+          "Haleakala Ballroom  "
+        ]
+      },
+      {
+        "date": "2026-04-15",
+        "time": "08:00 - 18:00",
+        "description": "Circle Lounge open",
+        "tagIds": [
+          "CCiJ77SBRzumgEkveIHwrg"
+        ],
+        "locationIds": [],
+        "subLocationIds": [],
+        "format": "important",
+        "tags": [
+          "Live"
+        ],
+        "locations": [
+          " "
+        ]
+      },
+      {
+        "date": "2026-04-16",
+        "time": "08:00 - 18:00",
+        "description": "Circle Lounge open",
+        "tagIds": [
+          "CCiJ77SBRzumgEkveIHwrg"
+        ],
+        "locationIds": [],
+        "subLocationIds": [],
+        "format": "important",
+        "tags": [
+          "Live"
+        ],
+        "locations": [
+          " "
+        ]
+      },
+      {
+        "date": "2026-04-17",
+        "time": "08:00 - 18:00",
+        "description": "Circle Lounge open",
+        "tagIds": [
+          "CCiJ77SBRzumgEkveIHwrg"
+        ],
+        "locationIds": [],
+        "subLocationIds": [],
+        "format": "important",
+        "tags": [
+          "Live"
+        ],
+        "locations": [
+          " "
+        ]
+      },
+      {
+        "date": "2026-04-18",
+        "time": "08:00 - 18:00",
+        "description": "Circle Lounge open",
+        "tagIds": [
+          "CCiJ77SBRzumgEkveIHwrg"
+        ],
+        "locationIds": [],
+        "subLocationIds": [],
+        "format": "important",
+        "tags": [
+          "Live"
+        ],
+        "locations": [
+          " "
+        ]
+      },
+      {
+        "date": "2026-04-19",
+        "time": "08:00 - 18:00",
+        "description": "Circle Lounge open",
+        "tagIds": [
+          "CCiJ77SBRzumgEkveIHwrg"
+        ],
+        "locationIds": [],
+        "subLocationIds": [],
+        "format": "important",
+        "tags": [
+          "Live"
+        ],
+        "locations": [
+          " "
+        ]
+      },
+      {
+        "date": "2026-04-20",
+        "time": "08:00 - 18:00",
+        "description": "Circle Lounge open",
+        "tagIds": [
+          "CCiJ77SBRzumgEkveIHwrg"
+        ],
+        "locationIds": [],
+        "subLocationIds": [],
+        "format": "important",
+        "tags": [
+          "Live"
+        ],
+        "locations": [
+          " "
+        ]
+      },
+      {
+        "date": "2026-04-21",
+        "time": "08:00 - 18:00",
+        "description": "Circle Lounge open",
+        "tagIds": [
+          "CCiJ77SBRzumgEkveIHwrg"
+        ],
+        "locationIds": [],
+        "subLocationIds": [],
+        "format": "important",
+        "tags": [
+          "Live"
+        ],
+        "locations": [
+          " "
+        ]
+      },
+      {
+        "date": "2026-04-15",
+        "time": "08:00 - 18:00 (tbc)",
+        "description": "Registration Open",
+        "tagIds": [
+          "CCiJ77SBRzumgEkveIHwrg"
+        ],
+        "locationIds": [],
+        "subLocationIds": [],
+        "format": "important",
+        "tags": [
+          "Live"
+        ],
+        "locations": [
+          " "
+        ]
+      },
+      {
+        "date": "2026-04-17",
+        "time": "08:00 - 18:00 (tbc)",
+        "description": "Registration Open",
+        "tagIds": [
+          "CCiJ77SBRzumgEkveIHwrg"
+        ],
+        "locationIds": [],
+        "subLocationIds": [],
+        "format": "important",
+        "tags": [
+          "Live"
+        ],
+        "locations": [
+          " "
+        ]
+      },
+      {
+        "date": "2026-04-18",
+        "time": "08:00 - 18:00 (tbc)",
+        "description": "Registration Open",
+        "tagIds": [
+          "CCiJ77SBRzumgEkveIHwrg"
+        ],
+        "locationIds": [],
+        "subLocationIds": [],
+        "format": "important",
+        "tags": [
+          "Live"
+        ],
+        "locations": [
+          " "
+        ]
+      },
+      {
+        "date": "2026-04-15",
+        "time": "00:01",
+        "description": "Access to Ballroom 2 & 3",
+        "tagIds": [
+          "TLMhG9O8R4ywTHUKwOrFFQ"
+        ],
+        "locationIds": [
+          "tM4.684nSRaR-JkLheFsjQ"
+        ],
+        "subLocationIds": [],
+        "tags": [
+          "Venue"
+        ],
+        "locations": [
+          "Haleakala Ballroom  "
+        ]
+      },
+      {
+        "date": "2026-04-15",
+        "time": "18:00 - 22:00",
+        "description": "Welcome reception live (Dry weather)",
+        "tagIds": [
+          "CCiJ77SBRzumgEkveIHwrg"
+        ],
+        "locationIds": [
+          "iezE4e-FSL6GIwqrXnRc-g"
+        ],
+        "subLocationIds": [],
+        "format": "important",
+        "tags": [
+          "Live"
+        ],
+        "locations": [
+          " "
+        ]
+      },
+      {
+        "date": "2026-04-15",
+        "time": "18:00 - 22:00",
+        "description": "Welcome reception live (Wet weather)",
+        "tagIds": [
+          "CCiJ77SBRzumgEkveIHwrg"
+        ],
+        "locationIds": [
+          "tM4.684nSRaR-JkLheFsjQ"
+        ],
+        "subLocationIds": [],
+        "format": "important",
+        "tags": [
+          "Live"
+        ],
+        "locations": [
+          "Haleakala Ballroom  "
+        ]
+      },
+      {
+        "date": "2026-04-15",
+        "time": "22:00 - 23:59 (tbc)",
+        "description": "Circle Club Late Lounge - Post Welcome",
+        "tagIds": [
+          "CCiJ77SBRzumgEkveIHwrg"
+        ],
+        "locationIds": [
+          "tM4.684nSRaR-JkLheFsjQ"
+        ],
+        "subLocationIds": [],
+        "format": "important",
+        "tags": [
+          "Live"
+        ],
+        "locations": [
+          "Haleakala Ballroom  "
+        ]
+      },
+      {
+        "date": "2026-04-16",
+        "time": "08:00 - 10:00 (tbc)",
+        "description": "Kick Off",
+        "tagIds": [
+          "CCiJ77SBRzumgEkveIHwrg"
+        ],
+        "locationIds": [
+          "tM4.684nSRaR-JkLheFsjQ"
+        ],
+        "subLocationIds": [],
+        "format": "important",
+        "tags": [
+          "Live"
+        ],
+        "locations": [
+          "Haleakala Ballroom  "
+        ]
+      },
+      {
+        "date": "2026-04-19",
+        "time": "08:00 - 10:00 (tbc)",
+        "description": "Kick Off",
+        "tagIds": [
+          "CCiJ77SBRzumgEkveIHwrg"
+        ],
+        "locationIds": [
+          "tM4.684nSRaR-JkLheFsjQ"
+        ],
+        "subLocationIds": [],
+        "format": "important",
+        "tags": [
+          "Live"
+        ],
+        "locations": [
+          "Haleakala Ballroom  "
+        ]
+      },
+      {
+        "date": "2026-04-18",
+        "time": "18:00 - 22:00",
+        "description": "Welcome reception live (Dry weather)",
+        "tagIds": [
+          "CCiJ77SBRzumgEkveIHwrg"
+        ],
+        "locationIds": [
+          "iezE4e-FSL6GIwqrXnRc-g"
+        ],
+        "subLocationIds": [],
+        "format": "important",
+        "tags": [
+          "Live"
+        ],
+        "locations": [
+          " "
+        ]
+      },
+      {
+        "date": "2026-04-18",
+        "time": "18:00 - 22:00",
+        "description": "Welcome reception live (Wet weather)",
+        "tagIds": [
+          "CCiJ77SBRzumgEkveIHwrg"
+        ],
+        "locationIds": [
+          "tM4.684nSRaR-JkLheFsjQ"
+        ],
+        "subLocationIds": [],
+        "format": "important",
+        "tags": [
+          "Live"
+        ],
+        "locations": [
+          "Haleakala Ballroom  "
+        ]
+      },
+      {
+        "date": "2026-04-19",
+        "time": "06:00 - 10:00 (tbc)",
+        "description": "KO Group breakfast",
+        "tagIds": [
+          "CCiJ77SBRzumgEkveIHwrg"
+        ],
+        "locationIds": [
+          "iezE4e-FSL6GIwqrXnRc-g"
+        ],
+        "subLocationIds": [],
+        "format": "important",
+        "tags": [
+          "Live"
+        ],
+        "locations": [
+          " "
+        ]
+      },
+      {
+        "date": "2026-04-18",
+        "time": "22:00 - 23:59 (tbc)",
+        "description": "Circle Club Late Lounge - Post Welcome",
+        "tagIds": [
+          "CCiJ77SBRzumgEkveIHwrg"
+        ],
+        "locationIds": [
+          "tM4.684nSRaR-JkLheFsjQ"
+        ],
+        "subLocationIds": [],
+        "format": "important",
+        "tags": [
+          "Live"
+        ],
+        "locations": [
+          "Haleakala Ballroom  "
+        ]
+      },
+      {
+        "date": "2026-04-16",
+        "time": "19:00 - 23:00 (tbc)",
+        "description": "Theme Party",
+        "tagIds": [
+          "CCiJ77SBRzumgEkveIHwrg"
+        ],
+        "locationIds": [
+          "tM4.684nSRaR-JkLheFsjQ"
+        ],
+        "subLocationIds": [],
+        "format": "important",
+        "tags": [
+          "Live"
+        ],
+        "locations": [
+          "Haleakala Ballroom  "
+        ]
+      },
+      {
+        "date": "2026-04-19",
+        "time": "19:00 - 23:00 (tbc)",
+        "description": "Theme Party",
+        "tagIds": [
+          "CCiJ77SBRzumgEkveIHwrg"
+        ],
+        "locationIds": [
+          "tM4.684nSRaR-JkLheFsjQ"
+        ],
+        "subLocationIds": [],
+        "format": "important",
+        "tags": [
+          "Live"
+        ],
+        "locations": [
+          "Haleakala Ballroom  "
+        ]
+      },
+      {
+        "date": "2026-04-21",
+        "time": "07:00 - 10:00 (tbc)",
+        "description": "Group breakfast",
+        "tagIds": [],
+        "locationIds": [
+          "iezE4e-FSL6GIwqrXnRc-g"
+        ],
+        "subLocationIds": [],
+        "tags": [],
+        "locations": [
+          " "
+        ]
+      },
+      {
+        "date": "2026-04-21",
+        "time": "10:00",
+        "description": "Ballroom 4,5 to be clear",
+        "tagIds": [],
+        "locationIds": [
+          "tM4.684nSRaR-JkLheFsjQ"
+        ],
+        "subLocationIds": [],
+        "tags": [],
+        "locations": [
+          "Haleakala Ballroom  "
+        ]
+      },
+      {
+        "date": "2026-04-21",
+        "time": "14:00",
+        "description": "Ballroom 1,2,3 to be clear",
+        "tagIds": [],
+        "locationIds": [
+          "tM4.684nSRaR-JkLheFsjQ"
+        ],
+        "subLocationIds": [],
+        "tags": [],
+        "locations": [
+          "Haleakala Ballroom  "
+        ]
+      },
+      {
+        "date": "2026-04-21",
+        "time": "14:00",
+        "description": "Gardens to be clear",
+        "tagIds": [
+          "TLMhG9O8R4ywTHUKwOrFFQ"
+        ],
+        "locationIds": [
+          "iezE4e-FSL6GIwqrXnRc-g"
+        ],
+        "subLocationIds": [],
+        "tags": [
+          "Venue"
+        ],
+        "locations": [
+          " "
+        ]
+      },
+      {
+        "date": "2026-04-22",
+        "time": "All day",
+        "description": "Crew departures",
+        "tagIds": [],
+        "locationIds": [],
+        "subLocationIds": [],
+        "tags": [],
+        "locations": [
+          " "
+        ]
+      },
+      {
+        "date": "2026-04-23",
+        "description": "UK Crew land home",
+        "tagIds": [],
+        "locationIds": [],
+        "subLocationIds": [],
+        "tags": [],
+        "locations": [
+          " "
+        ]
+      },
+      {
+        "date": "2026-04-12",
+        "time": "10:00",
+        "description": "Unload lighting",
+        "tagIds": [
+          "rUiP8.CxQtmfbFrE1K2pFQ"
+        ],
+        "locationIds": [
+          "tM4.684nSRaR-JkLheFsjQ"
+        ],
+        "subLocationIds": [],
+        "tags": [
+          "Hawaii S&L"
+        ],
+        "locations": [
+          "Haleakala Ballroom  "
+        ]
+      },
+      {
+        "date": "2026-04-13",
+        "time": "00:01",
+        "description": "Install AV in ballroom",
+        "tagIds": [
+          "8yUM-5uLSNSF.uxQPG8J.A",
+          "rUiP8.CxQtmfbFrE1K2pFQ",
+          "A5Dkj1-dRXW2hL9PcgrMIQ"
+        ],
+        "locationIds": [
+          "tM4.684nSRaR-JkLheFsjQ"
+        ],
+        "subLocationIds": [],
+        "tags": [
+          "AVS",
+          "Show Imaging",
+          "Hawaii S&L"
+        ],
+        "locations": [
+          "Haleakala Ballroom  "
+        ]
+      },
+      {
+        "date": "2026-04-14",
         "time": "08:00",
+        "description": "Install AV in ballroom",
+        "tagIds": [
+          "8yUM-5uLSNSF.uxQPG8J.A",
+          "rUiP8.CxQtmfbFrE1K2pFQ",
+          "A5Dkj1-dRXW2hL9PcgrMIQ"
+        ],
+        "locationIds": [
+          "tM4.684nSRaR-JkLheFsjQ"
+        ],
+        "subLocationIds": [],
+        "tags": [
+          "AVS",
+          "Show Imaging",
+          "Hawaii S&L"
+        ],
+        "locations": [
+          "Haleakala Ballroom  "
+        ]
+      },
+      {
+        "date": "2026-04-15",
+        "time": "00:01",
+        "description": "Install AV in ballroom",
+        "tagIds": [
+          "8yUM-5uLSNSF.uxQPG8J.A",
+          "rUiP8.CxQtmfbFrE1K2pFQ",
+          "A5Dkj1-dRXW2hL9PcgrMIQ"
+        ],
+        "locationIds": [
+          "tM4.684nSRaR-JkLheFsjQ"
+        ],
+        "subLocationIds": [],
+        "tags": [
+          "AVS",
+          "Show Imaging",
+          "Hawaii S&L"
+        ],
+        "locations": [
+          "Haleakala Ballroom  "
+        ]
+      },
+      {
+        "date": "2026-04-15",
+        "time": "08:00",
+        "description": "Install Welcome Reception AV",
+        "tagIds": [
+          "8yUM-5uLSNSF.uxQPG8J.A",
+          "rUiP8.CxQtmfbFrE1K2pFQ"
+        ],
+        "locationIds": [
+          "iezE4e-FSL6GIwqrXnRc-g"
+        ],
+        "subLocationIds": [],
+        "tags": [
+          "AVS",
+          "Hawaii S&L"
+        ],
+        "locations": [
+          " "
+        ]
+      },
+      {
+        "date": "2026-04-18",
+        "time": "08:00",
+        "description": "Install Welcome Reception AV",
+        "tagIds": [
+          "8yUM-5uLSNSF.uxQPG8J.A",
+          "rUiP8.CxQtmfbFrE1K2pFQ"
+        ],
+        "locationIds": [
+          "iezE4e-FSL6GIwqrXnRc-g"
+        ],
+        "subLocationIds": [],
+        "tags": [
+          "AVS",
+          "Hawaii S&L"
+        ],
+        "locations": [
+          " "
+        ]
+      },
+      {
+        "date": "2026-04-19",
+        "time": "08:00 - 22:00",
+        "description": "Shows / Turn around in ballroom",
+        "tagIds": [
+          "8yUM-5uLSNSF.uxQPG8J.A",
+          "rUiP8.CxQtmfbFrE1K2pFQ",
+          "A5Dkj1-dRXW2hL9PcgrMIQ"
+        ],
+        "locationIds": [
+          "tM4.684nSRaR-JkLheFsjQ"
+        ],
+        "subLocationIds": [],
+        "tags": [
+          "AVS",
+          "Show Imaging",
+          "Hawaii S&L"
+        ],
+        "locations": [
+          "Haleakala Ballroom  "
+        ]
+      },
+      {
+        "date": "2026-04-20",
+        "time": "08:00 - 22:00",
+        "description": "Shows / Turn around in ballroom",
+        "tagIds": [
+          "8yUM-5uLSNSF.uxQPG8J.A",
+          "rUiP8.CxQtmfbFrE1K2pFQ",
+          "A5Dkj1-dRXW2hL9PcgrMIQ"
+        ],
+        "locationIds": [
+          "tM4.684nSRaR-JkLheFsjQ"
+        ],
+        "subLocationIds": [],
+        "tags": [
+          "AVS",
+          "Show Imaging",
+          "Hawaii S&L"
+        ],
+        "locations": [
+          "Haleakala Ballroom  "
+        ]
+      },
+      {
+        "date": "2026-04-21",
+        "time": "08:00 - 22:00",
+        "description": "Derig in ballroom",
+        "tagIds": [
+          "8yUM-5uLSNSF.uxQPG8J.A",
+          "rUiP8.CxQtmfbFrE1K2pFQ",
+          "A5Dkj1-dRXW2hL9PcgrMIQ"
+        ],
+        "locationIds": [
+          "tM4.684nSRaR-JkLheFsjQ"
+        ],
+        "subLocationIds": [],
+        "tags": [
+          "AVS",
+          "Show Imaging",
+          "Hawaii S&L"
+        ],
+        "locations": [
+          "Haleakala Ballroom  "
+        ]
+      },
+      {
+        "date": "2026-04-16",
+        "time": "08:00 - 22:00",
+        "description": "Shows / Turn around in ballroom",
+        "tagIds": [
+          "8yUM-5uLSNSF.uxQPG8J.A",
+          "rUiP8.CxQtmfbFrE1K2pFQ",
+          "A5Dkj1-dRXW2hL9PcgrMIQ"
+        ],
+        "locationIds": [
+          "tM4.684nSRaR-JkLheFsjQ"
+        ],
+        "subLocationIds": [],
+        "tags": [
+          "AVS",
+          "Show Imaging",
+          "Hawaii S&L"
+        ],
+        "locations": [
+          "Haleakala Ballroom  "
+        ]
+      },
+      {
+        "date": "2026-04-17",
+        "time": "08:00 - 22:00",
+        "description": "Shows / Turn around in ballroom",
+        "tagIds": [
+          "8yUM-5uLSNSF.uxQPG8J.A",
+          "rUiP8.CxQtmfbFrE1K2pFQ",
+          "A5Dkj1-dRXW2hL9PcgrMIQ"
+        ],
+        "locationIds": [
+          "tM4.684nSRaR-JkLheFsjQ"
+        ],
+        "subLocationIds": [],
+        "tags": [
+          "AVS",
+          "Show Imaging",
+          "Hawaii S&L"
+        ],
+        "locations": [
+          "Haleakala Ballroom  "
+        ]
+      },
+      {
+        "date": "2026-04-18",
+        "time": "08:00 - 22:00",
+        "description": "Shows / Turn around in ballroom",
+        "tagIds": [
+          "8yUM-5uLSNSF.uxQPG8J.A",
+          "rUiP8.CxQtmfbFrE1K2pFQ",
+          "A5Dkj1-dRXW2hL9PcgrMIQ"
+        ],
+        "locationIds": [
+          "tM4.684nSRaR-JkLheFsjQ"
+        ],
+        "subLocationIds": [],
+        "tags": [
+          "AVS",
+          "Show Imaging",
+          "Hawaii S&L"
+        ],
+        "locations": [
+          "Haleakala Ballroom  "
+        ]
+      },
+      {
+        "date": "2026-04-16",
+        "time": "08:00 - 16:00",
+        "description": "Local crew call x 8",
+        "tagIds": [
+          "gkkjZLcuRi6rq9OlBUITrA"
+        ],
+        "locationIds": [],
+        "subLocationIds": [],
+        "tags": [
+          "Local labour"
+        ],
+        "locations": [
+          " "
+        ]
+      },
+      {
+        "date": "2026-04-13",
+        "time": "08:00 - 16:00",
+        "description": "Local crew call x 8",
+        "tagIds": [
+          "gkkjZLcuRi6rq9OlBUITrA"
+        ],
+        "locationIds": [],
+        "subLocationIds": [],
+        "tags": [
+          "Local labour"
+        ],
+        "locations": [
+          " "
+        ]
+      },
+      {
+        "date": "2026-04-14",
+        "time": "08:00 - 16:00",
+        "description": "Local crew call x 8",
+        "tagIds": [
+          "gkkjZLcuRi6rq9OlBUITrA"
+        ],
+        "locationIds": [],
+        "subLocationIds": [],
+        "tags": [
+          "Local labour"
+        ],
+        "locations": [
+          " "
+        ]
+      },
+      {
+        "date": "2026-04-15",
+        "time": "08:00 - 16:00",
+        "description": "Local crew call x 8",
+        "tagIds": [
+          "gkkjZLcuRi6rq9OlBUITrA"
+        ],
+        "locationIds": [],
+        "subLocationIds": [],
+        "tags": [
+          "Local labour"
+        ],
+        "locations": [
+          " "
+        ]
+      },
+      {
+        "date": "2026-04-17",
+        "time": "08:00 - 16:00",
+        "description": "Local crew call x 8",
+        "tagIds": [
+          "gkkjZLcuRi6rq9OlBUITrA"
+        ],
+        "locationIds": [],
+        "subLocationIds": [],
+        "tags": [
+          "Local labour"
+        ],
+        "locations": [
+          " "
+        ]
+      },
+      {
+        "date": "2026-04-19",
+        "time": "08:00 - 16:00",
+        "description": "Local crew call x 8",
+        "tagIds": [
+          "gkkjZLcuRi6rq9OlBUITrA"
+        ],
+        "locationIds": [],
+        "subLocationIds": [],
+        "tags": [
+          "Local labour"
+        ],
+        "locations": [
+          " "
+        ]
+      },
+      {
+        "date": "2026-04-18",
+        "time": "08:00 - 16:00",
+        "description": "Local crew call x 8",
+        "tagIds": [
+          "gkkjZLcuRi6rq9OlBUITrA"
+        ],
+        "locationIds": [],
+        "subLocationIds": [],
+        "tags": [
+          "Local labour"
+        ],
+        "locations": [
+          " "
+        ]
+      },
+      {
+        "date": "2026-04-20",
+        "time": "08:00 - 16:00",
+        "description": "Local crew call x 8",
+        "tagIds": [
+          "gkkjZLcuRi6rq9OlBUITrA"
+        ],
+        "locationIds": [],
+        "subLocationIds": [],
+        "tags": [
+          "Local labour"
+        ],
+        "locations": [
+          " "
+        ]
+      },
+      {
+        "date": "2026-04-21",
+        "time": "08:00 - 16:00",
+        "description": "Local crew call x 8",
+        "tagIds": [
+          "gkkjZLcuRi6rq9OlBUITrA"
+        ],
+        "locationIds": [],
+        "subLocationIds": [],
+        "tags": [
+          "Local labour"
+        ],
+        "locations": [
+          " "
+        ]
+      },
+      {
+        "date": "2026-04-14",
+        "time": "08:00 - 18:00 (tbc)",
+        "description": "Registration Open",
+        "tagIds": [
+          "CCiJ77SBRzumgEkveIHwrg"
+        ],
+        "locationIds": [
+          "UJ2V.z0JQXOhXixIo2dWUA"
+        ],
+        "subLocationIds": [],
+        "format": "important",
+        "tags": [
+          "Live"
+        ],
+        "locations": [
+          "Pikake (Registration) "
+        ]
+      },
+      {
+        "date": "2026-04-14",
+        "time": "15:00 - 16:00",
+        "description": "Off stage rehearsals",
+        "tagIds": [
+          "LF2y.OGvRQK9f2AnJ2RHVQ"
+        ],
+        "locationIds": [
+          "DeNgxgw1TbOeCD.rVCXG5Q"
+        ],
+        "subLocationIds": [],
+        "tags": [
+          "Rehearsals"
+        ],
+        "locations": [
+          "Plumeria (Gift & W1 Reh) "
+        ]
+      },
+      {
+        "date": "2026-04-17",
+        "time": "15:00 - 16:30",
+        "description": "Gala on stage rehearsals",
+        "tagIds": [
+          "LF2y.OGvRQK9f2AnJ2RHVQ"
+        ],
+        "locationIds": [
+          "tM4.684nSRaR-JkLheFsjQ"
+        ],
+        "subLocationIds": [],
+        "tags": [
+          "Rehearsals"
+        ],
+        "locations": [
+          "Haleakala Ballroom  "
+        ]
+      },
+      {
+        "date": "2026-04-16",
+        "time": "07:00",
+        "description": "Guest speaker rehearsals",
+        "tagIds": [
+          "LF2y.OGvRQK9f2AnJ2RHVQ"
+        ],
+        "locationIds": [
+          "tM4.684nSRaR-JkLheFsjQ"
+        ],
+        "subLocationIds": [],
+        "tags": [
+          "Rehearsals"
+        ],
+        "locations": [
+          "Haleakala Ballroom  "
+        ]
+      },
+      {
+        "date": "2026-04-14",
+        "time": "15:00 - 16:00",
+        "description": "Off stage rehearsals",
+        "tagIds": [
+          "LF2y.OGvRQK9f2AnJ2RHVQ"
+        ],
+        "locationIds": [],
+        "subLocationIds": [],
+        "tags": [
+          "Rehearsals"
+        ],
+        "locations": [
+          " "
+        ]
+      },
+      {
+        "date": "2026-04-17",
+        "time": "09:00 - 11:00",
+        "description": "W2 KO Off stage rehearsals",
+        "tagIds": [
+          "LF2y.OGvRQK9f2AnJ2RHVQ"
+        ],
+        "locationIds": [],
+        "subLocationIds": [],
+        "tags": [
+          "Rehearsals"
+        ],
+        "locations": [
+          " "
+        ]
+      },
+      {
+        "date": "2026-04-18",
+        "time": "13:30 - 15:00",
+        "description": "KO On stage rehearsals",
+        "tagIds": [
+          "LF2y.OGvRQK9f2AnJ2RHVQ"
+        ],
+        "locationIds": [],
+        "subLocationIds": [],
+        "tags": [
+          "Rehearsals"
+        ],
+        "locations": [
+          " "
+        ]
+      },
+      {
+        "date": "2026-04-20",
+        "time": "15:00 - 16:30",
+        "description": "Gala on stage rehearsals",
+        "tagIds": [
+          "LF2y.OGvRQK9f2AnJ2RHVQ"
+        ],
+        "locationIds": [],
+        "subLocationIds": [],
+        "tags": [
+          "Rehearsals"
+        ],
+        "locations": [
+          " "
+        ]
+      },
+      {
+        "date": "2026-04-15",
+        "time": "15:00 - 17:00",
+        "description": "KO Rehearsals on stage",
+        "tagIds": [
+          "LF2y.OGvRQK9f2AnJ2RHVQ"
+        ],
+        "locationIds": [
+          "tM4.684nSRaR-JkLheFsjQ"
+        ],
+        "subLocationIds": [],
+        "tags": [
+          "Rehearsals"
+        ],
+        "locations": [
+          "Haleakala Ballroom  "
+        ]
+      },
+      {
+        "date": "2026-04-13",
+        "time": "11:00 ",
+        "description": "Furniture loads into Circle Lounge",
+        "tagIds": [],
+        "locationIds": [
+          "Pl2OYWulR1WXB.zTCfkfWA"
+        ],
+        "subLocationIds": [],
+        "tags": [],
+        "locations": [
+          "Hibiscus (Circle Lounge) "
+        ]
+      },
+      {
+        "date": "2026-04-16",
+        "time": "06:30 - 16:30",
+        "description": "Tour departures & arrivals",
+        "tagIds": [
+          "LGhB3De5ToqiNblmc4.6cQ"
+        ],
+        "locationIds": [
+          "tM4.684nSRaR-JkLheFsjQ"
+        ],
+        "subLocationIds": [],
+        "notes": "Various times during the morning",
+        "tags": [
+          "Tours"
+        ],
+        "locations": [
+          "Haleakala Ballroom  "
+        ]
+      },
+      {
+        "date": "2026-04-17",
+        "time": "06:30 - 16:30",
+        "description": "Tour departures & arrivals",
+        "tagIds": [
+          "LGhB3De5ToqiNblmc4.6cQ"
+        ],
+        "locationIds": [
+          "tM4.684nSRaR-JkLheFsjQ"
+        ],
+        "subLocationIds": [],
+        "notes": "Various times during the morning",
+        "tags": [
+          "Tours"
+        ],
+        "locations": [
+          "Haleakala Ballroom  "
+        ]
+      },
+      {
+        "date": "2026-04-19",
+        "time": "06:30 - 16:30",
+        "description": "Tour departures & arrivals",
+        "tagIds": [
+          "LGhB3De5ToqiNblmc4.6cQ"
+        ],
+        "locationIds": [
+          "tM4.684nSRaR-JkLheFsjQ"
+        ],
+        "subLocationIds": [],
+        "notes": "Various times during the morning",
+        "tags": [
+          "Tours"
+        ],
+        "locations": [
+          "Haleakala Ballroom  "
+        ]
+      },
+      {
+        "date": "2026-04-20",
+        "time": "06:30 - 16:30",
+        "description": "Tour departures & arrivals",
+        "tagIds": [
+          "LGhB3De5ToqiNblmc4.6cQ"
+        ],
+        "locationIds": [
+          "tM4.684nSRaR-JkLheFsjQ"
+        ],
+        "subLocationIds": [],
+        "notes": "Various times during the morning",
+        "tags": [
+          "Tours"
+        ],
+        "locations": [
+          "Haleakala Ballroom  "
+        ]
+      },
+      {
+        "date": "2026-04-15",
+        "time": "10:00 - 12:00 (tbc)",
+        "description": "Golden Circle Brunch",
+        "tagIds": [
+          "CCiJ77SBRzumgEkveIHwrg"
+        ],
+        "locationIds": [
+          "a.TyFu6v5ToKUBAPcik9BFw"
+        ],
+        "subLocationIds": [],
+        "format": "important",
+        "tags": [
+          "Live"
+        ],
+        "locations": [
+          "Chapel Lawn "
+        ]
+      },
+      {
+        "date": "2026-04-18",
+        "time": "10:00 - 12:00 (tbc)",
+        "description": "Golden Circle Brunch",
+        "tagIds": [
+          "CCiJ77SBRzumgEkveIHwrg"
+        ],
+        "locationIds": [
+          "a.TyFu6v5ToKUBAPcik9BFw"
+        ],
+        "subLocationIds": [],
+        "format": "important",
+        "tags": [
+          "Live"
+        ],
+        "locations": [
+          "Chapel Lawn "
+        ]
+      },
+      {
+        "date": "2026-04-17",
+        "time": "18:00",
+        "description": "W1 Gala Dinner",
+        "tagIds": [
+          "CCiJ77SBRzumgEkveIHwrg"
+        ],
+        "locationIds": [
+          "tM4.684nSRaR-JkLheFsjQ"
+        ],
+        "subLocationIds": [],
+        "format": "important",
+        "tags": [
+          "Live"
+        ],
+        "locations": [
+          "Haleakala Ballroom  "
+        ]
+      },
+      {
+        "date": "2026-04-12",
+        "time": "18:00 (tbc)",
+        "description": "Crew welcome",
+        "tagIds": [],
+        "locationIds": [],
+        "subLocationIds": [],
+        "tags": [],
+        "locations": [
+          " "
+        ]
+      },
+      {
+        "date": "2026-04-20",
+        "time": "18:00",
+        "description": "W2 Gala Dinner",
+        "tagIds": [
+          "CCiJ77SBRzumgEkveIHwrg"
+        ],
+        "locationIds": [
+          "tM4.684nSRaR-JkLheFsjQ"
+        ],
+        "subLocationIds": [],
+        "format": "important",
+        "tags": [
+          "Live"
+        ],
+        "locations": [
+          "Haleakala Ballroom  "
+        ]
+      },
+      {
+        "date": "2026-04-20",
+        "time": "18:00",
+        "description": "W2 Gala Dinner",
+        "tagIds": [
+          "CCiJ77SBRzumgEkveIHwrg"
+        ],
+        "locationIds": [
+          "gbEw-zw3TM22Z7kTKvD3AA"
+        ],
+        "subLocationIds": [],
+        "format": "important",
+        "tags": [
+          "Live"
+        ],
+        "locations": [
+          "Aulani Ballroom (Marriott) "
+        ]
+      },
+      {
+        "date": "2026-04-18",
+        "time": "12:00",
+        "description": "Strike PA for Speeches in Garden area",
+        "tagIds": [
+          "GSGWzo1YQ8-T-cVMUpkHVA"
+        ],
+        "locationIds": [
+          "a.TyFu6v5ToKUBAPcik9BFw"
+        ],
+        "subLocationIds": [],
+        "tags": [
+          "Encore"
+        ],
+        "locations": [
+          "Chapel Lawn "
+        ]
+      },
+      {
+        "date": "2026-04-18",
+        "time": "08:00",
+        "description": "Set up PA for Speeches in Garden area. Ready for 9am",
+        "tagIds": [
+          "GSGWzo1YQ8-T-cVMUpkHVA"
+        ],
+        "locationIds": [
+          "a.TyFu6v5ToKUBAPcik9BFw"
+        ],
+        "subLocationIds": [],
+        "tags": [
+          "Encore"
+        ],
+        "locations": [
+          "Chapel Lawn "
+        ]
+      },
+      {
+        "date": "2026-04-18",
+        "time": "08:00",
+        "description": "Set up PA in Tent. Ready for 9am",
+        "tagIds": [
+          "GSGWzo1YQ8-T-cVMUpkHVA"
+        ],
+        "locationIds": [
+          "a.TyFu6v5ToKUBAPcik9BFw"
+        ],
+        "subLocationIds": [],
+        "tags": [
+          "Encore"
+        ],
+        "locations": [
+          "Chapel Lawn "
+        ]
+      },
+      {
+        "date": "2026-04-19",
+        "time": "08:00 - 12:00",
+        "description": "Focus and plot",
+        "tagIds": [
+          "8yUM-5uLSNSF.uxQPG8J.A"
+        ],
+        "locationIds": [
+          "gbEw-zw3TM22Z7kTKvD3AA"
+        ],
+        "subLocationIds": [],
+        "tags": [
+          "AVS"
+        ],
+        "locations": [
+          "Aulani Ballroom (Marriott) "
+        ]
+      },
+      {
+        "date": "2026-04-19",
+        "time": "14:00 - 18:00",
+        "description": "Client on stage rehearsals",
+        "tagIds": [
+          "8yUM-5uLSNSF.uxQPG8J.A",
+          "LF2y.OGvRQK9f2AnJ2RHVQ"
+        ],
+        "locationIds": [
+          "gbEw-zw3TM22Z7kTKvD3AA"
+        ],
+        "subLocationIds": [],
+        "tags": [
+          "AVS",
+          "Rehearsals"
+        ],
+        "locations": [
+          "Aulani Ballroom (Marriott) "
+        ]
+      },
+      {
+        "date": "2026-04-21",
+        "time": "08:00 - 18:00",
+        "description": "Load out",
+        "tagIds": [
+          "8yUM-5uLSNSF.uxQPG8J.A",
+          "A5Dkj1-dRXW2hL9PcgrMIQ"
+        ],
+        "locationIds": [
+          "gbEw-zw3TM22Z7kTKvD3AA"
+        ],
+        "subLocationIds": [],
+        "tags": [
+          "AVS",
+          "Show Imaging"
+        ],
+        "locations": [
+          "Aulani Ballroom (Marriott) "
+        ]
+      },
+      {
+        "date": "2026-04-16",
+        "time": "23:00 approx ",
+        "description": "John Fynn lands ",
+        "tagIds": [],
+        "locationIds": [],
+        "subLocationIds": [],
+        "tags": [],
+        "locations": [
+          " "
+        ]
+      },
+      {
+        "date": "2026-04-09",
         "description": "Test",
         "tagIds": [],
         "locationIds": [],
         "subLocationIds": [],
+        "resp": "Andrew Davies",
         "format": "new",
         "tags": [],
         "locations": [

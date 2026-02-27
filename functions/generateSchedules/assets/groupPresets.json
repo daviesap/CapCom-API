@@ -34,18 +34,19 @@
     },
         {
       "id": "test",
-      "label": "Group by tag. Columns for time, description, tags, location and notes",
+      "label": "Group by date. Columns for time, description, tags, location and notes",
       "dataset": "scheduleDetail",
-      "groupBy": "tagId",
-      "groupMetaData": "tag",
-      "groupSort": ["tagName:asc"],
-      "entrySort": ["dateKey:asc", "time:desc", "description:asc"],
+      "groupBy": "date",
+    
+      "groupMetaData": "dates",
+      "groupSort": ["date:asc"],
+       "entrySort": ["time:asc", "description:asc"],
       "columns": [
         { "label": "Date",        "showLabel": true, "field": "dateKey",     "width": 90 },
         { "label": "Time",        "showLabel": true, "field": "time",        "width": 75 },
         { "label": "Description", "showLabel": true, "field": "description", "width": 260 },
         { "label": "Location",    "showLabel": true, "field": "locations",   "width": 120 },
-        { "label": "Responsible", "showLabel": true, "field": "notes",   "width": 120 }
+        { "label": "Responsible", "showLabel": true, "field": "resp",   "width": 120 }
       ]
     },
     {
