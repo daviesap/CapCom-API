@@ -34,16 +34,36 @@ function adaptGroupsForRendererV2(groups) {
   return groups.map(g => {
     const entries = Array.isArray(g.entries) ? g.entries : [];
     const adaptedEntries = entries.map(e => {
-      if (e && typeof e === "object" && e.fields && typeof e.fields === "object") return e;
-      const fields = {
-        date: e?.date ?? e?.dateKey ?? "",
-        dateKey: e?.dateKey ?? e?.date ?? "",
-        time: e?.time ?? "",
-        description: e?.description ?? e?.fields?.description ?? "",
-        notes: e?.notes ?? e?.fields?.notes ?? "",
-        tags: Array.isArray(e?.tags) ? e.tags.join(", ") : (e?.tags ?? ""),
-        locations: Array.isArray(e?.locations) ? e.locations.join(", ") : (e?.locations ?? "")
-      };
+      const existingFields = (e && typeof e === "object" && e.fields && typeof e.fields === "object")
+        ? { ...e.fields }
+        : {};
+      const fields = { ...existingFields };
+
+      if (e && typeof e === "object") {
+        for (const [key, value] of Object.entries(e)) {
+          if (fields[key] !== undefined) continue;
+          if (Array.isArray(value)) {
+            fields[key] = value.map(v => (typeof v === "string" || typeof v === "number") ? String(v) : "")
+              .filter(Boolean)
+              .join(", ");
+          } else if (typeof value === "string" || typeof value === "number") {
+            fields[key] = value;
+          }
+        }
+      }
+
+      fields.date = e?.date ?? fields.date ?? e?.dateKey ?? "";
+      fields.dateKey = e?.dateKey ?? fields.dateKey ?? e?.date ?? "";
+      fields.time = e?.time ?? fields.time ?? "";
+      fields.description = e?.description ?? fields.description ?? "";
+      fields.notes = e?.notes ?? fields.notes ?? "";
+      fields.tags = Array.isArray(e?.tags)
+        ? e.tags.join(", ")
+        : (fields.tags ?? e?.tags ?? "");
+      fields.locations = Array.isArray(e?.locations)
+        ? e.locations.join(", ")
+        : (fields.locations ?? e?.locations ?? "");
+
       return { ...e, fields };
     });
     return {
