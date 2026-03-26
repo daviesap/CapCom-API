@@ -2,150 +2,51 @@
   "api_key": "Sausages2025!!",
   "event": {
     "profileId": "NTw0ENsxIC",
-    "name": "Salesforce Paris 2026",
-    "logoUrl": "https://images.pexels.com/photos/7435827/pexels-photo-7435827.jpeg",
+    "name": "Test",
     "header": [
-      "Salesforce Paris 2026",
-      "Porte de Versailles",
-      "Friday 15th to Sunday 23rd May 2026"
+      "Test"
     ]
   },
-  "debug": false,
+  "debug": true,
   "UserId": "AdwgDd77SUGOlcSgWH6JIw",
   "userEmail": "andrew@flair.london",
   "glideAppName": "IML - Salesforce 2026",
   "groupMeta": {
     "scheduleDetail": [
       {
-        "date": "2026-05-08",
+        "date": "2026-06-23",
         "data": {
-          "title": "Friday, 8 May 2026",
-          "above": "Day Summary",
-          "below": "EOD Target"
+          "title": "Tuesday, 23 June 2026"
         }
       },
       {
-        "date": "2026-05-09",
+        "date": "2026-06-24",
         "data": {
-          "title": "Saturday, 9 May 2026",
-          "above": "Day Summary",
-          "below": "EOD Target"
+          "title": "Wednesday, 24 June 2026"
         }
       },
       {
-        "date": "2026-05-10",
+        "date": "2026-06-25",
         "data": {
-          "title": "Sunday, 10 May 2026",
-          "above": "Day Summary",
-          "below": "EOD Target"
+          "title": "Thursday, 25 June 2026"
+        }
+      }
+    ],
+    "trucks": [
+      {
+        "truckId": "LsoTMQW1S8COG8PG2.nSUA",
+        "data": {
+          "title": "Test 1",
+          "above": "Size = 40 ', Driver = , Contents = ",
+          "below": "Below text"
         }
       },
       {
-        "date": "2026-05-11",
+        "truckId": "8nzPCCuRTSi.5E1g5h3flg",
         "data": {
-          "title": "Monday, 11 May 2026",
-          "above": "Day Summary",
-          "below": "EOD Target"
-        }
-      },
-      {
-        "date": "2026-05-12",
-        "data": {
-          "title": "Tuesday, 12 May 2026",
-          "above": "Day Summary",
-          "below": "EOD Target"
-        }
-      },
-      {
-        "date": "2026-05-13",
-        "data": {
-          "title": "Wednesday, 13 May 2026",
-          "above": "Day Summary",
-          "below": "EOD Target"
-        }
-      },
-      {
-        "date": "2026-05-14",
-        "data": {
-          "title": "Thursday, 14 May 2026"
-        }
-      },
-      {
-        "date": "2026-05-15",
-        "data": {
-          "title": "Friday, 15 May 2026"
-        }
-      },
-      {
-        "date": "2026-05-16",
-        "data": {
-          "title": "Saturday, 16 May 2026"
-        }
-      },
-      {
-        "date": "2026-05-17",
-        "data": {
-          "title": "Sunday, 17 May 2026"
-        }
-      },
-      {
-        "date": "2026-05-18",
-        "data": {
-          "title": "Monday, 18 May 2026"
-        }
-      },
-      {
-        "date": "2026-05-19",
-        "data": {
-          "title": "Tuesday, 19 May 2026"
-        }
-      },
-      {
-        "date": "2026-05-20",
-        "data": {
-          "title": "Wednesday, 20 May 2026"
-        }
-      },
-      {
-        "date": "2026-05-21",
-        "data": {
-          "title": "Thursday, 21 May 2026"
-        }
-      },
-      {
-        "date": "2026-05-22",
-        "data": {
-          "title": "Friday, 22 May 2026"
-        }
-      },
-      {
-        "date": "2026-05-23",
-        "data": {
-          "title": "Saturday, 23 May 2026"
-        }
-      },
-      {
-        "date": "2026-05-24",
-        "data": {
-          "title": "Sunday, 24 May 2026"
-        }
-      },
-      {
-        "date": "2026-05-25",
-        "data": {
-          "title": "Monday, 25 May 2026"
-        }
-      },
-      {
-        "date": "2026-05-26",
-        "data": {
-          "title": "Tuesday, 26 May 2026"
-        }
-      },
-      {
-        "date": "2026-05-27",
-        "data": {
-          "title": "Wednesday, 27 May 2026"
+          "title": "Truck 2",
+          "above": "Size = , Driver = , Contents = ",
+          "below": "Below text"
         }
       }
     ]
@@ -160,187 +61,134 @@
       "filterLocationIds": [],
       "group": "Full schedule",
       "sortOrder": 1
+    },
+    {
+      "name": "Trucking",
+      "filterBox": false,
+      "showKeyInfo": false,
+      "groupPresetId": "iml-trucking",
+      "filterTagIds": [],
+      "filterLocationIds": [],
+      "group": "Full schedule",
+      "sortOrder": 1
     }
   ],
   "data": {
     "scheduleDetail": [
       {
-        "date": "2026-05-08",
-        "type": [
-          "Trucking"
+        "date": "2026-06-23",
+        "dateFriendly": "Tuesday, 23 June 2026",
+        "time": "15:30",
+        "description": "w",
+        "tags": [
+          "Rehearsals"
         ],
         "tagIds": [
-          "trucks"
+          "ClWrvEWYQRirXxVHHJRAaA"
         ],
         "locationIds": [
-          "qjFPItqBSjuwfxh4vjGyGg"
+          "XR94lIUKQ2iw5KK1LR.vjg"
         ],
         "supplier": [
-          "CT"
-        ]
+          "Supplier A"
+        ],
+        "sortField": "20260623/15:30/w"
       },
       {
-        "date": "2026-05-08",
-        "time": "08:00",
-        "description": "Load trucks",
-        "type": [],
-        "tagIds": [],
-        "locationIds": [],
-        "supplier": []
-      },
-      {
-        "date": "2026-05-10",
-        "type": [
-          "Trucking"
+        "date": "2026-06-23",
+        "dateFriendly": "Tuesday, 23 June 2026",
+        "time": "2",
+        "description": "w",
+        "tags": [
+          "Event Live"
         ],
         "tagIds": [
-          "trucks"
+          "aYN-H5f1TTC3IZji1DCg0g"
         ],
         "locationIds": [
-          "sfdGqr5.RO6rfvzYtEo6oA"
+          "KznQ5.pKTkuzJBjs0V146A"
         ],
         "supplier": [
-          "EST"
-        ]
-      },
-      {
-        "date": "2026-05-11",
-        "type": [
-          "Plant"
+          "Supplier B"
         ],
-        "tagIds": [
-          "plant"
-        ],
-        "locationIds": [],
-        "supplier": []
+        "sortField": "20260623/2/w"
       },
       {
-        "date": "2026-05-12",
-        "type": [],
+        "date": "2026-06-23",
+        "dateFriendly": "Tuesday, 23 June 2026",
+        "time": "16:00",
+        "description": "ww",
+        "tags": [],
         "tagIds": [],
         "locationIds": [],
-        "supplier": []
+        "supplier": [],
+        "truckId": "LsoTMQW1S8COG8PG2.nSUA",
+        "sortField": "20260623/16:00/ww"
       },
       {
-        "date": "2026-05-13",
-        "type": [],
+        "date": "2026-06-23",
+        "dateFriendly": "Tuesday, 23 June 2026",
+        "time": "15:00",
+        "description": "ww",
+        "tags": [],
         "tagIds": [],
         "locationIds": [],
-        "supplier": []
+        "supplier": [],
+        "truckId": "LsoTMQW1S8COG8PG2.nSUA",
+        "sortField": "20260623/15:00/ww"
       },
       {
-        "date": "2026-05-13",
-        "type": [],
-        "tagIds": [],
-        "locationIds": [
-          "sfdGqr5.RO6rfvzYtEo6oA"
-        ],
-        "supplier": [
-          "EST"
-        ]
-      },
-      {
-        "date": "2026-05-13",
-        "type": [],
+        "date": "2026-06-24",
+        "dateFriendly": "Wednesday, 24 June 2026",
+        "time": "1",
+        "tags": [],
         "tagIds": [],
         "locationIds": [],
-        "supplier": []
+        "supplier": [],
+        "truckId": "LsoTMQW1S8COG8PG2.nSUA",
+        "sortField": "20260624/1/"
       },
       {
-        "date": "2026-05-13",
-        "type": [],
+        "date": "2026-06-25",
+        "dateFriendly": "Thursday, 25 June 2026",
+        "tags": [],
         "tagIds": [],
         "locationIds": [],
-        "supplier": []
+        "supplier": [],
+        "sortField": "20260625//"
       },
       {
-        "date": "2026-05-09",
-        "type": [],
+        "date": "2026-06-24",
+        "dateFriendly": "Wednesday, 24 June 2026",
+        "time": "2",
+        "tags": [],
         "tagIds": [],
         "locationIds": [],
-        "supplier": []
+        "supplier": [],
+        "truckId": "8nzPCCuRTSi.5E1g5h3flg",
+        "sortField": "20260624/2/"
       },
       {
-        "date": "2026-05-09",
-        "type": [],
-        "tagIds": [],
-        "locationIds": [
-          "Zq-t26IqStWTTPn6tILpnw"
-        ],
-        "supplier": [
-          "Unusual Rigging"
-        ]
-      },
-      {
-        "date": "2026-05-09",
-        "type": [],
+        "date": "2026-06-24",
+        "dateFriendly": "Wednesday, 24 June 2026",
+        "time": "4",
+        "tags": [],
         "tagIds": [],
         "locationIds": [],
-        "supplier": []
+        "supplier": [],
+        "truckId": "8nzPCCuRTSi.5E1g5h3flg",
+        "sortField": "20260624/4/"
       },
       {
-        "date": "2026-05-08",
-        "time": "08:00",
-        "description": "Load trucks",
-        "type": [],
+        "date": "2026-06-25",
+        "dateFriendly": "Thursday, 25 June 2026",
+        "time": "1",
+        "tags": [],
         "tagIds": [],
         "locationIds": [],
-        "supplier": []
-      },
-      {
-        "date": "2026-05-27",
-        "description": "Last entry",
-        "type": [],
-        "tagIds": [],
-        "locationIds": [],
-        "supplier": []
-      },
-      {
-        "date": "2026-05-08",
-        "type": [],
-        "tagIds": [],
-        "locationIds": [],
-        "supplier": []
-      },
-      {
-        "date": "2026-05-08",
-        "type": [],
-        "tagIds": [],
-        "locationIds": [],
-        "supplier": []
-      },
-      {
-        "date": "2026-05-08",
-        "type": [
-          "Plant"
-        ],
-        "tagIds": [
-          "plant"
-        ],
-        "locationIds": [],
-        "supplier": []
-      },
-      {
-        "date": "2026-05-08",
-        "type": [
-          "Plant"
-        ],
-        "tagIds": [
-          "plant"
-        ],
-        "locationIds": [],
-        "supplier": []
-      },
-      {
-        "date": "2026-05-08",
-        "type": [],
-        "tagIds": [],
-        "locationIds": [
-          "qjFPItqBSjuwfxh4vjGyGg"
-        ],
-        "supplier": [
-          "CT"
-        ]
+        "supplier": [],
+        "truckId": "8nzPCCuRTSi.5E1g5h3flg",
+        "sortField": "20260625/1/"
       }
     ]
   }

@@ -67,7 +67,12 @@ export async function prepareJSONGroups(
     if (metaBucket) {
       for (const g of groups) {
         const m = metaBucket[g.rawKey];
-        if (m) g.meta = m; // { title, above, below }
+        if (m) {
+          g.meta = m; // { title, above, below }
+          if (typeof m.title === "string" && m.title.trim().length) {
+            g.title = m.title;
+          }
+        }
       }
     }
 
