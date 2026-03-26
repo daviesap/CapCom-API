@@ -62,7 +62,6 @@ import { getStorage } from 'firebase-admin/storage';
       userId: 'test-user',
       profileId: '',
       glideAppName: 'TestApp',
-      logToGlide: async (p) => { console.log('logToGlide called:', p); return null; },
       safeAppName: 'TestApp',
       safeEventName: 'TestEvent'
     });

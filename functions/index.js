@@ -4,10 +4,10 @@
  * Main Cloud Function router for the Flair PDF Generator project.
  * Responsibilities:
  *  - Expose a single HTTP entrypoint (`v2`) which routes actions (version, updateDates, mealsPivot, generateHome).
- *  - Perform common validation (API key gating), environment wiring (secrets), and shared helpers (makePublicUrl, logToGlide).
+ *  - Perform common validation (API key gating), environment wiring (secrets), and shared helpers (makePublicUrl).
  * Requirements / runtime expectations:
  *  - Firebase Admin must be initialised (the module calls initializeApp at import-time).
- *  - Secrets: API_KEY, GLIDE_API_KEY, GLIDE_LOGS_TOKEN are expected to be bound to the function in production.
+ *  - Secrets: API_KEY, GLIDE_API_KEY are expected to be bound to the function in production.
  *  - The handler delegates heavy work to files under `functions/generateSchedules` which in turn may call Storage/Firestore.
  *  - When running locally the emulator flags (FUNCTIONS_EMULATOR / FIREBASE_EMULATOR_HUB) should be set and LOCAL_API_KEY or LOCAL_GLIDE_API_KEY may be used.
  */
@@ -37,7 +37,6 @@ import { generateHomeHandler } from "./generateSchedules/generateHomeHandler.mjs
 // Declare the secret names as they exist in Secret Manager
 const API_KEY = defineSecret("api_key");
 const GLIDE_API_KEY = defineSecret("glideApiKey");
-const GLIDE_LOGS_TOKEN = defineSecret("GLIDE_LOGS_TOKEN");
 
 
 // ===== Helpers — data shaping =====
@@ -121,121 +120,6 @@ function deriveRunId(body, timestamp) {
 }
 
 /**
- * Write a creation log row to a Glide Big Table.
- *
- * Secrets:
- *   - GLIDE_LOGS_TOKEN  (from Secret Manager)
- * Env vars (less sensitive, can be in .env or functions config):
- *   - GLIDE_LOGS_APP    (Glide App ID)
- *   - GLIDE_LOGS_TABLE  (Glide table ID)
- *
- * @param {Object} p
- * @param {string} p.timestamp   ISO timestamp
- * @param {string} p.glideAppName
- * @param {string} p.filename
- * @param {string} [p.htmlUrl]   MOM/Home page URL
- * @param {string} [p.pdfUrl]    Snapshot PDF URL
- * @param {string} [p.userId]
- * @param {string} [p.userEmail]
- * @param {string} [p.profileId]
- * @param {boolean} p.success
- * @param {string} [p.message]
- * @param {string} [p.type]      e.g. "MOM" | "Snapshot"
- * @param {string} [p.runId]     identifier shared by related log entries
- * @returns {Promise<string|null>} The created Glide row ID or null
- */
-export async function logToGlide({
-  timestamp,
-  glideAppName,
-  filename,
-  htmlUrl,
-  pdfUrl,
-  userId,
-  userEmail,
-  profileId,
-  success,
-  message,
-  type,
-  executionTimeSeconds,
-  runId }) {
-  try {
-    // Resolve token: Secret in prod, env fallback in emulator
-    const token = runningEmulated
-      ? (process.env.GLIDE_LOGS_TOKEN || process.env.GLIDE_API_KEY || process.env.LOCAL_GLIDE_API_KEY || "")
-      : GLIDE_LOGS_TOKEN.value();
-    let app = process.env.GLIDE_LOGS_APP;
-    let table = process.env.GLIDE_LOGS_TABLE;
-
-    // Debug current Glide logging configuration
-    console.log("Glide log config:", {
-      hasToken: !!token,
-      app,
-      table,
-      runningEmulated
-    });
-
-    if (!token || !app || !table) {
-      if (runningEmulated) {
-        console.warn("ℹ️ Glide logging skipped: missing token/app/table");
-      }
-      return null;
-    }
-
-    const { table: glideTable } = await import("@glideapps/tables");
-    const glideColumns = {
-      timestamp: { type: "date-time", name: process.env.GLIDE_COL_TIMESTAMP || "Name" },
-      runId: { type: "string", name: process.env.GLIDE_COL_RUNID || "BaZYc" },
-      type: { type: "string", name: process.env.GLIDE_COL_TYPE || "2DORE" },
-      htmlUrl: { type: "uri", name: process.env.GLIDE_COL_HTML_URL || "Tuty3" },
-      pdfUrl: { type: "uri", name: process.env.GLIDE_COL_PDF_URL || "dfncB" },
-      userId: { type: "string", name: process.env.GLIDE_COL_USER_ID || "0KZ2q" },
-      filename: { type: "string", name: process.env.GLIDE_COL_FILENAME || "44Wdw" },
-      userEmail: { type: "string", name: process.env.GLIDE_COL_USER_EMAIL || "uNiQn" },
-      glideAppName: { type: "string", name: process.env.GLIDE_COL_APP_NAME || "u0Fsq" },
-      success: { type: "boolean", name: process.env.GLIDE_COL_SUCCESS || "8t3Kn" },
-      message: { type: "string", name: process.env.GLIDE_COL_MESSAGE || "7FlAG" },
-      profileId: { type: "string", name: process.env.GLIDE_COL_PROFILE_ID || "wboxm" },
-      executionTimeSeconds: { type: "number", name: process.env.GLIDE_COL_EXEC_TIME || "fWoD7" }
-    };
-    const apiLogCreationTable = glideTable({
-      token,
-      app,
-      table,
-      columns: glideColumns
-    });
-
-    // Log payload for troubleshooting (remove later if too noisy)
-    const _payload = {
-      timestamp,
-      htmlUrl: htmlUrl || "",
-      pdfUrl: pdfUrl || "",
-      userId: userId || "",
-      userEmail: userEmail || "",
-      glideAppName: glideAppName || "",
-      success: !!success,
-      message: message || "",
-      profileId: profileId || "",
-      type: type || "",
-      filename: filename || "",
-      executionTimeSeconds: executionTimeSeconds,
-      runId: runId || ""
-    };
-    console.log("➡️  Glide addRow payload:", _payload);
-    const createdId = await apiLogCreationTable.addRow(_payload);
-
-    if (runningEmulated) console.log("✅ Glide log row created:", createdId);
-    return createdId;
-  } catch (e) {
-    console.warn("⚠️ Glide logging failed:", e?.message || e);
-    return null;
-  }
-}
-//****END LOGGING TO GLIDE FUNCTION */
-
-
-
-
-/**
  * Write a JSON payload to the local emulator output for debugging.
  * Creates a per-app folder and a timestamped file.
  * No-ops safely when writing fails.
@@ -266,7 +150,7 @@ export const v2 = onRequest({
   memory: "1GiB",     // PDF/Excel need headroom
   cpu: 2,             // faster processing
   concurrency: 10,     // handle multiple requests per instance
-  secrets: [API_KEY, GLIDE_API_KEY, GLIDE_LOGS_TOKEN],
+  secrets: [API_KEY, GLIDE_API_KEY],
 }, async (req, res) => {
   const startTime = Date.now();
   const timestamp = new Date().toISOString();
@@ -430,14 +314,13 @@ export const v2 = onRequest({
         timestamp,
         userEmail,
         userId,
-      profileId,
-      glideAppName,
-      logToGlide,
-      safeAppName,
-      safeEventName,
-      runId,
-    });
-  }
+        profileId,
+        glideAppName,
+        safeAppName,
+        safeEventName,
+        runId,
+      });
+    }
 
 
     // Shouldn't reach here
@@ -445,18 +328,6 @@ export const v2 = onRequest({
   } catch (err) {
     const executionTimeSeconds = (Date.now() - startTime) / 1000;
     console.error("❌ Cloud Function error:", err);
-    await logToGlide({
-      timestamp,
-      glideAppName: (req.body?.glideAppName || "Missing Glide App Name"),
-      filename: "not generated",
-      htmlUrl: "",
-      pdfUrl: "",
-      userEmail,
-      profileId,
-      success: false,
-      message: err.message,
-      runId,
-    });
     return res.status(500).json({ success: false, message: `Operation failed: ${err.message}`, executionTimeSeconds });
   }
 });

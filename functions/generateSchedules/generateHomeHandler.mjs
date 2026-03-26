@@ -103,7 +103,6 @@ export async function generateHomeHandler({
   userId,
   profileId,
   glideAppName,
-  logToGlide,
   safeAppName,
   safeEventName,
   makePublicUrl,
@@ -239,7 +238,6 @@ export async function generateHomeHandler({
         userId,
         profileId: effectiveProfileId,
         makePublicUrl,
-        logToGlide,
         extraSubdir: "",
         runId,
       });
@@ -277,7 +275,6 @@ export async function generateHomeHandler({
       profileId,
       glideAppName,
       req,
-      logToGlide,
       bucket,
       safeAppName,
       safeEventName,

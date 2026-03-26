@@ -80,7 +80,6 @@ export async function generateHome({
   profileId,
   glideAppName,
   req,
-  logToGlide,
   runId
 }) {
   const safeAppName = sanitiseUrl(req?.body?.appName || jsonInput?.glideAppName || "App");
@@ -513,21 +512,6 @@ export async function generateHome({
       htmlUrl,
       pdfUrl
     };
-  });
-
-  await logToGlide({
-    timestamp,
-    glideAppName,
-    filename: safeHomeName,
-    htmlUrl: homeUrl,
-    userId,
-    userEmail,
-    profileId,
-    success: true,
-    type: "MOM",
-    message: "MOM page generated",
-    executionTimeSeconds,
-    runId
   });
 
   return {

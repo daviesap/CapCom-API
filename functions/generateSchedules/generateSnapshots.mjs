@@ -59,7 +59,6 @@ export async function generateSnapshotOutputsv2({
   userEmail,
   profileId,
   makePublicUrl,
-  logToGlide,
   // 👇 easy toggle: set to "" when promoting to prod paths
   extraSubdir = "",  //was "v2"
   runId,
@@ -116,24 +115,8 @@ export async function generateSnapshotOutputsv2({
   }
   const htmlUrl = makePublicUrl(joinCloudPath(htmlName), bucket);
 
-  // 5) Log + return
+  // 5) Return
   const executionTimeSeconds = (Date.now() - startTime) / 1000;
-  const glideAppName = prepared.glideAppName || "Glide App Name Missing";
-
-  await logToGlide({
-    timestamp,
-    glideAppName,
-    filename: filename,
-    htmlUrl: htmlUrl,
-    pdfUrl: pdfUrl,
-    userEmail,
-    profileId,
-    success: true,
-    type: "snapshot",
-    message: "snapshot generated",
-    executionTimeSeconds: executionTimeSeconds,
-    runId
-  });
 
   return { pdfUrl, htmlUrl, pdfName, htmlName, executionTimeSeconds };
 }
