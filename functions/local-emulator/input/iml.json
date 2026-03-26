@@ -1,0 +1,347 @@
+{
+  "api_key": "Sausages2025!!",
+  "event": {
+    "profileId": "NTw0ENsxIC",
+    "name": "Salesforce Paris 2026",
+    "logoUrl": "https://images.pexels.com/photos/7435827/pexels-photo-7435827.jpeg",
+    "header": [
+      "Salesforce Paris 2026",
+      "Porte de Versailles",
+      "Friday 15th to Sunday 23rd May 2026"
+    ]
+  },
+  "debug": false,
+  "UserId": "AdwgDd77SUGOlcSgWH6JIw",
+  "userEmail": "andrew@flair.london",
+  "glideAppName": "IML - Salesforce 2026",
+  "groupMeta": {
+    "scheduleDetail": [
+      {
+        "date": "2026-05-08",
+        "data": {
+          "title": "Friday, 8 May 2026",
+          "above": "Day Summary",
+          "below": "EOD Target"
+        }
+      },
+      {
+        "date": "2026-05-09",
+        "data": {
+          "title": "Saturday, 9 May 2026",
+          "above": "Day Summary",
+          "below": "EOD Target"
+        }
+      },
+      {
+        "date": "2026-05-10",
+        "data": {
+          "title": "Sunday, 10 May 2026",
+          "above": "Day Summary",
+          "below": "EOD Target"
+        }
+      },
+      {
+        "date": "2026-05-11",
+        "data": {
+          "title": "Monday, 11 May 2026",
+          "above": "Day Summary",
+          "below": "EOD Target"
+        }
+      },
+      {
+        "date": "2026-05-12",
+        "data": {
+          "title": "Tuesday, 12 May 2026",
+          "above": "Day Summary",
+          "below": "EOD Target"
+        }
+      },
+      {
+        "date": "2026-05-13",
+        "data": {
+          "title": "Wednesday, 13 May 2026",
+          "above": "Day Summary",
+          "below": "EOD Target"
+        }
+      },
+      {
+        "date": "2026-05-14",
+        "data": {
+          "title": "Thursday, 14 May 2026"
+        }
+      },
+      {
+        "date": "2026-05-15",
+        "data": {
+          "title": "Friday, 15 May 2026"
+        }
+      },
+      {
+        "date": "2026-05-16",
+        "data": {
+          "title": "Saturday, 16 May 2026"
+        }
+      },
+      {
+        "date": "2026-05-17",
+        "data": {
+          "title": "Sunday, 17 May 2026"
+        }
+      },
+      {
+        "date": "2026-05-18",
+        "data": {
+          "title": "Monday, 18 May 2026"
+        }
+      },
+      {
+        "date": "2026-05-19",
+        "data": {
+          "title": "Tuesday, 19 May 2026"
+        }
+      },
+      {
+        "date": "2026-05-20",
+        "data": {
+          "title": "Wednesday, 20 May 2026"
+        }
+      },
+      {
+        "date": "2026-05-21",
+        "data": {
+          "title": "Thursday, 21 May 2026"
+        }
+      },
+      {
+        "date": "2026-05-22",
+        "data": {
+          "title": "Friday, 22 May 2026"
+        }
+      },
+      {
+        "date": "2026-05-23",
+        "data": {
+          "title": "Saturday, 23 May 2026"
+        }
+      },
+      {
+        "date": "2026-05-24",
+        "data": {
+          "title": "Sunday, 24 May 2026"
+        }
+      },
+      {
+        "date": "2026-05-25",
+        "data": {
+          "title": "Monday, 25 May 2026"
+        }
+      },
+      {
+        "date": "2026-05-26",
+        "data": {
+          "title": "Tuesday, 26 May 2026"
+        }
+      },
+      {
+        "date": "2026-05-27",
+        "data": {
+          "title": "Wednesday, 27 May 2026"
+        }
+      }
+    ]
+  },
+  "snapshots": [
+    {
+      "name": "Full schedule",
+      "filterBox": true,
+      "showKeyInfo": false,
+      "groupPresetId": "iml-1",
+      "filterTagIds": [],
+      "filterLocationIds": [],
+      "group": "Full schedule",
+      "sortOrder": 1
+    }
+  ],
+  "data": {
+    "scheduleDetail": [
+      {
+        "date": "2026-05-08",
+        "type": [
+          "Trucking"
+        ],
+        "tagIds": [
+          "trucks"
+        ],
+        "locationIds": [
+          "qjFPItqBSjuwfxh4vjGyGg"
+        ],
+        "supplier": [
+          "CT"
+        ]
+      },
+      {
+        "date": "2026-05-08",
+        "time": "08:00",
+        "description": "Load trucks",
+        "type": [],
+        "tagIds": [],
+        "locationIds": [],
+        "supplier": []
+      },
+      {
+        "date": "2026-05-10",
+        "type": [
+          "Trucking"
+        ],
+        "tagIds": [
+          "trucks"
+        ],
+        "locationIds": [
+          "sfdGqr5.RO6rfvzYtEo6oA"
+        ],
+        "supplier": [
+          "EST"
+        ]
+      },
+      {
+        "date": "2026-05-11",
+        "type": [
+          "Plant"
+        ],
+        "tagIds": [
+          "plant"
+        ],
+        "locationIds": [],
+        "supplier": []
+      },
+      {
+        "date": "2026-05-12",
+        "type": [],
+        "tagIds": [],
+        "locationIds": [],
+        "supplier": []
+      },
+      {
+        "date": "2026-05-13",
+        "type": [],
+        "tagIds": [],
+        "locationIds": [],
+        "supplier": []
+      },
+      {
+        "date": "2026-05-13",
+        "type": [],
+        "tagIds": [],
+        "locationIds": [
+          "sfdGqr5.RO6rfvzYtEo6oA"
+        ],
+        "supplier": [
+          "EST"
+        ]
+      },
+      {
+        "date": "2026-05-13",
+        "type": [],
+        "tagIds": [],
+        "locationIds": [],
+        "supplier": []
+      },
+      {
+        "date": "2026-05-13",
+        "type": [],
+        "tagIds": [],
+        "locationIds": [],
+        "supplier": []
+      },
+      {
+        "date": "2026-05-09",
+        "type": [],
+        "tagIds": [],
+        "locationIds": [],
+        "supplier": []
+      },
+      {
+        "date": "2026-05-09",
+        "type": [],
+        "tagIds": [],
+        "locationIds": [
+          "Zq-t26IqStWTTPn6tILpnw"
+        ],
+        "supplier": [
+          "Unusual Rigging"
+        ]
+      },
+      {
+        "date": "2026-05-09",
+        "type": [],
+        "tagIds": [],
+        "locationIds": [],
+        "supplier": []
+      },
+      {
+        "date": "2026-05-08",
+        "time": "08:00",
+        "description": "Load trucks",
+        "type": [],
+        "tagIds": [],
+        "locationIds": [],
+        "supplier": []
+      },
+      {
+        "date": "2026-05-27",
+        "description": "Last entry",
+        "type": [],
+        "tagIds": [],
+        "locationIds": [],
+        "supplier": []
+      },
+      {
+        "date": "2026-05-08",
+        "type": [],
+        "tagIds": [],
+        "locationIds": [],
+        "supplier": []
+      },
+      {
+        "date": "2026-05-08",
+        "type": [],
+        "tagIds": [],
+        "locationIds": [],
+        "supplier": []
+      },
+      {
+        "date": "2026-05-08",
+        "type": [
+          "Plant"
+        ],
+        "tagIds": [
+          "plant"
+        ],
+        "locationIds": [],
+        "supplier": []
+      },
+      {
+        "date": "2026-05-08",
+        "type": [
+          "Plant"
+        ],
+        "tagIds": [
+          "plant"
+        ],
+        "locationIds": [],
+        "supplier": []
+      },
+      {
+        "date": "2026-05-08",
+        "type": [],
+        "tagIds": [],
+        "locationIds": [
+          "qjFPItqBSjuwfxh4vjGyGg"
+        ],
+        "supplier": [
+          "CT"
+        ]
+      }
+    ]
+  }
+}

@@ -386,13 +386,11 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
   const htmlWidths = pdfWidths.map(w => (w / totalPdfWidth) * 100);
 
   const filterableColumnsMap = new Map();
-  const FILTERABLE_FIELDS = new Set(["tags", "locations", "responsible"]);
   cols.forEach((col, index) => {
     if (!col || typeof col.field !== "string") return;
+    if (col.filterable !== true) return;
     const fieldName = col.field.trim();
     if (!fieldName) return;
-    const lower = fieldName.toLowerCase();
-    if (!FILTERABLE_FIELDS.has(lower)) return;
     if (filterableColumnsMap.has(fieldName)) return;
     const attrSlug = fieldName
       .toLowerCase()
@@ -405,33 +403,8 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
       values: new Set(),
     });
   });
-  const hasFilterForField = (field) => {
-    const target = field.toLowerCase();
-    for (const col of filterableColumnsMap.values()) {
-      if ((col.field || "").toLowerCase() === target) return true;
-    }
-    return false;
-  };
-
-  if (!hasFilterForField("tags")) {
-    filterableColumnsMap.set("__auto-tags__", {
-      field: "tags",
-      label: "Tags",
-      attrName: "filter-tags",
-      values: new Set(),
-    });
-  }
 
   const filterableColumns = Array.from(filterableColumnsMap.values());
-
-  const findFilterByField = (field) =>
-    filterableColumns.find(col => col.field?.toLowerCase() === field);
-  const tagsFilterCol = findFilterByField("tags");
-  const locationsFilterCol = findFilterByField("locations");
-
-  if (locationsFilterCol) {
-    locationsFilterCol.label = "Locations";
-  }
 
   const groupsArr = Array.isArray(jsonInput.groups) ? jsonInput.groups : [];
   let totalRowCount = 0;

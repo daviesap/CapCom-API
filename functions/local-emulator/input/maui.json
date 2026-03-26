@@ -3,7 +3,7 @@
   "event": {
     "profileId": "0ha9w3GkYW",
     "name": "GWC 2025 - Maui",
-    "logoUrl": "https://storage.googleapis.com/glide-prod.appspot.com/uploads-v2/p9amI8oZ4G31RWl1rwqF/pub/5OZZI4jrgATmFspvSJY3.png",
+    "logoUrl": "https://storage.googleapis.com/glide-prod.appspot.com/uploads-v2/p9amI8oZ4G31RWl1rwqF/pub/jMJxMFM21OElHTTytOf2.png",
     "header": [
       "GWC 2025 - Maui",
       "Grand Wailea, Maui",
@@ -21,6 +21,10 @@
       {
         "title": "AVS Marriott Crew",
         "text": "Joe Ferreira - Project Manager\n\nMichael Jackson - A1\n\nMatt Hohman - A2\n\nLou Diliberto - Video TD / Switcher\n\nSteve Barber - Video Engineer \n\nBuhwan Kim - E2 Switcher Op\n\nMauricio Gomes - Millumin Op \n\nNori Hubbs - Teleprompter Op\n\nDerek Sander - Camera Op\n\nMike Waltze - Camera Op\n\nAdam Van Alderwerelt - Lead LED Tech\n\nTBD - Lighting Director\n\nAvianna Meck - Master Electrician \n\nTom Fortier - A1 - After Party \n\nCharles Trundy - Monitor Engineer - After Party"
+      },
+      {
+        "title": "Crew catering location",
+        "text": "\"The Cave\" at Grand Wailea. Crew will need a pass and be checked off a list."
       }
     ],
     "keyPeople": [
@@ -95,8 +99,8 @@
     ]
   },
   "debug": false,
-  "UserId": "WQj4MNAZRF27KDH8OYJ4DQ",
-  "userEmail": "whitney@nteractive.com",
+  "UserId": "JwAOVyJUSwGKh1mD8Z1ovg",
+  "userEmail": "andrew@flair.london",
   "glideAppName": "GWC",
   "groupMeta": {
     "scheduleDetail": [
@@ -164,7 +168,7 @@
         "data": {
           "title": "Sunday, 12 April 2026",
           "above": "Circle Lounge Build 1/2, Ballroom Rigging & Crew Welcome",
-          "below": "Truss at trim"
+          "below": "Truss rigged and at trim"
         }
       },
       {
@@ -389,7 +393,7 @@
       {
         "date": "2026-04-11",
         "time": "09:00 (tbc)",
-        "description": "AVS Deliver AV kit and store in Ballroom 4/5",
+        "description": "AVS Deliver AV kit and store in Ballroom 4/5 (Mainly LED - 40')",
         "tagIds": [
           "8yUM-5uLSNSF.uxQPG8J.A",
           "2z06ontDR3eB3dl.0ptyxA"
@@ -430,14 +434,16 @@
         "tagIds": [
           "CCiJ77SBRzumgEkveIHwrg"
         ],
-        "locationIds": [],
+        "locationIds": [
+          "Pl2OYWulR1WXB.zTCfkfWA"
+        ],
         "subLocationIds": [],
         "format": "important",
         "tags": [
           "Live"
         ],
         "locations": [
-          " "
+          "Hibiscus (Circle Lounge) "
         ]
       },
       {
@@ -815,6 +821,36 @@
         ]
       },
       {
+        "date": "2026-04-21",
+        "time": "14:00 ",
+        "description": "Gardens to be clear",
+        "tagIds": [
+          "TLMhG9O8R4ywTHUKwOrFFQ"
+        ],
+        "locationIds": [
+          "iezE4e-FSL6GIwqrXnRc-g"
+        ],
+        "subLocationIds": [],
+        "tags": [
+          "Venue"
+        ],
+        "locations": [
+          " "
+        ]
+      },
+      {
+        "date": "2026-04-22",
+        "time": "All day ",
+        "description": "Crew departures",
+        "tagIds": [],
+        "locationIds": [],
+        "subLocationIds": [],
+        "tags": [],
+        "locations": [
+          " "
+        ]
+      },
+      {
         "date": "2026-04-23",
         "time": " (time tbc)",
         "description": "UK Crew land home",
@@ -888,6 +924,26 @@
       },
       {
         "date": "2026-04-15",
+        "time": "08:00 ",
+        "description": "Install Welcome Reception AV",
+        "tagIds": [
+          "8yUM-5uLSNSF.uxQPG8J.A",
+          "rUiP8.CxQtmfbFrE1K2pFQ"
+        ],
+        "locationIds": [
+          "iezE4e-FSL6GIwqrXnRc-g"
+        ],
+        "subLocationIds": [],
+        "tags": [
+          "AVS",
+          "On Stage Hawaii"
+        ],
+        "locations": [
+          " "
+        ]
+      },
+      {
+        "date": "2026-04-18",
         "time": "08:00 ",
         "description": "Install Welcome Reception AV",
         "tagIds": [
@@ -1310,6 +1366,25 @@
         ]
       },
       {
+        "date": "2026-04-13",
+        "time": "11:00  ",
+        "description": "Furniture loads into Circle Lounge",
+        "tagIds": [
+          "JtSZDy.XQS6A-3jFc6Uzkw"
+        ],
+        "locationIds": [
+          "Pl2OYWulR1WXB.zTCfkfWA"
+        ],
+        "subLocationIds": [],
+        "format": "new",
+        "tags": [
+          "Artisan Events"
+        ],
+        "locations": [
+          "Hibiscus (Circle Lounge) "
+        ]
+      },
+      {
         "date": "2026-04-16",
         "time": "10:30 to 16:30 ",
         "description": "Tour departures & arrivals",
@@ -1426,6 +1501,25 @@
         "date": "2026-04-17",
         "time": "18:00 to 23:00 ",
         "description": "W1 Gala Dinner",
+        "tagIds": [
+          "CCiJ77SBRzumgEkveIHwrg"
+        ],
+        "locationIds": [
+          "tM4.684nSRaR-JkLheFsjQ"
+        ],
+        "subLocationIds": [],
+        "format": "important",
+        "tags": [
+          "Live"
+        ],
+        "locations": [
+          "Haleakala Ballroom  "
+        ]
+      },
+      {
+        "date": "2026-04-20",
+        "time": "18:00 ",
+        "description": "W2 Gala Dinner",
         "tagIds": [
           "CCiJ77SBRzumgEkveIHwrg"
         ],
@@ -1644,7 +1738,7 @@
       },
       {
         "date": "2026-04-11",
-        "time": "08:00 ",
+        "time": "07:00 ",
         "description": "Encore pre rig",
         "tagIds": [
           "GSGWzo1YQ8-T-cVMUpkHVA"
@@ -2044,7 +2138,7 @@
       {
         "date": "2026-04-14",
         "time": "12:00 ",
-        "description": "Commence AV install Welcome - tbc",
+        "description": "Commence AV install Welcome",
         "tagIds": [
           "8yUM-5uLSNSF.uxQPG8J.A",
           "rUiP8.CxQtmfbFrE1K2pFQ"
@@ -2395,7 +2489,7 @@
       },
       {
         "date": "2026-04-18",
-        "time": "11:00 ",
+        "time": "13:00 ",
         "description": "Deliver Video, sound and lighting",
         "tagIds": [
           "8yUM-5uLSNSF.uxQPG8J.A"
@@ -2413,7 +2507,7 @@
       },
       {
         "date": "2026-04-18",
-        "time": "10:00 ",
+        "time": "12:00 ",
         "description": "Truss at working height",
         "tagIds": [
           "GSGWzo1YQ8-T-cVMUpkHVA"
@@ -2775,7 +2869,7 @@
       },
       {
         "date": "2026-04-18",
-        "time": "06:00 ",
+        "time": "08:00 ",
         "description": "Encore install truss",
         "tagIds": [
           "GSGWzo1YQ8-T-cVMUpkHVA"
@@ -2826,12 +2920,17 @@
         "date": "2026-04-13",
         "time": "16:00 ",
         "description": "Bella Bloom to arrive to deliver Circle Lounge florals, Plants for Premium gift, plants for Pre function ",
-        "tagIds": [],
+        "tagIds": [
+          "vrqvlI94QM-grRjGGaI3BA"
+        ],
         "locationIds": [
           "Pl2OYWulR1WXB.zTCfkfWA"
         ],
         "subLocationIds": [],
-        "tags": [],
+        "format": "new",
+        "tags": [
+          "Bella Bloom"
+        ],
         "locations": [
           "Hibiscus (Circle Lounge) "
         ]
@@ -3033,16 +3132,21 @@
       {
         "date": "2026-04-17",
         "time": "01:00 ",
-        "description": "Envision to strike Theme Party",
+        "description": "Envision, Hang Ten, Refinery to strike Theme Party",
         "tagIds": [
-          "ST0OAOJ-RzmTqhy-RUMlSQ"
+          "ST0OAOJ-RzmTqhy-RUMlSQ",
+          "8q2Y4Q9XSFuETijmDmyk6A",
+          "oyh8q4vrR9unL8IOKIMLZw"
         ],
         "locationIds": [
           "tM4.684nSRaR-JkLheFsjQ"
         ],
         "subLocationIds": [],
+        "format": "new",
         "tags": [
-          "Envisions"
+          "Envisions",
+          "Refinery Event Rentals",
+          "Hang Ten"
         ],
         "locations": [
           "Haleakala Ballroom  "
@@ -3142,24 +3246,6 @@
         "date": "2026-04-19",
         "time": "10:30 ",
         "description": "Envision on site to set theme items ",
-        "tagIds": [
-          "ST0OAOJ-RzmTqhy-RUMlSQ"
-        ],
-        "locationIds": [
-          "tM4.684nSRaR-JkLheFsjQ"
-        ],
-        "subLocationIds": [],
-        "tags": [
-          "Envisions"
-        ],
-        "locations": [
-          "Haleakala Ballroom  "
-        ]
-      },
-      {
-        "date": "2026-04-20",
-        "time": "01:00 ",
-        "description": "Envision to strike Theme ",
         "tagIds": [
           "ST0OAOJ-RzmTqhy-RUMlSQ"
         ],
@@ -3285,12 +3371,17 @@
         "date": "2026-04-14",
         "time": "09:00 ",
         "description": "Golden Circle Brunch small tent built",
-        "tagIds": [],
+        "tagIds": [
+          "IRgUZ8WeS0Gb8aRpCN2BMQ"
+        ],
         "locationIds": [
           "a.TyFu6v5ToKUBAPcik9BFw"
         ],
         "subLocationIds": [],
-        "tags": [],
+        "format": "new",
+        "tags": [
+          "Rio Event Rentals"
+        ],
         "locations": [
           "Chapel Lawn "
         ]
@@ -3299,12 +3390,17 @@
         "date": "2026-04-15",
         "time": "15:00 ",
         "description": "Golden Circle Brunch small tent removed",
-        "tagIds": [],
+        "tagIds": [
+          "IRgUZ8WeS0Gb8aRpCN2BMQ"
+        ],
         "locationIds": [
           "a.TyFu6v5ToKUBAPcik9BFw"
         ],
         "subLocationIds": [],
-        "tags": [],
+        "format": "new",
+        "tags": [
+          "Rio Event Rentals"
+        ],
         "locations": [
           "Chapel Lawn "
         ]
@@ -3459,7 +3555,7 @@
       {
         "date": "2026-04-15",
         "time": "09:30 ",
-        "description": "Refinery Circle Late Lounge delivery",
+        "description": "Refinery Circle Late Lounge & Shelf delivery",
         "tagIds": [
           "oyh8q4vrR9unL8IOKIMLZw"
         ],
@@ -3478,24 +3574,6 @@
         "date": "2026-04-16",
         "time": "12:00 ",
         "description": "Refinery delivery for theme",
-        "tagIds": [
-          "oyh8q4vrR9unL8IOKIMLZw"
-        ],
-        "locationIds": [
-          "tM4.684nSRaR-JkLheFsjQ"
-        ],
-        "subLocationIds": [],
-        "tags": [
-          "Refinery Event Rentals"
-        ],
-        "locations": [
-          "Haleakala Ballroom  "
-        ]
-      },
-      {
-        "date": "2026-04-17",
-        "time": "01:00 ",
-        "description": "Refinery pickup for theme",
         "tagIds": [
           "oyh8q4vrR9unL8IOKIMLZw"
         ],
@@ -3586,24 +3664,6 @@
         "date": "2026-04-19",
         "time": "12:00 ",
         "description": "Refinery delivery for theme",
-        "tagIds": [
-          "oyh8q4vrR9unL8IOKIMLZw"
-        ],
-        "locationIds": [
-          "tM4.684nSRaR-JkLheFsjQ"
-        ],
-        "subLocationIds": [],
-        "tags": [
-          "Refinery Event Rentals"
-        ],
-        "locations": [
-          "Haleakala Ballroom  "
-        ]
-      },
-      {
-        "date": "2026-04-20",
-        "time": "01:00 ",
-        "description": "Refinery pickup for theme",
         "tagIds": [
           "oyh8q4vrR9unL8IOKIMLZw"
         ],
@@ -3728,8 +3788,8 @@
       },
       {
         "date": "2026-04-11",
-        "time": "14:00 (tbc)",
-        "description": "Load in lighting ready for next day (if required)",
+        "time": "13:00 (tbc)",
+        "description": "Load in lighting ready for next day",
         "tagIds": [
           "rUiP8.CxQtmfbFrE1K2pFQ"
         ],
@@ -3746,7 +3806,7 @@
       },
       {
         "date": "2026-04-13",
-        "time": "12:00 (tbc)",
+        "time": "10:00 (tbc)",
         "description": "Main stage built (Kick off configuration with ramp)",
         "tagIds": [
           "rUiP8.CxQtmfbFrE1K2pFQ"
@@ -3763,8 +3823,8 @@
         ]
       },
       {
-        "date": "2026-04-12",
-        "time": "16:00 ",
+        "date": "2026-04-13",
+        "time": "08:00 ",
         "description": "Central US graphic wall built",
         "tagIds": [
           "A5Dkj1-dRXW2hL9PcgrMIQ"
@@ -4009,6 +4069,356 @@
         ],
         "locations": [
           "Chapel Lawn "
+        ]
+      },
+      {
+        "date": "2026-04-16",
+        "time": "12:30 ",
+        "description": "Hang Ten Delivery for Theme",
+        "tagIds": [
+          "8q2Y4Q9XSFuETijmDmyk6A"
+        ],
+        "locationIds": [
+          "tM4.684nSRaR-JkLheFsjQ"
+        ],
+        "subLocationIds": [],
+        "format": "new",
+        "tags": [
+          "Hang Ten"
+        ],
+        "locations": [
+          "Haleakala Ballroom  "
+        ]
+      },
+      {
+        "date": "2026-04-19",
+        "time": "12:30 ",
+        "description": "Hang Ten Delivery for Theme",
+        "tagIds": [
+          "8q2Y4Q9XSFuETijmDmyk6A"
+        ],
+        "locationIds": [
+          "tM4.684nSRaR-JkLheFsjQ"
+        ],
+        "subLocationIds": [],
+        "format": "new",
+        "tags": [
+          "Hang Ten"
+        ],
+        "locations": [
+          "Haleakala Ballroom  "
+        ]
+      },
+      {
+        "date": "2026-04-20",
+        "time": "01:00 ",
+        "description": "Envision, Hang Ten, Refinery to strike Theme Party",
+        "tagIds": [
+          "ST0OAOJ-RzmTqhy-RUMlSQ",
+          "8q2Y4Q9XSFuETijmDmyk6A",
+          "oyh8q4vrR9unL8IOKIMLZw"
+        ],
+        "locationIds": [
+          "tM4.684nSRaR-JkLheFsjQ"
+        ],
+        "subLocationIds": [],
+        "format": "new",
+        "tags": [
+          "Envisions",
+          "Refinery Event Rentals",
+          "Hang Ten"
+        ],
+        "locations": [
+          "Haleakala Ballroom  "
+        ]
+      },
+      {
+        "date": "2026-04-16",
+        "time": "10:30 ",
+        "description": "Banqueting Team on standby to clear all chairs from Ballroom so vendors can load in for Theme ",
+        "tagIds": [
+          "TLMhG9O8R4ywTHUKwOrFFQ"
+        ],
+        "locationIds": [
+          "tM4.684nSRaR-JkLheFsjQ"
+        ],
+        "subLocationIds": [],
+        "format": "new",
+        "tags": [
+          "Venue"
+        ],
+        "locations": [
+          "Haleakala Ballroom  "
+        ]
+      },
+      {
+        "date": "2026-04-19",
+        "time": "10:30 ",
+        "description": "Banqueting Team on standby to clear all chairs from Ballroom so vendors can load in for Theme ",
+        "tagIds": [
+          "TLMhG9O8R4ywTHUKwOrFFQ"
+        ],
+        "locationIds": [
+          "tM4.684nSRaR-JkLheFsjQ"
+        ],
+        "subLocationIds": [],
+        "format": "new",
+        "tags": [
+          "Venue"
+        ],
+        "locations": [
+          "Haleakala Ballroom  "
+        ]
+      },
+      {
+        "date": "2026-04-15",
+        "time": "22:00 ",
+        "description": "All Vendors strike Welcome Reception",
+        "tagIds": [
+          "vrqvlI94QM-grRjGGaI3BA",
+          "ST0OAOJ-RzmTqhy-RUMlSQ",
+          "TLMhG9O8R4ywTHUKwOrFFQ"
+        ],
+        "locationIds": [
+          "JvbHJdsUSb2YO8srEEeBFA"
+        ],
+        "subLocationIds": [],
+        "format": "new",
+        "tags": [
+          "Venue",
+          "Envisions",
+          "Bella Bloom"
+        ],
+        "locations": [
+          "Molokini Garden "
+        ]
+      },
+      {
+        "date": "2026-04-15",
+        "time": "22:00 ",
+        "description": "Client linens collected by Nteractive team and handed off to venue to launder for Wave 2",
+        "tagIds": [
+          "TLMhG9O8R4ywTHUKwOrFFQ"
+        ],
+        "locationIds": [
+          "JvbHJdsUSb2YO8srEEeBFA"
+        ],
+        "subLocationIds": [],
+        "format": "new",
+        "tags": [
+          "Venue"
+        ],
+        "locations": [
+          "Molokini Garden "
+        ]
+      },
+      {
+        "date": "2026-04-18",
+        "time": "22:00 ",
+        "description": "Client linens collected by Nteractive team and handed off to venue to launder ",
+        "tagIds": [
+          "TLMhG9O8R4ywTHUKwOrFFQ"
+        ],
+        "locationIds": [
+          "JvbHJdsUSb2YO8srEEeBFA"
+        ],
+        "subLocationIds": [],
+        "format": "new",
+        "tags": [
+          "Venue"
+        ],
+        "locations": [
+          "Molokini Garden "
+        ]
+      },
+      {
+        "date": "2026-04-11",
+        "time": "14:00 (tbc)",
+        "description": "Show Imaging on site",
+        "tagIds": [
+          "8yUM-5uLSNSF.uxQPG8J.A",
+          "A5Dkj1-dRXW2hL9PcgrMIQ"
+        ],
+        "locationIds": [],
+        "subLocationIds": [],
+        "format": "new",
+        "tags": [
+          "AVS",
+          "Show Imaging"
+        ],
+        "locations": [
+          " "
+        ]
+      },
+      {
+        "date": "2026-04-13",
+        "time": "08:00 ",
+        "description": "Install plasma screens and PA in Circle Lounge",
+        "tagIds": [
+          "8yUM-5uLSNSF.uxQPG8J.A"
+        ],
+        "locationIds": [
+          "Pl2OYWulR1WXB.zTCfkfWA"
+        ],
+        "subLocationIds": [],
+        "format": "new",
+        "tags": [
+          "AVS"
+        ],
+        "locations": [
+          "Hibiscus (Circle Lounge) "
+        ]
+      },
+      {
+        "date": "2026-04-17",
+        "time": "13:00 ",
+        "description": "Hang Ten deliver After Party glow Items  ",
+        "tagIds": [
+          "8q2Y4Q9XSFuETijmDmyk6A"
+        ],
+        "locationIds": [
+          "tM4.684nSRaR-JkLheFsjQ"
+        ],
+        "subLocationIds": [],
+        "format": "new",
+        "tags": [
+          "Hang Ten"
+        ],
+        "locations": [
+          "Haleakala Ballroom  "
+        ]
+      },
+      {
+        "date": "2026-04-20",
+        "time": "13:00 ",
+        "description": "Hang Ten deliver After Party glow Items  ",
+        "tagIds": [
+          "8q2Y4Q9XSFuETijmDmyk6A"
+        ],
+        "locationIds": [
+          "tM4.684nSRaR-JkLheFsjQ"
+        ],
+        "subLocationIds": [],
+        "format": "new",
+        "tags": [
+          "Hang Ten"
+        ],
+        "locations": [
+          "Haleakala Ballroom  "
+        ]
+      },
+      {
+        "date": "2026-04-18",
+        "time": "01:00 ",
+        "description": "Hang Ten strike After Party glow Items  ",
+        "tagIds": [
+          "8q2Y4Q9XSFuETijmDmyk6A"
+        ],
+        "locationIds": [
+          "tM4.684nSRaR-JkLheFsjQ"
+        ],
+        "subLocationIds": [],
+        "format": "new",
+        "tags": [
+          "Hang Ten"
+        ],
+        "locations": [
+          "Haleakala Ballroom  "
+        ]
+      },
+      {
+        "date": "2026-04-21",
+        "time": "01:00 ",
+        "description": "Hang Ten strike After Party glow Items  ",
+        "tagIds": [
+          "8q2Y4Q9XSFuETijmDmyk6A"
+        ],
+        "locationIds": [
+          "tM4.684nSRaR-JkLheFsjQ"
+        ],
+        "subLocationIds": [],
+        "format": "new",
+        "tags": [
+          "Hang Ten"
+        ],
+        "locations": [
+          "Haleakala Ballroom  "
+        ]
+      },
+      {
+        "date": "2026-04-18",
+        "time": "01:00 ",
+        "description": "Hang Ten strike After Party glow Items  (Marriott)",
+        "tagIds": [
+          "8q2Y4Q9XSFuETijmDmyk6A"
+        ],
+        "locationIds": [
+          "gbEw-zw3TM22Z7kTKvD3AA"
+        ],
+        "subLocationIds": [],
+        "format": "new",
+        "tags": [
+          "Hang Ten"
+        ],
+        "locations": [
+          "Aulani Ballroom (Marriott) "
+        ]
+      },
+      {
+        "date": "2026-04-17",
+        "time": "13:00 ",
+        "description": "Hang Ten deliver After Party glow Items (Marriott) ",
+        "tagIds": [
+          "8q2Y4Q9XSFuETijmDmyk6A"
+        ],
+        "locationIds": [
+          "gbEw-zw3TM22Z7kTKvD3AA"
+        ],
+        "subLocationIds": [],
+        "format": "new",
+        "tags": [
+          "Hang Ten"
+        ],
+        "locations": [
+          "Aulani Ballroom (Marriott) "
+        ]
+      },
+      {
+        "date": "2026-04-20",
+        "time": "13:00 ",
+        "description": "Hang Ten deliver After Party glow Items  (Marriott)",
+        "tagIds": [
+          "8q2Y4Q9XSFuETijmDmyk6A"
+        ],
+        "locationIds": [
+          "gbEw-zw3TM22Z7kTKvD3AA"
+        ],
+        "subLocationIds": [],
+        "format": "new",
+        "tags": [
+          "Hang Ten"
+        ],
+        "locations": [
+          "Aulani Ballroom (Marriott) "
+        ]
+      },
+      {
+        "date": "2026-04-21",
+        "time": "01:00 ",
+        "description": "Hang Ten strike After Party glow Items  (Marriott)",
+        "tagIds": [
+          "8q2Y4Q9XSFuETijmDmyk6A"
+        ],
+        "locationIds": [
+          "gbEw-zw3TM22Z7kTKvD3AA"
+        ],
+        "subLocationIds": [],
+        "format": "new",
+        "tags": [
+          "Hang Ten"
+        ],
+        "locations": [
+          "Aulani Ballroom (Marriott) "
         ]
       }
     ],
