@@ -27,7 +27,7 @@
       "columns": [
         { "label": "Time",        "showLabel": true, "field": "time",        "width": 75,  "filterable": false  },
         { "label": "Description", "showLabel": true, "field": "description", "width": 250,  "filterable": false  },
-        { "label": "Tags",  "showLabel": true, "field": "tags", "width": 100,  "filterable": true  },0
+        { "label": "Tags",  "showLabel": true, "field": "tags", "width": 100,  "filterable": true  },
         { "label": "Location",    "showLabel": true, "field": "locations",   "width": 100,  "filterable": true  },
         { "label": "Notes",       "showLabel": true, "field": "notes",       "width": 217,  "filterable": false  }
       ]
