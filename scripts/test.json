@@ -1,0 +1,142 @@
+{
+  "groupPresets": [
+    {
+      "id": "byDate-1",
+      "label": "Group by date. Columns for time, description, tags, location and notes",
+      "dataset": "scheduleDetail",
+      "groupBy": "date",
+      "groupSort": ["date:asc"],
+      "groupMetaData": "dates",
+      "entrySort": ["time:asc", "description:asc"],
+      "columns": [
+        { "label": "Time",        "showLabel": true, "field": "time",        "width": 75,  "filterable": false  },
+        { "label": "Description", "showLabel": true, "field": "description", "width": 250,  "filterable": false  },
+        { "label": "Tags",        "showLabel": true, "field": "tags",        "width": 100,  "filterable": true  },
+        { "label": "Location",    "showLabel": true, "field": "locations",   "width": 100,  "filterable": true  },
+        { "label": "Notes",       "showLabel": true, "field": "notes",       "width": 217,  "filterable": false  }
+      ]
+    },
+        {
+      "id": "byDate-4",
+      "label": "Group by date. Columns for time, description, resp, location and notes",
+      "dataset": "scheduleDetail",
+      "groupBy": "date",
+      "groupSort": ["date:asc"],
+      "groupMetaData": "dates",
+      "entrySort": ["time:asc", "description:asc"],
+      "columns": [
+        { "label": "Time",        "showLabel": true, "field": "time",        "width": 75,  "filterable": false  },
+        { "label": "Description", "showLabel": true, "field": "description", "width": 250,  "filterable": false  },
+        { "label": "Tags",  "showLabel": true, "field": "tags", "width": 100,  "filterable": true  },
+        { "label": "Location",    "showLabel": true, "field": "locations",   "width": 100,  "filterable": true  },
+        { "label": "Notes",       "showLabel": true, "field": "notes",       "width": 217,  "filterable": false  }
+      ]
+    },
+    {
+      "id": "byTag-1",
+      "label": "Group by tag. Columns for time, description, tags, location and notes",
+      "dataset": "scheduleDetail",
+      "groupBy": "tagId",
+      "groupMetaData": "tag",
+      "groupSort": ["tagName:asc"],
+      "entrySort": ["dateKey:asc", "time:desc", "description:asc"],
+      "columns": [
+        { "label": "Date",        "showLabel": true, "field": "dateKey",     "width": 90,  "filterable": false  },
+        { "label": "Time",        "showLabel": true, "field": "time",        "width": 75,  "filterable": false  },
+        { "label": "Description", "showLabel": true, "field": "description", "width": 260,  "filterable": false  },
+        { "label": "Location",    "showLabel": true, "field": "locations",   "width": 120,  "filterable": true  },
+        { "label": "Notes",       "showLabel": true, "field": "notes",       "width": 180,  "filterable": false  }
+      ]
+    },
+    {
+      "id": "trucking-1",
+      "label": "Group by truck. Columns for time, description, tags, location and notes",
+      "dataset": "scheduleDetail",
+      "groupBy": "truckId",
+      "groupMetaData": "trucks",
+      "groupSort": ["tagName:asc"],
+      "entrySort": ["date:asc", "time:asc", "description:asc"],
+      "columns": [
+        { "label": "Date",        "showLabel": true, "field": "dateKey",     "width": 200,  "filterable": false  },
+        { "label": "Time",        "showLabel": true, "field": "time",        "width": 60,  "filterable": false  },
+        { "label": "Description", "showLabel": true, "field": "description", "width": 460,  "filterable": false  }
+      ]
+    },
+    {
+      "id": "byLocation-1",
+      "label": "Group by location. Columns for time, description, tags, location and notes",
+      "dataset": "scheduleDetail",
+      "groupBy": "locationId",
+      "groupMetaData": "tbc",
+      "groupSort": ["locationName:asc"],
+      "entrySort": ["date:asc", "time:asc", "description:asc"],
+      "columns": [
+        { "label": "Date",        "showLabel": true, "field": "dateKey",     "width": 90,  "filterable": false  },
+        { "label": "Time",        "showLabel": true, "field": "time",        "width": 75,  "filterable": false  },
+        { "label": "Description", "showLabel": true, "field": "description", "width": 280,  "filterable": false  },
+        { "label": "Tags",        "showLabel": true, "field": "tags",        "width": 110,  "filterable": true  },
+        { "label": "Notes",       "showLabel": true, "field": "notes",       "width": 160,  "filterable": false  }
+      ]
+    },
+    {
+      "id": "byDate-2",
+      "label": "Group by date. Columns for time, description, Location",
+      "dataset": "scheduleDetail",
+      "groupBy": "date",
+      "groupMetaData": "dates",
+      "groupSort": ["date:asc"],
+      "entrySort": ["time:asc", "description:asc"],
+      "columns": [
+        { "label": "Time",        "showLabel": true, "field": "time",        "width": 75,  "filterable": false  },
+        { "label": "Description", "showLabel": true, "field": "description", "width": 250,  "filterable": false  },
+        { "label": "Location",    "showLabel": true, "field": "locations",   "width": 100,  "filterable": true  },
+        { "label": "Notes",       "showLabel": true, "field": "notes",       "width": 217,  "filterable": false  }
+      ]
+    },
+    {
+      "id": "byDate-3",
+      "label": "Group by date. Columns for time, description, Tags",
+      "dataset": "scheduleDetail",
+      "groupBy": "date",
+      "groupMetaData": "dates",
+      "groupSort": ["date:asc"],
+      "entrySort": ["time:asc", "description:asc"],
+      "columns": [
+        { "label": "Time",        "showLabel": true, "field": "time",        "width": 75 },
+        { "label": "Description", "showLabel": true, "field": "description", "width": 250 },
+        { "label": "Tags",    "showLabel": true, "field": "tags",   "width": 100 },
+        { "label": "Notes",       "showLabel": true, "field": "notes",       "width": 217 }
+      ]
+    },    {
+      "id": "iml-1",
+      "label": "IML Group by date. Columns for time, description, tags, location and notes",
+      "dataset": "scheduleDetail",
+      "groupBy": "date",
+      "groupSort": ["date:asc"],
+      "groupMetaData": "dates",
+      "entrySort": ["time:asc", "description:asc"],
+      "columns": [
+        { "label": "Time",        "showLabel": true, "field": "time",        "width": 75,  "filterable": false },
+        { "label": "Description", "showLabel": true, "field": "description", "width": 250,  "filterable": false },
+        { "label": "Tags",        "showLabel": true, "field": "tags",        "width": 100,  "filterable": true },
+        { "label": "Supplier",    "showLabel": true, "field": "supplier",   "width": 100,  "filterable": true },
+        { "label": "Notes",       "showLabel": true, "field": "notes",       "width": 217,  "filterable": false }
+      ]
+    },    {
+      "id": "iml-trucking",
+      "label": "IML Group by truck",
+      "dataset": "scheduleDetail",
+      "groupBy": "truckId",
+      "groupSort": ["title:asc"],
+      "groupMetaData": "trucks",
+      "entrySort": ["sortField:asc", "description:asc"],
+      "columns": [
+        { "label": "Date",        "showLabel": true, "field": "dateFriendly",        "width": 75,  "filterable": false },
+        { "label": "Time",        "showLabel": true, "field": "time",        "width": 75,  "filterable": false },
+        { "label": "Description", "showLabel": true, "field": "description", "width": 250,  "filterable": false },
+        { "label": "Supplier",    "showLabel": true, "field": "supplier",   "width": 100,  "filterable": true },
+        { "label": "Notes",       "showLabel": true, "field": "notes",       "width": 217,  "filterable": false }
+      ]
+    }
+  ]
+}
