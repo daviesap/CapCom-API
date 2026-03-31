@@ -25,7 +25,7 @@ import { merge } from "lodash-es";
 import { defineSecret } from "firebase-functions/params";
 import { onRequest } from "firebase-functions/v2/https";
 import { initializeApp, applicationDefault } from "firebase-admin/app";
-import { getFirestore } from "firebase-admin/firestore";
+import { getFirestore, FieldValue } from "firebase-admin/firestore";
 import { getStorage } from "firebase-admin/storage";
 
 
@@ -119,6 +119,101 @@ function deriveRunId(body, timestamp) {
   return `run_${safeTs}`;
 }
 
+function redactSecret(value) {
+  if (value === undefined || value === null) return value;
+  const text = String(value);
+  if (text.length <= 4) return "****";
+  return `${text.slice(0, 2)}***${text.slice(-2)}`;
+}
+
+function sanitizeForLog(value, seen = new WeakSet()) {
+  if (value === null || value === undefined) return value;
+
+  if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+    return value;
+  }
+
+  if (typeof value !== "object") {
+    return String(value);
+  }
+
+  if (seen.has(value)) {
+    return "[Circular]";
+  }
+  seen.add(value);
+
+  if (Array.isArray(value)) {
+    return value.map((item) => sanitizeForLog(item, seen));
+  }
+
+  const out = {};
+  for (const [key, entry] of Object.entries(value)) {
+    if (key === "api_key") {
+      out[key] = redactSecret(entry);
+      continue;
+    }
+    out[key] = sanitizeForLog(entry, seen);
+  }
+  return out;
+}
+
+function attachFirestoreResponseLogging(req, res, { action, timestamp, startTime, runId }) {
+  if (res.locals?.firestoreLogContext) {
+    res.locals.firestoreLogContext.action = action;
+    res.locals.firestoreLogContext.timestamp = timestamp;
+    res.locals.firestoreLogContext.startTime = startTime;
+    res.locals.firestoreLogContext.runId = runId;
+    return;
+  }
+
+  const originalJson = res.json.bind(res);
+  let logWritten = false;
+  if (!res.locals) res.locals = {};
+  res.locals.firestoreLogContext = { action, timestamp, startTime, runId };
+
+  res.json = function patchedJson(body) {
+    if (logWritten) {
+      return originalJson(body);
+    }
+    logWritten = true;
+
+    const requestBody = (req.body && typeof req.body === "object")
+      ? req.body
+      : { rawBody: req.body ?? null };
+
+    const context = res.locals.firestoreLogContext || { action, timestamp, startTime, runId };
+    const logEntry = {
+      createdAt: FieldValue.serverTimestamp(),
+      requestTimestamp: context.timestamp,
+      responseTimestamp: new Date().toISOString(),
+      executionTimeMs: Date.now() - context.startTime,
+      runId: context.runId,
+      action: context.action,
+      statusCode: res.statusCode || 200,
+      success: body?.success ?? ((res.statusCode || 200) < 400),
+      runningEmulated,
+      method: req.method || "POST",
+      path: req.path || req.url || "",
+      requestContentType: req.get?.("content-type") || null,
+      userId: req.body?.UserId ?? req.body?.userId ?? null,
+      userEmail: req.body?.userEmail ?? null,
+      glideAppName: req.body?.glideAppName ?? null,
+      profileId: req.body?.event?.profileId ?? null,
+      eventName: req.body?.event?.name ?? req.body?.eventName ?? null,
+      snapshotsCount: Array.isArray(req.body?.snapshots) ? req.body.snapshots.length : null,
+      payloadReceived: sanitizeForLog(requestBody),
+      apiResponse: sanitizeForLog(body),
+      query: sanitizeForLog(req.query || {}),
+    };
+
+    return db.collection("logs").add(logEntry)
+      .catch((logErr) => {
+        console.error("⚠️ Failed to write Firestore log entry:", logErr);
+      })
+      .then(() => originalJson(body));
+  };
+}
+
 /**
  * Write a JSON payload to the local emulator output for debugging.
  * Creates a per-app folder and a timestamped file.
@@ -157,6 +252,7 @@ export const v2 = onRequest({
   let runId = deriveRunId(req.body, timestamp);
 
   const action = String(req.query?.action || "").trim();
+  attachFirestoreResponseLogging(req, res, { action, timestamp, startTime, runId });
   const allowed = new Set(Object.values(ACTIONS));
 
   if (!allowed.has(action)) {
@@ -201,6 +297,7 @@ export const v2 = onRequest({
   }
 
   runId = deriveRunId(req.body, timestamp);
+  attachFirestoreResponseLogging(req, res, { action, timestamp, startTime, runId });
 
 
 
