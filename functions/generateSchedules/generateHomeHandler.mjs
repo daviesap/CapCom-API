@@ -151,10 +151,11 @@ export async function generateHomeHandler({
     }
 
     const rootProfilePdf = getProfilePdfConfig(rootProfileDoc);
+    if (!Array.isArray(rootProfilePdf.groupPresets) || rootProfilePdf.groupPresets.length === 0) {
+      return res.status(400).json({ success: false, message: "group preset missing" });
+    }
     const groupedViews = await prepareJSONGroups(req.body, {
-      groupPresets: Array.isArray(rootProfilePdf.groupPresets) && rootProfilePdf.groupPresets.length
-        ? rootProfilePdf.groupPresets
-        : undefined,
+      groupPresets: rootProfilePdf.groupPresets,
     });
 
     if (runningEmulated || req.body.debug === true) {
@@ -175,7 +176,14 @@ export async function generateHomeHandler({
       console.log(`▶️  Starting snapshot ${idx + 1}/${snapshots.length}: ${label}`);
 
       const presetId = snap.groupPresetId;
-      const baseView = groupedViews[presetId] || { groupBy: "", groups: [], columns: [] };
+      if (!presetId || !groupedViews[presetId]) {
+        return res.status(400).json({
+          success: false,
+          message: "group preset missing",
+          groupPresetId: presetId || null,
+        });
+      }
+      const baseView = groupedViews[presetId];
 
       const processedJSON = applySnapshotFiltersToView(baseView, {
         filterTagIds: snap.filterTagIds || [],

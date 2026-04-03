@@ -25,7 +25,7 @@ curl -X POST \
 
 ### JSON payload conventions
 - Every snapshot in the request must declare a `dataset`. Current accepted values: `scheduleDetail`, `truckingDetail`, `contacts`.
-- Group presets (`functions/generateSchedules/assets/groupPresets.json`) also include a `dataset` so snapshots can inherit the correct source without extra configuration.
+- Group presets now come from the selected document in the Firestore `profiles` collection, under `groupPresets`. Each preset should include a `dataset` so snapshots can inherit the correct source without extra configuration.
 - Matching metadata for grouping lives under `groupMeta.<dataset>` (e.g. `groupMeta.scheduleDetail`). If the payload supplies dictionary-style metadata, it should live under `dicts.groupMeta.<dataset>`.
 - `columns[].width` values in each preset control column proportions for **both** HTML and PDF outputs (percent ratios in HTML tables, point widths in the PDF renderer), so keep them aligned when editing presets.
 

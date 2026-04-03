@@ -1,18 +1,12 @@
 /*
  * functions/generateSchedules/prepareJSONforSnapshots.mjs
  * -------------------------------------------------------
- * Build grouped and sorted views for each group preset. This module reads a
- * `groupPresets.json` file and materializes groups (e.g., date/tag/location) from
- * an incoming payload of schedule rows.
+ * Build grouped and sorted views for each group preset using the `groupPresets`
+ * array supplied by the loaded profile document.
  * Requirements:
- *  - The module loads a presets JSON file; the path should be resolved relative to
- *    this module (not to process.cwd()) to avoid working-dir issues.
+ *  - Callers must provide `groupPresets` as an array.
  *  - The payload shape expected: payload.data.scheduleDetail is an array of rows.
  */
-
-import fs from "node:fs/promises";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
 
 /**
  * Build grouped & sorted views for each preset.
@@ -24,19 +18,11 @@ import { fileURLToPath } from "node:url";
  */
 export async function prepareJSONGroups(
   payload,
-  { presetsPath, groupPresets: providedGroupPresets } = {}
+  { groupPresets: providedGroupPresets } = {}
 ) {
-  // Resolve presets path relative to this module to avoid depending on process.cwd()
-  const __dirname = path.dirname(fileURLToPath(import.meta.url));
-  const defaultPresets = path.join(__dirname, "assets", "groupPresets.json");
-  const presetsAbs = path.isAbsolute(presetsPath || "")
-    ? (presetsPath || defaultPresets)
-    : path.resolve(__dirname, presetsPath || defaultPresets);
-  // 1) Load presets
   let groupPresets = providedGroupPresets;
   if (!Array.isArray(groupPresets)) {
-    const parsed = JSON.parse(await fs.readFile(presetsAbs, "utf8"));
-    groupPresets = parsed.groupPresets;
+    throw new Error("Profile is missing a valid groupPresets array.");
   }
 
   // 2) Build quick meta indexes keyed by `groupMetaData`
