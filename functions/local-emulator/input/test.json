@@ -1,0 +1,87 @@
+{
+  "name": "Capcom Main Profile",
+  "styles": {
+    "footer": {
+      "fontColour": "#000000",
+      "paddingTop": 20,
+      "fontStyle": "normal",
+      "fontSize": 10
+    },
+    "labelRow": {
+      "fontSize": 11,
+      "fontStyle": "bold",
+      "backgroundColour": "#FFFFFF",
+      "fontColour": "#000000"
+    },
+    "groupMetadata": {
+      "fontColour": "#000000",
+      "backgroundColour": "#FFFFFF",
+      "paddingBottom": 12,
+      "fontStyle": "italic",
+      "fontSize": 11
+    },
+    "row": {
+      "highlight": {
+        "fontStyle": "italic",
+        "fontSize": 10,
+        "fontColour": "#000000",
+        "backgroundColour": "#fffbb9"
+      },
+      "lineSpacing": 3,
+      "default": {
+        "fontSize": 10,
+        "fontStyle": "normal",
+        "backgroundColour": "#FFFFFF",
+        "fontColour": "#000000"
+      },
+      "lowlight": {
+        "backgroundColour": "#FFFFFF",
+        "fontColour": "#000000",
+        "fontSize": 10,
+        "fontStyle": "bold"
+      }
+    },
+    "header": {
+      "fontSize": 12,
+      "fontStyle": "normal",
+      "paddingBottom": 20,
+      "fontColour": "#000000"
+    },
+    "groupTitle": {
+      "paddingBottom": 0,
+      "backgroundColour": "#FFFFFF",
+      "fontStyle": "bold",
+      "fontSize": 12,
+      "fontColour": "#000000"
+    }
+  },
+  "userId": {
+    "seconds": 1754521200,
+    "nanoseconds": 71000000
+  },
+  "document": {
+    "bottomMargin": 20,
+    "pageSize": {
+      "height": 595,
+      "width": 842
+    },
+    "groupPaddingBottom": 10,
+    "topMargin": 30,
+    "rightMargin": 50,
+    "header": {
+      "logo": {
+        "width": 36,
+        "height": 36,
+        "url": "https://firebasestorage.googleapis.com/v0/b/flair-pdf-generator.firebasestorage.app/o/logos%2Fflair-logo.png?alt=media&token=2f79f8b7-2c31-4ee9-aa3f-223a7d6ed5cf"
+      }
+    },
+    "bottomPageThreshold": 40,
+    "leftMargin": 50
+  },
+  "lastUsed": {
+    "seconds": 1754434800,
+    "nanoseconds": 982000000
+  },
+  "fieldsLastUpdated": "2025-09-02T08:28:55.022Z",
+  "ownerId": ""
+}

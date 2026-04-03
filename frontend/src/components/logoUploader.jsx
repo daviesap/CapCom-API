@@ -1,10 +1,12 @@
 import React, { useState, useRef } from "react";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { storage, db } from "../services/firebase";
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, updateDoc, serverTimestamp } from "firebase/firestore";
 
 export default function LogoUploader({ profile, setProfile, setOriginalProfile, profileId }) {
-  const existingLogo = profile?.document?.header?.logo || {};
+  const pdf = (profile?.PDF && typeof profile.PDF === "object") ? profile.PDF : {};
+  const existingDocument = pdf.document || profile?.document || {};
+  const existingLogo = existingDocument?.header?.logo || {};
   const [file, setFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -38,24 +40,30 @@ export default function LogoUploader({ profile, setProfile, setOriginalProfile, 
 
         const updatedProfile = {
           ...profile,
-          document: {
-            ...profile.document,
-            header: {
-              ...(profile.document?.header || {}),
-              logo: {
-                url,
-                width: Number(width),
-                height: Number(height)
+          PDF: {
+            ...(profile.PDF || {}),
+            document: {
+              ...existingDocument,
+              header: {
+                ...(existingDocument?.header || {}),
+                logo: {
+                  url,
+                  width: Number(width),
+                  height: Number(height)
+                }
               }
-            }
-          }
+            },
+          },
         };
 
         setProfile(updatedProfile);
         setOriginalProfile(updatedProfile);
 
-        const docRef = doc(db, "styleProfiles", profileId);
-        await updateDoc(docRef, updatedProfile);
+        const docRef = doc(db, "profiles", profileId);
+        await updateDoc(docRef, {
+          "PDF.document": updatedProfile.PDF.document,
+          lastUsed: serverTimestamp(),
+        });
         console.log("✅ Logo saved to Firestore");
       }
     );
@@ -64,20 +72,26 @@ export default function LogoUploader({ profile, setProfile, setOriginalProfile, 
   const handleRemove = async () => {
     const updatedProfile = {
       ...profile,
-      document: {
-        ...profile.document,
-        header: {
-          ...profile.document?.header,
-          logo: null  // simply remove logo object
-        }
-      }
+      PDF: {
+        ...(profile.PDF || {}),
+        document: {
+          ...existingDocument,
+          header: {
+            ...existingDocument?.header,
+            logo: null
+          }
+        },
+      },
     };
 
     setProfile(updatedProfile);
     setOriginalProfile(updatedProfile);
 
-    const docRef = doc(db, "styleProfiles", profileId);
-    await updateDoc(docRef, updatedProfile);
+    const docRef = doc(db, "profiles", profileId);
+    await updateDoc(docRef, {
+      "PDF.document": updatedProfile.PDF.document,
+      lastUsed: serverTimestamp(),
+    });
     console.log("✅ Logo removed from Firestore");
   };
 

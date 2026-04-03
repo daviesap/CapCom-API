@@ -9,7 +9,7 @@
  *  - Invoke `generateSnapshotOutputsv2` for each snapshot
  *  - Call `generateHome` to build and publish the MOM/Home page
  * Requirements / dependencies:
- *  - `db` (Firestore instance) passed in to read styleProfiles
+ *  - `db` (Firestore instance) passed in to read profiles
  *  - `bucket` (Storage bucket) passed in for publishing and for URL construction
  *  - `makePublicUrl` function (provided by the caller) to create public URLs
  *  - `generateSnapshotOutputsv2` and `generateHome` from sibling modules
@@ -28,6 +28,16 @@ import { generateSnapshotOutputsv2 } from "./generateSnapshots.mjs";
 import { generateHome } from "./generateHome.mjs";
 
 const LOCAL_OUTPUT_DIR = path.join(process.cwd(), "local-emulator", "output");
+
+function getProfilePdfConfig(profileDoc = {}) {
+  const pdf = (profileDoc?.PDF && typeof profileDoc.PDF === "object") ? profileDoc.PDF : {};
+  return {
+    styles: pdf.styles || profileDoc.styles || {},
+    document: pdf.document || profileDoc.document || {},
+    columns: pdf.columns || profileDoc.columns || [],
+    groupPresets: profileDoc.groupPresets || [],
+  };
+}
 
 function adaptGroupsForRendererV2(groups) {
   if (!Array.isArray(groups)) return [];
@@ -117,14 +127,15 @@ export async function generateHomeHandler({
     let rootProfileDoc = {};
     if (rootProfileId) {
       try {
-        const ref = db.collection("styleProfiles").doc(rootProfileId);
+        const ref = db.collection("profiles").doc(rootProfileId);
         const snap = await ref.get();
         if (snap.exists) {
           rootProfileDoc = snap.data() || {};
-          jsonInput.styles = merge({}, rootProfileDoc.styles || {}, jsonInput.styles || {});
-          jsonInput.document = merge({}, rootProfileDoc.document || {}, jsonInput.document || {});
+          const profilePdf = getProfilePdfConfig(rootProfileDoc);
+          jsonInput.styles = merge({}, profilePdf.styles, jsonInput.styles || {});
+          jsonInput.document = merge({}, profilePdf.document, jsonInput.document || {});
           if (!Array.isArray(jsonInput.columns) || jsonInput.columns.length === 0) {
-            jsonInput.columns = rootProfileDoc.columns || [];
+            jsonInput.columns = profilePdf.columns || [];
           }
           try {
             await ref.update({ lastUsed: FieldValue.serverTimestamp() });
@@ -139,7 +150,12 @@ export async function generateHomeHandler({
       }
     }
 
-    const groupedViews = await prepareJSONGroups(req.body);
+    const rootProfilePdf = getProfilePdfConfig(rootProfileDoc);
+    const groupedViews = await prepareJSONGroups(req.body, {
+      groupPresets: Array.isArray(rootProfilePdf.groupPresets) && rootProfilePdf.groupPresets.length
+        ? rootProfilePdf.groupPresets
+        : undefined,
+    });
 
     if (runningEmulated || req.body.debug === true) {
       const dumpPath = writeDebugJson(
@@ -172,6 +188,7 @@ export async function generateHomeHandler({
 
       const effectiveProfileId = rootProfileId || profileId;
       const profileDoc = rootProfileDoc || {};
+      const profilePdf = getProfilePdfConfig(profileDoc);
 
       const adaptedGroups = adaptGroupsForRendererV2(processedJSON.groups);
       const finalGroups = adaptedGroups.map(g => {
@@ -185,17 +202,17 @@ export async function generateHomeHandler({
       const prepared = {
         ...jsonInput,
         groups: finalGroups,
-        styles: merge({}, profileDoc.styles || {}, jsonInput.styles || {}),
+        styles: merge({}, profilePdf.styles, jsonInput.styles || {}),
         document: merge(
           {},
-          profileDoc.document || {},
+          profilePdf.document,
           jsonInput.document || {},
           { filename: snap.name || (jsonInput.document?.filename || "schedule") }
         ),
         columns:
           (Array.isArray(baseView.columns) && baseView.columns.length ? baseView.columns : null) ||
           jsonInput.columns ||
-          profileDoc.columns ||
+          profilePdf.columns ||
           [],
         header: [...(jsonInput?.event?.header ?? []), snap.filename].filter(Boolean),
         profileId: effectiveProfileId,

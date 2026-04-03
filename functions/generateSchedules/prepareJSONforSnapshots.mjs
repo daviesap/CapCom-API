@@ -24,7 +24,7 @@ import { fileURLToPath } from "node:url";
  */
 export async function prepareJSONGroups(
   payload,
-  { presetsPath } = {}
+  { presetsPath, groupPresets: providedGroupPresets } = {}
 ) {
   // Resolve presets path relative to this module to avoid depending on process.cwd()
   const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -33,7 +33,11 @@ export async function prepareJSONGroups(
     ? (presetsPath || defaultPresets)
     : path.resolve(__dirname, presetsPath || defaultPresets);
   // 1) Load presets
-  const { groupPresets } = JSON.parse(await fs.readFile(presetsAbs, "utf8"));
+  let groupPresets = providedGroupPresets;
+  if (!Array.isArray(groupPresets)) {
+    const parsed = JSON.parse(await fs.readFile(presetsAbs, "utf8"));
+    groupPresets = parsed.groupPresets;
+  }
 
   // 2) Build quick meta indexes keyed by `groupMetaData`
   const groupMetaIndexes = indexGroupMeta(payload);

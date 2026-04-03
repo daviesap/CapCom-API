@@ -1,0 +1,35 @@
+{
+  "groupPresets": [
+       {
+      "id": "iml-1",
+      "label": "IML Group by date. Columns for time, description, tags, location and notes",
+      "dataset": "scheduleDetail",
+      "groupBy": "date",
+      "groupSort": ["date:asc"],
+      "groupMetaData": "dates",
+      "entrySort": ["time:asc", "description:asc"],
+      "columns": [
+        { "label": "Time",        "showLabel": true, "field": "time",        "width": 75,  "filterable": false },
+        { "label": "Description", "showLabel": true, "field": "description", "width": 250,  "filterable": false },
+        { "label": "Tags",        "showLabel": true, "field": "tags",        "width": 100,  "filterable": true },
+        { "label": "Supplier",    "showLabel": true, "field": "supplier",   "width": 100,  "filterable": true },
+        { "label": "Notes",       "showLabel": true, "field": "notes",       "width": 217,  "filterable": false }
+      ]
+    },    {
+      "id": "iml-trucking",
+      "label": "IML Group by truck",
+      "dataset": "scheduleDetail",
+      "groupBy": "truckId",
+      "groupSort": ["title:asc"],
+      "groupMetaData": "trucks",
+      "entrySort": ["sortField:asc", "description:asc"],
+      "columns": [
+        { "label": "Date",        "showLabel": true, "field": "dateFriendly",        "width": 75,  "filterable": false },
+        { "label": "Time",        "showLabel": true, "field": "time",        "width": 75,  "filterable": false },
+        { "label": "Description", "showLabel": true, "field": "description", "width": 250,  "filterable": false },
+        { "label": "Supplier",    "showLabel": true, "field": "supplier",   "width": 100,  "filterable": true },
+        { "label": "Notes",       "showLabel": true, "field": "notes",       "width": 217,  "filterable": false }
+      ]
+    }
+  ]
+}

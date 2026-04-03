@@ -4,22 +4,27 @@ import {
   getDocs,
   getDoc,
   doc,
-  deleteDoc
+  deleteDoc,
+  query,
+  orderBy,
+  limit,
 } from 'firebase/firestore';
 import { db } from '../services/firebase';
 import { nanoid } from 'nanoid';
 import { createStyleProfile } from '../services/styleProfileService';
 import { useNavigate } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
+import LogsTable from '../components/LogsTable';
 
 export default function ProfileList() {
   const [profiles, setProfiles] = useState([]);
+  const [recentLogs, setRecentLogs] = useState([]);
   const [newName, setNewName] = useState("");
 
   const navigate = useNavigate();
 
   const fetchProfiles = async () => {
-    const querySnapshot = await getDocs(collection(db, 'styleProfiles'));
+    const querySnapshot = await getDocs(collection(db, 'profiles'));
 
     const data = querySnapshot.docs.map((docSnap) => {
       const profileId = docSnap.id;
@@ -53,6 +58,14 @@ export default function ProfileList() {
 
   useEffect(() => {
     fetchProfiles();
+    const fetchRecentLogs = async () => {
+      const logsQuery = query(collection(db, 'logs'), orderBy('createdAt', 'desc'), limit(5));
+      const snapshot = await getDocs(logsQuery);
+      setRecentLogs(snapshot.docs.map((docSnap) => ({ id: docSnap.id, ...docSnap.data() })));
+    };
+    fetchRecentLogs().catch((error) => {
+      console.error('Error fetching recent logs:', error);
+    });
   }, []);
 
   const addProfile = async () => {
@@ -68,7 +81,7 @@ export default function ProfileList() {
     const confirmed = window.confirm(`Are you sure you want to delete profile "${name}"?`);
     if (!confirmed) return;
 
-    await deleteDoc(doc(db, "styleProfiles", id));
+    await deleteDoc(doc(db, "profiles", id));
     fetchProfiles();
   };
 
@@ -77,7 +90,7 @@ export default function ProfileList() {
     if (!newName || !newName.trim()) return;
 
     try {
-      const originalDocRef = doc(db, "styleProfiles", originalId);
+      const originalDocRef = doc(db, "profiles", originalId);
       const originalSnap = await getDoc(originalDocRef);
       const originalData = originalSnap.data();
 
@@ -164,6 +177,20 @@ export default function ProfileList() {
             ))}
           </tbody>
         </table>
+      </div>
+
+      <div className="mt-10">
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
+          <h3 className="text-xl font-semibold">Recent Log Entries</h3>
+          <button
+            onClick={() => navigate('/logs')}
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+          >
+            View All Logs
+          </button>
+        </div>
+
+        <LogsTable logs={recentLogs} />
       </div>
     </div>
   );

@@ -20,7 +20,7 @@ function TitleStyleEditor() {
 
     const loadAllProfiles = async () => {
         try {
-            const querySnapshot = await getDocs(collection(db, "styleProfiles"));
+            const querySnapshot = await getDocs(collection(db, "profiles"));
             const profiles = querySnapshot.docs.map(doc => ({
                 id: doc.id,
                 data: doc.data()
@@ -37,7 +37,7 @@ function TitleStyleEditor() {
 
     const handleSave = async () => {
         try {
-            const docRef = doc(db, "styleProfiles", projectId);
+            const docRef = doc(db, "profiles", projectId);
 
             await setDoc(docRef, {
                 stylesDocument: {
@@ -63,7 +63,7 @@ function TitleStyleEditor() {
         if (!window.confirm(`Delete profile "${id}"?`)) return;
 
         try {
-            await deleteDoc(doc(db, "styleProfiles", id));
+            await deleteDoc(doc(db, "profiles", id));
             setMessage(`Deleted "${id}" from Firestore`);
             await loadAllProfiles();
         } catch (error) {

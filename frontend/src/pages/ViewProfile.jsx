@@ -1,6 +1,6 @@
 //ViewProfile.jsx
 import React, { useEffect, useState } from "react";
-import { getDoc, doc, updateDoc } from "firebase/firestore";
+import { getDoc, doc, updateDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../services/firebase";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -13,6 +13,15 @@ import DocumentEditor from "../components/DocumentEditor";
 import ColumnsEditor from "../components/ColumnsEditor";
 import JSONdisplay from "../components/JSONDisplay";
 
+function getPdfConfig(profile = {}) {
+  const pdf = (profile?.PDF && typeof profile.PDF === "object") ? profile.PDF : {};
+  return {
+    styles: pdf.styles || profile.styles || {},
+    document: pdf.document || profile.document || {},
+    columns: pdf.columns || profile.columns || [],
+  };
+}
+
 export default function ViewProfile({ profileId }) {
   const [profile, setProfile] = useState(null);
   const [originalProfile, setOriginalProfile] = useState(null);
@@ -20,12 +29,13 @@ export default function ViewProfile({ profileId }) {
 
   useEffect(() => {
     const loadProfile = async () => {
-      const docRef = doc(db, "styleProfiles", profileId);
+      const docRef = doc(db, "profiles", profileId);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         const data = docSnap.data();
         setProfile(data);
         setOriginalProfile(data);
+        await updateDoc(docRef, { lastUsed: serverTimestamp() });
       }
     };
     loadProfile();
@@ -69,21 +79,42 @@ export default function ViewProfile({ profileId }) {
 
   // 🔧 Generalized save function for any section
   const saveSection = async (field, updatedValue) => {
-    const updatedProfile = { ...profile, [field]: updatedValue };
+    const updatedProfile = {
+      ...profile,
+      PDF: {
+        ...(profile.PDF || {}),
+        [field]: updatedValue,
+      },
+    };
     setProfile(updatedProfile);
-    const docRef = doc(db, "styleProfiles", profileId);
-    await updateDoc(docRef, { [field]: updatedValue });
+    const docRef = doc(db, "profiles", profileId);
+    await updateDoc(docRef, {
+      [`PDF.${field}`]: updatedValue,
+      lastUsed: serverTimestamp(),
+    });
     setOriginalProfile(updatedProfile);
     console.log(`✅ ${field} saved to Firestore`);
   };
 
   // 🔧 Slightly simplified Style save (still fully safe)
   const handleSaveSection = async (sectionKey, updatedData) => {
-    const newStyles = { ...profile.styles, [sectionKey]: updatedData };
+    const { styles } = getPdfConfig(profile);
+    const newStyles = { ...styles, [sectionKey]: updatedData };
     await saveSection("styles", newStyles);
   };
 
+  const handleSaveJson = async (updatedProfile) => {
+    setProfile(updatedProfile);
+    const docRef = doc(db, "profiles", profileId);
+    await updateDoc(docRef, {
+      ...updatedProfile,
+      lastUsed: serverTimestamp(),
+    });
+    setOriginalProfile(updatedProfile);
+  };
+
   if (!profile) return <p className="text-center mt-8 text-gray-500">Loading...</p>;
+  const pdf = getPdfConfig(profile);
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-6">
@@ -100,7 +131,7 @@ export default function ViewProfile({ profileId }) {
             label: "Styles",
             content: (
               <StyleBoxList
-                styles={profile.styles}
+                styles={pdf.styles}
                 onSaveSection={handleSaveSection}
               />
             ),
@@ -109,9 +140,15 @@ export default function ViewProfile({ profileId }) {
             label: "Document Styles",
             content: (
               <DocumentEditor
-                documentData={profile.document}
+                documentData={pdf.document}
                 onChange={(updatedDoc) => {
-                  const updatedProfile = { ...profile, document: updatedDoc };
+                  const updatedProfile = {
+                    ...profile,
+                    PDF: {
+                      ...(profile.PDF || {}),
+                      document: updatedDoc,
+                    },
+                  };
                   setProfile(updatedProfile);
                 }}
                 onSave={(updatedDocument) => saveSection("document", updatedDocument)}
@@ -122,12 +159,18 @@ export default function ViewProfile({ profileId }) {
           //   label: "Columns",
           //   content: (
           //     <ColumnsEditor
-          //       columnsData={profile.columns}
+          //       columnsData={pdf.columns}
           //       detectedFields={profile.detectedFields || []}
           //       fieldsLastUpdated={profile.fieldsLastUpdated || null}
-          //       documentConfig={profile.document}
+          //       documentConfig={pdf.document}
           //       onChange={(updated) => {
-          //         setProfile((prev) => ({ ...prev, columns: updated }));
+          //         setProfile((prev) => ({
+          //           ...prev,
+          //           PDF: {
+          //             ...(prev.PDF || {}),
+          //             columns: updated,
+          //           },
+          //         }));
           //       }}
           //       onSave={(updatedColumns) => saveSection("columns", updatedColumns)}
           //     />
@@ -147,7 +190,7 @@ export default function ViewProfile({ profileId }) {
           {
             label: "JSON",
             content: (
-              <JSONdisplay jsonData={profile} />
+              <JSONdisplay jsonData={profile} onSaveJson={handleSaveJson} />
             ),
           },
         ]}

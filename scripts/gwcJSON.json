@@ -1,0 +1,214 @@
+{
+  "name": "GWC25",
+  "PDF": {
+    "document": {
+      "topMargin": 30,
+      "rightMargin": 50,
+      "bottomPageThreshold": 80,
+      "header": {
+        "logo": {
+          "url": "https://firebasestorage.googleapis.com/v0/b/flair-pdf-generator.firebasestorage.app/o/logos%2F0ha9w3GkYW_GWC%20Logo.png?alt=media&token=db10e4f3-39aa-4be8-8ff4-9f7d4a95cc24",
+          "height": 100,
+          "width": 100
+        }
+      },
+      "leftMargin": 50,
+      "bottomMargin": 10,
+      "pageSize": {
+        "height": 595,
+        "width": 842
+      },
+      "groupPaddingBottom": 10
+    },
+    "styles": {
+      "footer": {
+        "fontColour": "#000000",
+        "paddingTop": 20,
+        "fontStyle": "normal",
+        "fontSize": 10
+      },
+      "header": {
+        "fontStyle": "normal",
+        "fontSize": 12,
+        "fontColour": "#000000",
+        "paddingBottom": 14
+      },
+      "row": {
+        "default": {
+          "fontSize": 10,
+          "fontStyle": "normal",
+          "backgroundColour": "#FFFFFF",
+          "gutterColour": "#e22400",
+          "fontColour": "#000000"
+        },
+        "past": {
+          "underline": {
+            "enabled": false
+          }
+        },
+        "lowlight": {
+          "fontStyle": "bold",
+          "fontSize": 10,
+          "backgroundColour": "#FFFFFF",
+          "fontColour": "#ff40ff"
+        },
+        "important": {
+          "gutterColour": "#ff2600",
+          "badge": {
+            "text": "⭐︎ ",
+            "enabled": true
+          },
+          "underline": {
+            "enabled": false
+          }
+        },
+        "highlight": {
+          "fontColour": "#000000",
+          "backgroundColour": "#FFFF00",
+          "fontSize": 10,
+          "fontStyle": "italic"
+        },
+        "lineSpacing": 3,
+        "new": {
+          "gutterColour": "#0056d6",
+          "underline": {
+            "enabled": false
+          },
+          "badge": {
+            "text": "🔵 "
+          }
+        }
+      },
+      "groupMetadata": {
+        "fontColour": "#da5100",
+        "fontSize": 11,
+        "fontStyle": "italic",
+        "backgroundColour": "#FFFFFF",
+        "paddingBottom": 0
+      },
+      "labelRow": {
+        "fontColour": "#000000",
+        "backgroundColour": "#FFFFFF",
+        "fontStyle": "bold",
+        "fontSize": 11
+      },
+      "groupTitle": {
+        "fontColour": "#000000",
+        "fontStyle": "bold",
+        "fontSize": 12,
+        "backgroundColour": "#FFFFFF",
+        "paddingBottom": 0
+      }
+    }
+  },
+  "groupPresets": [
+    {
+      "id": "byDate-1",
+      "label": "Group by date. Columns for time, description, tags, location and notes",
+      "dataset": "scheduleDetail",
+      "groupBy": "date",
+      "groupSort": ["date:asc"],
+      "groupMetaData": "dates",
+      "entrySort": ["time:asc", "description:asc"],
+      "columns": [
+        { "label": "Time", "showLabel": true, "field": "time", "width": 75, "filterable": false },
+        { "label": "Description", "showLabel": true, "field": "description", "width": 250, "filterable": false },
+        { "label": "Tags", "showLabel": true, "field": "tags", "width": 100, "filterable": true },
+        { "label": "Location", "showLabel": true, "field": "locations", "width": 100, "filterable": true },
+        { "label": "Notes", "showLabel": true, "field": "notes", "width": 217, "filterable": false }
+      ]
+    },
+    {
+      "id": "byDate-4",
+      "label": "Group by date. Columns for time, description, resp, location and notes",
+      "dataset": "scheduleDetail",
+      "groupBy": "date",
+      "groupSort": ["date:asc"],
+      "groupMetaData": "dates",
+      "entrySort": ["time:asc", "description:asc"],
+      "columns": [
+        { "label": "Time", "showLabel": true, "field": "time", "width": 75, "filterable": false },
+        { "label": "Description", "showLabel": true, "field": "description", "width": 250, "filterable": false },
+        { "label": "Tags", "showLabel": true, "field": "tags", "width": 100, "filterable": true },
+        { "label": "Location", "showLabel": true, "field": "locations", "width": 100, "filterable": true },
+        { "label": "Notes", "showLabel": true, "field": "notes", "width": 217, "filterable": false }
+      ]
+    },
+    {
+      "id": "byTag-1",
+      "label": "Group by tag. Columns for time, description, tags, location and notes",
+      "dataset": "scheduleDetail",
+      "groupBy": "tagId",
+      "groupMetaData": "tag",
+      "groupSort": ["tagName:asc"],
+      "entrySort": ["dateKey:asc", "time:desc", "description:asc"],
+      "columns": [
+        { "label": "Date", "showLabel": true, "field": "dateKey", "width": 90, "filterable": false },
+        { "label": "Time", "showLabel": true, "field": "time", "width": 75, "filterable": false },
+        { "label": "Description", "showLabel": true, "field": "description", "width": 260, "filterable": false },
+        { "label": "Location", "showLabel": true, "field": "locations", "width": 120, "filterable": true },
+        { "label": "Notes", "showLabel": true, "field": "notes", "width": 180, "filterable": false }
+      ]
+    },
+    {
+      "id": "trucking-1",
+      "label": "Group by truck. Columns for time, description, tags, location and notes",
+      "dataset": "scheduleDetail",
+      "groupBy": "truckId",
+      "groupMetaData": "trucks",
+      "groupSort": ["tagName:asc"],
+      "entrySort": ["date:asc", "time:asc", "description:asc"],
+      "columns": [
+        { "label": "Date", "showLabel": true, "field": "dateKey", "width": 200, "filterable": false },
+        { "label": "Time", "showLabel": true, "field": "time", "width": 60, "filterable": false },
+        { "label": "Description", "showLabel": true, "field": "description", "width": 460, "filterable": false }
+      ]
+    },
+    {
+      "id": "byLocation-1",
+      "label": "Group by location. Columns for time, description, tags, location and notes",
+      "dataset": "scheduleDetail",
+      "groupBy": "locationId",
+      "groupMetaData": "tbc",
+      "groupSort": ["locationName:asc"],
+      "entrySort": ["date:asc", "time:asc", "description:asc"],
+      "columns": [
+        { "label": "Date", "showLabel": true, "field": "dateKey", "width": 90, "filterable": false },
+        { "label": "Time", "showLabel": true, "field": "time", "width": 75, "filterable": false },
+        { "label": "Description", "showLabel": true, "field": "description", "width": 280, "filterable": false },
+        { "label": "Tags", "showLabel": true, "field": "tags", "width": 110, "filterable": true },
+        { "label": "Notes", "showLabel": true, "field": "notes", "width": 160, "filterable": false }
+      ]
+    },
+    {
+      "id": "byDate-2",
+      "label": "Group by date. Columns for time, description, Location",
+      "dataset": "scheduleDetail",
+      "groupBy": "date",
+      "groupMetaData": "dates",
+      "groupSort": ["date:asc"],
+      "entrySort": ["time:asc", "description:asc"],
+      "columns": [
+        { "label": "Time", "showLabel": true, "field": "time", "width": 75, "filterable": false },
+        { "label": "Description", "showLabel": true, "field": "description", "width": 250, "filterable": false },
+        { "label": "Location", "showLabel": true, "field": "locations", "width": 100, "filterable": true },
+        { "label": "Notes", "showLabel": true, "field": "notes", "width": 217, "filterable": false }
+      ]
+    },
+    {
+      "id": "byDate-3",
+      "label": "Group by date. Columns for time, description, Tags",
+      "dataset": "scheduleDetail",
+      "groupBy": "date",
+      "groupMetaData": "dates",
+      "groupSort": ["date:asc"],
+      "entrySort": ["time:asc", "description:asc"],
+      "columns": [
+        { "label": "Time", "showLabel": true, "field": "time", "width": 75 },
+        { "label": "Description", "showLabel": true, "field": "description", "width": 250 },
+        { "label": "Tags", "showLabel": true, "field": "tags", "width": 100 },
+        { "label": "Notes", "showLabel": true, "field": "notes", "width": 217 }
+      ]
+    }
+  ]
+}

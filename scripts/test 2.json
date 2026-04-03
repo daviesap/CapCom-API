@@ -1,0 +1,112 @@
+{
+  "name": "Capcom Main Profile",
+  "PDF": {
+    "Styles": {
+      "footer": {
+        "fontColour": "#000000",
+        "paddingTop": 20,
+        "fontStyle": "normal",
+        "fontSize": 10
+      },
+      "labelRow": {
+        "fontSize": 11,
+        "fontStyle": "bold",
+        "backgroundColour": "#FFFFFF",
+        "fontColour": "#000000"
+      },
+      "groupMetadata": {
+        "fontColour": "#000000",
+        "backgroundColour": "#FFFFFF",
+        "paddingBottom": 12,
+        "fontStyle": "italic",
+        "fontSize": 11
+      },
+      "row": {
+        "highlight": {
+          "fontStyle": "italic",
+          "fontSize": 10,
+          "fontColour": "#000000",
+          "backgroundColour": "#fffbb9"
+        },
+        "lineSpacing": 3,
+        "default": {
+          "fontSize": 10,
+          "fontStyle": "normal",
+          "backgroundColour": "#FFFFFF",
+          "fontColour": "#000000"
+        },
+        "lowlight": {
+          "backgroundColour": "#FFFFFF",
+          "fontColour": "#000000",
+          "fontSize": 10,
+          "fontStyle": "bold"
+        }
+      },
+      "header": {
+        "fontSize": 12,
+        "fontStyle": "normal",
+        "paddingBottom": 20,
+        "fontColour": "#000000"
+      },
+      "groupTitle": {
+        "paddingBottom": 0,
+        "backgroundColour": "#FFFFFF",
+        "fontStyle": "bold",
+        "fontSize": 12,
+        "fontColour": "#000000"
+      }
+    },
+    "document": {
+      "bottomMargin": 20,
+      "pageSize": {
+        "height": 595,
+        "width": 842
+      },
+      "groupPaddingBottom": 10,
+      "topMargin": 30,
+      "rightMargin": 50,
+      "header": {
+        "logo": {
+          "width": 36,
+          "height": 36,
+          "url": "https://firebasestorage.googleapis.com/v0/b/flair-pdf-generator.firebasestorage.app/o/logos%2Fflair-logo.png?alt=media&token=2f79f8b7-2c31-4ee9-aa3f-223a7d6ed5cf"
+        }
+      },
+      "bottomPageThreshold": 40,
+      "leftMargin": 50
+    }
+  },
+  "groupPresets" : [
+    {
+      "id": "byDate-1",
+      "label": "Group by date. Columns for time, description, tags, location and notes",
+      "dataset": "scheduleDetail",
+      "groupBy": "date",
+      "groupSort": ["date:asc"],
+      "groupMetaData": "dates",
+      "entrySort": ["time:asc", "description:asc"],
+      "columns": [
+        { "label": "Time",        "showLabel": true, "field": "time",        "width": 75,  "filterable": false  },
+        { "label": "Description", "showLabel": true, "field": "description", "width": 250,  "filterable": false  },
+        { "label": "Tags",        "showLabel": true, "field": "tags",        "width": 100,  "filterable": true  },
+        { "label": "Location",    "showLabel": true, "field": "locations",   "width": 100,  "filterable": true  },
+        { "label": "Notes",       "showLabel": true, "field": "notes",       "width": 217,  "filterable": false  }
+      ]
+    },
+        {
+      "id": "byDate-4",
+      "label": "Group by date. Columns for time, description, resp, location and notes",
+      "dataset": "scheduleDetail",
+      "groupBy": "date",
+      "groupSort": ["date:asc"],
+      "groupMetaData": "dates",
+      "entrySort": ["time:asc", "description:asc"],
+      "columns": [
+        { "label": "Time",        "showLabel": true, "field": "time",        "width": 75,  "filterable": false  },
+        { "label": "Description", "showLabel": true, "field": "description", "width": 250,  "filterable": false  },
+        { "label": "Tags",  "showLabel": true, "field": "tags", "width": 100,  "filterable": true  },
+        { "label": "Location",    "showLabel": true, "field": "locations",   "width": 100,  "filterable": true  },
+        { "label": "Notes",       "showLabel": true, "field": "notes",       "width": 217,  "filterable": false  }
+      ]
+    }]
+}
