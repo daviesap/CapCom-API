@@ -15,6 +15,7 @@
     "date-fns": "^4.1.0",
     "firebase": "^11.6.1",
     "lodash.isequal": "^4.5.0",
+    "monaco-editor": "^0.53.0",
     "nanoid": "^5.1.5",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
