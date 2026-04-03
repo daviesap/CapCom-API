@@ -144,9 +144,11 @@ export async function generateHomeHandler({
           }
         } else {
           console.warn(`⚠️ No Firestore profile found for root profileId "${rootProfileId}" (GENERATE_HOME).`);
+          return res.status(400).json({ success: false, message: "Missing profile ID" });
         }
       } catch (e) {
         console.warn(`⚠️ Failed to load root profile "${rootProfileId}" for GENERATE_HOME:`, e?.message || e);
+        return res.status(400).json({ success: false, message: "Missing profile ID" });
       }
     }
 

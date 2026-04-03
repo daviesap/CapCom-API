@@ -8,9 +8,8 @@ import isEqual from "lodash.isequal";
 import LogoUploader from "../components/LogoUploader";
 
 import Tabs from "../components/Tabs";
-import StyleBoxList from "../components/StyleBoxList";
-import DocumentEditor from "../components/DocumentEditor";
-import ColumnsEditor from "../components/ColumnsEditor";
+import StylesEditor from "../components/StylesEditor";
+import GroupPresetsEditor from "../components/GroupPresetsEditor";
 import JSONdisplay from "../components/JSONDisplay";
 
 function getPdfConfig(profile = {}) {
@@ -77,30 +76,33 @@ export default function ViewProfile({ profileId }) {
     }
   };
 
-  // 🔧 Generalized save function for any section
-  const saveSection = async (field, updatedValue) => {
+  const savePdf = async (updatedPdf) => {
     const updatedProfile = {
       ...profile,
-      PDF: {
-        ...(profile.PDF || {}),
-        [field]: updatedValue,
-      },
+      PDF: updatedPdf,
     };
     setProfile(updatedProfile);
     const docRef = doc(db, "profiles", profileId);
     await updateDoc(docRef, {
-      [`PDF.${field}`]: updatedValue,
+      PDF: updatedPdf,
       lastUsed: serverTimestamp(),
     });
     setOriginalProfile(updatedProfile);
-    console.log(`✅ ${field} saved to Firestore`);
+    console.log("✅ PDF saved to Firestore");
   };
 
-  // 🔧 Slightly simplified Style save (still fully safe)
-  const handleSaveSection = async (sectionKey, updatedData) => {
-    const { styles } = getPdfConfig(profile);
-    const newStyles = { ...styles, [sectionKey]: updatedData };
-    await saveSection("styles", newStyles);
+  const handleSaveGroupPresets = async (updatedGroupPresets) => {
+    const updatedProfile = {
+      ...profile,
+      groupPresets: updatedGroupPresets,
+    };
+    setProfile(updatedProfile);
+    const docRef = doc(db, "profiles", profileId);
+    await updateDoc(docRef, {
+      groupPresets: updatedGroupPresets,
+      lastUsed: serverTimestamp(),
+    });
+    setOriginalProfile(updatedProfile);
   };
 
   const handleSaveJson = async (updatedProfile) => {
@@ -128,54 +130,23 @@ export default function ViewProfile({ profileId }) {
       <Tabs
         tabs={[
           {
-            label: "Styles",
+            label: "PDF",
             content: (
-              <StyleBoxList
-                styles={pdf.styles}
-                onSaveSection={handleSaveSection}
+              <StylesEditor
+                styles={pdf}
+                onSave={savePdf}
               />
             ),
           },
           {
-            label: "Document Styles",
+            label: "groupPresets",
             content: (
-              <DocumentEditor
-                documentData={pdf.document}
-                onChange={(updatedDoc) => {
-                  const updatedProfile = {
-                    ...profile,
-                    PDF: {
-                      ...(profile.PDF || {}),
-                      document: updatedDoc,
-                    },
-                  };
-                  setProfile(updatedProfile);
-                }}
-                onSave={(updatedDocument) => saveSection("document", updatedDocument)}
+              <GroupPresetsEditor
+                groupPresets={profile.groupPresets || []}
+                onSave={handleSaveGroupPresets}
               />
             ),
           },
-          // {
-          //   label: "Columns",
-          //   content: (
-          //     <ColumnsEditor
-          //       columnsData={pdf.columns}
-          //       detectedFields={profile.detectedFields || []}
-          //       fieldsLastUpdated={profile.fieldsLastUpdated || null}
-          //       documentConfig={pdf.document}
-          //       onChange={(updated) => {
-          //         setProfile((prev) => ({
-          //           ...prev,
-          //           PDF: {
-          //             ...(prev.PDF || {}),
-          //             columns: updated,
-          //           },
-          //         }));
-          //       }}
-          //       onSave={(updatedColumns) => saveSection("columns", updatedColumns)}
-          //     />
-          //   )
-          // },
           {
             label: "Logo",
             content: (
