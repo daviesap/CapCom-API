@@ -66,13 +66,22 @@ export function applySnapshotFiltersToView(view, {
   filterTagIds = [],
   filterLocationIds = [],
   filterSubLocationIds = [],
+  filterGroup = "",
 }) {
   if (!view || !Array.isArray(view.groups)) {
     return { groupBy: view?.groupBy || "", groups: [] };
   }
 
+  const requiredGroupValue = typeof filterGroup === "string" ? filterGroup.trim() : String(filterGroup ?? "").trim();
+  const filterField = typeof view?.filterGroupField === "string" ? view.filterGroupField.trim() : "";
+
   const groups = [];
   for (const g of view.groups) {
+    if (requiredGroupValue && filterField) {
+      const metadataValue = readGroupFilterValue(g?.meta, filterField);
+      if (metadataValue !== requiredGroupValue) continue;
+    }
+
     const entries = filterEntriesArray({
       data: g.entries,
       filterTagIds,
@@ -95,5 +104,18 @@ export function applySnapshotFiltersToView(view, {
       });
     }
   }
-  return { groupBy: view.groupBy, groups };
+  return {
+    groupBy: view.groupBy,
+    groupMetaData: view.groupMetaData,
+    filterGroupField: view.filterGroupField,
+    groups,
+  };
+}
+
+function readGroupFilterValue(meta, field) {
+  if (!meta || typeof meta !== "object" || !field) return "";
+  const value = meta[field];
+  if (typeof value === "string") return value.trim();
+  if (typeof value === "number" || typeof value === "boolean") return String(value);
+  return "";
 }

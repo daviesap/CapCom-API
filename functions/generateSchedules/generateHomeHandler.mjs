@@ -191,6 +191,7 @@ export async function generateHomeHandler({
         filterTagIds: snap.filterTagIds || [],
         filterLocationIds: snap.filterLocationIds || [],
         filterSubLocationIds: snap.filterSubLocationIds || [],
+        filterGroup: snap.filterGroup || "",
       });
 
       const groupsCount = Array.isArray(processedJSON?.groups) ? processedJSON.groups.length : 0;

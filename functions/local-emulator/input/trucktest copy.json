@@ -1,0 +1,175 @@
+{
+  "api_key": "Sausages2025!!",
+  "event": {
+    "profileId": "ZEsXR_xGU5",
+    "name": "Test",
+    "header": [
+      "Test"
+    ]
+  },
+  "debug": false,
+  "UserId": "AdwgDd77SUGOlcSgWH6JIw",
+  "userEmail": "andrew@flair.london",
+  "glideAppName": "IML - Salesforce 2026",
+  "groupMeta": {
+    "scheduleDetail": [
+      {
+        "date": "2026-06-17",
+        "data": {
+          "title": "Wednesday, 17 June 2026"
+        }
+      },
+      {
+        "date": "2026-06-18",
+        "data": {
+          "title": "Thursday, 18 June 2026"
+        }
+      },
+      {
+        "date": "2026-06-19",
+        "data": {
+          "title": "Friday, 19 June 2026"
+        }
+      },
+      {
+        "date": "2026-06-20",
+        "data": {
+          "title": "Saturday, 20 June 2026"
+        }
+      }
+    ],
+    "trucks": [
+      {
+        "truckId": "LsoTMQW1S8COG8PG2.nSUA",
+        "truckingCompany": "EST",
+        "data": {
+          "title": "Test 1",
+          "above": "Size = 40 ', Driver = , Contents = ",
+          "below": "Below text"
+        }
+      },
+      {
+        "truckId": "8nzPCCuRTSi.5E1g5h3flg",
+        "truckingCompany": "EST2",
+        "data": {
+          "title": "Truck 2",
+          "above": "Size = , Driver = , Contents = ",
+          "below": "Below text"
+        }
+      }
+    ]
+  },
+  "snapshots": [
+    {
+      "name": "Full schedule",
+      "filterBox": true,
+      "showKeyInfo": false,
+      "groupPresetId": "iml-1",
+      "filterTagIds": [],
+      "filterLocationIds": [],
+      "group": "Full schedule",
+      "sortOrder": 1
+    },
+    {
+      "name": "Trucking",
+      "filterBox": false,
+      "showKeyInfo": false,
+      "groupPresetId": "iml-trucking",
+      "filterTagIds": [],
+      "filterLocationIds": [],
+      "filterGroup": "EST2",
+      "group": "Full schedule",
+      "sortOrder": 1
+    }
+  ],
+  "data": {
+    "scheduleDetail": [
+      {
+        "date": "2026-06-17",
+        "dateFriendly": "Wednesday, 17 June 2026",
+        "time": "15:30",
+        "description": "w",
+        "tags": [
+          "Rehearsals"
+        ],
+        "tagIds": [
+          "ClWrvEWYQRirXxVHHJRAaA"
+        ],
+        "locationIds": [
+          "XR94lIUKQ2iw5KK1LR.vjg"
+        ],
+        "supplier": [
+          "Supplier A"
+        ],
+        "sortField": "20260617/15:30/w"
+      },
+      {
+        "date": "2026-06-18",
+        "dateFriendly": "Thursday, 18 June 2026",
+        "time": "2",
+        "description": "w",
+        "tags": [
+          "Event Live"
+        ],
+        "tagIds": [
+          "aYN-H5f1TTC3IZji1DCg0g"
+        ],
+        "locationIds": [
+          "KznQ5.pKTkuzJBjs0V146A"
+        ],
+        "supplier": [
+          "Supplier B"
+        ],
+        "sortField": "20260618/2/w"
+      },
+      {
+        "date": "2026-06-19",
+        "dateFriendly": "Friday, 19 June 2026",
+        "time": "16:00",
+        "description": "ww",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [],
+        "supplier": [],
+        "truckId": "LsoTMQW1S8COG8PG2.nSUA",
+        "sortField": "20260619/16:00/ww"
+      },
+      {
+        "date": "2026-06-20",
+        "dateFriendly": "Saturday, 20 June 2026",
+        "time": "15:00",
+        "description": "ww",
+        "tags": [
+          "Event Live"
+        ],
+        "tagIds": [
+          "aYN-H5f1TTC3IZji1DCg0g"
+        ],
+        "locationIds": [],
+        "supplier": [],
+        "sortField": "20260620/15:00/ww"
+      },
+      {
+        "date": "2026-06-19",
+        "dateFriendly": "Friday, 19 June 2026",
+        "time": "1",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [],
+        "supplier": [],
+        "truckId": "LsoTMQW1S8COG8PG2.nSUA",
+        "sortField": "20260619/1/"
+      },
+      {
+        "date": "2026-06-17",
+        "dateFriendly": "Wednesday, 17 June 2026",
+        "description": "TEST",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [],
+        "supplier": [],
+        "sortField": "20260617//TEST"
+      }
+    ]
+  }
+}

@@ -1,0 +1,221 @@
+{
+  "name": "IML",
+  "createdAt": {
+    "seconds": 1775183178,
+    "nanoseconds": 105000000
+  },
+  "lastUsed": {
+    "seconds": 1775187664,
+    "nanoseconds": 848000000
+  },
+  "PDF": {
+    "document": {
+      "topMargin": 30,
+      "pageSize": {
+        "height": 595,
+        "width": 842
+      },
+      "bottomPageThreshold": 80,
+      "bottomMargin": 10,
+      "header": {
+        "logo": {
+          "url": "https://firebasestorage.googleapis.com/v0/b/flair-pdf-generator.firebasestorage.app/o/logos%2F0ha9w3GkYW_GWC%20Logo.png?alt=media&token=db10e4f3-39aa-4be8-8ff4-9f7d4a95cc24",
+          "height": 100,
+          "width": 100
+        }
+      },
+      "rightMargin": 50,
+      "leftMargin": 50,
+      "groupPaddingBottom": 10
+    },
+    "styles": {
+      "header": {
+        "fontSize": 12,
+        "fontStyle": "normal",
+        "fontColour": "#000000",
+        "paddingBottom": 14
+      },
+      "groupTitle": {
+        "backgroundColour": "#FFFFFF",
+        "fontColour": "#000000",
+        "fontStyle": "bold",
+        "paddingBottom": 0,
+        "fontSize": 12
+      },
+      "row": {
+        "new": {
+          "gutterColour": "#0056d6",
+          "underline": {
+            "enabled": false
+          },
+          "badge": {
+            "text": "🔵 "
+          }
+        },
+        "lowlight": {
+          "fontColour": "#ff40ff",
+          "backgroundColour": "#FFFFFF",
+          "fontSize": 10,
+          "fontStyle": "bold"
+        },
+        "default": {
+          "fontSize": 10,
+          "gutterColour": "#e22400",
+          "fontStyle": "normal",
+          "fontColour": "#000000",
+          "backgroundColour": "#FFFFFF"
+        },
+        "past": {
+          "underline": {
+            "enabled": false
+          }
+        },
+        "lineSpacing": 3,
+        "important": {
+          "underline": {
+            "enabled": false
+          },
+          "badge": {
+            "text": "⭐︎ ",
+            "enabled": true
+          },
+          "gutterColour": "#ff2600"
+        },
+        "highlight": {
+          "fontSize": 10,
+          "fontStyle": "italic",
+          "fontColour": "#000000",
+          "backgroundColour": "#FFFF00"
+        }
+      },
+      "labelRow": {
+        "fontStyle": "bold",
+        "fontSize": 11,
+        "backgroundColour": "#FFFFFF",
+        "fontColour": "#000000"
+      },
+      "footer": {
+        "paddingTop": 20,
+        "fontSize": 10,
+        "fontStyle": "normal",
+        "fontColour": "#000000"
+      },
+      "groupMetadata": {
+        "fontStyle": "italic",
+        "backgroundColour": "#FFFFFF",
+        "fontColour": "#da5100",
+        "fontSize": 11,
+        "paddingBottom": 0
+      }
+    }
+  },
+  "updatedAt": {
+    "nanoseconds": 105000000,
+    "seconds": 1775183178
+  },
+  "groupPresets": [
+    {
+      "groupMetaData": "dates",
+      "label": "IML Group by date. Columns for time, description, tags, location and notes",
+      "dataset": "scheduleDetail",
+      "id": "iml-1",
+      "groupSort": [
+        "date:asc"
+      ],
+      "groupBy": "date",
+      "columns": [
+        {
+          "filterable": false,
+          "field": "time",
+          "label": "Time",
+          "width": 75,
+          "showLabel": true
+        },
+        {
+          "showLabel": true,
+          "width": 250,
+          "label": "Description",
+          "filterable": false,
+          "field": "description"
+        },
+        {
+          "showLabel": true,
+          "width": 100,
+          "label": "Tags",
+          "filterable": true,
+          "field": "tags"
+        },
+        {
+          "field": "supplier",
+          "filterable": true,
+          "width": 100,
+          "showLabel": true,
+          "label": "Supplier"
+        },
+        {
+          "filterable": false,
+          "field": "notes",
+          "width": 217,
+          "showLabel": true,
+          "label": "Notes"
+        }
+      ],
+      "entrySort": [
+        "time:asc",
+        "description:asc"
+      ]
+    },
+    {
+      "id": "iml-trucking",
+      "dataset": "scheduleDetail",
+      "groupFilterField" : "truckingCompany",
+      "groupSort": [
+        "title:asc"
+      ],
+      "groupBy": "truckId",
+      "entrySort": [
+        "sortField:asc",
+        "description:asc"
+      ],
+      "columns": [
+        {
+          "filterable": false,
+          "field": "dateFriendly",
+          "showLabel": true,
+          "width": 150,
+          "label": "Date"
+        },
+        {
+          "label": "Time",
+          "showLabel": true,
+          "width": 75,
+          "filterable": false,
+          "field": "time"
+        },
+        {
+          "filterable": false,
+          "field": "description",
+          "showLabel": true,
+          "width": 250,
+          "label": "Description"
+        },
+        {
+          "label": "Supplier",
+          "showLabel": true,
+          "width": 100,
+          "filterable": true,
+          "field": "supplier"
+        },
+        {
+          "width": 217,
+          "showLabel": true,
+          "label": "Notes",
+          "field": "notes",
+          "filterable": false
+        }
+      ],
+      "groupMetaData": "trucks",
+      "label": "IML Group by truck"
+    }
+  ]
+}

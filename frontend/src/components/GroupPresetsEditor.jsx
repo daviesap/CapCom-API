@@ -7,6 +7,7 @@ const DEFAULT_PRESET = {
   dataset: "scheduleDetail",
   groupBy: "date",
   groupMetaData: "dates",
+  filterGroupField: "",
   groupSort: ["date:asc"],
   entrySort: ["time:asc", "description:asc"],
   columns: [],
@@ -186,6 +187,15 @@ export default function GroupPresetsEditor({ groupPresets = [], onSave }) {
                 type="text"
                 value={preset.groupMetaData || ""}
                 onChange={(e) => updatePreset(presetIndex, "groupMetaData", e.target.value)}
+              />
+            </label>
+            <label className="block text-sm">
+              filterGroupField
+              <input
+                className="mt-1 w-full border rounded p-2"
+                type="text"
+                value={preset.filterGroupField || ""}
+                onChange={(e) => updatePreset(presetIndex, "filterGroupField", e.target.value)}
               />
             </label>
             <label className="block text-sm">

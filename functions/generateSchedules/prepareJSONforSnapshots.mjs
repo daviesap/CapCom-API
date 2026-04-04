@@ -76,6 +76,8 @@ export async function prepareJSONGroups(
     result[outKey] = {
       label: preset.label || outKey,
       groupBy,
+      groupMetaData: preset.groupMetaData || "",
+      filterGroupField: preset.filterGroupField || "",
       columns,
       groups,
     };
@@ -91,9 +93,12 @@ function indexGroupMeta(payload) {
 
   const assign = (bucket, key, data) => {
     if (!bucket || !key) return;
-    const { title = "", above = "", below = "" } = data || {};
+    const source = (data && typeof data === "object") ? data : {};
+    const title = source.title ?? "";
+    const above = source.above ?? "";
+    const below = source.below ?? "";
     if (!meta[bucket]) meta[bucket] = Object.create(null);
-    meta[bucket][key] = { title, above, below };
+    meta[bucket][key] = { ...source, title, above, below };
   };
 
   const arrayBuckets = payload?.groupMeta;
@@ -102,7 +107,9 @@ function indexGroupMeta(payload) {
       if (!Array.isArray(entries)) continue;
       for (const entry of entries) {
         if (!entry || typeof entry !== "object") continue;
-        const data = (entry.data && typeof entry.data === "object") ? entry.data : entry;
+        const data = (entry.data && typeof entry.data === "object")
+          ? { ...entry, ...entry.data }
+          : entry;
         const key =
           entry.id ??
           entry.date ??

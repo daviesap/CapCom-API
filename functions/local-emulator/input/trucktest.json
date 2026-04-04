@@ -1,0 +1,2937 @@
+{
+  "api_key": "Sausages2025!!",
+  "event": {
+    "profileId": "ZEsXR_xGU5",
+    "name": "Salesforce Paris 2026",
+    "logoUrl": "https://storage.googleapis.com/glide-prod.appspot.com/uploads-v2/S0wohF76tMytHAyBTn14/pub/N8HWuXPHsxdgtVm3v6bA.png",
+    "header": [
+      "Salesforce Paris 2026",
+      "Porte de Versailles",
+      "Friday 15th to Sunday 23rd May 2026"
+    ]
+  },
+  "debug": false,
+  "UserId": "AdwgDd77SUGOlcSgWH6JIw",
+  "userEmail": "andrew@flair.london",
+  "glideAppName": "IML - Salesforce 2026",
+  "groupMeta": {
+    "scheduleDetail": [
+      {
+        "date": "2026-05-14",
+        "data": {
+          "title": "Thursday, 14 May 2026"
+        }
+      },
+      {
+        "date": "2026-05-15",
+        "data": {
+          "title": "Friday, 15 May 2026",
+          "above": "UK Collections",
+          "below": "Trucks en-route Paris"
+        }
+      },
+      {
+        "date": "2026-05-16",
+        "data": {
+          "title": "Saturday, 16 May 2026",
+          "above": "PM #1 Travel, Blackout FR trucks tip",
+          "below": "Rigging trucks tipped"
+        }
+      },
+      {
+        "date": "2026-05-17",
+        "data": {
+          "title": "Sunday, 17 May 2026",
+          "above": "Rigging load-in, Tip trucks",
+          "below": "All technical trusses built and to working height / trim\nAll trucks tipped to storage areas\nKeynote floorspace ready for technical load-in\n?No. screens built and to trim ??"
+        }
+      },
+      {
+        "date": "2026-05-18",
+        "data": {
+          "title": "Monday, 18 May 2026",
+          "above": "Technical Load-in #1, Carpet",
+          "below": "Carpet lay complete\nControl positions built x3\nDSMSs built x6\nDemo desks built x4\nCamera risers built x3\nDSMs complete\nDemo desks complete\nCamera positions complete\nDuct cabling installed and closed up\nControl positions complete\nAudio focus complete\nAll access points & switches on truss\nDeads loaded and off-site"
+        }
+      },
+      {
+        "date": "2026-05-19",
+        "data": {
+          "title": "Tuesday, 19 May 2026",
+          "above": "Technical Load-in #2, Seat Build",
+          "below": "Drape trusses flown out\nDrape portals complete\nSeat build complete\nElectrical inspection complete\nGreen Rooms complete\nKeynote space ready for client rehearsals"
+        }
+      },
+      {
+        "date": "2026-05-20",
+        "data": {
+          "title": "Wednesday, 20 May 2026",
+          "above": "Client Rehearsals",
+          "below": "Keynote space is show ready\nSilent Conference set up\nKeynote is Show-Ready"
+        }
+      },
+      {
+        "date": "2026-05-21",
+        "data": {
+          "title": "Thursday, 21 May 2026",
+          "above": "Live Show Day, Load-out #1",
+          "below": "Seats out\nScenic loaded and off-site\nAV loaded and off-site\nNetworks loaded and off-site\nSilent Conference packed, ready for loading Fri\nDrape trusses down"
+        }
+      },
+      {
+        "date": "2026-05-22",
+        "data": {
+          "title": "Friday, 22 May 2026",
+          "above": "Load-out #1",
+          "below": "Audio loaded and off-site\nLighting loaded and off-site\nRigging loaded and off-site\nTrucks en-route UK\nVenue clear"
+        }
+      },
+      {
+        "date": "2026-05-23",
+        "data": {
+          "title": "Saturday, 23 May 2026",
+          "above": "UK returns",
+          "below": "Tip JPM Scenery\nTip Silent Conference"
+        }
+      },
+      {
+        "date": "2026-05-24",
+        "data": {
+          "title": "Sunday, 24 May 2026"
+        }
+      },
+      {
+        "date": "2026-05-25",
+        "data": {
+          "title": "Monday, 25 May 2026",
+          "above": "Bank Holiday Monday"
+        }
+      },
+      {
+        "date": "2026-05-08",
+        "data": {
+          "title": "Friday, 8 May 2026"
+        }
+      },
+      {
+        "date": "2026-05-26",
+        "data": {
+          "title": "Tuesday, 26 May 2026",
+          "above": "UK returns",
+          "below": "Audio #1 tipped\nLighting #1 tipped\nScenic #1 tipped"
+        }
+      },
+      {
+        "date": "2026-05-07",
+        "data": {
+          "title": "Thursday, 7 May 2026"
+        }
+      },
+      {
+        "date": "2026-05-06",
+        "data": {
+          "title": "Wednesday, 6 May 2026"
+        }
+      },
+      {
+        "date": "2026-05-05",
+        "data": {
+          "title": "Tuesday, 5 May 2026",
+          "above": "Collect Set-A-Site",
+          "below": "Assets tipped to JPM for refurb"
+        }
+      }
+    ],
+    "trucks": [
+      {
+        "truckId": "KyzAglQ3RQ2pXDZaM32T4g",
+        "data": {
+          "title": "Audio #1",
+          "above": "Trucking Company = EST, Size = 45' Megacube Box, Driver = , Contents = Audio",
+          "below": "Below text",
+          "truckingCompany": "EST"
+        }
+      },
+      {
+        "truckId": "ivFWF3A-Sj6LwErS-mA1DA",
+        "data": {
+          "title": "Lighting #1",
+          "above": "Trucking Company = FCL, Size = 45' Megacube Box, Driver = , Contents = Lighting, Silent Conference",
+          "below": "Below text",
+          "truckingCompany": "FCL"
+        }
+      },
+      {
+        "truckId": "cWLHPbyHSVadc0rCPTTXuw",
+        "data": {
+          "title": "Scenic #1",
+          "above": "Trucking Company = tbc, Size = 45' Megacube Curtain, Driver = , Contents = Set-A-Side Scenic, JPM Scenic",
+          "below": "Below text",
+          "truckingCompany": "tbc"
+        }
+      },
+      {
+        "truckId": "J20wz1TVRgG3NfhIOEYvMw",
+        "data": {
+          "title": "Blackout FR #1",
+          "above": "Trucking Company = tbc, Size = 45' Box Trailer, Driver = , Contents = Rigging",
+          "below": "Below text",
+          "truckingCompany": "tbc"
+        }
+      },
+      {
+        "truckId": "U8WZYuijQAOG4UtDL2aPrg",
+        "data": {
+          "title": "Blackout FR #2",
+          "above": "Trucking Company = tbc, Size = 45' Box Trailer, Driver = , Contents = Rigging",
+          "below": "Below text",
+          "truckingCompany": "tbc"
+        }
+      },
+      {
+        "truckId": "y6beTiDlSb6kTQF9QShOPA",
+        "data": {
+          "title": "Blackout FR #3",
+          "above": "Trucking Company = tbc, Size = 45' Box Trailer, Driver = , Contents = Rigging",
+          "below": "Below text",
+          "truckingCompany": "tbc"
+        }
+      },
+      {
+        "truckId": "IXKYkN7WSvSYlyo3jID3Vw",
+        "data": {
+          "title": "Video #1",
+          "above": "Trucking Company = tbc, Size = 45' Megacube Box, Driver = , Contents = Video",
+          "below": "Below text",
+          "truckingCompany": "tbc"
+        }
+      },
+      {
+        "truckId": "MXEYIgBQQ5uoFFn3VOLrSQ",
+        "data": {
+          "title": "Video #2",
+          "above": "Trucking Company = tbc, Size = 45' Megacube Box, Driver = , Contents = Video",
+          "below": "Below text",
+          "truckingCompany": "tbc"
+        }
+      }
+    ]
+  },
+  "snapshots": [
+    {
+      "name": "Full schedule",
+      "filterBox": true,
+      "showKeyInfo": true,
+      "groupPresetId": "iml-1",
+      "filterTagIds": [],
+      "filterLocationIds": [],
+      "group": "Full schedule",
+      "sortOrder": 1
+    },
+    {
+      "name": "Trucking",
+      "filterBox": false,
+      "showKeyInfo": false,
+      "groupPresetId": "iml-trucking",
+      "filterTagIds": [],
+      "filterLocationIds": [],
+      "group": "Full schedule",
+      "sortOrder": 1
+    },
+    {
+      "name": "Trucking - FCL",
+      "filterBox": false,
+      "showKeyInfo": false,
+      "groupPresetId": "iml-trucking",
+      "filterTagIds": [],
+      "filterLocationIds": [],
+      "filterGroup": "FCL",
+      "group": "Full schedule",
+      "sortOrder": 1
+    }
+  ],
+  "data": {
+    "scheduleDetail": [
+      {
+        "date": "2026-05-15",
+        "dateFriendly": "Friday, 15 May 2026",
+        "time": "16:00",
+        "description": "Truck Audio #1 collects Pixl Audio",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "BhB4cGsDRWicJPOOXcVuPA"
+        ],
+        "supplier": [
+          "TruckingBY"
+        ],
+        "truckId": "KyzAglQ3RQ2pXDZaM32T4g",
+        "sortField": "20260515/16:00/Truck Audio #1 collects Pixl Audio"
+      },
+      {
+        "date": "2026-05-15",
+        "dateFriendly": "Friday, 15 May 2026",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [],
+        "supplier": [],
+        "sortField": "20260515//"
+      },
+      {
+        "date": "2026-05-15",
+        "dateFriendly": "Friday, 15 May 2026",
+        "time": "16:00",
+        "description": "Truck Lighting #1 collects TSL",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "BhB4cGsDRWicJPOOXcVuPA"
+        ],
+        "supplier": [
+          "TruckingBY"
+        ],
+        "truckId": "ivFWF3A-Sj6LwErS-mA1DA",
+        "sortField": "20260515/16:00/Truck Lighting #1 collects TSL"
+      },
+      {
+        "date": "2026-05-15",
+        "dateFriendly": "Friday, 15 May 2026",
+        "time": "10:00",
+        "description": "Truck Scenic #1 collects Set-A-Side",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "BhB4cGsDRWicJPOOXcVuPA"
+        ],
+        "supplier": [
+          "TruckingBY"
+        ],
+        "truckId": "cWLHPbyHSVadc0rCPTTXuw",
+        "sortField": "20260515/10:00/Truck Scenic #1 collects Set-A-Side"
+      },
+      {
+        "date": "2026-05-15",
+        "dateFriendly": "Friday, 15 May 2026",
+        "time": "17:30",
+        "description": "Truck Lighting #1 collects Silent Conference",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "BhB4cGsDRWicJPOOXcVuPA"
+        ],
+        "supplier": [
+          "TruckingBY"
+        ],
+        "truckId": "ivFWF3A-Sj6LwErS-mA1DA",
+        "sortField": "20260515/17:30/Truck Lighting #1 collects Silent Conference"
+      },
+      {
+        "date": "2026-05-15",
+        "dateFriendly": "Friday, 15 May 2026",
+        "time": "13:00",
+        "description": "Truck Scenic #1 collects JPM Scenery",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "BhB4cGsDRWicJPOOXcVuPA"
+        ],
+        "supplier": [
+          "TruckingBY"
+        ],
+        "truckId": "cWLHPbyHSVadc0rCPTTXuw",
+        "sortField": "20260515/13:00/Truck Scenic #1 collects JPM Scenery"
+      },
+      {
+        "date": "2026-05-16",
+        "dateFriendly": "Saturday, 16 May 2026",
+        "time": "AM",
+        "description": "PM #1 travel UK-FRA",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [],
+        "supplier": [],
+        "sortField": "20260516/AM/PM #1 travel UK-FRA"
+      },
+      {
+        "date": "2026-05-16",
+        "dateFriendly": "Saturday, 16 May 2026",
+        "time": "PM",
+        "description": "PM check floor markout complete",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [],
+        "supplier": [],
+        "sortField": "20260516/PM/PM check floor markout complete"
+      },
+      {
+        "date": "2026-05-16",
+        "dateFriendly": "Saturday, 16 May 2026",
+        "time": "14:15",
+        "description": "Blackout FR #1 tips",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "QmVLl7UaTm-heEB0lIeCzw"
+        ],
+        "supplier": [
+          "Blackout Fr"
+        ],
+        "truckId": "J20wz1TVRgG3NfhIOEYvMw",
+        "sortField": "20260516/14:15/Blackout FR #1 tips"
+      },
+      {
+        "date": "2026-05-17",
+        "dateFriendly": "Sunday, 17 May 2026",
+        "time": "08:00",
+        "description": "~PM on-site",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "2cTKWSUVSXSKWIhGxVVeuw"
+        ],
+        "supplier": [
+          "IML"
+        ],
+        "sortField": "20260517/08:00/~PM on-site"
+      },
+      {
+        "date": "2026-05-17",
+        "dateFriendly": "Sunday, 17 May 2026",
+        "time": "08:00",
+        "description": "Rigging team on-site",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "QmVLl7UaTm-heEB0lIeCzw"
+        ],
+        "supplier": [
+          "Blackout Fr"
+        ],
+        "sortField": "20260517/08:00/Rigging team on-site"
+      },
+      {
+        "date": "2026-05-17",
+        "dateFriendly": "Sunday, 17 May 2026",
+        "time": "08:00",
+        "description": "Local crew on-site, 10pax 10hr call",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "a-2XDh-IuSU2FnLdVo9tWaw"
+        ],
+        "supplier": [
+          "AlphaCrew"
+        ],
+        "sortField": "20260517/08:00/Local crew on-site, 10pax 10hr call"
+      },
+      {
+        "date": "2026-05-16",
+        "dateFriendly": "Saturday, 16 May 2026",
+        "time": "15:15",
+        "description": "Blackout FR #3 tips",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "QmVLl7UaTm-heEB0lIeCzw"
+        ],
+        "supplier": [
+          "Blackout Fr"
+        ],
+        "truckId": "y6beTiDlSb6kTQF9QShOPA",
+        "sortField": "20260516/15:15/Blackout FR #3 tips"
+      },
+      {
+        "date": "2026-05-16",
+        "dateFriendly": "Saturday, 16 May 2026",
+        "time": "14:45",
+        "description": "Blackout FR #2 tips",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "QmVLl7UaTm-heEB0lIeCzw"
+        ],
+        "supplier": [
+          "Blackout Fr"
+        ],
+        "truckId": "U8WZYuijQAOG4UtDL2aPrg",
+        "sortField": "20260516/14:45/Blackout FR #2 tips"
+      },
+      {
+        "date": "2026-05-17",
+        "dateFriendly": "Sunday, 17 May 2026",
+        "time": "08:00",
+        "description": "Commence rigging load-in",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [],
+        "supplier": [],
+        "sortField": "20260517/08:00/Commence rigging load-in"
+      },
+      {
+        "date": "2026-05-17",
+        "dateFriendly": "Sunday, 17 May 2026",
+        "time": "12:30",
+        "description": "Crew lunch",
+        "tags": [
+          "Welfare"
+        ],
+        "tagIds": [
+          "JZlX1tarSL2H7IxEYTWeqw"
+        ],
+        "locationIds": [
+          "a-.t8z9CYT9a42qZWV2Ex0A"
+        ],
+        "supplier": [
+          "ViParis"
+        ],
+        "sortField": "20260517/12:30/Crew lunch"
+      },
+      {
+        "date": "2026-05-17",
+        "dateFriendly": "Sunday, 17 May 2026",
+        "time": "10:00",
+        "description": "Truck Lighting #1 on-site & tip",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "BhB4cGsDRWicJPOOXcVuPA"
+        ],
+        "supplier": [
+          "TruckingBY"
+        ],
+        "truckId": "ivFWF3A-Sj6LwErS-mA1DA",
+        "sortField": "20260517/10:00/Truck Lighting #1 on-site & tip"
+      },
+      {
+        "date": "2026-05-17",
+        "dateFriendly": "Sunday, 17 May 2026",
+        "time": "12:00",
+        "description": "Truck Audio #1 on-site & tip",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "BhB4cGsDRWicJPOOXcVuPA"
+        ],
+        "supplier": [
+          "TruckingBY"
+        ],
+        "truckId": "KyzAglQ3RQ2pXDZaM32T4g",
+        "sortField": "20260517/12:00/Truck Audio #1 on-site & tip"
+      },
+      {
+        "date": "2026-05-17",
+        "dateFriendly": "Sunday, 17 May 2026",
+        "time": "11:00",
+        "description": "Truck Scenic #1 on-site & tip",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "BhB4cGsDRWicJPOOXcVuPA"
+        ],
+        "supplier": [
+          "TruckingBY"
+        ],
+        "truckId": "cWLHPbyHSVadc0rCPTTXuw",
+        "sortField": "20260517/11:00/Truck Scenic #1 on-site & tip"
+      },
+      {
+        "date": "2026-05-17",
+        "dateFriendly": "Sunday, 17 May 2026",
+        "time": "10:00",
+        "description": "Tip truck to storage",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "a-2XDh-IuSU2FnLdVo9tWaw"
+        ],
+        "supplier": [
+          "AlphaCrew"
+        ],
+        "sortField": "20260517/10:00/Tip truck to storage"
+      },
+      {
+        "date": "2026-05-17",
+        "dateFriendly": "Sunday, 17 May 2026",
+        "time": "11:00",
+        "description": "Tip truck to storage",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "a-2XDh-IuSU2FnLdVo9tWaw"
+        ],
+        "supplier": [
+          "AlphaCrew"
+        ],
+        "sortField": "20260517/11:00/Tip truck to storage"
+      },
+      {
+        "date": "2026-05-17",
+        "dateFriendly": "Sunday, 17 May 2026",
+        "time": "12:00",
+        "description": "Tip truck to storage",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "a-2XDh-IuSU2FnLdVo9tWaw"
+        ],
+        "supplier": [
+          "AlphaCrew"
+        ],
+        "sortField": "20260517/12:00/Tip truck to storage"
+      },
+      {
+        "date": "2026-05-17",
+        "dateFriendly": "Sunday, 17 May 2026",
+        "time": "14:00",
+        "description": "Truck Video #1 on-site & tip",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "OuA-1AxIRAWxDU1pPPTsCQ"
+        ],
+        "supplier": [
+          "CT Netherlands"
+        ],
+        "truckId": "IXKYkN7WSvSYlyo3jID3Vw",
+        "sortField": "20260517/14:00/Truck Video #1 on-site & tip"
+      },
+      {
+        "date": "2026-05-17",
+        "dateFriendly": "Sunday, 17 May 2026",
+        "time": "15:00",
+        "description": "Truck Video #2 on-site & tip",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "OuA-1AxIRAWxDU1pPPTsCQ"
+        ],
+        "supplier": [
+          "CT Netherlands"
+        ],
+        "truckId": "MXEYIgBQQ5uoFFn3VOLrSQ",
+        "sortField": "20260517/15:00/Truck Video #2 on-site & tip"
+      },
+      {
+        "date": "2026-05-17",
+        "dateFriendly": "Sunday, 17 May 2026",
+        "time": "14:00",
+        "description": "Tip truck to storage",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "a-2XDh-IuSU2FnLdVo9tWaw"
+        ],
+        "supplier": [
+          "AlphaCrew"
+        ],
+        "sortField": "20260517/14:00/Tip truck to storage"
+      },
+      {
+        "date": "2026-05-17",
+        "dateFriendly": "Sunday, 17 May 2026",
+        "time": "15:00",
+        "description": "Tip truck to storage",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "a-2XDh-IuSU2FnLdVo9tWaw"
+        ],
+        "supplier": [
+          "AlphaCrew"
+        ],
+        "sortField": "20260517/15:00/Tip truck to storage"
+      },
+      {
+        "date": "2026-05-17",
+        "dateFriendly": "Sunday, 17 May 2026",
+        "time": "15:00",
+        "description": "Build LED screen x3No.",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "OuA-1AxIRAWxDU1pPPTsCQ"
+        ],
+        "supplier": [
+          "CT Netherlands"
+        ],
+        "sortField": "20260517/15:00/Build LED screen x3No."
+      },
+      {
+        "date": "2026-05-17",
+        "dateFriendly": "Sunday, 17 May 2026",
+        "time": "15:00",
+        "description": "Build LED screen x3No.",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "a-2XDh-IuSU2FnLdVo9tWaw"
+        ],
+        "supplier": [
+          "AlphaCrew"
+        ],
+        "sortField": "20260517/15:00/Build LED screen x3No."
+      },
+      {
+        "date": "2026-05-17",
+        "dateFriendly": "Sunday, 17 May 2026",
+        "time": "08:00",
+        "description": "Forks on-site, 2pax 10hr call",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "a-2XDh-IuSU2FnLdVo9tWaw"
+        ],
+        "supplier": [
+          "AlphaCrew"
+        ],
+        "sortField": "20260517/08:00/Forks on-site, 2pax 10hr call"
+      },
+      {
+        "date": "2026-05-17",
+        "dateFriendly": "Sunday, 17 May 2026",
+        "time": "18:00",
+        "description": "Local crew call ends, 10pax",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "a-2XDh-IuSU2FnLdVo9tWaw"
+        ],
+        "supplier": [
+          "AlphaCrew"
+        ],
+        "sortField": "20260517/18:00/Local crew call ends, 10pax"
+      },
+      {
+        "date": "2026-05-17",
+        "dateFriendly": "Sunday, 17 May 2026",
+        "time": "18:00",
+        "description": "Forks call ends, 2pax",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "a-2XDh-IuSU2FnLdVo9tWaw"
+        ],
+        "supplier": [
+          "AlphaCrew"
+        ],
+        "sortField": "20260517/18:00/Forks call ends, 2pax"
+      },
+      {
+        "date": "2026-05-17",
+        "dateFriendly": "Sunday, 17 May 2026",
+        "time": "PM",
+        "description": "UK crew travel",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [],
+        "supplier": [],
+        "sortField": "20260517/PM/UK crew travel"
+      },
+      {
+        "date": "2026-05-18",
+        "dateFriendly": "Monday, 18 May 2026",
+        "time": "08:00",
+        "description": "Rigging team on-site",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "QmVLl7UaTm-heEB0lIeCzw"
+        ],
+        "supplier": [
+          "Blackout Fr"
+        ],
+        "sortField": "20260518/08:00/Rigging team on-site"
+      },
+      {
+        "date": "2026-05-18",
+        "dateFriendly": "Monday, 18 May 2026",
+        "time": "08:00",
+        "description": "~PM on-site",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "2cTKWSUVSXSKWIhGxVVeuw"
+        ],
+        "supplier": [
+          "IML"
+        ],
+        "sortField": "20260518/08:00/~PM on-site"
+      },
+      {
+        "date": "2026-05-18",
+        "dateFriendly": "Monday, 18 May 2026",
+        "time": "08:00",
+        "description": "Video team on-site",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "OuA-1AxIRAWxDU1pPPTsCQ"
+        ],
+        "supplier": [
+          "CT Netherlands"
+        ],
+        "sortField": "20260518/08:00/Video team on-site"
+      },
+      {
+        "date": "2026-05-18",
+        "dateFriendly": "Monday, 18 May 2026",
+        "time": "08:00",
+        "description": "Lighting team on-site",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "j2a8av22Tyyf67JM8.omnQ"
+        ],
+        "supplier": [
+          "TSL"
+        ],
+        "sortField": "20260518/08:00/Lighting team on-site"
+      },
+      {
+        "date": "2026-05-18",
+        "dateFriendly": "Monday, 18 May 2026",
+        "time": "08:00",
+        "description": "Audio team on-site",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "47b8O0UvSNKfr4l8BCMr8Q"
+        ],
+        "supplier": [
+          "Pixl Audio"
+        ],
+        "sortField": "20260518/08:00/Audio team on-site"
+      },
+      {
+        "date": "2026-05-19",
+        "dateFriendly": "Tuesday, 19 May 2026",
+        "time": "08:00",
+        "description": "Scenic team on-site",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "ULu0NyF5REy7aHNUJpsUyQ"
+        ],
+        "supplier": [
+          "JPM Scenery"
+        ],
+        "sortField": "20260519/08:00/Scenic team on-site"
+      },
+      {
+        "date": "2026-05-18",
+        "dateFriendly": "Monday, 18 May 2026",
+        "time": "08:00",
+        "description": "Local crew on-site, 6pax 10hr call",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "a-2XDh-IuSU2FnLdVo9tWaw"
+        ],
+        "supplier": [
+          "AlphaCrew"
+        ],
+        "sortField": "20260518/08:00/Local crew on-site, 6pax 10hr call"
+      },
+      {
+        "date": "2026-05-18",
+        "dateFriendly": "Monday, 18 May 2026",
+        "time": "08:00",
+        "description": "Forks on-site, 2pax 10hr call",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "a-2XDh-IuSU2FnLdVo9tWaw"
+        ],
+        "supplier": [
+          "AlphaCrew"
+        ],
+        "sortField": "20260518/08:00/Forks on-site, 2pax 10hr call"
+      },
+      {
+        "date": "2026-05-18",
+        "dateFriendly": "Monday, 18 May 2026",
+        "time": "08:00",
+        "description": "Network team on-site",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "Q4C2.Xv3TvGnqIZyj0RcEA"
+        ],
+        "supplier": [
+          "SUT"
+        ],
+        "sortField": "20260518/08:00/Network team on-site"
+      },
+      {
+        "date": "2026-05-18",
+        "dateFriendly": "Monday, 18 May 2026",
+        "time": "08:30",
+        "description": "Commence technical load-in",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [],
+        "supplier": [],
+        "sortField": "20260518/08:30/Commence technical load-in"
+      },
+      {
+        "date": "2026-05-18",
+        "dateFriendly": "Monday, 18 May 2026",
+        "time": "08:30",
+        "description": "Commence Scenic build;\n- FoH Control\n- Demo desks\n- DSM caddies\n- Camera risers\n- Breakout Control",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "ULu0NyF5REy7aHNUJpsUyQ"
+        ],
+        "supplier": [
+          "JPM Scenery"
+        ],
+        "sortField": "20260518/08:30/Commence Scenic build;\n- FoH Control\n- Demo desks\n- DSM caddies\n- Camera risers\n- Breakout Control"
+      },
+      {
+        "date": "2026-05-26",
+        "dateFriendly": "Tuesday, 26 May 2026",
+        "time": "09:00",
+        "description": "Truck Lighting #1 tips TSL",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "BhB4cGsDRWicJPOOXcVuPA"
+        ],
+        "supplier": [
+          "TruckingBY"
+        ],
+        "truckId": "ivFWF3A-Sj6LwErS-mA1DA",
+        "sortField": "20260526/09:00/Truck Lighting #1 tips TSL"
+      },
+      {
+        "date": "2026-05-18",
+        "dateFriendly": "Monday, 18 May 2026",
+        "time": "15:00",
+        "description": "Truck Scenic #1 on-site to load LX, PA, Scenic deads",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "BhB4cGsDRWicJPOOXcVuPA"
+        ],
+        "supplier": [
+          "TruckingBY"
+        ],
+        "truckId": "cWLHPbyHSVadc0rCPTTXuw",
+        "sortField": "20260518/15:00/Truck Scenic #1 on-site to load LX, PA, Scenic deads"
+      },
+      {
+        "date": "2026-05-18",
+        "dateFriendly": "Monday, 18 May 2026",
+        "time": "15:30",
+        "description": "Truck Video #1 on-site to load deads",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "OuA-1AxIRAWxDU1pPPTsCQ"
+        ],
+        "supplier": [
+          "CT Netherlands"
+        ],
+        "truckId": "IXKYkN7WSvSYlyo3jID3Vw",
+        "sortField": "20260518/15:30/Truck Video #1 on-site to load deads"
+      },
+      {
+        "date": "2026-05-18",
+        "dateFriendly": "Monday, 18 May 2026",
+        "time": "15:01",
+        "description": "Load deads to truck",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "a-2XDh-IuSU2FnLdVo9tWaw"
+        ],
+        "supplier": [
+          "AlphaCrew"
+        ],
+        "sortField": "20260518/15:01/Load deads to truck"
+      },
+      {
+        "date": "2026-05-18",
+        "dateFriendly": "Monday, 18 May 2026",
+        "time": "15:31",
+        "description": "Load deads to truck",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "a-2XDh-IuSU2FnLdVo9tWaw"
+        ],
+        "supplier": [
+          "AlphaCrew"
+        ],
+        "sortField": "20260518/15:31/Load deads to truck"
+      },
+      {
+        "date": "2026-05-18",
+        "dateFriendly": "Monday, 18 May 2026",
+        "time": "15:29",
+        "description": "Truck Scenic #1 departs site to Heliport",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "BhB4cGsDRWicJPOOXcVuPA"
+        ],
+        "supplier": [
+          "TruckingBY"
+        ],
+        "truckId": "cWLHPbyHSVadc0rCPTTXuw",
+        "sortField": "20260518/15:29/Truck Scenic #1 departs site to Heliport"
+      },
+      {
+        "date": "2026-05-18",
+        "dateFriendly": "Monday, 18 May 2026",
+        "time": "15:59",
+        "description": "Truck Video #1 departs site to Heliport",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "OuA-1AxIRAWxDU1pPPTsCQ"
+        ],
+        "supplier": [
+          "CT Netherlands"
+        ],
+        "truckId": "IXKYkN7WSvSYlyo3jID3Vw",
+        "sortField": "20260518/15:59/Truck Video #1 departs site to Heliport"
+      },
+      {
+        "date": "2026-05-17",
+        "dateFriendly": "Sunday, 17 May 2026",
+        "time": "10:30",
+        "description": "Truck Lighting #1 departs to Heliport",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "BhB4cGsDRWicJPOOXcVuPA"
+        ],
+        "supplier": [
+          "TruckingBY"
+        ],
+        "truckId": "ivFWF3A-Sj6LwErS-mA1DA",
+        "sortField": "20260517/10:30/Truck Lighting #1 departs to Heliport"
+      },
+      {
+        "date": "2026-05-17",
+        "dateFriendly": "Sunday, 17 May 2026",
+        "time": "11:45",
+        "description": "Truck Scenic #1 departs to Heliport",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "BhB4cGsDRWicJPOOXcVuPA"
+        ],
+        "supplier": [
+          "TruckingBY"
+        ],
+        "truckId": "cWLHPbyHSVadc0rCPTTXuw",
+        "sortField": "20260517/11:45/Truck Scenic #1 departs to Heliport"
+      },
+      {
+        "date": "2026-05-17",
+        "dateFriendly": "Sunday, 17 May 2026",
+        "time": "12:30",
+        "description": "Truck Audio #1 departs to Heliport",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "BhB4cGsDRWicJPOOXcVuPA"
+        ],
+        "supplier": [
+          "TruckingBY"
+        ],
+        "truckId": "KyzAglQ3RQ2pXDZaM32T4g",
+        "sortField": "20260517/12:30/Truck Audio #1 departs to Heliport"
+      },
+      {
+        "date": "2026-05-17",
+        "dateFriendly": "Sunday, 17 May 2026",
+        "time": "14:30",
+        "description": "Truck Video #1 departs site to Heliport",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "OuA-1AxIRAWxDU1pPPTsCQ"
+        ],
+        "supplier": [
+          "CT Netherlands"
+        ],
+        "truckId": "IXKYkN7WSvSYlyo3jID3Vw",
+        "sortField": "20260517/14:30/Truck Video #1 departs site to Heliport"
+      },
+      {
+        "date": "2026-05-17",
+        "dateFriendly": "Sunday, 17 May 2026",
+        "time": "15:30",
+        "description": "Truck Video #2 departs site to Heliport",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "OuA-1AxIRAWxDU1pPPTsCQ"
+        ],
+        "supplier": [
+          "CT Netherlands"
+        ],
+        "truckId": "MXEYIgBQQ5uoFFn3VOLrSQ",
+        "sortField": "20260517/15:30/Truck Video #2 departs site to Heliport"
+      },
+      {
+        "date": "2026-05-18",
+        "dateFriendly": "Monday, 18 May 2026",
+        "time": "14:30",
+        "description": "Truck Lighting #1 on-site to load Rigging deads",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "BhB4cGsDRWicJPOOXcVuPA"
+        ],
+        "supplier": [
+          "TruckingBY"
+        ],
+        "truckId": "ivFWF3A-Sj6LwErS-mA1DA",
+        "sortField": "20260518/14:30/Truck Lighting #1 on-site to load Rigging deads"
+      },
+      {
+        "date": "2026-05-18",
+        "dateFriendly": "Monday, 18 May 2026",
+        "time": "14:31",
+        "description": "Load deads to truck",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "a-2XDh-IuSU2FnLdVo9tWaw"
+        ],
+        "supplier": [
+          "AlphaCrew"
+        ],
+        "sortField": "20260518/14:31/Load deads to truck"
+      },
+      {
+        "date": "2026-05-18",
+        "dateFriendly": "Monday, 18 May 2026",
+        "time": "14:59",
+        "description": "Truck Lighting #1 departs site to Heliport",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "BhB4cGsDRWicJPOOXcVuPA"
+        ],
+        "supplier": [
+          "TruckingBY"
+        ],
+        "truckId": "ivFWF3A-Sj6LwErS-mA1DA",
+        "sortField": "20260518/14:59/Truck Lighting #1 departs site to Heliport"
+      },
+      {
+        "date": "2026-05-18",
+        "dateFriendly": "Monday, 18 May 2026",
+        "time": "12:30",
+        "description": "Crew lunch 12:30-13:15",
+        "tags": [
+          "Welfare"
+        ],
+        "tagIds": [
+          "JZlX1tarSL2H7IxEYTWeqw"
+        ],
+        "locationIds": [
+          "a-.t8z9CYT9a42qZWV2Ex0A"
+        ],
+        "supplier": [
+          "ViParis"
+        ],
+        "sortField": "20260518/12:30/Crew lunch 12:30-13:15"
+      },
+      {
+        "date": "2026-05-18",
+        "dateFriendly": "Monday, 18 May 2026",
+        "time": "18:00",
+        "description": "Forks call ends, 2pax",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "a-2XDh-IuSU2FnLdVo9tWaw"
+        ],
+        "supplier": [
+          "AlphaCrew"
+        ],
+        "sortField": "20260518/18:00/Forks call ends, 2pax"
+      },
+      {
+        "date": "2026-05-18",
+        "dateFriendly": "Monday, 18 May 2026",
+        "time": "18:00",
+        "description": "Local crew ends, 6pax",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "a-2XDh-IuSU2FnLdVo9tWaw"
+        ],
+        "supplier": [
+          "AlphaCrew"
+        ],
+        "sortField": "20260518/18:00/Local crew ends, 6pax"
+      },
+      {
+        "date": "2026-05-18",
+        "dateFriendly": "Monday, 18 May 2026",
+        "time": "16:00",
+        "description": "Carpet lay??",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "1uw9ARZJR8KVsoNycxdLrQ"
+        ],
+        "supplier": [
+          "GL Events"
+        ],
+        "sortField": "20260518/16:00/Carpet lay??"
+      },
+      {
+        "date": "2026-05-18",
+        "dateFriendly": "Monday, 18 May 2026",
+        "time": "17:00",
+        "description": "Audio focus??",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "47b8O0UvSNKfr4l8BCMr8Q"
+        ],
+        "supplier": [
+          "Pixl Audio"
+        ],
+        "sortField": "20260518/17:00/Audio focus??"
+      },
+      {
+        "date": "2026-05-18",
+        "dateFriendly": "Monday, 18 May 2026",
+        "time": "15:00",
+        "description": "Venue duct access??",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "a-.t8z9CYT9a42qZWV2Ex0A"
+        ],
+        "supplier": [
+          "ViParis"
+        ],
+        "sortField": "20260518/15:00/Venue duct access??"
+      },
+      {
+        "date": "2026-05-17",
+        "dateFriendly": "Sunday, 17 May 2026",
+        "time": "18:15",
+        "description": "All works complete, crews depart site",
+        "tags": [
+          "Welfare"
+        ],
+        "tagIds": [
+          "JZlX1tarSL2H7IxEYTWeqw"
+        ],
+        "locationIds": [],
+        "supplier": [],
+        "sortField": "20260517/18:15/All works complete, crews depart site"
+      },
+      {
+        "date": "2026-05-18",
+        "dateFriendly": "Monday, 18 May 2026",
+        "time": "18:15",
+        "description": "All works complete, crews depart site",
+        "tags": [
+          "Welfare"
+        ],
+        "tagIds": [
+          "JZlX1tarSL2H7IxEYTWeqw"
+        ],
+        "locationIds": [],
+        "supplier": [],
+        "sortField": "20260518/18:15/All works complete, crews depart site"
+      },
+      {
+        "date": "2026-05-16",
+        "dateFriendly": "Saturday, 16 May 2026",
+        "time": "18:15",
+        "description": "All works complete, crews depart site",
+        "tags": [
+          "Welfare"
+        ],
+        "tagIds": [
+          "JZlX1tarSL2H7IxEYTWeqw"
+        ],
+        "locationIds": [],
+        "supplier": [],
+        "sortField": "20260516/18:15/All works complete, crews depart site"
+      },
+      {
+        "date": "2026-05-18",
+        "dateFriendly": "Monday, 18 May 2026",
+        "time": "09:30",
+        "description": "ICE Security inspection",
+        "tags": [
+          "Inspection"
+        ],
+        "tagIds": [
+          "fMFhkDCIRTeWWMzAMTplMQ"
+        ],
+        "locationIds": [
+          "a-.t8z9CYT9a42qZWV2Ex0A"
+        ],
+        "supplier": [
+          "ViParis"
+        ],
+        "sortField": "20260518/09:30/ICE Security inspection"
+      },
+      {
+        "date": "2026-05-19",
+        "dateFriendly": "Tuesday, 19 May 2026",
+        "time": "13:15",
+        "description": "Build Pipe & Drape",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "QmVLl7UaTm-heEB0lIeCzw"
+        ],
+        "supplier": [
+          "Blackout Fr"
+        ],
+        "sortField": "20260519/13:15/Build Pipe & Drape"
+      },
+      {
+        "date": "2026-05-19",
+        "dateFriendly": "Tuesday, 19 May 2026",
+        "time": "13:15",
+        "description": "Green Rooms LX",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "j2a8av22Tyyf67JM8.omnQ"
+        ],
+        "supplier": [
+          "TSL"
+        ],
+        "sortField": "20260519/13:15/Green Rooms LX"
+      },
+      {
+        "date": "2026-05-19",
+        "dateFriendly": "Tuesday, 19 May 2026",
+        "time": "13:15",
+        "description": "Client Area build",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "2cTKWSUVSXSKWIhGxVVeuw"
+        ],
+        "supplier": [
+          "IML"
+        ],
+        "sortField": "20260519/13:15/Client Area build"
+      },
+      {
+        "date": "2026-05-19",
+        "dateFriendly": "Tuesday, 19 May 2026",
+        "time": "08:00",
+        "description": "Audio team on-site",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "47b8O0UvSNKfr4l8BCMr8Q"
+        ],
+        "supplier": [
+          "Pixl Audio"
+        ],
+        "sortField": "20260519/08:00/Audio team on-site"
+      },
+      {
+        "date": "2026-05-19",
+        "dateFriendly": "Tuesday, 19 May 2026",
+        "time": "08:00",
+        "description": "Forks on-site, 2pax 10hr call",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "a-2XDh-IuSU2FnLdVo9tWaw"
+        ],
+        "supplier": [
+          "AlphaCrew"
+        ],
+        "sortField": "20260519/08:00/Forks on-site, 2pax 10hr call"
+      },
+      {
+        "date": "2026-05-19",
+        "dateFriendly": "Tuesday, 19 May 2026",
+        "time": "08:00",
+        "description": "Lighting team on-site",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "j2a8av22Tyyf67JM8.omnQ"
+        ],
+        "supplier": [
+          "TSL"
+        ],
+        "sortField": "20260519/08:00/Lighting team on-site"
+      },
+      {
+        "date": "2026-05-19",
+        "dateFriendly": "Tuesday, 19 May 2026",
+        "time": "08:00",
+        "description": "Local crew on-site, 2pax 10hr call",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "a-2XDh-IuSU2FnLdVo9tWaw"
+        ],
+        "supplier": [
+          "AlphaCrew"
+        ],
+        "sortField": "20260519/08:00/Local crew on-site, 2pax 10hr call"
+      },
+      {
+        "date": "2026-05-19",
+        "dateFriendly": "Tuesday, 19 May 2026",
+        "time": "08:00",
+        "description": "Network team on-site",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "Q4C2.Xv3TvGnqIZyj0RcEA"
+        ],
+        "supplier": [
+          "SUT"
+        ],
+        "sortField": "20260519/08:00/Network team on-site"
+      },
+      {
+        "date": "2026-05-19",
+        "dateFriendly": "Tuesday, 19 May 2026",
+        "time": "08:00",
+        "description": "~PM on-site",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "2cTKWSUVSXSKWIhGxVVeuw"
+        ],
+        "supplier": [
+          "IML"
+        ],
+        "sortField": "20260519/08:00/~PM on-site"
+      },
+      {
+        "date": "2026-05-19",
+        "dateFriendly": "Tuesday, 19 May 2026",
+        "time": "08:00",
+        "description": "Rigging team on-site",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "QmVLl7UaTm-heEB0lIeCzw"
+        ],
+        "supplier": [
+          "Blackout Fr"
+        ],
+        "sortField": "20260519/08:00/Rigging team on-site"
+      },
+      {
+        "date": "2026-05-18",
+        "dateFriendly": "Monday, 18 May 2026",
+        "time": "08:00",
+        "description": "Scenic team on-site",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "ULu0NyF5REy7aHNUJpsUyQ"
+        ],
+        "supplier": [
+          "JPM Scenery"
+        ],
+        "sortField": "20260518/08:00/Scenic team on-site"
+      },
+      {
+        "date": "2026-05-20",
+        "dateFriendly": "Wednesday, 20 May 2026",
+        "time": "08:00",
+        "description": "Video team on-site",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "OuA-1AxIRAWxDU1pPPTsCQ"
+        ],
+        "supplier": [
+          "CT Netherlands"
+        ],
+        "sortField": "20260520/08:00/Video team on-site"
+      },
+      {
+        "date": "2026-05-19",
+        "dateFriendly": "Tuesday, 19 May 2026",
+        "time": "08:15",
+        "description": "GL Events drop seats to Keynote",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "1uw9ARZJR8KVsoNycxdLrQ"
+        ],
+        "supplier": [
+          "GL Events"
+        ],
+        "sortField": "20260519/08:15/GL Events drop seats to Keynote"
+      },
+      {
+        "date": "2026-05-19",
+        "dateFriendly": "Tuesday, 19 May 2026",
+        "time": "08:16",
+        "description": "Commence Keynote seat build",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "1uw9ARZJR8KVsoNycxdLrQ"
+        ],
+        "supplier": [
+          "GL Events"
+        ],
+        "sortField": "20260519/08:16/Commence Keynote seat build"
+      },
+      {
+        "date": "2026-05-19",
+        "dateFriendly": "Tuesday, 19 May 2026",
+        "time": "12:30",
+        "description": "Crew lunch 12:30-13:15",
+        "tags": [
+          "Welfare"
+        ],
+        "tagIds": [
+          "JZlX1tarSL2H7IxEYTWeqw"
+        ],
+        "locationIds": [
+          "a-.t8z9CYT9a42qZWV2Ex0A"
+        ],
+        "supplier": [
+          "ViParis"
+        ],
+        "sortField": "20260519/12:30/Crew lunch 12:30-13:15"
+      },
+      {
+        "date": "2026-05-19",
+        "dateFriendly": "Tuesday, 19 May 2026",
+        "time": "18:15",
+        "description": "All works complete, crews depart site",
+        "tags": [
+          "Welfare"
+        ],
+        "tagIds": [
+          "JZlX1tarSL2H7IxEYTWeqw"
+        ],
+        "locationIds": [],
+        "supplier": [],
+        "sortField": "20260519/18:15/All works complete, crews depart site"
+      },
+      {
+        "date": "2026-05-19",
+        "dateFriendly": "Tuesday, 19 May 2026",
+        "time": "13:00",
+        "description": "Electrical inspection, possible power downs",
+        "tags": [
+          "Inspection"
+        ],
+        "tagIds": [
+          "fMFhkDCIRTeWWMzAMTplMQ"
+        ],
+        "locationIds": [
+          "a-.t8z9CYT9a42qZWV2Ex0A"
+        ],
+        "supplier": [
+          "ViParis"
+        ],
+        "sortField": "20260519/13:00/Electrical inspection, possible power downs"
+      },
+      {
+        "date": "2026-05-19",
+        "dateFriendly": "Tuesday, 19 May 2026",
+        "time": "PM",
+        "description": "Keynote cue-to-cue reherarsal",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [],
+        "supplier": [],
+        "sortField": "20260519/PM/Keynote cue-to-cue reherarsal"
+      },
+      {
+        "date": "2026-05-19",
+        "dateFriendly": "Tuesday, 19 May 2026",
+        "time": "PM",
+        "description": "Test build for Keynote - Breakout room turn\n- Dividing Wall\n- Demo Desks\n- Cabling",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [],
+        "supplier": [],
+        "sortField": "20260519/PM/Test build for Keynote - Breakout room turn\n- Dividing Wall\n- Demo Desks\n- Cabling"
+      },
+      {
+        "date": "2026-05-19",
+        "dateFriendly": "Tuesday, 19 May 2026",
+        "time": "16:00",
+        "description": "Keynote seat build complete, stillages removed from site",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "1uw9ARZJR8KVsoNycxdLrQ"
+        ],
+        "supplier": [
+          "GL Events"
+        ],
+        "sortField": "20260519/16:00/Keynote seat build complete, stillages removed from site"
+      },
+      {
+        "date": "2026-05-20",
+        "dateFriendly": "Wednesday, 20 May 2026",
+        "time": "08:00",
+        "description": "Audio team on-site",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "47b8O0UvSNKfr4l8BCMr8Q"
+        ],
+        "supplier": [
+          "Pixl Audio"
+        ],
+        "sortField": "20260520/08:00/Audio team on-site"
+      },
+      {
+        "date": "2026-05-20",
+        "dateFriendly": "Wednesday, 20 May 2026",
+        "time": "08:00",
+        "description": "Lighting team on-site",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "j2a8av22Tyyf67JM8.omnQ"
+        ],
+        "supplier": [
+          "TSL"
+        ],
+        "sortField": "20260520/08:00/Lighting team on-site"
+      },
+      {
+        "date": "2026-05-20",
+        "dateFriendly": "Wednesday, 20 May 2026",
+        "time": "08:00",
+        "description": "Network team on-site",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "Q4C2.Xv3TvGnqIZyj0RcEA"
+        ],
+        "supplier": [
+          "SUT"
+        ],
+        "sortField": "20260520/08:00/Network team on-site"
+      },
+      {
+        "date": "2026-05-20",
+        "dateFriendly": "Wednesday, 20 May 2026",
+        "time": "08:00",
+        "description": "~PM on-site",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "2cTKWSUVSXSKWIhGxVVeuw"
+        ],
+        "supplier": [
+          "IML"
+        ],
+        "sortField": "20260520/08:00/~PM on-site"
+      },
+      {
+        "date": "2026-05-20",
+        "dateFriendly": "Wednesday, 20 May 2026",
+        "time": "08:00",
+        "description": "Rigging team on-site",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "QmVLl7UaTm-heEB0lIeCzw"
+        ],
+        "supplier": [
+          "Blackout Fr"
+        ],
+        "sortField": "20260520/08:00/Rigging team on-site"
+      },
+      {
+        "date": "2026-05-20",
+        "dateFriendly": "Wednesday, 20 May 2026",
+        "time": "08:00",
+        "description": "Scenic team on-site",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "ULu0NyF5REy7aHNUJpsUyQ"
+        ],
+        "supplier": [
+          "JPM Scenery"
+        ],
+        "sortField": "20260520/08:00/Scenic team on-site"
+      },
+      {
+        "date": "2026-05-19",
+        "dateFriendly": "Tuesday, 19 May 2026",
+        "time": "08:00",
+        "description": "Video team on-site",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "OuA-1AxIRAWxDU1pPPTsCQ"
+        ],
+        "supplier": [
+          "CT Netherlands"
+        ],
+        "sortField": "20260519/08:00/Video team on-site"
+      },
+      {
+        "date": "2026-05-19",
+        "dateFriendly": "Tuesday, 19 May 2026",
+        "time": "13:30",
+        "description": "Silent Conference on-site and set up",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "4PJDdDNoST2iaiwiiRnsWw"
+        ],
+        "supplier": [
+          "Silent Conference"
+        ],
+        "sortField": "20260519/13:30/Silent Conference on-site and set up"
+      },
+      {
+        "date": "2026-05-20",
+        "dateFriendly": "Wednesday, 20 May 2026",
+        "time": "09:00",
+        "description": "Client Keynote rehearsals??",
+        "tags": [
+          "Rehearsals"
+        ],
+        "tagIds": [
+          "mk7JQE5bTTq9YBKhuBds9g"
+        ],
+        "locationIds": [
+          "7XSD08G7Sx2nlJ69D4nVaQ"
+        ],
+        "supplier": [
+          "Keynote Team"
+        ],
+        "sortField": "20260520/09:00/Client Keynote rehearsals??"
+      },
+      {
+        "date": "2026-05-20",
+        "dateFriendly": "Wednesday, 20 May 2026",
+        "time": "12:30",
+        "description": "Crew lunch 12:30-13:15",
+        "tags": [
+          "Welfare"
+        ],
+        "tagIds": [
+          "JZlX1tarSL2H7IxEYTWeqw"
+        ],
+        "locationIds": [
+          "a-.t8z9CYT9a42qZWV2Ex0A"
+        ],
+        "supplier": [
+          "ViParis"
+        ],
+        "sortField": "20260520/12:30/Crew lunch 12:30-13:15"
+      },
+      {
+        "date": "2026-05-20",
+        "dateFriendly": "Wednesday, 20 May 2026",
+        "time": "18:15",
+        "description": "All works complete, crews depart site",
+        "tags": [
+          "Welfare"
+        ],
+        "tagIds": [
+          "JZlX1tarSL2H7IxEYTWeqw"
+        ],
+        "locationIds": [],
+        "supplier": [],
+        "sortField": "20260520/18:15/All works complete, crews depart site"
+      },
+      {
+        "date": "2026-05-20",
+        "dateFriendly": "Wednesday, 20 May 2026",
+        "time": "13:30",
+        "description": "Client Breakout rehearsals??",
+        "tags": [
+          "Rehearsals"
+        ],
+        "tagIds": [
+          "mk7JQE5bTTq9YBKhuBds9g"
+        ],
+        "locationIds": [
+          "7XSD08G7Sx2nlJ69D4nVaQ"
+        ],
+        "supplier": [
+          "Keynote Team"
+        ],
+        "sortField": "20260520/13:30/Client Breakout rehearsals??"
+      },
+      {
+        "date": "2026-05-21",
+        "dateFriendly": "Thursday, 21 May 2026",
+        "time": "12:30",
+        "description": "Crew lunch 12:30-13:15",
+        "tags": [
+          "Welfare"
+        ],
+        "tagIds": [
+          "JZlX1tarSL2H7IxEYTWeqw"
+        ],
+        "locationIds": [
+          "a-.t8z9CYT9a42qZWV2Ex0A"
+        ],
+        "supplier": [
+          "ViParis"
+        ],
+        "sortField": "20260521/12:30/Crew lunch 12:30-13:15"
+      },
+      {
+        "date": "2026-05-21",
+        "dateFriendly": "Thursday, 21 May 2026",
+        "time": "22:35",
+        "description": "All works complete, crews depart site",
+        "tags": [
+          "Welfare"
+        ],
+        "tagIds": [
+          "JZlX1tarSL2H7IxEYTWeqw"
+        ],
+        "locationIds": [],
+        "supplier": [],
+        "sortField": "20260521/22:35/All works complete, crews depart site"
+      },
+      {
+        "date": "2026-05-21",
+        "dateFriendly": "Thursday, 21 May 2026",
+        "description": "Doors",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [],
+        "supplier": [],
+        "sortField": "20260521//Doors"
+      },
+      {
+        "date": "2026-05-21",
+        "dateFriendly": "Thursday, 21 May 2026",
+        "description": "Breakout session",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [],
+        "supplier": [],
+        "sortField": "20260521//Breakout session"
+      },
+      {
+        "date": "2026-05-21",
+        "dateFriendly": "Thursday, 21 May 2026",
+        "description": "Keynote",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [],
+        "supplier": [],
+        "sortField": "20260521//Keynote"
+      },
+      {
+        "date": "2026-05-21",
+        "dateFriendly": "Thursday, 21 May 2026",
+        "description": "Room turn - Keynote-Breakout",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "7XSD08G7Sx2nlJ69D4nVaQ"
+        ],
+        "supplier": [
+          "Keynote Team"
+        ],
+        "sortField": "20260521//Room turn - Keynote-Breakout"
+      },
+      {
+        "date": "2026-05-21",
+        "dateFriendly": "Thursday, 21 May 2026",
+        "description": "Room turn - Breakout-Keynote",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "7XSD08G7Sx2nlJ69D4nVaQ"
+        ],
+        "supplier": [
+          "Keynote Team"
+        ],
+        "sortField": "20260521//Room turn - Breakout-Keynote"
+      },
+      {
+        "date": "2026-05-21",
+        "dateFriendly": "Thursday, 21 May 2026",
+        "time": "16:30",
+        "description": "Truck Lighting #1 on-site, tip deads, depart site",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "BhB4cGsDRWicJPOOXcVuPA"
+        ],
+        "supplier": [
+          "TruckingBY"
+        ],
+        "truckId": "ivFWF3A-Sj6LwErS-mA1DA",
+        "sortField": "20260521/16:30/Truck Lighting #1 on-site, tip deads, depart site"
+      },
+      {
+        "date": "2026-05-21",
+        "dateFriendly": "Thursday, 21 May 2026",
+        "time": "17:00",
+        "description": "Truck Scenic #1 on-site, tip Rigging deads, wait on-site for load",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "BhB4cGsDRWicJPOOXcVuPA"
+        ],
+        "supplier": [
+          "TruckingBY"
+        ],
+        "truckId": "cWLHPbyHSVadc0rCPTTXuw",
+        "sortField": "20260521/17:00/Truck Scenic #1 on-site, tip Rigging deads, wait on-site for load"
+      },
+      {
+        "date": "2026-05-21",
+        "dateFriendly": "Thursday, 21 May 2026",
+        "time": "16:35",
+        "description": "Truck Video #1 on-site, tip deads, wait on-site for load",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "OuA-1AxIRAWxDU1pPPTsCQ"
+        ],
+        "supplier": [
+          "CT Netherlands"
+        ],
+        "truckId": "IXKYkN7WSvSYlyo3jID3Vw",
+        "sortField": "20260521/16:35/Truck Video #1 on-site, tip deads, wait on-site for load"
+      },
+      {
+        "date": "2026-05-21",
+        "dateFriendly": "Thursday, 21 May 2026",
+        "time": "11:00",
+        "description": "Local crew on-site, 4pax 5hr call, Show Blacks please",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "a-2XDh-IuSU2FnLdVo9tWaw"
+        ],
+        "supplier": [
+          "AlphaCrew"
+        ],
+        "sortField": "20260521/11:00/Local crew on-site, 4pax 5hr call, Show Blacks please"
+      },
+      {
+        "date": "2026-05-21",
+        "dateFriendly": "Thursday, 21 May 2026",
+        "time": "22:30",
+        "description": "Local crew ends, 8pax",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "a-2XDh-IuSU2FnLdVo9tWaw"
+        ],
+        "supplier": [
+          "AlphaCrew"
+        ],
+        "sortField": "20260521/22:30/Local crew ends, 8pax"
+      },
+      {
+        "date": "2026-05-21",
+        "dateFriendly": "Thursday, 21 May 2026",
+        "time": "16:30",
+        "description": "Local crew on-site, 8pax 6hr call",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "a-2XDh-IuSU2FnLdVo9tWaw"
+        ],
+        "supplier": [
+          "AlphaCrew"
+        ],
+        "sortField": "20260521/16:30/Local crew on-site, 8pax 6hr call"
+      },
+      {
+        "date": "2026-05-21",
+        "dateFriendly": "Thursday, 21 May 2026",
+        "time": "16:30",
+        "description": "Forks on-site, 2pax 6hr call",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "a-2XDh-IuSU2FnLdVo9tWaw"
+        ],
+        "supplier": [
+          "AlphaCrew"
+        ],
+        "sortField": "20260521/16:30/Forks on-site, 2pax 6hr call"
+      },
+      {
+        "date": "2026-05-21",
+        "dateFriendly": "Thursday, 21 May 2026",
+        "time": "22:30",
+        "description": "Forks call ends, 2pax",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "a-2XDh-IuSU2FnLdVo9tWaw"
+        ],
+        "supplier": [
+          "AlphaCrew"
+        ],
+        "sortField": "20260521/22:30/Forks call ends, 2pax"
+      },
+      {
+        "date": "2026-05-21",
+        "dateFriendly": "Thursday, 21 May 2026",
+        "time": "16:00",
+        "description": "Local crew ends, 4pax",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "a-2XDh-IuSU2FnLdVo9tWaw"
+        ],
+        "supplier": [
+          "AlphaCrew"
+        ],
+        "sortField": "20260521/16:00/Local crew ends, 4pax"
+      },
+      {
+        "date": "2026-05-21",
+        "dateFriendly": "Thursday, 21 May 2026",
+        "time": "16:00",
+        "description": "GL Events remove Keynote seats",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "1uw9ARZJR8KVsoNycxdLrQ"
+        ],
+        "supplier": [
+          "GL Events"
+        ],
+        "sortField": "20260521/16:00/GL Events remove Keynote seats"
+      },
+      {
+        "date": "2026-05-22",
+        "dateFriendly": "Friday, 22 May 2026",
+        "time": "08:00",
+        "description": "Local crew on-site, 10pax 8hr call",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "a-2XDh-IuSU2FnLdVo9tWaw"
+        ],
+        "supplier": [
+          "AlphaCrew"
+        ],
+        "sortField": "20260522/08:00/Local crew on-site, 10pax 8hr call"
+      },
+      {
+        "date": "2026-05-22",
+        "dateFriendly": "Friday, 22 May 2026",
+        "time": "08:00",
+        "description": "Forks on-site, 2pax 8hr call",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "a-2XDh-IuSU2FnLdVo9tWaw"
+        ],
+        "supplier": [
+          "AlphaCrew"
+        ],
+        "sortField": "20260522/08:00/Forks on-site, 2pax 8hr call"
+      },
+      {
+        "date": "2026-05-22",
+        "dateFriendly": "Friday, 22 May 2026",
+        "time": "16:00",
+        "description": "Forks call ends, 2pax",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "a-2XDh-IuSU2FnLdVo9tWaw"
+        ],
+        "supplier": [
+          "AlphaCrew"
+        ],
+        "sortField": "20260522/16:00/Forks call ends, 2pax"
+      },
+      {
+        "date": "2026-05-22",
+        "dateFriendly": "Friday, 22 May 2026",
+        "time": "16:00",
+        "description": "Local crew ends, 10pax",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "a-2XDh-IuSU2FnLdVo9tWaw"
+        ],
+        "supplier": [
+          "AlphaCrew"
+        ],
+        "sortField": "20260522/16:00/Local crew ends, 10pax"
+      },
+      {
+        "date": "2026-05-21",
+        "dateFriendly": "Thursday, 21 May 2026",
+        "time": "16:36",
+        "description": "Tip deads to storage",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "a-2XDh-IuSU2FnLdVo9tWaw"
+        ],
+        "supplier": [
+          "AlphaCrew"
+        ],
+        "sortField": "20260521/16:36/Tip deads to storage"
+      },
+      {
+        "date": "2026-05-21",
+        "dateFriendly": "Thursday, 21 May 2026",
+        "time": "16:31",
+        "description": "Tip deads to storage",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "a-2XDh-IuSU2FnLdVo9tWaw"
+        ],
+        "supplier": [
+          "AlphaCrew"
+        ],
+        "sortField": "20260521/16:31/Tip deads to storage"
+      },
+      {
+        "date": "2026-05-21",
+        "dateFriendly": "Thursday, 21 May 2026",
+        "time": "17:01",
+        "description": "Tip deads to storage",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "a-2XDh-IuSU2FnLdVo9tWaw"
+        ],
+        "supplier": [
+          "AlphaCrew"
+        ],
+        "sortField": "20260521/17:01/Tip deads to storage"
+      },
+      {
+        "date": "2026-05-21",
+        "dateFriendly": "Thursday, 21 May 2026",
+        "time": "20:00",
+        "description": "Truck Video #2 on-site, load Video",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "OuA-1AxIRAWxDU1pPPTsCQ"
+        ],
+        "supplier": [
+          "CT Netherlands"
+        ],
+        "truckId": "MXEYIgBQQ5uoFFn3VOLrSQ",
+        "sortField": "20260521/20:00/Truck Video #2 on-site, load Video"
+      },
+      {
+        "date": "2026-05-21",
+        "dateFriendly": "Thursday, 21 May 2026",
+        "time": "20:01",
+        "description": "Load Video",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "a-2XDh-IuSU2FnLdVo9tWaw"
+        ],
+        "supplier": [
+          "AlphaCrew"
+        ],
+        "sortField": "20260521/20:01/Load Video"
+      },
+      {
+        "date": "2026-05-21",
+        "dateFriendly": "Thursday, 21 May 2026",
+        "time": "22:00",
+        "description": "All Video loaded, CT depart site",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "OuA-1AxIRAWxDU1pPPTsCQ"
+        ],
+        "supplier": [
+          "CT Netherlands"
+        ],
+        "sortField": "20260521/22:00/All Video loaded, CT depart site"
+      },
+      {
+        "date": "2026-05-21",
+        "dateFriendly": "Thursday, 21 May 2026",
+        "time": "19:00",
+        "description": "Load Scenic",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "a-2XDh-IuSU2FnLdVo9tWaw"
+        ],
+        "supplier": [
+          "AlphaCrew"
+        ],
+        "sortField": "20260521/19:00/Load Scenic"
+      },
+      {
+        "date": "2026-05-16",
+        "dateFriendly": "Saturday, 16 May 2026",
+        "time": "12:00",
+        "description": "Forks on-site, 2pax 4hr call",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "a-2XDh-IuSU2FnLdVo9tWaw"
+        ],
+        "supplier": [
+          "AlphaCrew"
+        ],
+        "sortField": "20260516/12:00/Forks on-site, 2pax 4hr call"
+      },
+      {
+        "date": "2026-05-16",
+        "dateFriendly": "Saturday, 16 May 2026",
+        "time": "12:00",
+        "description": "Local crew on-site, 6pax 4hr call",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "a-2XDh-IuSU2FnLdVo9tWaw"
+        ],
+        "supplier": [
+          "AlphaCrew"
+        ],
+        "sortField": "20260516/12:00/Local crew on-site, 6pax 4hr call"
+      },
+      {
+        "date": "2026-05-16",
+        "dateFriendly": "Saturday, 16 May 2026",
+        "time": "16:00",
+        "description": "Local crew call ends, 6pax",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "a-2XDh-IuSU2FnLdVo9tWaw"
+        ],
+        "supplier": [
+          "AlphaCrew"
+        ],
+        "sortField": "20260516/16:00/Local crew call ends, 6pax"
+      },
+      {
+        "date": "2026-05-16",
+        "dateFriendly": "Saturday, 16 May 2026",
+        "time": "14:20",
+        "description": "Tip rigging to storage",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "a-2XDh-IuSU2FnLdVo9tWaw"
+        ],
+        "supplier": [
+          "AlphaCrew"
+        ],
+        "sortField": "20260516/14:20/Tip rigging to storage"
+      },
+      {
+        "date": "2026-05-16",
+        "dateFriendly": "Saturday, 16 May 2026",
+        "time": "16:00",
+        "description": "Forks call ends, 2pax",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "a-2XDh-IuSU2FnLdVo9tWaw"
+        ],
+        "supplier": [
+          "AlphaCrew"
+        ],
+        "sortField": "20260516/16:00/Forks call ends, 2pax"
+      },
+      {
+        "date": "2026-05-16",
+        "dateFriendly": "Saturday, 16 May 2026",
+        "time": "14:50",
+        "description": "Tip rigging to storage",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "a-2XDh-IuSU2FnLdVo9tWaw"
+        ],
+        "supplier": [
+          "AlphaCrew"
+        ],
+        "sortField": "20260516/14:50/Tip rigging to storage"
+      },
+      {
+        "date": "2026-05-16",
+        "dateFriendly": "Saturday, 16 May 2026",
+        "time": "15:20",
+        "description": "Tip rigging to storage",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "a-2XDh-IuSU2FnLdVo9tWaw"
+        ],
+        "supplier": [
+          "AlphaCrew"
+        ],
+        "sortField": "20260516/15:20/Tip rigging to storage"
+      },
+      {
+        "date": "2026-05-21",
+        "dateFriendly": "Thursday, 21 May 2026",
+        "time": "19:00",
+        "description": "Truck Scenic #1 load Scenic elements",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "BhB4cGsDRWicJPOOXcVuPA"
+        ],
+        "supplier": [
+          "TruckingBY"
+        ],
+        "truckId": "cWLHPbyHSVadc0rCPTTXuw",
+        "sortField": "20260521/19:00/Truck Scenic #1 load Scenic elements"
+      },
+      {
+        "date": "2026-05-21",
+        "dateFriendly": "Thursday, 21 May 2026",
+        "time": "22:01",
+        "description": "Truck Video #1 loaded, depart site",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "OuA-1AxIRAWxDU1pPPTsCQ"
+        ],
+        "supplier": [
+          "CT Netherlands"
+        ],
+        "truckId": "IXKYkN7WSvSYlyo3jID3Vw",
+        "sortField": "20260521/22:01/Truck Video #1 loaded, depart site"
+      },
+      {
+        "date": "2026-05-21",
+        "dateFriendly": "Thursday, 21 May 2026",
+        "time": "22:02",
+        "description": "Truck Video #2 loaded, depart site",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "OuA-1AxIRAWxDU1pPPTsCQ"
+        ],
+        "supplier": [
+          "CT Netherlands"
+        ],
+        "truckId": "MXEYIgBQQ5uoFFn3VOLrSQ",
+        "sortField": "20260521/22:02/Truck Video #2 loaded, depart site"
+      },
+      {
+        "date": "2026-05-21",
+        "dateFriendly": "Thursday, 21 May 2026",
+        "time": "22:30",
+        "description": "Truck Scenic #1 loaded, depart site",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "BhB4cGsDRWicJPOOXcVuPA"
+        ],
+        "supplier": [
+          "TruckingBY"
+        ],
+        "truckId": "cWLHPbyHSVadc0rCPTTXuw",
+        "sortField": "20260521/22:30/Truck Scenic #1 loaded, depart site"
+      },
+      {
+        "date": "2026-05-22",
+        "dateFriendly": "Friday, 22 May 2026",
+        "time": "10:00",
+        "description": "Truck Audio #1 on-site, load Audio",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "BhB4cGsDRWicJPOOXcVuPA"
+        ],
+        "supplier": [
+          "TruckingBY"
+        ],
+        "truckId": "KyzAglQ3RQ2pXDZaM32T4g",
+        "sortField": "20260522/10:00/Truck Audio #1 on-site, load Audio"
+      },
+      {
+        "date": "2026-05-22",
+        "dateFriendly": "Friday, 22 May 2026",
+        "time": "11:00",
+        "description": "Truck Lighting #1 on-site, load Lighting",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "BhB4cGsDRWicJPOOXcVuPA"
+        ],
+        "supplier": [
+          "TruckingBY"
+        ],
+        "truckId": "ivFWF3A-Sj6LwErS-mA1DA",
+        "sortField": "20260522/11:00/Truck Lighting #1 on-site, load Lighting"
+      },
+      {
+        "date": "2026-05-21",
+        "dateFriendly": "Thursday, 21 May 2026",
+        "time": "17:30",
+        "description": "Truck Lighting #1 tipped, depart site",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "BhB4cGsDRWicJPOOXcVuPA"
+        ],
+        "supplier": [
+          "TruckingBY"
+        ],
+        "truckId": "ivFWF3A-Sj6LwErS-mA1DA",
+        "sortField": "20260521/17:30/Truck Lighting #1 tipped, depart site"
+      },
+      {
+        "date": "2026-05-22",
+        "dateFriendly": "Friday, 22 May 2026",
+        "time": "11:00",
+        "description": "Truck Audio #1 loaded, depart site",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "BhB4cGsDRWicJPOOXcVuPA"
+        ],
+        "supplier": [
+          "TruckingBY"
+        ],
+        "truckId": "KyzAglQ3RQ2pXDZaM32T4g",
+        "sortField": "20260522/11:00/Truck Audio #1 loaded, depart site"
+      },
+      {
+        "date": "2026-05-22",
+        "dateFriendly": "Friday, 22 May 2026",
+        "time": "12:00",
+        "description": "Truck Lighting #1 loaded, depart site",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "BhB4cGsDRWicJPOOXcVuPA"
+        ],
+        "supplier": [
+          "TruckingBY"
+        ],
+        "truckId": "ivFWF3A-Sj6LwErS-mA1DA",
+        "sortField": "20260522/12:00/Truck Lighting #1 loaded, depart site"
+      },
+      {
+        "date": "2026-05-22",
+        "dateFriendly": "Friday, 22 May 2026",
+        "time": "14:05",
+        "description": "Truck Blackout FR #3 on-site, load Rigging",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "QmVLl7UaTm-heEB0lIeCzw"
+        ],
+        "supplier": [
+          "Blackout Fr"
+        ],
+        "truckId": "y6beTiDlSb6kTQF9QShOPA",
+        "sortField": "20260522/14:05/Truck Blackout FR #3 on-site, load Rigging"
+      },
+      {
+        "date": "2026-05-22",
+        "dateFriendly": "Friday, 22 May 2026",
+        "time": "12:05",
+        "description": "Truck Blackout FR #1 on-site, load Rigging",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "QmVLl7UaTm-heEB0lIeCzw"
+        ],
+        "supplier": [
+          "Blackout Fr"
+        ],
+        "truckId": "J20wz1TVRgG3NfhIOEYvMw",
+        "sortField": "20260522/12:05/Truck Blackout FR #1 on-site, load Rigging"
+      },
+      {
+        "date": "2026-05-22",
+        "dateFriendly": "Friday, 22 May 2026",
+        "time": "13:05",
+        "description": "Truck Blackout FR #2 on-site, load Rigging",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "QmVLl7UaTm-heEB0lIeCzw"
+        ],
+        "supplier": [
+          "Blackout Fr"
+        ],
+        "truckId": "U8WZYuijQAOG4UtDL2aPrg",
+        "sortField": "20260522/13:05/Truck Blackout FR #2 on-site, load Rigging"
+      },
+      {
+        "date": "2026-05-22",
+        "dateFriendly": "Friday, 22 May 2026",
+        "time": "13:00",
+        "description": "Truck Blackout FR #1 loaded, depart site",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "QmVLl7UaTm-heEB0lIeCzw"
+        ],
+        "supplier": [
+          "Blackout Fr"
+        ],
+        "truckId": "J20wz1TVRgG3NfhIOEYvMw",
+        "sortField": "20260522/13:00/Truck Blackout FR #1 loaded, depart site"
+      },
+      {
+        "date": "2026-05-22",
+        "dateFriendly": "Friday, 22 May 2026",
+        "time": "14:00",
+        "description": "Truck Blackout FR #2 loaded, depart site",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "QmVLl7UaTm-heEB0lIeCzw"
+        ],
+        "supplier": [
+          "Blackout Fr"
+        ],
+        "truckId": "U8WZYuijQAOG4UtDL2aPrg",
+        "sortField": "20260522/14:00/Truck Blackout FR #2 loaded, depart site"
+      },
+      {
+        "date": "2026-05-22",
+        "dateFriendly": "Friday, 22 May 2026",
+        "time": "15:00",
+        "description": "Truck Blackout FR #3 loaded, depart site",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "QmVLl7UaTm-heEB0lIeCzw"
+        ],
+        "supplier": [
+          "Blackout Fr"
+        ],
+        "truckId": "y6beTiDlSb6kTQF9QShOPA",
+        "sortField": "20260522/15:00/Truck Blackout FR #3 loaded, depart site"
+      },
+      {
+        "date": "2026-05-21",
+        "dateFriendly": "Thursday, 21 May 2026",
+        "time": "08:00",
+        "description": "~PM on-site",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "2cTKWSUVSXSKWIhGxVVeuw"
+        ],
+        "supplier": [
+          "IML"
+        ],
+        "sortField": "20260521/08:00/~PM on-site"
+      },
+      {
+        "date": "2026-05-21",
+        "dateFriendly": "Thursday, 21 May 2026",
+        "time": "08:00",
+        "description": "Audio team on-site",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "47b8O0UvSNKfr4l8BCMr8Q"
+        ],
+        "supplier": [
+          "Pixl Audio"
+        ],
+        "sortField": "20260521/08:00/Audio team on-site"
+      },
+      {
+        "date": "2026-05-21",
+        "dateFriendly": "Thursday, 21 May 2026",
+        "time": "08:00",
+        "description": "Lighting team on-site",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "j2a8av22Tyyf67JM8.omnQ"
+        ],
+        "supplier": [
+          "TSL"
+        ],
+        "sortField": "20260521/08:00/Lighting team on-site"
+      },
+      {
+        "date": "2026-05-21",
+        "dateFriendly": "Thursday, 21 May 2026",
+        "time": "08:00",
+        "description": "Network team on-site",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "Q4C2.Xv3TvGnqIZyj0RcEA"
+        ],
+        "supplier": [
+          "SUT"
+        ],
+        "sortField": "20260521/08:00/Network team on-site"
+      },
+      {
+        "date": "2026-05-21",
+        "dateFriendly": "Thursday, 21 May 2026",
+        "time": "08:00",
+        "description": "Rigging team on-site",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "QmVLl7UaTm-heEB0lIeCzw"
+        ],
+        "supplier": [
+          "Blackout Fr"
+        ],
+        "sortField": "20260521/08:00/Rigging team on-site"
+      },
+      {
+        "date": "2026-05-21",
+        "dateFriendly": "Thursday, 21 May 2026",
+        "time": "08:00",
+        "description": "Scenic team on-site",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "ULu0NyF5REy7aHNUJpsUyQ"
+        ],
+        "supplier": [
+          "JPM Scenery"
+        ],
+        "sortField": "20260521/08:00/Scenic team on-site"
+      },
+      {
+        "date": "2026-05-21",
+        "dateFriendly": "Thursday, 21 May 2026",
+        "time": "08:00",
+        "description": "Video team on-site",
+        "tags": [
+          "Crew Call"
+        ],
+        "tagIds": [
+          "wq.kHzIzTjqhBr9D3FWJqg"
+        ],
+        "locationIds": [
+          "OuA-1AxIRAWxDU1pPPTsCQ"
+        ],
+        "supplier": [
+          "CT Netherlands"
+        ],
+        "sortField": "20260521/08:00/Video team on-site"
+      },
+      {
+        "date": "2026-05-26",
+        "dateFriendly": "Tuesday, 26 May 2026",
+        "time": "09:00",
+        "description": "Truck Audio #1 tips Pixl Audio",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "BhB4cGsDRWicJPOOXcVuPA"
+        ],
+        "supplier": [
+          "TruckingBY"
+        ],
+        "truckId": "KyzAglQ3RQ2pXDZaM32T4g",
+        "sortField": "20260526/09:00/Truck Audio #1 tips Pixl Audio"
+      },
+      {
+        "date": "2026-05-05",
+        "dateFriendly": "Tuesday, 5 May 2026",
+        "time": "09:00",
+        "description": "Truck Scenic #1 pulls assets from Set-A-Side, tips to JPM Scenery",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "BhB4cGsDRWicJPOOXcVuPA"
+        ],
+        "supplier": [
+          "TruckingBY"
+        ],
+        "truckId": "cWLHPbyHSVadc0rCPTTXuw",
+        "sortField": "20260505/09:00/Truck Scenic #1 pulls assets from Set-A-Side, tips to JPM Scenery"
+      },
+      {
+        "date": "2026-05-23",
+        "dateFriendly": "Saturday, 23 May 2026",
+        "time": "12:00",
+        "description": "Truck Scenic #1 tips JPM Scenery only",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "BhB4cGsDRWicJPOOXcVuPA"
+        ],
+        "supplier": [
+          "TruckingBY"
+        ],
+        "truckId": "cWLHPbyHSVadc0rCPTTXuw",
+        "sortField": "20260523/12:00/Truck Scenic #1 tips JPM Scenery only"
+      },
+      {
+        "date": "2026-05-26",
+        "dateFriendly": "Tuesday, 26 May 2026",
+        "time": "09:00",
+        "description": "Truck Scenic #1 tips Set-A-Side",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "BhB4cGsDRWicJPOOXcVuPA"
+        ],
+        "supplier": [
+          "TruckingBY"
+        ],
+        "truckId": "cWLHPbyHSVadc0rCPTTXuw",
+        "sortField": "20260526/09:00/Truck Scenic #1 tips Set-A-Side"
+      },
+      {
+        "date": "2026-05-23",
+        "dateFriendly": "Saturday, 23 May 2026",
+        "time": "12:00",
+        "description": "Truck Lighting #1 tips Silent Conference only",
+        "tags": [],
+        "tagIds": [],
+        "locationIds": [
+          "BhB4cGsDRWicJPOOXcVuPA"
+        ],
+        "supplier": [
+          "TruckingBY"
+        ],
+        "truckId": "ivFWF3A-Sj6LwErS-mA1DA",
+        "sortField": "20260523/12:00/Truck Lighting #1 tips Silent Conference only"
+      }
+    ]
+  }
+}
