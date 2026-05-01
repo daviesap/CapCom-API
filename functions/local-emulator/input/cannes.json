@@ -1,0 +1,263 @@
+{
+  "api_key": "Sausages2025!!",
+  "event": {
+    "profileId": "Tek0mqU4_U",
+    "name": "Meta at Cannes Lions 2026",
+    "logoUrl": "https://storage.googleapis.com/glide-prod.appspot.com/uploads-v2/HcC5eciQj3AFdnMoEPmj/pub/kH1CSbaoLEIhC5Tm46NY.png",
+    "header": [
+      "Meta at Cannes Lions 2026",
+      "22nd to 26th June 2026"
+    ]
+  },
+  "debug": false,
+  "UserId": "AdwgDd77SUGOlcSgWH6JIw",
+  "userEmail": "andrew@flair.london",
+  "glideAppName": "De-Yan Cannes Lions",
+  "groupMeta": {
+    "scheduleDetail": [
+      {
+        "date": "2026-06-13",
+        "data": {
+          "title": "Saturday, 13 June 2026"
+        }
+      },
+      {
+        "date": "2026-06-14",
+        "data": {
+          "title": "Sunday, 14 June 2026"
+        }
+      },
+      {
+        "date": "2026-06-15",
+        "data": {
+          "title": "Monday, 15 June 2026"
+        }
+      },
+      {
+        "date": "2026-06-16",
+        "data": {
+          "title": "Tuesday, 16 June 2026"
+        }
+      },
+      {
+        "date": "2026-06-17",
+        "data": {
+          "title": "Wednesday, 17 June 2026",
+          "above": "Beach Tenancy Commences @ 19:00"
+        }
+      },
+      {
+        "date": "2026-06-18",
+        "data": {
+          "title": "Thursday, 18 June 2026",
+          "above": "BEACH TENANCY ENDS @ 08:00 \nBEACH TENANCY COMMENCES @ 19:00"
+        }
+      },
+      {
+        "date": "2026-06-19",
+        "data": {
+          "title": "Friday, 19 June 2026"
+        }
+      },
+      {
+        "date": "2026-06-20",
+        "data": {
+          "title": "Saturday, 20 June 2026"
+        }
+      },
+      {
+        "date": "2026-06-21",
+        "data": {
+          "title": "Sunday, 21 June 2026"
+        }
+      },
+      {
+        "date": "2026-06-22",
+        "data": {
+          "title": "Monday, 22 June 2026",
+          "above": "Live Day 1"
+        }
+      },
+      {
+        "date": "2026-06-23",
+        "data": {
+          "title": "Tuesday, 23 June 2026",
+          "above": "Live Day 2"
+        }
+      },
+      {
+        "date": "2026-06-24",
+        "data": {
+          "title": "Wednesday, 24 June 2026",
+          "above": "Live Day 3"
+        }
+      },
+      {
+        "date": "2026-06-25",
+        "data": {
+          "title": "Thursday, 25 June 2026",
+          "above": "Live Day 4"
+        }
+      },
+      {
+        "date": "2026-06-26",
+        "data": {
+          "title": "Friday, 26 June 2026"
+        }
+      },
+      {
+        "date": "2026-06-27",
+        "data": {
+          "title": "Saturday, 27 June 2026"
+        }
+      },
+      {
+        "date": "2026-06-28",
+        "data": {
+          "title": "Sunday, 28 June 2026",
+          "above": "Beach tenancy ends @ 08:00"
+        }
+      },
+      {
+        "date": "2026-06-29",
+        "data": {
+          "title": "Monday, 29 June 2026"
+        }
+      },
+      {
+        "date": "2026-06-30",
+        "data": {
+          "title": "Tuesday, 30 June 2026"
+        }
+      },
+      {
+        "date": "2026-06-11",
+        "data": {
+          "title": "Thursday, 11 June 2026"
+        }
+      },
+      {
+        "date": "2026-06-12",
+        "data": {
+          "title": "Friday, 12 June 2026"
+        }
+      }
+    ],
+    "trucks": [
+      {
+        "truckId": "fwhhcjE1RAmxw6SAXonvoQ",
+        "data": {
+          "title": "KB1",
+          "above": "Trucking Company = KB Event, Size = 18T, Driver = Bob , Contents = Scenic",
+          "below": "Below text",
+          "truckingCompany": "a-euY4.fxRfmBhTGPs7gO-A"
+        }
+      },
+      {
+        "truckId": "oyC46NfGTn6ujyCtcCbRvQ",
+        "data": {
+          "title": "M1",
+          "above": "Trucking Company = Mediaco, Size = 7.5T, Driver = , Contents = ",
+          "below": "Below text",
+          "truckingCompany": "eWJ.Z7TYTFm6l1UIQHYXmw"
+        }
+      },
+      {
+        "truckId": "s-EopoQZRmyPQPDuWpY6lg",
+        "data": {
+          "title": "MAG1",
+          "above": "Trucking Company = Magnum (HVAC), Size = 26T, Driver = , Contents = ",
+          "below": "Below text",
+          "truckingCompany": "u9cc6gM5RzC9-dP7.-DhzQ"
+        }
+      }
+    ]
+  },
+  "snapshots": [
+    {
+      "name": "Full schedule",
+      "filterBox": false,
+      "showKeyInfo": false,
+      "groupPresetId": "DY-1",
+      "filterSupplierIds": [],
+      "filterLocationIds": "",
+      "group": "Full schedule",
+      "sortOrder": 1
+    },
+    {
+      "name": "KB Event Trucking",
+      "filterBox": false,
+      "showKeyInfo": false,
+      "groupPresetId": "DY-trucking",
+      "filterSupplierIds": [],
+      "filterLocationIds": "",
+      "filterGroup": "a-euY4.fxRfmBhTGPs7gO-A",
+      "group": "Full schedule",
+      "sortOrder": 1
+    },
+    {
+      "name": "Mediaco Trucking",
+      "filterBox": false,
+      "showKeyInfo": false,
+      "groupPresetId": "DY-trucking",
+      "filterSupplierIds": [],
+      "filterLocationIds": "",
+      "filterGroup": "eWJ.Z7TYTFm6l1UIQHYXmw",
+      "group": "Full schedule",
+      "sortOrder": 1
+    },
+    {
+      "name": "Magnum Trucking",
+      "filterBox": false,
+      "showKeyInfo": false,
+      "groupPresetId": "DY-trucking",
+      "filterSupplierIds": [],
+      "filterLocationIds": "",
+      "filterGroup": "u9cc6gM5RzC9-dP7.-DhzQ",
+      "group": "Full schedule",
+      "sortOrder": 1
+    },
+    {
+      "name": "Alpha Crew call",
+      "filterBox": false,
+      "showKeyInfo": false,
+      "groupPresetId": "DY-1",
+      "filterSupplierIds": [
+        "8uM88eZ4QcC4YcwU38U.Pg"
+      ],
+      "filterLocationIds": "",
+      "group": "Full schedule",
+      "sortOrder": 1
+    }
+  ],
+  "data": {
+    "scheduleDetail": [
+      {
+        "date": "2026-06-15",
+        "dateFriendly": "Monday, 15 June 2026",
+        "time": "08:00 - 20:00",
+        "description": "Sausages",
+        "tags": [],
+        "tagIds": [],
+        "supplierId": "8uM88eZ4QcC4YcwU38U.Pg",
+        "supplier": [
+          "Alpha Crew"
+        ],
+        "sortField": "20260615/08:00/Sausages"
+      },
+      {
+        "date": "2026-06-16",
+        "dateFriendly": "Tuesday, 16 June 2026",
+        "time": "08:00 - ",
+        "description": "Sausages",
+        "tags": [],
+        "tagIds": [],
+        "supplierId": "8uM88eZ4QcC4YcwU38U.Pg",
+        "supplier": [
+          "Alpha Crew"
+        ],
+        "sortField": "20260616/08:00/Sausages"
+      }
+    ]
+  }
+}
