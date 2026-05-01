@@ -19,6 +19,7 @@ import LogsTable from '../components/LogsTable';
 export default function ProfileList() {
   const [profiles, setProfiles] = useState([]);
   const [recentLogs, setRecentLogs] = useState([]);
+  const [userStats, setUserStats] = useState([]);
   const [newName, setNewName] = useState("");
 
   const navigate = useNavigate();
@@ -56,8 +57,48 @@ export default function ProfileList() {
     setProfiles(data);
   };
 
+  function toDate(value) {
+    if (!value) return null;
+    if (typeof value?.toDate === 'function') return value.toDate();
+    if (value instanceof Date) return value;
+    const parsed = new Date(value);
+    return Number.isNaN(parsed.getTime()) ? null : parsed;
+  }
+
+  const fetchUserStats = async () => {
+    const querySnapshot = await getDocs(collection(db, 'logs'));
+    const users = {};
+
+    querySnapshot.docs.forEach((docSnap) => {
+      const log = docSnap.data() || {};
+      const userKey = log.userEmail || log.userId || 'Unknown user';
+      const timestamp = toDate(log.createdAt || log.responseTimestamp);
+
+      if (!users[userKey]) {
+        users[userKey] = { userName: userKey, lastSeen: null, totalRuns: 0 };
+      }
+
+      users[userKey].totalRuns += 1;
+      if (timestamp && (!users[userKey].lastSeen || timestamp > users[userKey].lastSeen)) {
+        users[userKey].lastSeen = timestamp;
+      }
+    });
+
+    const stats = Object.values(users).sort((a, b) => {
+      const aTime = a.lastSeen?.getTime?.() || 0;
+      const bTime = b.lastSeen?.getTime?.() || 0;
+      return bTime - aTime;
+    });
+
+    setUserStats(stats);
+  };
+
   useEffect(() => {
     fetchProfiles();
+    fetchUserStats().catch((error) => {
+      console.error('Error fetching user stats:', error);
+    });
+
     const fetchRecentLogs = async () => {
       const logsQuery = query(collection(db, 'logs'), orderBy('createdAt', 'desc'), limit(5));
       const snapshot = await getDocs(logsQuery);
@@ -180,6 +221,43 @@ export default function ProfileList() {
       </div>
 
       <div className="mt-10">
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
+          <h3 className="text-xl font-semibold">Users</h3>
+        </div>
+
+        <div className="overflow-x-auto mb-8">
+          <table className="w-full border-collapse border border-gray-300 text-left text-sm">
+            <thead>
+              <tr className="bg-gray-100">
+                <th className="border border-gray-300 px-4 py-2">User name</th>
+                <th className="border border-gray-300 px-4 py-2">Last seen</th>
+                <th className="border border-gray-300 px-4 py-2">Total runs</th>
+              </tr>
+            </thead>
+            <tbody>
+              {userStats.length === 0 ? (
+                <tr>
+                  <td colSpan="3" className="border border-gray-300 px-4 py-8 text-center text-gray-500">
+                    No user activity found.
+                  </td>
+                </tr>
+              ) : (
+                userStats.map((user) => (
+                  <tr key={user.userName} className="hover:bg-gray-50">
+                    <td className="border border-gray-300 px-4 py-2 font-medium">{user.userName}</td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      {user.lastSeen
+                        ? formatDistanceToNow(user.lastSeen, { addSuffix: true })
+                        : "Never seen"}
+                    </td>
+                    <td className="border border-gray-300 px-4 py-2">{user.totalRuns}</td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+
         <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
           <h3 className="text-xl font-semibold">Recent Log Entries</h3>
           <button
