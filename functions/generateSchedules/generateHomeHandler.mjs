@@ -191,6 +191,7 @@ export async function generateHomeHandler({
         filterTagIds: snap.filterTagIds || [],
         filterLocationIds: snap.filterLocationIds || [],
         filterSubLocationIds: snap.filterSubLocationIds || [],
+        filterSupplierIds: snap.filterSupplierIds || [],
         filterGroup: snap.filterGroup || "",
       });
 

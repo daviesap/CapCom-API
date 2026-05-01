@@ -196,34 +196,37 @@
       "sortOrder": 1
     },
     {
-      "name": "Mediaco Trucking",
-      "filterBox": false,
-      "showKeyInfo": false,
-      "groupPresetId": "DY-trucking",
-      "filterSupplierIds": [],
-      "filterLocationIds": "",
-      "filterGroup": "eWJ.Z7TYTFm6l1UIQHYXmw",
-      "group": "Full schedule",
-      "sortOrder": 1
-    },
-    {
-      "name": "Magnum Trucking",
-      "filterBox": false,
-      "showKeyInfo": false,
-      "groupPresetId": "DY-trucking",
-      "filterSupplierIds": [],
-      "filterLocationIds": "",
-      "filterGroup": "u9cc6gM5RzC9-dP7.-DhzQ",
-      "group": "Full schedule",
-      "sortOrder": 1
-    },
-    {
       "name": "Alpha Crew call",
       "filterBox": false,
       "showKeyInfo": false,
       "groupPresetId": "DY-1",
       "filterSupplierIds": [
         "8uM88eZ4QcC4YcwU38U.Pg"
+      ],
+      "filterLocationIds": "",
+      "group": "Full schedule",
+      "sortOrder": 1
+    },
+    {
+      "name": "**All**",
+      "filterBox": false,
+      "showKeyInfo": false,
+      "groupPresetId": "DY-1",
+      "filterSupplierIds": [
+        "xGT8aNVQQ.Cc8yPLBuA0qg"
+      ],
+      "filterLocationIds": "",
+      "group": "Full schedule",
+      "sortOrder": 1
+    },
+    {
+      "name": "**All** and Blue-i",
+      "filterBox": false,
+      "showKeyInfo": false,
+      "groupPresetId": "DY-1",
+      "filterSupplierIds": [
+        "xGT8aNVQQ.Cc8yPLBuA0qg",
+        "a-MtC-XDtSWWo2lU715Ol9A"
       ],
       "filterLocationIds": "",
       "group": "Full schedule",
@@ -236,27 +239,64 @@
         "date": "2026-06-15",
         "dateFriendly": "Monday, 15 June 2026",
         "time": "08:00 - 20:00",
-        "description": "Sausages",
+        "description": "Alpha Crew",
         "tags": [],
         "tagIds": [],
         "supplierId": "8uM88eZ4QcC4YcwU38U.Pg",
         "supplier": [
           "Alpha Crew"
         ],
-        "sortField": "20260615/08:00/Sausages"
+        "sortField": "20260615/08:00/Alpha Crew"
       },
       {
         "date": "2026-06-16",
         "dateFriendly": "Tuesday, 16 June 2026",
         "time": "08:00 - ",
-        "description": "Sausages",
+        "description": "Alpha Crew",
         "tags": [],
         "tagIds": [],
         "supplierId": "8uM88eZ4QcC4YcwU38U.Pg",
         "supplier": [
           "Alpha Crew"
         ],
-        "sortField": "20260616/08:00/Sausages"
+        "sortField": "20260616/08:00/Alpha Crew"
+      },
+      {
+        "date": "2026-06-15",
+        "dateFriendly": "Monday, 15 June 2026",
+        "time": "08:00 - ",
+        "description": "Alpha Crew",
+        "tags": [],
+        "tagIds": [],
+        "supplierId": "8uM88eZ4QcC4YcwU38U.Pg",
+        "supplier": [
+          "Alpha Crew"
+        ],
+        "sortField": "20260615/08:00/Alpha Crew"
+      },
+      {
+        "date": "2026-06-15",
+        "dateFriendly": "Monday, 15 June 2026",
+        "time": "08:00 - ",
+        "description": "Blue Iand **all**",
+        "tags": [],
+        "tagIds": [],
+        "supplierId": "xGT8aNVQQ.Cc8yPLBuA0qg,a-MtC-XDtSWWo2lU715Ol9A",
+        "supplier": [],
+        "sortField": "20260615/08:00/Blue Iand **all**"
+      },
+      {
+        "date": "2026-06-15",
+        "dateFriendly": "Monday, 15 June 2026",
+        "time": "08:00 - ",
+        "description": "**all**",
+        "tags": [],
+        "tagIds": [],
+        "supplierId": "xGT8aNVQQ.Cc8yPLBuA0qg",
+        "supplier": [
+          "**All**"
+        ],
+        "sortField": "20260615/08:00/**all**"
       }
     ]
   }

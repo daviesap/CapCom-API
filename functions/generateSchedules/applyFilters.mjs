@@ -4,19 +4,19 @@
  * Purpose
  * -------
  * Provides utility functions to filter grouped schedule data according to
- * snapshot-level filters (tags, locations, sub-locations).
+ * snapshot-level filters (tags, locations, sub-locations, suppliers).
  *
  * Functions
  * ---------
  * - normaliseIdArray(x): ensures a value is returned as an array of strings.
- * - filterEntriesArray({ data, filterTagIds, filterLocationIds, filterSubLocationIds }):
+ * - filterEntriesArray({ data, filterTagIds, filterLocationIds, filterSubLocationIds, filterSupplierIds }):
  *     Given a list of entries, returns only those entries whose tagIds,
- *     locationIds, and subLocationIds match the provided filters.
+ *     locationIds, subLocationIds, and supplierId match the provided filters.
  *     - If a filter array is empty, that dimension is treated as "no filter".
  *     - Matching is "any" within a dimension (an entry passes if it has at least one
  *       of the required IDs for that dimension).
- *     - Across dimensions, all must match (tags AND locations AND subLocations).
- * - applySnapshotFiltersToView(view, { filterTagIds, filterLocationIds, filterSubLocationIds }):
+ *     - Across dimensions, all must match (tags AND locations AND subLocations AND suppliers).
+ * - applySnapshotFiltersToView(view, { filterTagIds, filterLocationIds, filterSubLocationIds, filterSupplierIds }):
  *     Given a grouped view (with groups and entries), applies filterEntriesArray
  *     to each group. Returns a new view object containing only groups with
  *     entries that match the filters.
@@ -25,7 +25,7 @@
  * -----
  * This module is imported by index.js to apply per-snapshot filters after
  * grouped views have been prepared. It ensures each snapshot only includes
- * entries relevant to its specified tag/location filters.
+ * entries relevant to its specified tag/location/supplier filters.
  */
 // functions/generateSchedules/applyFilters.mjs
 
@@ -34,20 +34,34 @@ function normaliseIdArray(x) {
   return x.map(v => String(v));
 }
 
+function normaliseSupplierIds(value) {
+  if (Array.isArray(value)) {
+    return value.flatMap(v => normaliseSupplierIds(v));
+  }
+  if (value == null) return [];
+  return String(value)
+    .split(",")
+    .map(v => v.trim())
+    .filter(Boolean);
+}
+
 export function filterEntriesArray({
   data,
   filterTagIds = [],
   filterLocationIds = [],
   filterSubLocationIds = [],
+  filterSupplierIds = [],
 }) {
   const reqTags  = normaliseIdArray(filterTagIds);
   const reqLocs  = normaliseIdArray(filterLocationIds);
   const reqSubs  = normaliseIdArray(filterSubLocationIds);
+  const reqSuppliers = normaliseIdArray(filterSupplierIds);
 
   return (Array.isArray(data) ? data : []).filter(entry => {
     const rowTags = normaliseIdArray(entry?.tagIds);
     const rowLocs = normaliseIdArray(entry?.locationIds);
     const rowSubs = normaliseIdArray(entry?.subLocationIds);
+    const rowSupplier = normaliseSupplierIds(entry?.supplierId);
 
     const matchSet = (row, req) => {
       if (!req.length) return true; // no filter
@@ -57,8 +71,9 @@ export function filterEntriesArray({
     const tagMatch = matchSet(rowTags, reqTags);
     const locMatch = matchSet(rowLocs, reqLocs);
     const subMatch = matchSet(rowSubs, reqSubs);
+    const supplierMatch = matchSet(rowSupplier, reqSuppliers);
 
-    return tagMatch && locMatch && subMatch;
+    return tagMatch && locMatch && subMatch && supplierMatch;
   });
 }
 
@@ -66,6 +81,7 @@ export function applySnapshotFiltersToView(view, {
   filterTagIds = [],
   filterLocationIds = [],
   filterSubLocationIds = [],
+  filterSupplierIds = [],
   filterGroup = "",
 }) {
   if (!view || !Array.isArray(view.groups)) {
@@ -87,6 +103,7 @@ export function applySnapshotFiltersToView(view, {
       filterTagIds,
       filterLocationIds,
       filterSubLocationIds,
+      filterSupplierIds,
     });
     if (entries.length) {
       groups.push({ rawKey: g.rawKey, title: g.title, meta: g.meta, entries });
