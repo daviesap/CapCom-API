@@ -107,18 +107,6 @@ export function applySnapshotFiltersToView(view, {
     });
     if (entries.length) {
       groups.push({ rawKey: g.rawKey, title: g.title, meta: g.meta, entries });
-    } else {
-      groups.push({
-        rawKey: g.rawKey,
-        title: g.title,
-        meta: g.meta,
-        entries: [
-          {
-            fields: { time: "", description: "No entries", notes: "", tags: "", locations: "" },
-            format: "empty"
-          }
-        ]
-      });
     }
   }
   return {
