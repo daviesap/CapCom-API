@@ -1,0 +1,156 @@
+{
+  "api_key": "Sausages2025!!",
+  "event": {
+    "profileId": "Tek0mqU4_U",
+    "name": "Test",
+    "header": [
+      "Test"
+    ]
+  },
+  "debug": false,
+  "UserId": "AdwgDd77SUGOlcSgWH6JIw",
+  "userEmail": "andrew@flair.london",
+  "glideAppName": "De-Yan Cannes Lions",
+  "groupMeta": {
+    "scheduleDetail": [
+      {
+        "date": "2026-06-13",
+        "data": {
+          "title": "Saturday, 13 June 2026"
+        }
+      },
+      {
+        "date": "2026-06-14",
+        "data": {
+          "title": "Sunday, 14 June 2026"
+        }
+      },
+      {
+        "date": "2026-06-15",
+        "data": {
+          "title": "Monday, 15 June 2026"
+        }
+      }
+    ],
+    "trucks": [
+      {
+        "truckId": "0ytICMYaTJi9euLMKVOyLA",
+        "data": {
+          "title": "est 1",
+          "above": "Trucking Company = KB Event, Size = 7.5T, Driver = , Contents = ",
+          "below": "Below text",
+          "truckingCompany": "v7R6DICeSIOcZ5zT9rCxJA"
+        }
+      }
+    ]
+  },
+  "snapshots": [
+    {
+      "name": "Full schedule",
+      "filterBox": false,
+      "showKeyInfo": false,
+      "groupPresetId": "BG-1",
+      "filterTagIds": [],
+      "filterSupplierIds": [],
+      "filterLocationIds": "",
+      "group": "Full schedule",
+      "sortOrder": 1
+    },
+    {
+      "name": "Tag test",
+      "filterBox": false,
+      "showKeyInfo": false,
+      "groupPresetId": "BG-1",
+      "filterTagIds": [
+        "iD-mNLtsRPKnNF1ioBiTVQ",
+        "SgWftp0cTuufBbNmiHYcsA"
+      ],
+      "filterSupplierIds": [],
+      "filterLocationIds": "",
+      "group": "Full schedule",
+      "sortOrder": 1
+    },
+    {
+      "name": "Trucking Schedule",
+      "filterBox": false,
+      "showKeyInfo": false,
+      "groupPresetId": "BG-trucking",
+      "filterTagIds": [
+        "w1sMjnWURBGZr9ITPw.w9A",
+        "SNQcQyocT5usJJ3mYxJ1vw",
+        "hUfXWU0oTVuIs0QCks7axw"
+      ],
+      "filterSupplierIds": [],
+      "filterLocationIds": "",
+      "group": "Full schedule",
+      "sortOrder": 1
+    }
+  ],
+  "data": {
+    "scheduleDetail": [
+      {
+        "date": "2026-06-14",
+        "dateFriendly": "Sunday, 14 June 2026",
+        "time": " - ",
+        "tags": [],
+        "tagIds": [],
+        "supplierId": "a.9TJgUXFRyKnSvhclHThSA",
+        "supplier": [
+          "Flair"
+        ],
+        "locationIds": "3VtxWmfNRny.jHoMEJ3KLg",
+        "locations": "M2/Sub A",
+        "sortField": "20260614//"
+      },
+      {
+        "date": "2026-06-14",
+        "dateFriendly": "Sunday, 14 June 2026",
+        "time": " - ",
+        "description": "est 1 Deliver M2/Sub A ",
+        "tags": [
+          "Trucking"
+        ],
+        "tagIds": [
+          "Vkim7s0IQ12ltT.UH6M9bQ"
+        ],
+        "supplier": [],
+        "locationIds": "3VtxWmfNRny.jHoMEJ3KLg",
+        "locations": "M2/Sub A",
+        "truckId": "0ytICMYaTJi9euLMKVOyLA",
+        "sortField": "20260614//"
+      },
+      {
+        "date": "2026-06-13",
+        "dateFriendly": "Saturday, 13 June 2026",
+        "time": " - ",
+        "description": "est 1 Collect KB Event ",
+        "tags": [
+          "Trucking"
+        ],
+        "tagIds": [
+          "Vkim7s0IQ12ltT.UH6M9bQ"
+        ],
+        "supplier": [
+          "KB Event"
+        ],
+        "truckId": "0ytICMYaTJi9euLMKVOyLA",
+        "sortField": "20260613//"
+      },
+      {
+        "date": "2026-06-14",
+        "dateFriendly": "Sunday, 14 June 2026",
+        "time": " - ",
+        "description": "est 1   ",
+        "tags": [
+          "Trucking"
+        ],
+        "tagIds": [
+          "Vkim7s0IQ12ltT.UH6M9bQ"
+        ],
+        "supplier": [],
+        "truckId": "0ytICMYaTJi9euLMKVOyLA",
+        "sortField": "20260614//"
+      }
+    ]
+  }
+}
