@@ -186,6 +186,56 @@ function shouldRenderKeyInfoForSnapshot(jsonInput = {}) {
   return false;
 }
 
+function shouldRenderLocationsForSnapshot(jsonInput = {}) {
+  const snapshots = Array.isArray(jsonInput?.snapshots) ? jsonInput.snapshots : null;
+  if (!snapshots || snapshots.length === 0) {
+    return false;
+  }
+
+  const currentTokens = new Set([
+    jsonInput?.document?.filename,
+    jsonInput?.document?.title,
+    jsonInput?.filename,
+    jsonInput?.name,
+  ].flatMap(collectMatchTokens));
+
+  if (!currentTokens.size) {
+    return false;
+  }
+
+  const matched = snapshots.find((snap) => {
+    if (!snap || typeof snap !== "object") return false;
+    const snapTokens = new Set([
+      snap.name,
+      snap.displayName,
+      snap.title,
+      snap.filename,
+      snap.document?.filename,
+    ].flatMap(collectMatchTokens));
+    if (!snapTokens.size) return false;
+    for (const token of snapTokens) {
+      if (currentTokens.has(token)) return true;
+    }
+    return false;
+  });
+
+  if (!matched) {
+    return false;
+  }
+
+  if (typeof matched.showLocations === "boolean") {
+    return matched.showLocations;
+  }
+
+  if (typeof matched.showLocations === "string") {
+    const normalised = matched.showLocations.trim().toLowerCase();
+    if (normalised === "true") return true;
+    if (normalised === "false") return false;
+  }
+
+  return false;
+}
+
 function renderLogo(logo = {}) {
   const url = logo?.url;
   if (!url) return "";
@@ -232,6 +282,7 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
   `;
 
   const renderKeyInfo = shouldRenderKeyInfoForSnapshot(jsonInput);
+  const renderLocations = shouldRenderLocationsForSnapshot(jsonInput);
 
   // Optional Key People accordion (grouped by company)
   let keyPeopleBlock = "";
@@ -373,6 +424,61 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
         ${safeHtml}
       </div>
     </details>`;
+  }
+
+  // Optional Locations accordion
+  let locationsBlock = "";
+
+  if (renderLocations && Array.isArray(jsonInput?.event?.locations) && jsonInput.event.locations.length) {
+    const locationItems = jsonInput.event.locations
+      .map((location, index) => {
+        if (typeof location === "string") {
+          return { name: location, address: "", sortOrder: 0, index };
+        }
+        return {
+          name: location?.name || location?.locationName || location?.title,
+          address: location?.address || location?.locationAddress || "",
+          sortOrder: Number.isFinite(Number(location?.sortOrder)) ? Number(location.sortOrder) : 0,
+          index,
+        };
+      })
+      .filter((location) =>
+        (location.name && String(location.name).trim()) ||
+        (location.address && String(location.address).trim())
+      )
+      .sort((a, b) => (a.sortOrder - b.sortOrder) || (a.index - b.index));
+
+    if (locationItems.length) {
+      const itemsHtml = locationItems.map((location) => {
+        const nameHtml = location.name && String(location.name).trim()
+          ? `<h4>${escapeHtml(location.name)}</h4>`
+          : "";
+        const addressHtml = location.address && String(location.address).trim()
+          ? `<div class="location-address">${escapeHtml(location.address)}</div>`
+          : "";
+        return `
+          <div class="location-item">
+            ${nameHtml}
+            ${addressHtml}
+          </div>
+        `;
+      }).join("");
+
+      locationsBlock = `
+      <details class="accordion key-locations">
+        <summary>
+          <span>Addresses</span>
+          <svg class="acc-chevron" xmlns="http://www.w3.org/2000/svg" fill="none"
+               viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"
+               width="18" height="18" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+        </summary>
+        <div class="acc-body">
+          ${itemsHtml}
+        </div>
+      </details>`;
+    }
   }
 
   // Columns & widths (assumed present)
@@ -623,28 +729,35 @@ ${controlsBlock}
   const cssExtra = `
   /* --- Key Info/People Accordion (injected by generateHtmlv2.mjs) --- */
   .accordion.key-info,
-  .accordion.key-people{
+  .accordion.key-people,
+  .accordion.key-locations{
     background:var(--card-alt); border:1px solid var(--border); border-radius:12px;
     margin:16px 0 20px; padding:0; overflow:hidden; box-shadow:0 10px 26px var(--shadow);
   }
   .accordion.key-info summary,
-  .accordion.key-people summary{
+  .accordion.key-people summary,
+  .accordion.key-locations summary{
     display:flex; align-items:center; justify-content:space-between;
     gap:8px; cursor:pointer; list-style:none; padding:12px 18px; font-weight:600;
     font-size:.95rem; color:var(--header); background:#eef2ff; border-bottom:1px solid rgba(37,99,235,0.18);
   }
   .accordion.key-info summary::-webkit-details-marker,
-  .accordion.key-people summary::-webkit-details-marker{ display:none; }
+  .accordion.key-people summary::-webkit-details-marker,
+  .accordion.key-locations summary::-webkit-details-marker{ display:none; }
   .accordion.key-info .acc-body,
-  .accordion.key-people .acc-body{ padding:14px 18px; border-top:1px solid var(--border); background:var(--card); }
+  .accordion.key-people .acc-body,
+  .accordion.key-locations .acc-body{ padding:14px 18px; border-top:1px solid var(--border); background:var(--card); }
   .accordion.key-info[open] .acc-body,
-  .accordion.key-people[open] .acc-body{
+  .accordion.key-people[open] .acc-body,
+  .accordion.key-locations[open] .acc-body{
     background:#e0e7ff; box-shadow: inset 3px 0 0 rgba(37,99,235,0.35);
   }
   .accordion.key-info .acc-chevron,
-  .accordion.key-people .acc-chevron{ flex:0 0 auto; color:var(--accent); transition: transform .18s ease; }
+  .accordion.key-people .acc-chevron,
+  .accordion.key-locations .acc-chevron{ flex:0 0 auto; color:var(--accent); transition: transform .18s ease; }
   .accordion.key-info .acc-body,
-  .accordion.key-people .acc-body{ line-height:1.6; font-size:.98rem; color:var(--text); }
+  .accordion.key-people .acc-body,
+  .accordion.key-locations .acc-body{ line-height:1.6; font-size:.98rem; color:var(--text); }
   .accordion.key-info .acc-body a[href*="w3w.co"]{
     font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     background: rgba(37,99,235,0.1); border:1px solid rgba(37,99,235,0.22);
@@ -666,6 +779,15 @@ ${controlsBlock}
   .accordion.key-people .key-people-role{ color:var(--muted); font-size:.95em; }
   .accordion.key-people .key-people-empty{
     color:var(--muted); font-size:.92rem;
+  }
+  .accordion.key-locations .location-item + .location-item{
+    margin-top:12px; padding-top:12px; border-top:1px solid var(--border);
+  }
+  .accordion.key-locations .location-item h4{
+    margin:0 0 4px; font-size:1rem; color:var(--header);
+  }
+  .accordion.key-locations .location-address{
+    color:var(--muted); white-space:pre-line;
   }
   `;
 
@@ -693,6 +815,7 @@ ${controlsBlock}
   const groupsSection = [
     keyPeopleBlock,
     keyInfoBlock,
+    locationsBlock,
     filterControlsHtml,
     groupsHtml,
   ].filter(Boolean).join("\n");

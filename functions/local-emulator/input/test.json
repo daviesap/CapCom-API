@@ -1,87 +1,160 @@
 {
-  "name": "Capcom Main Profile",
-  "styles": {
-    "footer": {
-      "fontColour": "#000000",
-      "paddingTop": 20,
-      "fontStyle": "normal",
-      "fontSize": 10
-    },
-    "labelRow": {
-      "fontSize": 11,
-      "fontStyle": "bold",
-      "backgroundColour": "#FFFFFF",
-      "fontColour": "#000000"
-    },
-    "groupMetadata": {
-      "fontColour": "#000000",
-      "backgroundColour": "#FFFFFF",
-      "paddingBottom": 12,
-      "fontStyle": "italic",
-      "fontSize": 11
-    },
-    "row": {
-      "highlight": {
-        "fontStyle": "italic",
-        "fontSize": 10,
-        "fontColour": "#000000",
-        "backgroundColour": "#fffbb9"
+  "api_key": "Sausages2025!!",
+  "event": {
+    "profileId": "Tek0mqU4_U",
+    "name": "Test",
+    "header": [
+      "Test"
+    ],
+    "locations": [
+      {
+        "name": "Main 1",
+        "address": "15 Francemary Road"
       },
-      "lineSpacing": 3,
-      "default": {
-        "fontSize": 10,
-        "fontStyle": "normal",
-        "backgroundColour": "#FFFFFF",
-        "fontColour": "#000000"
+      {
+        "name": "Main 3"
       },
-      "lowlight": {
-        "backgroundColour": "#FFFFFF",
-        "fontColour": "#000000",
-        "fontSize": 10,
-        "fontStyle": "bold"
+      {
+        "name": "Main 2"
+      },
+      {
+        "name": "Main 4"
       }
+    ]
+  },
+  "debug": false,
+  "UserId": "AdwgDd77SUGOlcSgWH6JIw",
+  "userEmail": "andrew@flair.london",
+  "glideAppName": "De-Yan Cannes Lions",
+  "groupMeta": {
+    "scheduleDetail": [
+      {
+        "date": "2026-06-13",
+        "data": {
+          "title": "Saturday, 13 June 2026",
+          "above": "Day one",
+          "below": "Rigging at trim"
+        }
+      },
+      {
+        "date": "2026-06-14",
+        "data": {
+          "title": "Sunday, 14 June 2026",
+          "above": "Day two",
+          "below": "Ready for rehearsals"
+        }
+      },
+      {
+        "date": "2026-06-15",
+        "data": {
+          "title": "Monday, 15 June 2026",
+          "above": "Day three",
+          "below": "Site clear"
+        }
+      }
+    ],
+    "trucks": [
+      {
+        "truckId": "0ytICMYaTJi9euLMKVOyLA",
+        "data": {
+          "title": "est 1",
+          "above": "Trucking Company = EST, Size = 7.5T, Driver = , Contents = ",
+          "below": "Below text",
+          "truckingCompany": "a.m-n76-sQcSvKF9vlAQJRA"
+        }
+      }
+    ]
+  },
+  "snapshots": [
+    {
+      "name": "Full schedule",
+      "filterBox": false,
+      "showKeyInfo": false,
+      "showLocations": true,
+      "groupPresetId": "DY-1",
+      "filterSupplierIds": [],
+      "filterLocationIds": "",
+      "group": "Full schedule",
+      "sortOrder": 1
     },
-    "header": {
-      "fontSize": 12,
-      "fontStyle": "normal",
-      "paddingBottom": 20,
-      "fontColour": "#000000"
-    },
-    "groupTitle": {
-      "paddingBottom": 0,
-      "backgroundColour": "#FFFFFF",
-      "fontStyle": "bold",
-      "fontSize": 12,
-      "fontColour": "#000000"
+    {
+      "name": "Trucking Schedule",
+      "filterBox": false,
+      "showKeyInfo": false,
+      "showLocations": true,
+      "groupPresetId": "DY-trucking",
+      "filterSupplierIds": [],
+      "filterLocationIds": "",
+      "filterGroup": "a.m-n76-sQcSvKF9vlAQJRA",
+      "group": "Full schedule",
+      "sortOrder": 1
     }
-  },
-  "userId": {
-    "seconds": 1754521200,
-    "nanoseconds": 71000000
-  },
-  "document": {
-    "bottomMargin": 20,
-    "pageSize": {
-      "height": 595,
-      "width": 842
-    },
-    "groupPaddingBottom": 10,
-    "topMargin": 30,
-    "rightMargin": 50,
-    "header": {
-      "logo": {
-        "width": 36,
-        "height": 36,
-        "url": "https://firebasestorage.googleapis.com/v0/b/flair-pdf-generator.firebasestorage.app/o/logos%2Fflair-logo.png?alt=media&token=2f79f8b7-2c31-4ee9-aa3f-223a7d6ed5cf"
+  ],
+  "data": {
+    "scheduleDetail": [
+      {
+        "date": "2026-06-13",
+        "dateFriendly": "Saturday, 13 June 2026",
+        "time": "08:00 - 10:00",
+        "description": "Description here",
+        "tags": [],
+        "tagIds": [],
+        "supplierId": "swDfuG0TRayZSAsucgpXOw",
+        "supplier": [
+          "De-Yan"
+        ],
+        "locationIds": "3VtxWmfNRny.jHoMEJ3KLg",
+        "locations": "Main 2",
+        "sortField": "20260613/08:00/Description here"
+      },
+      {
+        "date": "2026-06-15",
+        "dateFriendly": "Monday, 15 June 2026",
+        "time": "08:00 - 10:00",
+        "description": "Description here",
+        "tags": [],
+        "tagIds": [],
+        "supplierId": "swDfuG0TRayZSAsucgpXOw,a.m-n76-sQcSvKF9vlAQJRA,dGBbDSdGTR2l6Epy6ydZ7A",
+        "supplier": [
+          "EST",
+          "De-Yan",
+          "Flair Ltd"
+        ],
+        "locationIds": "7oXUNjjKSkeDdJnlk6uDKQ",
+        "locations": "Main 1",
+        "sortField": "20260615/08:00/Description here"
+      },
+      {
+        "date": "2026-06-14",
+        "dateFriendly": "Sunday, 14 June 2026",
+        "time": " - ",
+        "tags": [],
+        "tagIds": [],
+        "supplierId": "dGBbDSdGTR2l6Epy6ydZ7A",
+        "supplier": [
+          "Flair Ltd"
+        ],
+        "sortField": "20260614//"
+      },
+      {
+        "date": "2026-06-14",
+        "dateFriendly": "Sunday, 14 June 2026",
+        "time": " - ",
+        "tags": [],
+        "tagIds": [],
+        "supplier": [],
+        "sortField": "20260614//"
+      },
+      {
+        "date": "2026-06-13",
+        "dateFriendly": "Saturday, 13 June 2026",
+        "time": " - ",
+        "description": "XXX",
+        "tags": [],
+        "tagIds": [],
+        "supplier": [],
+        "sortField": "20260613//XXX"
       }
-    },
-    "bottomPageThreshold": 40,
-    "leftMargin": 50
-  },
-  "lastUsed": {
-    "seconds": 1754434800,
-    "nanoseconds": 982000000
-  },
-  "fieldsLastUpdated": "2025-09-02T08:28:55.022Z",
-  "ownerId": ""
+    ]
+  }
 }

@@ -216,6 +216,56 @@ function shouldRenderKeyInfoForSnapshot(jsonData = {}) {
   return false;
 }
 
+function shouldRenderLocationsForSnapshot(jsonData = {}) {
+  const snapshots = Array.isArray(jsonData?.snapshots) ? jsonData.snapshots : null;
+  if (!snapshots || snapshots.length === 0) {
+    return false;
+  }
+
+  const currentTokens = new Set([
+    jsonData?.document?.filename,
+    jsonData?.document?.title,
+    jsonData?.filename,
+    jsonData?.name,
+  ].flatMap(collectMatchTokens));
+
+  if (!currentTokens.size) {
+    return false;
+  }
+
+  const matched = snapshots.find((snap) => {
+    if (!snap || typeof snap !== "object") return false;
+    const snapTokens = new Set([
+      snap.name,
+      snap.displayName,
+      snap.title,
+      snap.filename,
+      snap.document?.filename,
+    ].flatMap(collectMatchTokens));
+    if (!snapTokens.size) return false;
+    for (const token of snapTokens) {
+      if (currentTokens.has(token)) return true;
+    }
+    return false;
+  });
+
+  if (!matched) {
+    return false;
+  }
+
+  if (typeof matched.showLocations === "boolean") {
+    return matched.showLocations;
+  }
+
+  if (typeof matched.showLocations === "string") {
+    const normalised = matched.showLocations.trim().toLowerCase();
+    if (normalised === "true") return true;
+    if (normalised === "false") return false;
+  }
+
+  return false;
+}
+
 function normaliseKeyInfoToLines(src) {
   const rawLines = String(src).replace(/\r\n/g, '\n').split('\n');
   return rawLines.map(l => {
@@ -407,6 +457,7 @@ export const generatePdfBuffer = async (jsonInput) => {
   };
 
   const renderKeyInfo = shouldRenderKeyInfoForSnapshot(jsonData);
+  const renderLocations = shouldRenderLocationsForSnapshot(jsonData);
 
   // ---- Key People box (optional) ----
   const keyPeopleRaw = renderKeyInfo ? jsonData?.event?.keyPeople : null;
@@ -554,17 +605,92 @@ export const generatePdfBuffer = async (jsonInput) => {
     }
   }
 
-  // If a Key Info box exists, start groups on a new page
+  // ---- Locations box (optional) ----
+  const locationsRaw = renderLocations ? jsonData?.event?.locations : null;
+  let hasLocations = false;
+  if (Array.isArray(locationsRaw) && locationsRaw.length) {
+    const textStyle = resolveStyle(
+      styles.keyInfo?.text || { fontSize: 10, fontStyle: 'normal', fontColour: '#000000' },
+      boldFont, regularFont, italicFont, boldItalicFont, 1
+    );
+    const boxStyle = styles.keyInfo?.box || {
+      backgroundColour: '#F7F7F7',
+      borderColour: '#CCCCCC',
+      padding: 10,
+      marginBottom: 16,
+    };
+
+    const innerWidth = Math.max(1, (pageWidth - leftMargin - rightMargin) - (boxStyle.padding ?? 10) * 2);
+
+    const locationItems = locationsRaw
+      .map((location, index) => {
+        if (typeof location === "string") {
+          return { name: location, address: "", sortOrder: 0, index };
+        }
+        return {
+          name: location?.name || location?.locationName || location?.title,
+          address: location?.address || location?.locationAddress || "",
+          sortOrder: Number.isFinite(Number(location?.sortOrder)) ? Number(location.sortOrder) : 0,
+          index,
+        };
+      })
+      .filter((location) =>
+        (location.name && String(location.name).trim()) ||
+        (location.address && String(location.address).trim())
+      )
+      .sort((a, b) => (a.sortOrder - b.sortOrder) || (a.index - b.index));
+
+    if (locationItems.length) {
+      const lines = [
+        { text: "Addresses", font: boldFont },
+        { text: "", font: textStyle.font },
+      ];
+      locationItems.forEach((location, locationIndex) => {
+        if (location.name && String(location.name).trim()) {
+          const nameLines = wrapLinesForWidth([stripInlineMd(String(location.name))], boldFont, textStyle.fontSize, innerWidth);
+          nameLines.forEach((ln) => lines.push({ text: ln, font: boldFont }));
+        }
+
+        if (location.address && String(location.address).trim()) {
+          const addressLines = String(location.address).replace(/\r\n/g, '\n').split('\n').map(stripInlineMd);
+          const wrappedAddress = wrapLinesForWidth(addressLines, textStyle.font, textStyle.fontSize, innerWidth);
+          wrappedAddress.forEach((ln) => lines.push({ text: ln, font: textStyle.font }));
+        }
+
+        if (locationIndex < locationItems.length - 1) {
+          lines.push({ text: "", font: textStyle.font });
+        }
+      });
+
+      if (lines.length) {
+        const neededHeight = (boxStyle.padding ?? 10) +
+          (lines.length * textStyle.lineHeight) +
+          (boxStyle.padding ?? 10) +
+          (boxStyle.marginBottom ?? 16);
+
+        checkBreak(neededHeight, pageBottomLimit);
+
+        y = drawKeyInfoBoxWithLines({
+          page: currentPage, pageWidth, leftMargin, rightMargin,
+          currentY: y, textStyle, boxStyle, lines,
+        });
+        hasLocations = true;
+      }
+    }
+  }
+
+  // If an intro information box exists, start groups on a new page
   const hasKeyInfo = renderKeyInfo && (
     (Array.isArray(keyPeopleRaw) ? keyPeopleRaw.length > 0 : !!keyPeopleRaw) ||
     (Array.isArray(keyInfoRaw) ? keyInfoRaw.length > 0 : !!keyInfoRaw)
   );
+  const hasIntroBox = hasKeyInfo || hasLocations;
   let isFirstGroup = true;
 
   // ---- Groups ----
   for (const group of jsonData.groups) {
     if (isFirstGroup) {
-      if (hasKeyInfo) {
+      if (hasIntroBox) {
         currentPage = pdfDoc.addPage([pageWidth, pageHeight]);
         pages.push(currentPage);
         y = pageHeight - topMargin;
