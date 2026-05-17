@@ -60,6 +60,7 @@ const ACTIONS = {
   VERSION: "version",
   UPDATE_DATES: "updateDates",
   MEALS_PIVOT: "mealsPivot",
+  MEALS_PIVOT_V2: "mealsPivotv2",
   GENERATE_HOME: "generateHome" // New action to generate home page
 };
 
@@ -360,6 +361,11 @@ export const v2 = onRequest({
   if (action === ACTIONS.MEALS_PIVOT) {
     const { mealsPivotHandler } = await import("./pivotTable/mealsPivot.js");
     return await mealsPivotHandler(req, res);
+  }
+
+  if (action === ACTIONS.MEALS_PIVOT_V2) {
+    const { mealsPivotV2Handler } = await import("./pivotTable/mealsPivotv2.js");
+    return await mealsPivotV2Handler(req, res);
   }
 
   // Shared metadata

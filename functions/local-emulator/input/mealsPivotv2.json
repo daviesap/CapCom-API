@@ -1,0 +1,61 @@
+{
+  "api_key": "Sausages2025!!",
+  "event": {
+    "profileId": "Tek0mqU4_U",
+    "name": "Test",
+    "header": [
+      "Test"
+    ],
+    "locations": [
+      {
+        "name": "Main 1",
+        "address": "15 Francemary Road"
+      },
+      {
+        "name": "Main 3"
+      },
+      {
+        "name": "Main 2"
+      },
+      {
+        "name": "Main 4"
+      }
+    ]
+  },
+  "debug": true,
+  "userEmail": "andrew@flair.london",
+  "glideAppName": "De-Yan Cannes Lions",
+  "slots": [
+    {
+      "slot": 1,
+      "name": "Breakfast",
+      "abb": "B",
+      "location": "Upstairs"
+    },
+    {
+      "slot": 2,
+      "name": "Lunch",
+      "abb": "L",
+      "location": "Downstairs"
+    },
+    {
+      "slot": 3,
+      "name": "Dinner",
+      "abb": "D",
+      "location": "Outside"
+    },
+    {
+      "slot": 4,
+      "name": "Tea / Coffee",
+      "abb": "T/C",
+      "location": "Pitch side"
+    },
+    {
+      "slot": 5,
+      "name": "Spare",
+      "abb": "S",
+      "location": "tbc"
+    }
+  ],
+  "data": []
+}

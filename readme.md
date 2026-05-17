@@ -22,6 +22,12 @@ curl -X POST \
   --data-binary @/Users/apndavies/Coding/flair-pdf-generator/functions/local-emulator/input/meals2.json \
   "http://127.0.0.1:5001/flair-pdf-generator/europe-west2/v2?action=mealsPivot"
 
+  ## Meals Pivotv2
+curl -X POST \
+  -H "Content-Type: application/json" \
+  --data-binary @/Users/apndavies/Coding/flair-pdf-generator/functions/local-emulator/input/mealsPivotv2.json \
+  "http://127.0.0.1:5001/flair-pdf-generator/europe-west2/v2?action=mealsPivotv2"
+
 
 ### JSON payload conventions
 - Every snapshot in the request must declare a `dataset`. Current accepted values: `scheduleDetail`, `truckingDetail`, `contacts`.
