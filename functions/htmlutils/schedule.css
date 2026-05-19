@@ -254,6 +254,8 @@ h1 { font-size: 20px; margin: 0 0 8px 0; color: var(--header); }
 .group-metadata { font-size: 14px; font-weight: 600; color: var(--muted); margin-bottom: 6px; }
 
 /* ---------- Table ---------- */
+.table-scroll { width: 100%; }
+
 table { border-collapse: collapse; width: 100%; table-layout: fixed; background: var(--card); box-shadow: 0 8px 24px var(--shadow); border-radius: 12px; overflow: hidden; }
 
 th, td {
@@ -269,6 +271,18 @@ th { font-weight: 700; background: var(--card-alt); color: var(--header); }
 table td { font-size: 15px; }
 
 tbody tr:nth-child(2n) td { background: var(--row-alt); }
+
+@media screen and (max-width: 640px) {
+  .table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 2px;
+  }
+
+  .table-scroll table {
+    min-width: var(--schedule-table-min-width, 720px);
+  }
+}
 
 /* ---------- Row Formatting ---------- */
 .row-default, .row-new, .row-important, .row-past { position: relative; }

@@ -574,10 +574,12 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
       <section class="group">
         <div class="group-title">${groupHeading}</div>
         ${g.metadata ? `<div class="group-metadata">${escapeHtml(g.metadata)}</div>` : ""}
-        <table>
-          <thead>${headerHtml}</thead>
-          <tbody>${rowsHtml}</tbody>
-        </table>
+        <div class="table-scroll" style="--schedule-table-min-width:${Math.max(totalPdfWidth, 640)}px">
+          <table>
+            <thead>${headerHtml}</thead>
+            <tbody>${rowsHtml}</tbody>
+          </table>
+        </div>
       </section>
     `;
   }).join("");
