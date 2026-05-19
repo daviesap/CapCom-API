@@ -28,6 +28,8 @@
  * - Optional:
  *     - jsonInput.event.keyInfo: markdown-ish string or array of { title, text, sortOrder }
  *       rendered in shaded box(es) on page 1
+ *     - jsonInput.startEachGroupOnNewPage: true to force each group after the
+ *       first to begin on a fresh page
  *     - jsonInput.debug: true to draw layout guides (margins, thresholds, etc.)
  *
  * What this module does
@@ -164,6 +166,12 @@ function collectMatchTokens(value) {
   const slug = slugifyToken(trimmed);
   const tokens = new Set([lower, withoutExt, slug]);
   return Array.from(tokens).filter(Boolean);
+}
+
+function isTruthyFlag(value) {
+  if (typeof value === "boolean") return value;
+  if (typeof value === "string") return value.trim().toLowerCase() === "true";
+  return false;
 }
 
 function shouldRenderKeyInfoForSnapshot(jsonData = {}) {
@@ -366,6 +374,8 @@ export const generatePdfBuffer = async (jsonInput) => {
   // Layout & styles
   const styles = jsonData.styles || {};
   const debug = jsonData.debug === true;
+  const startEachGroupOnNewPage = isTruthyFlag(jsonData.startEachGroupOnNewPage) ||
+    isTruthyFlag(jsonData.document?.startEachGroupOnNewPage);
   const bottomPageThreshold = jsonData.document.bottomPageThreshold ?? 0;
   const lineSpacing = jsonData.styles?.row?.lineSpacing ?? 2;
 
@@ -697,6 +707,11 @@ export const generatePdfBuffer = async (jsonInput) => {
         reserveHeader();
       }
       isFirstGroup = false;
+    } else if (startEachGroupOnNewPage) {
+      currentPage = pdfDoc.addPage([pageWidth, pageHeight]);
+      pages.push(currentPage);
+      y = pageHeight - topMargin;
+      reserveHeader();
     }
 
     if (debug) drawThresholdLine(currentPage, bottomPageThreshold, pageWidth);

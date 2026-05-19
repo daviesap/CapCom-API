@@ -39,6 +39,12 @@ function getProfilePdfConfig(profileDoc = {}) {
   };
 }
 
+function isTruthyFlag(value) {
+  if (typeof value === "boolean") return value;
+  if (typeof value === "string") return value.trim().toLowerCase() === "true";
+  return false;
+}
+
 function adaptGroupsForRendererV2(groups) {
   if (!Array.isArray(groups)) return [];
   return groups.map(g => {
@@ -228,6 +234,7 @@ export async function generateHomeHandler({
           [],
         header: [...(jsonInput?.event?.header ?? []), snap.filename].filter(Boolean),
         profileId: effectiveProfileId,
+        startEachGroupOnNewPage: isTruthyFlag(snap.startEachGroupOnNewPage),
       };
 
       prepared.document = prepared.document || {};
