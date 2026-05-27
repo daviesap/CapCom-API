@@ -332,7 +332,7 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
       keyPeopleBlock = `
       <details class="accordion key-info key-people">
         <summary>
-          <span>Key people</span>
+          <span>Contacts</span>
           <svg class="acc-chevron" xmlns="http://www.w3.org/2000/svg" fill="none"
                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"
                width="18" height="18" aria-hidden="true">
