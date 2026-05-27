@@ -295,7 +295,11 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
         people: Array.isArray(company?.people) ? company.people : [],
         index,
       }))
-      .filter((company) => company.name && String(company.name).trim())
+      .filter((company) =>
+        company.name &&
+        String(company.name).trim() &&
+        company.people.some((person) => person?.name && String(person.name).trim())
+      )
       .sort((a, b) => (a.sortOrder - b.sortOrder) || (a.index - b.index));
 
     if (companyItems.length) {
@@ -304,6 +308,9 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
           .map((person, personIndex) => ({
             name: person?.name,
             role: person?.role,
+            phone: person?.phone ?? person?.phoneNumber ?? person?.mobile ?? person?.mobileNumber ?? person?.telephone ?? person?.tel,
+            email: person?.email ?? person?.emailAddress,
+            gdpr: person?.gdpr ?? person?.GDPR,
             sortOrder: Number.isFinite(Number(person?.sortOrder)) ? Number(person.sortOrder) : 0,
             index: personIndex,
           }))
@@ -311,14 +318,21 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
           .sort((a, b) => (a.sortOrder - b.sortOrder) || (a.index - b.index));
 
         const peopleHtml = peopleItems.length
-          ? `<ul class="key-people-list">${peopleItems
+          ? `<div class="key-people-list">${peopleItems
             .map((person) => {
-              const role = person.role && String(person.role).trim()
-                ? ` <span class="key-people-role">– ${escapeHtml(String(person.role))}</span>`
-                : "";
-              return `<li>${escapeHtml(person.name)}${role}</li>`;
+              const role = person.role && String(person.role).trim() ? escapeHtml(String(person.role)) : "";
+              const hasGdprConsent = person.gdpr === true || String(person.gdpr).trim().toLowerCase() === "true";
+              const phone = hasGdprConsent && person.phone && String(person.phone).trim() ? escapeHtml(String(person.phone)) : "";
+              const email = hasGdprConsent && person.email && String(person.email).trim() ? escapeHtml(String(person.email)) : "";
+              return `
+                <div class="key-people-row">
+                  <div class="key-people-name">${escapeHtml(person.name)}</div>
+                  <div class="key-people-role">${role}</div>
+                  <div class="key-people-phone">${phone}</div>
+                  <div class="key-people-email">${email}</div>
+                </div>`;
             })
-            .join("")}</ul>`
+            .join("")}</div>`
           : `<div class="key-people-empty">No contacts listed.</div>`;
 
         return `
@@ -775,10 +789,25 @@ ${controlsBlock}
     margin:0 0 6px; font-size:1rem; color:var(--header);
   }
   .accordion.key-people .key-people-list{
-    margin:0; padding-left:18px; display:grid; gap:4px;
+    margin:0; display:grid; gap:4px;
   }
-  .accordion.key-people .key-people-list li{ margin:0; }
-  .accordion.key-people .key-people-role{ color:var(--muted); font-size:.95em; }
+  .accordion.key-people .key-people-row{
+    display:grid;
+    grid-template-columns:minmax(120px, 1.1fr) minmax(160px, 1.4fr) minmax(110px, .9fr) minmax(180px, 1.4fr);
+    gap:8px 14px;
+    align-items:start;
+  }
+  .accordion.key-people .key-people-name{ font-weight:600; }
+  .accordion.key-people .key-people-role,
+  .accordion.key-people .key-people-phone,
+  .accordion.key-people .key-people-email{ color:var(--muted); font-size:.95em; overflow-wrap:anywhere; }
+  @media (max-width: 720px){
+    .accordion.key-people .key-people-row{
+      grid-template-columns:1fr;
+      gap:2px;
+      padding-bottom:8px;
+    }
+  }
   .accordion.key-people .key-people-empty{
     color:var(--muted); font-size:.92rem;
   }

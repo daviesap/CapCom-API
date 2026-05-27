@@ -365,6 +365,117 @@ function drawKeyInfoBoxWithLines({ page, pageWidth, leftMargin, rightMargin, cur
   return currentY - boxHeight - marginBottom;
 }
 
+function getContactColumnWidths(innerWidth) {
+  const gap = 10;
+  const indent = 12;
+  const available = Math.max(1, innerWidth - indent - (gap * 3));
+  const name = available * 0.22;
+  const role = available * 0.30;
+  const phone = available * 0.18;
+  const email = available - name - role - phone;
+  return { indent, name, role, phone, email, gap };
+}
+
+function prepareContactRows({ groups, textStyle, boldFont, innerWidth }) {
+  const widths = getContactColumnWidths(innerWidth);
+  const wrapCell = (text, font, width) =>
+    wrapLinesForWidth([stripInlineMd(String(text || ""))], font, textStyle.fontSize, Math.max(1, width));
+  const titleLines = wrapCell("Contacts", boldFont, innerWidth);
+
+  const prepared = [
+    {
+      type: "title",
+      lines: titleLines,
+      lineCount: titleLines.length,
+    },
+  ];
+
+  for (const group of groups) {
+    const companyLines = wrapCell(group.company, boldFont, innerWidth);
+    prepared.push({
+      type: "company",
+      lines: companyLines,
+      lineCount: companyLines.length,
+    });
+
+    for (const row of group.people) {
+      const cells = [
+        { lines: wrapCell(row.name, textStyle.font, widths.name), font: textStyle.font, width: widths.name },
+        { lines: wrapCell(row.role, textStyle.font, widths.role), font: textStyle.font, width: widths.role },
+        { lines: wrapCell(row.phone, textStyle.font, widths.phone), font: textStyle.font, width: widths.phone },
+        { lines: wrapCell(row.email, textStyle.font, widths.email), font: textStyle.font, width: widths.email },
+      ];
+      prepared.push({
+        type: "contact",
+        cells,
+        lineCount: Math.max(1, ...cells.map((cell) => cell.lines.length)),
+      });
+    }
+  }
+
+  return { rows: prepared, widths };
+}
+
+function getContactsBoxHeight(rowCount, textStyle, boxStyle) {
+  const pad = (boxStyle?.padding ?? 10);
+  const marginBottom = (boxStyle?.marginBottom ?? 16);
+  return pad + (rowCount * textStyle.lineHeight) + pad + marginBottom;
+}
+
+function drawContactsBox({ page, pageWidth, leftMargin, rightMargin, currentY, textStyle, boxStyle, rows, widths, boldFont }) {
+  const pad = (boxStyle?.padding ?? 10);
+  const bg = rgbHex(boxStyle?.backgroundColour || '#F7F7F7');
+  const border = rgbHex(boxStyle?.borderColour || '#CCCCCC');
+  const marginBottom = (boxStyle?.marginBottom ?? 16);
+  const width = pageWidth - leftMargin - rightMargin;
+  const rowCount = rows.reduce((sum, row) => sum + row.lineCount, 0);
+  const boxHeight = pad + (rowCount * textStyle.lineHeight) + pad;
+  const rectY = currentY - boxHeight;
+
+  page.drawRectangle({
+    x: leftMargin, y: rectY, width, height: boxHeight,
+    color: bg, borderColor: border, borderWidth: 0.5,
+  });
+
+  let yCursor = currentY - pad;
+  const textY = (lineIndex) => yCursor - (lineIndex * textStyle.lineHeight) - (textStyle.lineHeight - textStyle.fontSize);
+
+  for (const row of rows) {
+    if (row.type === "title" || row.type === "company") {
+      row.lines.forEach((line, lineIndex) => {
+        page.drawText(toWinAnsi(line), {
+          x: leftMargin + pad,
+          y: textY(lineIndex),
+          size: textStyle.fontSize,
+          font: boldFont,
+          color: textStyle.color,
+        });
+      });
+    } else {
+      const xs = [
+        leftMargin + pad + widths.indent,
+        leftMargin + pad + widths.indent + widths.name + widths.gap,
+        leftMargin + pad + widths.indent + widths.name + widths.gap + widths.role + widths.gap,
+        leftMargin + pad + widths.indent + widths.name + widths.gap + widths.role + widths.gap + widths.phone + widths.gap,
+      ];
+      row.cells.forEach((cell, cellIndex) => {
+        cell.lines.forEach((line, lineIndex) => {
+          page.drawText(toWinAnsi(line), {
+            x: xs[cellIndex],
+            y: textY(lineIndex),
+            size: textStyle.fontSize,
+            font: cell.font,
+            color: textStyle.color,
+          });
+        });
+      });
+    }
+    yCursor -= row.lineCount * textStyle.lineHeight;
+  }
+
+  return currentY - boxHeight - marginBottom;
+}
+
 // ---------- main ----------
 export const generatePdfBuffer = async (jsonInput) => {
   // Input is assumed already sanitized/filtered/grouped/sorted
@@ -457,12 +568,16 @@ export const generatePdfBuffer = async (jsonInput) => {
 
   const pageBottomLimit = bottomPageThreshold > 0 ? bottomPageThreshold : footerYLimit;
 
+  const addPage = () => {
+    currentPage = pdfDoc.addPage([pageWidth, pageHeight]);
+    pages.push(currentPage);
+    y = pageHeight - topMargin;
+    reserveHeader();
+  };
+
   const checkBreak = (neededHeight, limitY = footerYLimit) => {
     if (y - neededHeight < limitY) {
-      currentPage = pdfDoc.addPage([pageWidth, pageHeight]);
-      pages.push(currentPage);
-      y = pageHeight - topMargin;
-      reserveHeader();
+      addPage();
     }
   };
 
@@ -492,54 +607,70 @@ export const generatePdfBuffer = async (jsonInput) => {
         people: Array.isArray(company?.people) ? company.people : [],
         index,
       }))
-      .filter((company) => company.name && String(company.name).trim())
+      .filter((company) =>
+        company.name &&
+        String(company.name).trim() &&
+        company.people.some((person) => person?.name && String(person.name).trim())
+      )
       .sort((a, b) => (a.sortOrder - b.sortOrder) || (a.index - b.index));
 
     if (companyItems.length) {
-      const lines = [];
-      companyItems.forEach((company, companyIndex) => {
+      const contactGroups = companyItems.map((company) => {
         const companyName = stripInlineMd(String(company.name));
-        const companyLines = wrapLinesForWidth([companyName], boldFont, textStyle.fontSize, innerWidth);
-        companyLines.forEach((ln) => lines.push({ text: ln, font: boldFont }));
-
-        const peopleItems = company.people
+        const people = company.people
           .map((person, personIndex) => ({
             name: person?.name,
             role: person?.role,
+            phone: person?.phone ?? person?.phoneNumber ?? person?.mobile ?? person?.mobileNumber ?? person?.telephone ?? person?.tel,
+            email: person?.email ?? person?.emailAddress,
             sortOrder: Number.isFinite(Number(person?.sortOrder)) ? Number(person.sortOrder) : 0,
             index: personIndex,
           }))
           .filter((person) => person.name && String(person.name).trim())
-          .sort((a, b) => (a.sortOrder - b.sortOrder) || (a.index - b.index));
-
-        peopleItems.forEach((person) => {
-          const name = stripInlineMd(String(person.name));
-          const role = person.role && String(person.role).trim()
-            ? ` - ${stripInlineMd(String(person.role))}`
-            : "";
-          const lineText = `• ${name}${role}`;
-          const wrapped = wrapLinesForWidth([lineText], textStyle.font, textStyle.fontSize, innerWidth);
-          wrapped.forEach((ln) => lines.push({ text: ln, font: textStyle.font }));
-        });
-
-        if (companyIndex < companyItems.length - 1) {
-          lines.push({ text: "", font: textStyle.font });
-        }
+          .sort((a, b) => (a.sortOrder - b.sortOrder) || (a.index - b.index))
+          .map((person) => ({
+            name: stripInlineMd(String(person.name)),
+            role: person.role && String(person.role).trim() ? stripInlineMd(String(person.role)) : "",
+            phone: person.phone && String(person.phone).trim() ? stripInlineMd(String(person.phone)) : "",
+            email: person.email && String(person.email).trim() ? stripInlineMd(String(person.email)) : "",
+          }));
+        return { company: companyName, people };
       });
 
-      if (lines.length) {
-        const neededHeight = (boxStyle.padding ?? 10) +
-          (lines.length * textStyle.lineHeight) +
-          (boxStyle.padding ?? 10) +
-          (boxStyle.marginBottom ?? 16);
-
+      const prepareChunk = (groups) => prepareContactRows({ groups, textStyle, boldFont, innerWidth });
+      const drawChunk = (groups) => {
+        if (!groups.length) return;
+        const prepared = prepareChunk(groups);
+        const rowCount = prepared.rows.reduce((sum, row) => sum + row.lineCount, 0);
+        const neededHeight = getContactsBoxHeight(rowCount, textStyle, boxStyle);
         checkBreak(neededHeight, pageBottomLimit);
-
-        y = drawKeyInfoBoxWithLines({
+        y = drawContactsBox({
           page: currentPage, pageWidth, leftMargin, rightMargin,
-          currentY: y, textStyle, boxStyle, lines,
+          currentY: y, textStyle, boxStyle,
+          rows: prepared.rows, widths: prepared.widths, boldFont,
         });
+      };
+
+      let pendingGroups = [];
+
+      for (const group of contactGroups) {
+        const candidate = [...pendingGroups, group];
+        const prepared = prepareChunk(candidate);
+        const rowCount = prepared.rows.reduce((sum, preparedRow) => sum + preparedRow.lineCount, 0);
+        const candidateHeight = getContactsBoxHeight(rowCount, textStyle, boxStyle);
+
+        if (pendingGroups.length && y - candidateHeight < pageBottomLimit) {
+          drawChunk(pendingGroups);
+          pendingGroups = [group];
+        } else if (!pendingGroups.length && y - candidateHeight < pageBottomLimit) {
+          drawChunk([group]);
+          pendingGroups = [];
+        } else {
+          pendingGroups = candidate;
+        }
       }
+
+      drawChunk(pendingGroups);
     }
   }
 
