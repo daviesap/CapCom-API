@@ -94,16 +94,8 @@ export async function generateHome({
 
   // Snapshots as given (no re-sorting at item level)
   const snapshots = Array.isArray(jsonInput.snapshots) ? jsonInput.snapshots.slice() : [];
-  const showKeyInfo = (() => {
-    const v = jsonInput?.event?.momKeyInfo;
-    if (typeof v === "boolean") return v;
-    if (typeof v === "string") {
-      const normalised = v.trim().toLowerCase();
-      if (normalised === "true") return true;
-      if (normalised === "false") return false;
-    }
-    return false;
-  })();
+  const showMomKeyInfo = jsonInput?.event?.showMomKeyInfo === true;
+  const showMomContacts = jsonInput?.event?.showMomContacts === true;
 
   // Build grouped structure (groups ordered by sortOrder; items retain input order)
   const groupsArr = groupSnapshotsByGroup(snapshots);
@@ -154,7 +146,7 @@ export async function generateHome({
   // Key People (grouped by company)
   let keyPeopleSection = "";
 
-  if (showKeyInfo && Array.isArray(jsonInput?.event?.keyPeople) && jsonInput.event.keyPeople.length) {
+  if (showMomContacts && Array.isArray(jsonInput?.event?.keyPeople) && jsonInput.event.keyPeople.length) {
     const companyItems = jsonInput.event.keyPeople
       .map((company, index) => ({
         name: company?.company,
@@ -247,7 +239,7 @@ export async function generateHome({
     return sanitizeHtml(rawHtml, keyInfoSanitizeOptions);
   };
 
-  if (showKeyInfo && Array.isArray(jsonInput?.event?.keyInfo) && jsonInput.event.keyInfo.length) {
+  if (showMomKeyInfo && Array.isArray(jsonInput?.event?.keyInfo) && jsonInput.event.keyInfo.length) {
     const keyInfoItems = jsonInput.event.keyInfo
       .map((item, index) => ({
         title: item?.title,
@@ -283,7 +275,7 @@ export async function generateHome({
         </div>
       </details>`;
     }
-  } else if (showKeyInfo && typeof jsonInput?.event?.keyInfo === "string" && jsonInput?.event?.keyInfo.trim().length) {
+  } else if (showMomKeyInfo && typeof jsonInput?.event?.keyInfo === "string" && jsonInput?.event?.keyInfo.trim().length) {
     const safeHtml = renderMarkdownSafe(jsonInput.event.keyInfo);
     keyInfoSection = `
     <details class="accordion key-info">

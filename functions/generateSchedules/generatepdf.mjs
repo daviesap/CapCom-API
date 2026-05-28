@@ -224,6 +224,49 @@ function shouldRenderKeyInfoForSnapshot(jsonData = {}) {
   return false;
 }
 
+function shouldRenderContactsForSnapshot(jsonData = {}) {
+  const snapshots = Array.isArray(jsonData?.snapshots) ? jsonData.snapshots : null;
+  if (!snapshots || snapshots.length === 0) {
+    return false;
+  }
+
+  const currentTokens = new Set([
+    jsonData?.document?.filename,
+    jsonData?.document?.title,
+    jsonData?.filename,
+    jsonData?.name,
+  ].flatMap(collectMatchTokens));
+
+  if (!currentTokens.size) {
+    return false;
+  }
+
+  const matched = snapshots.find((snap) => {
+    if (!snap || typeof snap !== "object") return false;
+    const snapTokens = new Set([
+      snap.name,
+      snap.displayName,
+      snap.title,
+      snap.filename,
+      snap.document?.filename,
+    ].flatMap(collectMatchTokens));
+    if (!snapTokens.size) return false;
+    for (const token of snapTokens) {
+      if (currentTokens.has(token)) return true;
+    }
+    return false;
+  });
+
+  return matched?.showContacts === true;
+}
+
+function hasKeyInfoContent(jsonData = {}) {
+  const keyInfo = jsonData?.event?.keyInfo;
+  if (Array.isArray(keyInfo)) return keyInfo.length > 0;
+  if (typeof keyInfo === "string") return keyInfo.trim().length > 0;
+  return !!keyInfo;
+}
+
 function shouldRenderLocationsForSnapshot(jsonData = {}) {
   const snapshots = Array.isArray(jsonData?.snapshots) ? jsonData.snapshots : null;
   if (!snapshots || snapshots.length === 0) {
@@ -582,10 +625,11 @@ export const generatePdfBuffer = async (jsonInput) => {
   };
 
   const renderKeyInfo = shouldRenderKeyInfoForSnapshot(jsonData);
+  const renderContacts = shouldRenderContactsForSnapshot(jsonData) && hasKeyInfoContent(jsonData);
   const renderLocations = shouldRenderLocationsForSnapshot(jsonData);
 
   // ---- Key People box (optional) ----
-  const keyPeopleRaw = renderKeyInfo ? jsonData?.event?.keyPeople : null;
+  const keyPeopleRaw = renderContacts ? jsonData?.event?.keyPeople : null;
   if (Array.isArray(keyPeopleRaw) && keyPeopleRaw.length) {
     const textStyle = resolveStyle(
       styles.keyInfo?.text || { fontSize: 10, fontStyle: 'normal', fontColour: '#000000' },
@@ -821,11 +865,9 @@ export const generatePdfBuffer = async (jsonInput) => {
   }
 
   // If an intro information box exists, start groups on a new page
-  const hasKeyInfo = renderKeyInfo && (
-    (Array.isArray(keyPeopleRaw) ? keyPeopleRaw.length > 0 : !!keyPeopleRaw) ||
-    (Array.isArray(keyInfoRaw) ? keyInfoRaw.length > 0 : !!keyInfoRaw)
-  );
-  const hasIntroBox = hasKeyInfo || hasLocations;
+  const hasContacts = renderContacts && (Array.isArray(keyPeopleRaw) ? keyPeopleRaw.length > 0 : !!keyPeopleRaw);
+  const hasKeyInfo = renderKeyInfo && (Array.isArray(keyInfoRaw) ? keyInfoRaw.length > 0 : !!keyInfoRaw);
+  const hasIntroBox = hasContacts || hasKeyInfo || hasLocations;
   let isFirstGroup = true;
 
   // ---- Groups ----

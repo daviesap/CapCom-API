@@ -186,6 +186,49 @@ function shouldRenderKeyInfoForSnapshot(jsonInput = {}) {
   return false;
 }
 
+function shouldRenderContactsForSnapshot(jsonInput = {}) {
+  const snapshots = Array.isArray(jsonInput?.snapshots) ? jsonInput.snapshots : null;
+  if (!snapshots || snapshots.length === 0) {
+    return false;
+  }
+
+  const currentTokens = new Set([
+    jsonInput?.document?.filename,
+    jsonInput?.document?.title,
+    jsonInput?.filename,
+    jsonInput?.name,
+  ].flatMap(collectMatchTokens));
+
+  if (!currentTokens.size) {
+    return false;
+  }
+
+  const matched = snapshots.find((snap) => {
+    if (!snap || typeof snap !== "object") return false;
+    const snapTokens = new Set([
+      snap.name,
+      snap.displayName,
+      snap.title,
+      snap.filename,
+      snap.document?.filename,
+    ].flatMap(collectMatchTokens));
+    if (!snapTokens.size) return false;
+    for (const token of snapTokens) {
+      if (currentTokens.has(token)) return true;
+    }
+    return false;
+  });
+
+  return matched?.showContacts === true;
+}
+
+function hasKeyInfoContent(jsonInput = {}) {
+  const keyInfo = jsonInput?.event?.keyInfo;
+  if (Array.isArray(keyInfo)) return keyInfo.length > 0;
+  if (typeof keyInfo === "string") return keyInfo.trim().length > 0;
+  return !!keyInfo;
+}
+
 function shouldRenderLocationsForSnapshot(jsonInput = {}) {
   const snapshots = Array.isArray(jsonInput?.snapshots) ? jsonInput.snapshots : null;
   if (!snapshots || snapshots.length === 0) {
@@ -282,12 +325,13 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
   `;
 
   const renderKeyInfo = shouldRenderKeyInfoForSnapshot(jsonInput);
+  const renderContacts = shouldRenderContactsForSnapshot(jsonInput) && hasKeyInfoContent(jsonInput);
   const renderLocations = shouldRenderLocationsForSnapshot(jsonInput);
 
   // Optional Key People accordion (grouped by company)
   let keyPeopleBlock = "";
 
-  if (renderKeyInfo && Array.isArray(jsonInput?.event?.keyPeople) && jsonInput.event.keyPeople.length) {
+  if (renderContacts && Array.isArray(jsonInput?.event?.keyPeople) && jsonInput.event.keyPeople.length) {
     const companyItems = jsonInput.event.keyPeople
       .map((company, index) => ({
         name: company?.company,
