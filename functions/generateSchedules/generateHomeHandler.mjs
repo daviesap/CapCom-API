@@ -262,7 +262,7 @@ export async function generateHomeHandler({
         }
       }
 
-      const { pdfUrl, htmlUrl } = await generateSnapshotOutputsv2({
+      const { pdfUrl, protectedPdfUrl, htmlUrl, protectedHtmlUrl } = await generateSnapshotOutputsv2({
         jsonInput: prepared,
         safeAppName,
         safeEventName,
@@ -285,6 +285,8 @@ export async function generateHomeHandler({
 
       snap.realHtmlUrl = htmlUrl;
       snap.realPdfUrl = pdfUrl;
+      snap.realProtectedHtmlUrl = protectedHtmlUrl;
+      snap.realProtectedPdfUrl = protectedPdfUrl;
     }
 
     if (Array.isArray(req.body.snapshots)) {

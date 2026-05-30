@@ -63,12 +63,16 @@ export async function generateSnapshotOutputsv2({
   extraSubdir = "",  //was "v2"
   runId,
 }) {
-  // Build a path under: public/<app>/<event>/<maybe v2>/<file>
+  // Build paths under: public/<app>/<event>/<maybe v2>/<file> and protected/<app>/<event>/<maybe v2>/<file>
   const joinCloudPath = (filename) =>
     `public/${safeAppName}/${safeEventName}${extraSubdir ? `/${extraSubdir}` : ""}/${filename}`;
+  const joinProtectedCloudPath = (filename) =>
+    `protected/${safeAppName}/${safeEventName}${extraSubdir ? `/${extraSubdir}` : ""}/${filename}`;
 
   const joinLocalPath = (...parts) =>
     path.join(LOCAL_OUTPUT_DIR, "public", safeAppName, safeEventName, ...(extraSubdir ? [extraSubdir] : []), ...parts);
+  const joinProtectedLocalPath = (...parts) =>
+    path.join(LOCAL_OUTPUT_DIR, "protected", safeAppName, safeEventName, ...(extraSubdir ? [extraSubdir] : []), ...parts);
 
   // --- Derive display name and sanitised base, then enrich header ---
   // Human-friendly base used in headers (keep spaces/case, strip any extension)
@@ -92,13 +96,21 @@ export async function generateSnapshotOutputsv2({
   if (runningEmulated) {
     fs.mkdirSync(joinLocalPath(), { recursive: true });
     fs.writeFileSync(joinLocalPath(pdfName), bytes);
+    fs.mkdirSync(joinProtectedLocalPath(), { recursive: true });
+    fs.writeFileSync(joinProtectedLocalPath(pdfName), bytes);
   } else {
     const pdfFile = bucket.file(joinCloudPath(pdfName));
     await pdfFile.save(bytes, {
       metadata: { contentType: "application/pdf", cacheControl: "public, max-age=31536000, immutable" },
     });
+    const protectedPdfFile = bucket.file(joinProtectedCloudPath(pdfName));
+    await protectedPdfFile.save(bytes, {
+      metadata: { contentType: "application/pdf", cacheControl: "no-cache, max-age=0" },
+    });
   }
   const pdfUrl = makePublicUrl(joinCloudPath(pdfName), bucket);
+  const protectedPdfUrl = makePublicUrl(joinProtectedCloudPath(pdfName), bucket);
+  const protectedPdfPath = joinProtectedCloudPath(pdfName);
 
   // 4) HTML that links to *this* PDF
   const { generateHtmlString } = await import("./generateHtml.mjs");
@@ -107,16 +119,24 @@ export async function generateSnapshotOutputsv2({
   if (runningEmulated) {
     fs.mkdirSync(joinLocalPath(), { recursive: true });
     fs.writeFileSync(joinLocalPath(htmlName), Buffer.from(htmlString, "utf8"));
+    fs.mkdirSync(joinProtectedLocalPath(), { recursive: true });
+    fs.writeFileSync(joinProtectedLocalPath(htmlName), Buffer.from(htmlString, "utf8"));
   } else {
     const htmlFile = bucket.file(joinCloudPath(htmlName));
     await htmlFile.save(Buffer.from(htmlString, "utf8"), {
       metadata: { contentType: "text/html; charset=utf-8", cacheControl: "public, max-age=0, must-revalidate" },
     });
+    const protectedHtmlFile = bucket.file(joinProtectedCloudPath(htmlName));
+    await protectedHtmlFile.save(Buffer.from(htmlString, "utf8"), {
+      metadata: { contentType: "text/html; charset=utf-8", cacheControl: "no-cache, max-age=0" },
+    });
   }
   const htmlUrl = makePublicUrl(joinCloudPath(htmlName), bucket);
+  const protectedHtmlUrl = makePublicUrl(joinProtectedCloudPath(htmlName), bucket);
+  const protectedHtmlPath = joinProtectedCloudPath(htmlName);
 
   // 5) Return
   const executionTimeSeconds = (Date.now() - startTime) / 1000;
 
-  return { pdfUrl, htmlUrl, pdfName, htmlName, executionTimeSeconds };
+  return { pdfUrl, protectedPdfUrl, htmlUrl, protectedHtmlUrl, pdfName, htmlName, executionTimeSeconds };
 }

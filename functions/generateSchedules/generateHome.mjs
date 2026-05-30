@@ -508,13 +508,23 @@ export async function generateHome({
     const htmlDir = path.join(LOCAL_OUTPUT_DIR, "public", safeAppName, safeEventName);
     fs.mkdirSync(htmlDir, { recursive: true });
     fs.writeFileSync(path.join(htmlDir, safeHomeName), Buffer.from(html, "utf8"));
+
+    const protectedHtmlDir = path.join(LOCAL_OUTPUT_DIR, "protected", safeAppName, safeEventName);
+    fs.mkdirSync(protectedHtmlDir, { recursive: true });
+    fs.writeFileSync(path.join(protectedHtmlDir, safeHomeName), Buffer.from(html, "utf8"));
   } else {
     const htmlFile = bucket.file(`public/${safeAppName}/${safeEventName}/${safeHomeName}`);
     await htmlFile.save(Buffer.from(html, "utf8"), {
       metadata: { contentType: "text/html; charset=utf-8", cacheControl: "public, max-age=0, must-revalidate" },
     });
+
+    const protectedHtmlFile = bucket.file(`protected/${safeAppName}/${safeEventName}/${safeHomeName}`);
+    await protectedHtmlFile.save(Buffer.from(html, "utf8"), {
+      metadata: { contentType: "text/html; charset=utf-8", cacheControl: "no-cache, max-age=0" },
+    });
   }
   const homeUrl = makePublicUrl(`public/${safeAppName}/${safeEventName}/${safeHomeName}`, bucket);
+  const protectedHomeUrl = makePublicUrl(`protected/${safeAppName}/${safeEventName}/${safeHomeName}`, bucket);
 
   // ---------- Log + return ----------
   const executionTimeSeconds = (Date.now() - startTime) / 1000;
@@ -528,10 +538,20 @@ export async function generateHome({
       ? s.realPdfUrl.trim()
       : "";
 
+    const protectedHtmlUrl = (typeof s.realProtectedHtmlUrl === "string" && s.realProtectedHtmlUrl.trim())
+      ? s.realProtectedHtmlUrl.trim()
+      : "";
+
+    const protectedPdfUrl = (typeof s.realProtectedPdfUrl === "string" && s.realProtectedPdfUrl.trim())
+      ? s.realProtectedPdfUrl.trim()
+      : "";
+
     return {
       name: String(s.name || "Snapshot name missing"),
       htmlUrl,
-      pdfUrl
+      protectedHtmlUrl,
+      pdfUrl,
+      protectedPdfUrl
     };
   });
 
@@ -541,6 +561,7 @@ export async function generateHome({
       success: true,
       message: "✅ MOM page generated",
       htmlUrl: homeUrl,
+      protectedHomeUrl,
       snapshots: snapshotsOut,
       timestamp,
       executionTimeSeconds,

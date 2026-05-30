@@ -90,6 +90,16 @@ function makePublicUrl(objectPath, bucket) {
     const [, app, rest] = m;
     return `https://snapshots.capcom.london/${app}/${rest}`;
   }
+
+  // Protected file URLs: direct GCS path, not mapped through vox
+  m = objectPath.match(/^protected\/(.+)$/);
+  if (m) {
+    if (runningEmulated) {
+      return `http://127.0.0.1:9199/v0/b/${bucket.name}/o/${encoded}?alt=media`;
+    }
+    return `https://storage.googleapis.com/${bucket.name}/${encoded}?alt=media`;
+  }
+
   // Fallback to native GCS URL (shouldn't be used in normal flow)
   return `https://storage.googleapis.com/${bucket.name}/${objectPath}`;
 }

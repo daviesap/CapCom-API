@@ -130,6 +130,7 @@ export async function mealsPivotHandler(req, res) {
 
     let excelMs = null;
     let excelUrl = null;
+    let protectedFilePath = null;
     let excelHrefForHtml = null;
     let localXlsxPath;
 
@@ -167,15 +168,27 @@ export async function mealsPivotHandler(req, res) {
       if (!isRunningLocally) {
         const bucket = getStorage().bucket();
         const xlsxDest = `public/${safeApp}/${safeEvent}/${xlsxFileName}`;
+        const protectedXlsxDest = `protected/${safeApp}/${safeEvent}/${xlsxFileName}`;
+
         await bucket.upload(localXlsxPath, {
           destination: xlsxDest,
-          metadata: { 
+          metadata: {
+            contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            cacheControl: 'no-cache, max-age=0'
+          }
+        });
+        await bucket.upload(localXlsxPath, {
+          destination: protectedXlsxDest,
+          metadata: {
             contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             cacheControl: 'no-cache, max-age=0'
           }
         });
         await bucket.file(xlsxDest);
+        await bucket.file(protectedXlsxDest);
+
         excelUrl = `https://vox.capcom.london/${safeApp}/${safeEvent}/${xlsxFileName}`; // branded URL via Worker
+        protectedFilePath = protectedXlsxDest;
         excelHrefForHtml = excelUrl;
       } else {
         excelHrefForHtml = xlsxFileName; // relative link next to HTML for local preview
@@ -223,15 +236,25 @@ export async function mealsPivotHandler(req, res) {
 
     if (!isRunningLocally) {
       let htmlUrl = null;
+      let protectedHtmlPath = null;
       if (doHtml) {
         const bucket = getStorage().bucket();
         const htmlDest = `public/${safeApp}/${safeEvent}/${cloudHtmlFileName}`;
+        const protectedHtmlDest = `protected/${safeApp}/${safeEvent}/${cloudHtmlFileName}`;
+
         await bucket.upload(localHtmlPath, {
           destination: htmlDest,
           metadata: { contentType: 'text/html; charset=utf-8', cacheControl: 'public, max-age=0, must-revalidate' }
         });
+        await bucket.upload(localHtmlPath, {
+          destination: protectedHtmlDest,
+          metadata: { contentType: 'text/html; charset=utf-8', cacheControl: 'no-cache, max-age=0' }
+        });
         await bucket.file(htmlDest);
+        await bucket.file(protectedHtmlDest);
+
         htmlUrl = `https://vox.capcom.london/${safeApp}/${safeEvent}/${cloudHtmlFileName}`; // branded URL via Worker
+        protectedHtmlPath = protectedHtmlDest;
       }
       const totalMs = Math.round(nsToMs(nowNs() - totalStart));
       const finishedAt = new Date().toISOString();
@@ -239,6 +262,8 @@ export async function mealsPivotHandler(req, res) {
         status: '✅ success',
         fileUrl: excelUrl,
         htmlUrl,
+        protectedFilePath,
+        protectedHtmlPath,
         timings: { startedAt, finishedAt, totalMs, excelMs, htmlMs }
       });
     }
