@@ -26,6 +26,7 @@ import { prepareJSONGroups } from "./prepareJSONforSnapshots.mjs";
 import { applySnapshotFiltersToView } from "./applyFilters.mjs";
 import { generateSnapshotOutputsv2 } from "./generateSnapshots.mjs";
 import { generateHome } from "./generateHome.mjs";
+import { buildDataDiff } from "./buildDataDiff.mjs";
 
 const LOCAL_OUTPUT_DIR = path.join(process.cwd(), "local-emulator", "output");
 
@@ -316,6 +317,8 @@ export async function generateHomeHandler({
       safeEventName,
       runId
     });
+
+    result.body.diff = buildDataDiff(jsonInput);
     return res.status(result.status).json(result.body);
   } catch (err) {
     console.error("❌ GENERATE_HOME handler error:", err);
