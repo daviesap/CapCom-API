@@ -209,8 +209,8 @@ function attachFirestoreResponseLogging(req, res, { action, timestamp, startTime
       userId: req.body?.UserId ?? req.body?.userId ?? null,
       userEmail: req.body?.userEmail ?? null,
       glideAppName: req.body?.glideAppName ?? null,
-      profileId: req.body?.event?.profileId ?? null,
-      eventName: req.body?.event?.name ?? req.body?.eventName ?? null,
+      profileId: req.body?.event?.profileId ?? req.body?.profileId ?? null,
+      eventName: req.body?.event?.name ?? req.body?.name ?? req.body?.eventName ?? null,
       snapshotsCount: Array.isArray(req.body?.snapshots) ? req.body.snapshots.length : null,
       payloadReceived: sanitizeForLog(requestBody),
       apiResponse: sanitizeForLog(body),
@@ -337,7 +337,7 @@ export const v2 = onRequest({
 
   // --- Normalise identifiers once for all actions ---
   const rawAppName = (req.body?.glideAppName ?? "").toString();
-  const rawEventName = (req.body?.event?.name ?? req.body?.eventName ?? "").toString();
+  const rawEventName = (req.body?.event?.name ?? req.body?.name ?? req.body?.eventName ?? "").toString();
 
   const safeAppNameBody = sanitiseUrl(rawAppName || "App");
   const safeEventName = sanitiseUrl(rawEventName || "Event");
@@ -380,7 +380,7 @@ export const v2 = onRequest({
 
   // Shared metadata
   const userEmail = req.body.userEmail || "unknown email";
-  const profileId = req.body.event?.profileId || "unknown profileId";
+  const profileId = req.body.event?.profileId || req.body.profileId || "unknown profileId";
   console.log(`Profile ID ${profileId}`);
 
   try {

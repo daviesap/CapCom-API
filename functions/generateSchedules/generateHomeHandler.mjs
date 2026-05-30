@@ -46,6 +46,57 @@ function isTruthyFlag(value) {
   return false;
 }
 
+function getEventField(jsonInput, key, fallback = "") {
+  return jsonInput?.event?.[key] ?? jsonInput?.[key] ?? fallback;
+}
+
+function normaliseAllowedEmails(value) {
+  if (!Array.isArray(value)) return null;
+
+  const emails = [];
+  const seen = new Set();
+  for (const item of value) {
+    if (typeof item !== "string") continue;
+    const email = item.trim().toLowerCase();
+    if (!email || seen.has(email)) continue;
+    seen.add(email);
+    emails.push(email);
+  }
+  return emails;
+}
+
+function badRequest(message) {
+  const err = new Error(message);
+  err.statusCode = 400;
+  return err;
+}
+
+async function syncAllowedEmails({ db, jsonInput }) {
+  const hasEventAllowedEmails = Object.prototype.hasOwnProperty.call(jsonInput?.event || {}, "allowedEmails");
+  if (!hasEventAllowedEmails) return;
+
+  const eventId = String(jsonInput?.event?.eventId || "").trim();
+  if (!eventId) {
+    throw badRequest("event.allowedEmails supplied without event.eventId");
+  }
+  if (eventId.includes("/")) {
+    throw badRequest("eventId cannot contain '/'");
+  }
+
+  const allowedEmails = normaliseAllowedEmails(jsonInput.event.allowedEmails);
+  if (!allowedEmails) {
+    throw badRequest("event.allowedEmails must be an array");
+  }
+
+  await db.collection("allowedEmails").doc(eventId).set({
+    eventId,
+    allowedEmails,
+    updatedAt: FieldValue.serverTimestamp(),
+  });
+
+  console.log(`✅ Synced ${allowedEmails.length} allowed email(s) for event "${eventId}"`);
+}
+
 function adaptGroupsForRendererV2(groups) {
   if (!Array.isArray(groups)) return [];
   return groups.map(g => {
@@ -129,8 +180,17 @@ export async function generateHomeHandler({
   try {
     let jsonInput = (typeof req.body === "object" && req.body) ? req.body : {};
 
+    try {
+      await syncAllowedEmails({ db, jsonInput });
+    } catch (err) {
+      if (err?.statusCode === 400) {
+        return res.status(400).json({ success: false, message: err.message });
+      }
+      throw err;
+    }
+
     // Load and merge profile once for GENERATE_HOME using root profileId
-    const rootProfileId = jsonInput.event?.profileId || "";
+    const rootProfileId = getEventField(jsonInput, "profileId", "");
     let rootProfileDoc = {};
     if (rootProfileId) {
       try {
