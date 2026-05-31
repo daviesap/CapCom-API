@@ -110,7 +110,12 @@ export async function generateSnapshotOutputsv2({
     });
   }
   const pdfUrl = makePublicUrl(joinCloudPath(pdfName), bucket);
-  const protectedPdfUrl = makePublicUrl(joinProtectedCloudPath(pdfName), bucket);
+  const protectedBranding = {
+    eventName: jsonInput?.event?.name,
+    clientName: jsonInput?.glideAppName,
+    logoUrl: jsonInput?.event?.logoUrl,
+  };
+  const protectedPdfUrl = makePublicUrl(joinProtectedCloudPath(pdfName), bucket, protectedBranding);
   const protectedPdfPath = joinProtectedCloudPath(pdfName);
 
   // 4) HTML that links to *this* PDF
@@ -133,7 +138,7 @@ export async function generateSnapshotOutputsv2({
     });
   }
   const htmlUrl = makePublicUrl(joinCloudPath(htmlName), bucket);
-  const protectedHtmlUrl = makePublicUrl(joinProtectedCloudPath(htmlName), bucket);
+  const protectedHtmlUrl = makePublicUrl(joinProtectedCloudPath(htmlName), bucket, protectedBranding);
   const protectedHtmlPath = joinProtectedCloudPath(htmlName);
 
   // 5) Return

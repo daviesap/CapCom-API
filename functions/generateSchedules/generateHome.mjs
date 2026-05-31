@@ -525,7 +525,11 @@ export async function generateHome({
     });
   }
   const homeUrl = makePublicUrl(`public/${safeAppName}/${safeEventName}/${safeHomeName}`, bucket);
-  const protectedHomeUrl = makePublicUrl(`protected/${safeAppName}/${protectedEventId}/${safeHomeName}`, bucket);
+  const protectedHomeUrl = makePublicUrl(`protected/${safeAppName}/${protectedEventId}/${safeHomeName}`, bucket, {
+    eventName: jsonInput?.event?.name,
+    clientName: jsonInput?.glideAppName,
+    logoUrl: jsonInput?.event?.logoUrl,
+  });
 
   // ---------- Log + return ----------
   const executionTimeSeconds = (Date.now() - startTime) / 1000;

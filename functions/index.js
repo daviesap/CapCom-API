@@ -70,9 +70,10 @@ const ACTIONS = {
  * custom domain mappings for `public/` and `snapshots/` prefixes.
  * @param {string} objectPath
  * @param {{name:string}} bucket
+ * @param {{eventName?:string,clientName?:string,logoUrl?:string}} [branding]
  * @returns {string}
  */
-function makePublicUrl(objectPath, bucket) {
+function makePublicUrl(objectPath, bucket, branding = {}) {
   const encoded = encodeURIComponent(objectPath);
   if (runningEmulated) {
     // Storage emulator REST endpoint
@@ -97,7 +98,12 @@ function makePublicUrl(objectPath, bucket) {
     if (runningEmulated) {
       return `http://127.0.0.1:9199/v0/b/${bucket.name}/o/${encoded}?alt=media`;
     }
-    return `https://vox.capcom.london/protected/${m[1]}`;
+    const url = new URL(`https://vox.capcom.london/protected/${m[1]}`);
+    for (const key of ["eventName", "clientName", "logoUrl"]) {
+      const value = String(branding[key] || "").trim();
+      if (value) url.searchParams.set(key, value);
+    }
+    return url.href;
   }
 
   // Fallback to native GCS URL (shouldn't be used in normal flow)
