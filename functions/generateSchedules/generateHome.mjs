@@ -80,6 +80,7 @@ export async function generateHome({
   profileId,
   glideAppName,
   req,
+  protectedEventId,
   runId
 }) {
   const safeAppName = sanitiseUrl(req?.body?.appName || jsonInput?.glideAppName || "App");
@@ -509,7 +510,7 @@ export async function generateHome({
     fs.mkdirSync(htmlDir, { recursive: true });
     fs.writeFileSync(path.join(htmlDir, safeHomeName), Buffer.from(html, "utf8"));
 
-    const protectedHtmlDir = path.join(LOCAL_OUTPUT_DIR, "protected", safeAppName, safeEventName);
+    const protectedHtmlDir = path.join(LOCAL_OUTPUT_DIR, "protected", safeAppName, protectedEventId);
     fs.mkdirSync(protectedHtmlDir, { recursive: true });
     fs.writeFileSync(path.join(protectedHtmlDir, safeHomeName), Buffer.from(html, "utf8"));
   } else {
@@ -518,13 +519,13 @@ export async function generateHome({
       metadata: { contentType: "text/html; charset=utf-8", cacheControl: "public, max-age=0, must-revalidate" },
     });
 
-    const protectedHtmlFile = bucket.file(`protected/${safeAppName}/${safeEventName}/${safeHomeName}`);
+    const protectedHtmlFile = bucket.file(`protected/${safeAppName}/${protectedEventId}/${safeHomeName}`);
     await protectedHtmlFile.save(Buffer.from(html, "utf8"), {
       metadata: { contentType: "text/html; charset=utf-8", cacheControl: "no-cache, max-age=0" },
     });
   }
   const homeUrl = makePublicUrl(`public/${safeAppName}/${safeEventName}/${safeHomeName}`, bucket);
-  const protectedHomeUrl = makePublicUrl(`protected/${safeAppName}/${safeEventName}/${safeHomeName}`, bucket);
+  const protectedHomeUrl = makePublicUrl(`protected/${safeAppName}/${protectedEventId}/${safeHomeName}`, bucket);
 
   // ---------- Log + return ----------
   const executionTimeSeconds = (Date.now() - startTime) / 1000;

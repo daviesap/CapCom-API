@@ -91,13 +91,13 @@ function makePublicUrl(objectPath, bucket) {
     return `https://snapshots.capcom.london/${app}/${rest}`;
   }
 
-  // Protected file URLs: direct GCS path, not mapped through vox
+  // Protected files must pass through the Worker so its auth cookie can be forwarded.
   m = objectPath.match(/^protected\/(.+)$/);
   if (m) {
     if (runningEmulated) {
       return `http://127.0.0.1:9199/v0/b/${bucket.name}/o/${encoded}?alt=media`;
     }
-    return `https://storage.googleapis.com/${bucket.name}/${encoded}?alt=media`;
+    return `https://vox.capcom.london/protected/${m[1]}`;
   }
 
   // Fallback to native GCS URL (shouldn't be used in normal flow)

@@ -87,14 +87,27 @@ async function syncAllowedEmails({ db, jsonInput }) {
   if (!allowedEmails) {
     throw badRequest("event.allowedEmails must be an array");
   }
+  const eventName = String(jsonInput?.event?.name || "").trim();
 
   await db.collection("allowedEmails").doc(eventId).set({
     eventId,
+    eventName,
     allowedEmails,
     updatedAt: FieldValue.serverTimestamp(),
   });
 
   console.log(`✅ Synced ${allowedEmails.length} allowed email(s) for event "${eventId}"`);
+}
+
+function getProtectedEventId(jsonInput) {
+  const eventId = String(jsonInput?.event?.eventId || "").trim();
+  if (!eventId) {
+    throw badRequest("event.eventId is required to generate protected files");
+  }
+  if (eventId.includes("/")) {
+    throw badRequest("eventId cannot contain '/'");
+  }
+  return eventId;
 }
 
 function adaptGroupsForRendererV2(groups) {
@@ -179,8 +192,10 @@ export async function generateHomeHandler({
   // Use the LOCAL_OUTPUT_DIR defined here (keeps parity with previous behaviour)
   try {
     let jsonInput = (typeof req.body === "object" && req.body) ? req.body : {};
+    let protectedEventId;
 
     try {
+      protectedEventId = getProtectedEventId(jsonInput);
       await syncAllowedEmails({ db, jsonInput });
     } catch (err) {
       if (err?.statusCode === 400) {
@@ -326,6 +341,7 @@ export async function generateHomeHandler({
         jsonInput: prepared,
         safeAppName,
         safeEventName,
+        protectedEventId,
         bucket,
         runningEmulated,
         LOCAL_OUTPUT_DIR,
@@ -377,6 +393,7 @@ export async function generateHomeHandler({
       bucket,
       safeAppName,
       safeEventName,
+      protectedEventId,
       runId
     });
 

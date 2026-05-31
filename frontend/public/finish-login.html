@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Completing sign in</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="min-h-screen bg-slate-100 px-4 py-12 text-slate-900 antialiased sm:py-20">
+    <main class="mx-auto flex max-w-md items-center justify-center">
+      <section class="w-full rounded-3xl border border-slate-200 bg-white px-6 py-8 shadow-xl shadow-slate-200/70 sm:px-10 sm:py-10">
+        <div class="mb-7 flex justify-center">
+          <div class="flex h-24 w-24 items-center justify-center overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 shadow-sm">
+            <img id="client-logo" class="hidden max-h-20 max-w-20 object-contain" alt="" />
+            <svg
+              id="logo-placeholder"
+              class="h-11 w-11 text-slate-300"
+              viewBox="0 0 48 48"
+              fill="none"
+              aria-label="Event logo placeholder"
+              role="img"
+            >
+              <path d="M15 12v-2a9 9 0 0 1 18 0v2" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
+              <path d="M10 12h28l2 28H8l2-28Z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" />
+              <path d="M18 21c1.2 2 3.2 3 6 3s4.8-1 6-3" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
+            </svg>
+          </div>
+        </div>
+
+        <div class="text-center">
+          <p id="client-name" class="text-sm font-semibold uppercase tracking-[0.18em] text-indigo-600">Event access</p>
+          <h1 id="event-name" class="mt-3 text-3xl font-bold tracking-tight text-slate-900">Completing sign in</h1>
+          <p id="status-message" class="mt-3 text-sm leading-6 text-slate-500" role="status" aria-live="polite">
+            Verifying your secure link...
+          </p>
+        </div>
+
+        <form id="email-form" class="mt-8 hidden space-y-5">
+          <div>
+            <label for="email" class="block text-sm font-medium text-slate-700">Confirm your email address</label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              autocomplete="email"
+              required
+              placeholder="you@example.com"
+              class="mt-2 block w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"
+            />
+          </div>
+
+          <button
+            id="submit-button"
+            type="submit"
+            class="flex w-full items-center justify-center rounded-xl bg-indigo-600 px-4 py-3 font-semibold text-white shadow-sm transition hover:bg-indigo-500 focus:outline-none focus:ring-4 focus:ring-indigo-200 disabled:cursor-wait disabled:opacity-70"
+          >
+            Complete Sign In
+          </button>
+        </form>
+      </section>
+    </main>
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+      import { getAuth, isSignInWithEmailLink, signInWithEmailLink } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyAx_vNVLuJzqvPttp4r3j_ljB7kpSg2Ev0",
+        authDomain: "flair-pdf-generator.firebaseapp.com",
+        projectId: "flair-pdf-generator",
+        storageBucket: "flair-pdf-generator.firebasestorage.app",
+        messagingSenderId: "136416086270",
+        appId: "1:136416086270:web:0428d0abb5be689c68bdaf",
+      };
+
+      const auth = getAuth(initializeApp(firebaseConfig));
+      const queryParams = new URLSearchParams(window.location.search);
+      let storedBrandingContext = {};
+
+      try {
+        storedBrandingContext = JSON.parse(window.localStorage.getItem("loginBrandingContext") || "{}");
+      } catch {
+        window.localStorage.removeItem("loginBrandingContext");
+      }
+
+      const brandingContext = {
+        redirect: queryParams.get("redirect") || storedBrandingContext.redirect || "",
+        eventName: queryParams.get("eventName") || storedBrandingContext.eventName || "",
+        clientName: queryParams.get("clientName") || storedBrandingContext.clientName || "",
+        logoUrl: queryParams.get("logoUrl") || storedBrandingContext.logoUrl || "",
+      };
+
+      const logo = document.getElementById("client-logo");
+      const logoPlaceholder = document.getElementById("logo-placeholder");
+      const eventName = document.getElementById("event-name");
+      const clientName = document.getElementById("client-name");
+      const statusMessage = document.getElementById("status-message");
+      const emailForm = document.getElementById("email-form");
+      const submitButton = document.getElementById("submit-button");
+
+      eventName.textContent = brandingContext.eventName ? `Welcome to ${brandingContext.eventName}` : "Completing sign in";
+      clientName.textContent = brandingContext.clientName ? `Hosted by ${brandingContext.clientName}` : "Event access";
+      document.title = brandingContext.eventName ? `${brandingContext.eventName} | Sign in` : "Completing sign in";
+      window.localStorage.setItem("loginBrandingContext", JSON.stringify(brandingContext));
+
+      function showLogoPlaceholder() {
+        logo.classList.add("hidden");
+        logoPlaceholder.classList.remove("hidden");
+      }
+
+      if (brandingContext.logoUrl) {
+        try {
+          const logoUrl = new URL(brandingContext.logoUrl);
+          if (!["http:", "https:"].includes(logoUrl.protocol)) {
+            throw new Error("Unsupported logo protocol");
+          }
+
+          logo.alt = brandingContext.clientName ? `${brandingContext.clientName} logo` : "Client logo";
+          logo.addEventListener("error", showLogoPlaceholder);
+          logo.src = logoUrl.href;
+          logo.classList.remove("hidden");
+          logoPlaceholder.classList.add("hidden");
+        } catch {
+          showLogoPlaceholder();
+        }
+      }
+
+      function getRedirectUrl() {
+        const fallbackUrl = new URL("/", window.location.origin);
+
+        if (!brandingContext.redirect) {
+          return fallbackUrl;
+        }
+
+        try {
+          const redirectUrl = new URL(brandingContext.redirect, window.location.origin);
+          const isLocalRedirect = redirectUrl.origin === window.location.origin;
+          const isProtectedVoxRedirect =
+            redirectUrl.origin === "https://vox.capcom.london" &&
+            redirectUrl.pathname.startsWith("/protected/");
+          return isLocalRedirect || isProtectedVoxRedirect ? redirectUrl : fallbackUrl;
+        } catch {
+          return fallbackUrl;
+        }
+      }
+
+      async function establishVoxSession(user, redirectUrl) {
+        if (redirectUrl.origin !== "https://vox.capcom.london") return;
+
+        const response = await fetch("https://vox.capcom.london/auth/session", {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ idToken: await user.getIdToken() }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Unable to establish protected-file session");
+        }
+      }
+
+      function showEmailForm(message) {
+        statusMessage.textContent = message;
+        emailForm.classList.remove("hidden");
+        document.getElementById("email").focus();
+      }
+
+      async function finishSignIn(email) {
+        emailForm.classList.add("hidden");
+        statusMessage.textContent = "Verifying your secure link...";
+
+        try {
+          const credential = await signInWithEmailLink(auth, email, window.location.href);
+          const redirectUrl = getRedirectUrl();
+          await establishVoxSession(credential.user, redirectUrl);
+          window.localStorage.removeItem("emailForSignIn");
+          statusMessage.textContent = "Sign-in complete. Redirecting...";
+          window.location.replace(redirectUrl.href);
+        } catch (error) {
+          console.error("Unable to complete email-link sign-in:", error);
+          showEmailForm("We could not complete sign-in. Confirm your email address or request a new link.");
+        }
+      }
+
+      if (!isSignInWithEmailLink(auth, window.location.href)) {
+        statusMessage.textContent = "This sign-in link is invalid or incomplete. Please request a new magic link.";
+      } else {
+        const savedEmail = window.localStorage.getItem("emailForSignIn");
+        if (savedEmail) {
+          finishSignIn(savedEmail);
+        } else {
+          showEmailForm("For security, confirm the email address that requested this link.");
+        }
+      }
+
+      emailForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        submitButton.disabled = true;
+        submitButton.textContent = "Signing in...";
+        await finishSignIn(emailForm.elements.email.value.trim());
+        submitButton.disabled = false;
+        submitButton.textContent = "Complete Sign In";
+      });
+    </script>
+  </body>
+</html>

@@ -51,6 +51,7 @@ export async function generateSnapshotOutputsv2({
   jsonInput,          // prepared per-snapshot JSON
   safeAppName,
   safeEventName,
+  protectedEventId,
   bucket,
   runningEmulated,
   LOCAL_OUTPUT_DIR,
@@ -63,16 +64,16 @@ export async function generateSnapshotOutputsv2({
   extraSubdir = "",  //was "v2"
   runId,
 }) {
-  // Build paths under: public/<app>/<event>/<maybe v2>/<file> and protected/<app>/<event>/<maybe v2>/<file>
+  // Public paths retain the display event slug. Protected paths use the Firestore allowlist ID.
   const joinCloudPath = (filename) =>
     `public/${safeAppName}/${safeEventName}${extraSubdir ? `/${extraSubdir}` : ""}/${filename}`;
   const joinProtectedCloudPath = (filename) =>
-    `protected/${safeAppName}/${safeEventName}${extraSubdir ? `/${extraSubdir}` : ""}/${filename}`;
+    `protected/${safeAppName}/${protectedEventId}${extraSubdir ? `/${extraSubdir}` : ""}/${filename}`;
 
   const joinLocalPath = (...parts) =>
     path.join(LOCAL_OUTPUT_DIR, "public", safeAppName, safeEventName, ...(extraSubdir ? [extraSubdir] : []), ...parts);
   const joinProtectedLocalPath = (...parts) =>
-    path.join(LOCAL_OUTPUT_DIR, "protected", safeAppName, safeEventName, ...(extraSubdir ? [extraSubdir] : []), ...parts);
+    path.join(LOCAL_OUTPUT_DIR, "protected", safeAppName, protectedEventId, ...(extraSubdir ? [extraSubdir] : []), ...parts);
 
   // --- Derive display name and sanitised base, then enrich header ---
   // Human-friendly base used in headers (keep spaces/case, strip any extension)

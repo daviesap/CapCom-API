@@ -176,6 +176,14 @@ npm run cf:deploy
 # (which runs: wrangler deploy --config infra/cloudflare/wrangler.toml)
 ```
 
+Protected files use Firebase passwordless authentication and the Firestore
+allowlist at `allowedEmails/{eventId}`. Deploy Storage rules when changing that
+flow:
+
+```bash
+firebase deploy --only storage --project flair-pdf-generator
+```
+
 **Wrangler notes**
 - `account_id = "8b3fed5dd481b67a898081122010dc37"`
 - Routes in `wrangler.toml`:
@@ -248,6 +256,7 @@ Typical assets:
 
 Worker maps:
 - `vox.capcom.london/<app>/<event>/<file>` → `public/<app>/<event>/<file>`
+- `vox.capcom.london/protected/<app>/<eventId>/<file>` → `protected/<app>/<eventId>/<file>` after email-link authentication and allowlist validation
 - `snapshots.capcom.london/<App>/<file>` → `snapshots/<App>/<file>` (legacy)
 
 ---
