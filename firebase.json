@@ -50,7 +50,22 @@
           }
         }
       ]
+    },
+    {
+  "site": "capcom-react-lab",
+  "public": "capcom-react-lab/dist",
+  "ignore": [
+    "firebase.json",
+    "**/.*",
+    "**/node_modules/**"
+  ],
+  "rewrites": [
+    {
+      "source": "**",
+      "destination": "/index.html"
     }
+  ]
+}
   ],
   "emulators": {
     "functions": {
