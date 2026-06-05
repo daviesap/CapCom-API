@@ -54,11 +54,8 @@ export default function EventDetailsPage() {
             <strong>End:</strong> {event.endDate}
           </p>
           <div className="actions">
-            <Link className="button" to={`/events/${event.id}/days`}>
-              View
-            </Link>
             <Link className="button secondary" to={`/events/${event.id}/edit`}>
-              Edit
+              Open
             </Link>
           </div>
         </section>

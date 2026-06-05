@@ -8,7 +8,7 @@ export default function Layout() {
     <div className="app-shell">
       <header className="topbar">
         <Link className="brand" to="/events">
-          CapCom React Lab
+          CapCom v2
         </Link>
         <div className="user-bar">
           <span>{user?.email}</span>

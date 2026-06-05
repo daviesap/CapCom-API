@@ -349,10 +349,7 @@ export default function EventEditPage() {
         </div>
         <div className="actions inline-actions">
           <Link className="button secondary" to={`/events/${eventId}`}>
-            Back to Event
-          </Link>
-          <Link className="button secondary" to={`/events/${eventId}/days`}>
-            View Schedule Days
+            Back
           </Link>
         </div>
       </div>

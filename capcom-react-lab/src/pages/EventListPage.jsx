@@ -83,7 +83,6 @@ export default function EventListPage() {
       <div className="page-header">
         <div>
           <h1 className="page-title">Events</h1>
-          <p className="page-subtitle">Create and open event records.</p>
         </div>
         <button
           className="button"
