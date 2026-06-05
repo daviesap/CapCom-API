@@ -1,7 +1,8 @@
 import React, { useState, useRef } from "react";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import { storage, db } from "../services/firebase";
-import { doc, updateDoc, serverTimestamp } from "firebase/firestore";
+import { db } from "../services/firestore";
+import { storage } from "../services/storage";
+import { doc, setDoc, updateDoc, serverTimestamp } from "firebase/firestore";
 
 export default function LogoUploader({ profile, setProfile, setOriginalProfile, profileId }) {
   const pdf = (profile?.PDF && typeof profile.PDF === "object") ? profile.PDF : {};
@@ -60,10 +61,16 @@ export default function LogoUploader({ profile, setProfile, setOriginalProfile, 
         setOriginalProfile(updatedProfile);
 
         const docRef = doc(db, "profiles", profileId);
-        await updateDoc(docRef, {
-          "PDF.document": updatedProfile.PDF.document,
-          lastUsed: serverTimestamp(),
-        });
+        await Promise.all([
+          updateDoc(docRef, {
+            "PDF.document": updatedProfile.PDF.document,
+            lastUsed: serverTimestamp(),
+          }),
+          setDoc(doc(db, "profileSummaries", profileId), {
+            name: updatedProfile.name || "(Unnamed Profile)",
+            lastUsed: serverTimestamp(),
+          }, { merge: true }),
+        ]);
         console.log("✅ Logo saved to Firestore");
       }
     );
@@ -88,10 +95,16 @@ export default function LogoUploader({ profile, setProfile, setOriginalProfile, 
     setOriginalProfile(updatedProfile);
 
     const docRef = doc(db, "profiles", profileId);
-    await updateDoc(docRef, {
-      "PDF.document": updatedProfile.PDF.document,
-      lastUsed: serverTimestamp(),
-    });
+    await Promise.all([
+      updateDoc(docRef, {
+        "PDF.document": updatedProfile.PDF.document,
+        lastUsed: serverTimestamp(),
+      }),
+      setDoc(doc(db, "profileSummaries", profileId), {
+        name: updatedProfile.name || "(Unnamed Profile)",
+        lastUsed: serverTimestamp(),
+      }, { merge: true }),
+    ]);
     console.log("✅ Logo removed from Firestore");
   };
 

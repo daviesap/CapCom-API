@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { doc, setDoc, getDoc, collection, getDocs } from 'firebase/firestore';
-import { db } from './firebase';
+import { doc, setDoc, collection, getDocs } from 'firebase/firestore';
+import { db } from './services/firestore';
 import { deleteDoc } from 'firebase/firestore'; // at the top with other imports
 
 function TitleStyleEditor() {
@@ -11,7 +11,6 @@ function TitleStyleEditor() {
         colour: "#000000"
     });
     const [message, setMessage] = useState("");
-    const [savedData, setSavedData] = useState(null);
     const [allProfiles, setAllProfiles] = useState([]);
 
     const handleChange = (field, value) => {
@@ -44,12 +43,6 @@ function TitleStyleEditor() {
                     title: titleStyle
                 }
             }, { merge: true });
-
-            const updatedDoc = await getDoc(docRef);
-            if (updatedDoc.exists()) {
-                const data = updatedDoc.data();
-                setSavedData(data.stylesDocument?.title || null);
-            }
 
             setMessage("Saved to Firestore!");
         } catch (error) {

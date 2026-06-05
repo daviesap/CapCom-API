@@ -1,5 +1,5 @@
 // src/services/styleProfileService.js
-import { doc, setDoc } from "firebase/firestore";
+import { doc, writeBatch } from "firebase/firestore";
 import templateJSON from "../config/defaultStyleTemplate.json";
 
 /**
@@ -14,5 +14,11 @@ export async function createStyleProfile(db, newId, newName, baseData = null) {
     ...(baseData || templateJSON), // Use provided data or fall back to default
     name: newName,
   };
-  await setDoc(doc(db, "profiles", newId), profileData);
+  const batch = writeBatch(db);
+  batch.set(doc(db, "profiles", newId), profileData);
+  batch.set(doc(db, "profileSummaries", newId), {
+    name: newName,
+    lastUsed: profileData.lastUsed || null,
+  });
+  await batch.commit();
 }

@@ -1,7 +1,14 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { collection, getDocs, query, orderBy } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  getDocsFromCache,
+  query,
+  orderBy,
+  limit,
+} from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
-import { db } from "../services/firebase";
+import { db } from "../services/firestore";
 import LogsTable from "../components/LogsTable";
 
 function toDate(value) {
@@ -20,6 +27,8 @@ function getComparableValue(log, sortKey) {
 
 export default function LogsPage() {
   const [logs, setLogs] = useState([]);
+  const [logsLoading, setLogsLoading] = useState(true);
+  const [logsError, setLogsError] = useState("");
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [sortKey, setSortKey] = useState("createdAt");
@@ -28,13 +37,28 @@ export default function LogsPage() {
 
   useEffect(() => {
     const fetchLogs = async () => {
-      const q = query(collection(db, "logs"), orderBy("createdAt", "desc"));
+      setLogsLoading(true);
+      setLogsError("");
+      const q = query(collection(db, "logs"), orderBy("createdAt", "desc"), limit(200));
+
+      try {
+        const cachedSnapshot = await getDocsFromCache(q);
+        if (!cachedSnapshot.empty) {
+          setLogs(cachedSnapshot.docs.map((docSnap) => ({ id: docSnap.id, ...docSnap.data() })));
+        }
+      } catch {
+        // Cache is optional; the server read below is the source of truth.
+      }
+
       const snapshot = await getDocs(q);
       setLogs(snapshot.docs.map((docSnap) => ({ id: docSnap.id, ...docSnap.data() })));
+      setLogsLoading(false);
     };
 
     fetchLogs().catch((error) => {
       console.error("Error fetching logs:", error);
+      setLogsError("Could not load logs.");
+      setLogsLoading(false);
     });
   }, []);
 
@@ -85,7 +109,7 @@ export default function LogsPage() {
       <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
         <div>
           <h2 className="text-2xl font-semibold">All Log Entries</h2>
-          <p className="text-sm text-gray-600">Search, filter, and sort the Firestore `logs` collection.</p>
+          <p className="text-sm text-gray-600">Search, filter, and sort the latest 200 Firestore log entries.</p>
         </div>
         <button
           onClick={() => navigate("/")}
@@ -116,6 +140,8 @@ export default function LogsPage() {
 
       <LogsTable
         logs={filteredLogs}
+        loading={logsLoading}
+        error={logsError}
         sortable
         sortKey={sortKey}
         sortDirection={sortDirection}

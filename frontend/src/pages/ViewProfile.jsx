@@ -1,7 +1,7 @@
 //ViewProfile.jsx
-import React, { useEffect, useState } from "react";
-import { getDoc, doc, updateDoc, serverTimestamp } from "firebase/firestore";
-import { db } from "../services/firebase";
+import React, { Suspense, lazy, useEffect, useState } from "react";
+import { getDoc, doc, setDoc, updateDoc, serverTimestamp } from "firebase/firestore";
+import { db } from "../services/firestore";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import isEqual from "lodash.isequal";
@@ -10,7 +10,8 @@ import LogoUploader from "../components/LogoUploader";
 import Tabs from "../components/Tabs";
 import StylesEditor from "../components/StylesEditor";
 import GroupPresetsEditor from "../components/GroupPresetsEditor";
-import JSONdisplay from "../components/JSONDisplay";
+
+const JSONdisplay = lazy(() => import("../components/JSONDisplay"));
 
 function getPdfConfig(profile = {}) {
   const pdf = (profile?.PDF && typeof profile.PDF === "object") ? profile.PDF : {};
@@ -34,7 +35,13 @@ export default function ViewProfile({ profileId }) {
         const data = docSnap.data();
         setProfile(data);
         setOriginalProfile(data);
-        await updateDoc(docRef, { lastUsed: serverTimestamp() });
+        await Promise.all([
+          updateDoc(docRef, { lastUsed: serverTimestamp() }),
+          setDoc(doc(db, "profileSummaries", profileId), {
+            name: data.name || "(Unnamed Profile)",
+            lastUsed: serverTimestamp(),
+          }, { merge: true }),
+        ]);
       }
     };
     loadProfile();
@@ -87,6 +94,10 @@ export default function ViewProfile({ profileId }) {
       PDF: updatedPdf,
       lastUsed: serverTimestamp(),
     });
+    await setDoc(doc(db, "profileSummaries", profileId), {
+      name: updatedProfile.name || "(Unnamed Profile)",
+      lastUsed: serverTimestamp(),
+    }, { merge: true });
     setOriginalProfile(updatedProfile);
     console.log("✅ PDF saved to Firestore");
   };
@@ -102,6 +113,10 @@ export default function ViewProfile({ profileId }) {
       groupPresets: updatedGroupPresets,
       lastUsed: serverTimestamp(),
     });
+    await setDoc(doc(db, "profileSummaries", profileId), {
+      name: updatedProfile.name || "(Unnamed Profile)",
+      lastUsed: serverTimestamp(),
+    }, { merge: true });
     setOriginalProfile(updatedProfile);
   };
 
@@ -112,6 +127,10 @@ export default function ViewProfile({ profileId }) {
       ...updatedProfile,
       lastUsed: serverTimestamp(),
     });
+    await setDoc(doc(db, "profileSummaries", profileId), {
+      name: updatedProfile.name || "(Unnamed Profile)",
+      lastUsed: serverTimestamp(),
+    }, { merge: true });
     setOriginalProfile(updatedProfile);
   };
 
@@ -161,7 +180,9 @@ export default function ViewProfile({ profileId }) {
           {
             label: "JSON",
             content: (
-              <JSONdisplay jsonData={profile} onSaveJson={handleSaveJson} />
+              <Suspense fallback={<p className="p-4 text-gray-600">Loading JSON editor...</p>}>
+                <JSONdisplay jsonData={profile} onSaveJson={handleSaveJson} />
+              </Suspense>
             ),
           },
         ]}

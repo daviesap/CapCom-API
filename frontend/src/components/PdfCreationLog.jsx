@@ -1,7 +1,7 @@
 //PdfCreationLog.jsx
 import React, { useEffect, useState } from 'react';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
-import { db } from '../services/firebase';
+import { db } from '../services/firestore';
 
 export default function PdfCreationLog() {
   const [logs, setLogs] = useState([]);

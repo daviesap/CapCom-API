@@ -1,7 +1,6 @@
 //frontend/src/AuthProvider.jsx
 import { createContext, useContext, useEffect, useState } from "react";
 import {
-  getAuth,
   onAuthStateChanged,
   signInWithPopup,
   GoogleAuthProvider,
@@ -9,10 +8,9 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
 } from "firebase/auth";
-import { app } from "./services/firebase";
+import { auth } from "./services/auth";
 
 const AuthContext = createContext();
-const auth = getAuth(app);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);

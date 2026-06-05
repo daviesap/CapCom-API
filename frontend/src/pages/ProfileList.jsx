@@ -1,72 +1,117 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   collection,
   getDocs,
+  getDocsFromCache,
   getDoc,
   doc,
   deleteDoc,
+  writeBatch,
   query,
   orderBy,
   limit,
 } from 'firebase/firestore';
-import { db } from '../services/firebase';
+import { db } from '../services/firestore';
 import { nanoid } from 'nanoid';
 import { createStyleProfile } from '../services/styleProfileService';
 import { useNavigate } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
 import LogsTable from '../components/LogsTable';
 
+function toDate(value) {
+  if (!value) return null;
+  if (typeof value?.toDate === 'function') return value.toDate();
+  if (value instanceof Date) return value;
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
 export default function ProfileList() {
   const [profiles, setProfiles] = useState([]);
   const [recentLogs, setRecentLogs] = useState([]);
   const [userStats, setUserStats] = useState([]);
+  const [profilesLoading, setProfilesLoading] = useState(true);
+  const [userStatsLoading, setUserStatsLoading] = useState(true);
+  const [recentLogsLoading, setRecentLogsLoading] = useState(true);
+  const [profilesError, setProfilesError] = useState("");
+  const [userStatsError, setUserStatsError] = useState("");
+  const [recentLogsError, setRecentLogsError] = useState("");
   const [newName, setNewName] = useState("");
 
   const navigate = useNavigate();
 
-  const fetchProfiles = async () => {
-    const querySnapshot = await getDocs(collection(db, 'profiles'));
-
-    const data = querySnapshot.docs.map((docSnap) => {
+  const mapProfileSnapshot = useCallback((querySnapshot) => {
+    return querySnapshot.docs.map((docSnap) => {
       const profileId = docSnap.id;
       const docData = docSnap.data() || {};
       const profileName = docData.name || "(Unnamed Profile)";
 
-      let lastUsed = null;
-      const rawLastUsed = docData.lastUsed;
-      if (rawLastUsed) {
-        if (typeof rawLastUsed.toDate === 'function') {
-          lastUsed = rawLastUsed.toDate();
-        } else if (rawLastUsed instanceof Date) {
-          lastUsed = rawLastUsed;
-        } else {
-          const parsed = new Date(rawLastUsed);
-          if (!Number.isNaN(parsed.getTime())) {
-            lastUsed = parsed;
-          }
-        }
-      }
-
       return {
         profileId,
         profileName,
-        lastUsed,
+        lastUsed: toDate(docData.lastUsed),
       };
     });
+  }, []);
 
-    setProfiles(data);
-  };
+  const applyProfilesSnapshot = useCallback((querySnapshot) => {
+    setProfiles(mapProfileSnapshot(querySnapshot));
+  }, [mapProfileSnapshot]);
 
-  function toDate(value) {
-    if (!value) return null;
-    if (typeof value?.toDate === 'function') return value.toDate();
-    if (value instanceof Date) return value;
-    const parsed = new Date(value);
-    return Number.isNaN(parsed.getTime()) ? null : parsed;
-  }
+  const backfillProfileSummaries = useCallback(async (profileRows) => {
+    if (profileRows.length === 0) return;
 
-  const fetchUserStats = async () => {
-    const querySnapshot = await getDocs(collection(db, 'logs'));
+    const batch = writeBatch(db);
+    profileRows.forEach((profile) => {
+      batch.set(doc(db, "profileSummaries", profile.profileId), {
+        name: profile.profileName,
+        lastUsed: profile.lastUsed || null,
+      });
+    });
+    await batch.commit();
+  }, []);
+
+  const fetchProfiles = useCallback(async () => {
+    setProfilesLoading(true);
+    setProfilesError("");
+    const summariesRef = collection(db, 'profileSummaries');
+    const summariesQuery = query(summariesRef, orderBy('name'));
+
+    try {
+      const cachedSnapshot = await getDocsFromCache(summariesQuery);
+      if (!cachedSnapshot.empty) {
+        applyProfilesSnapshot(cachedSnapshot);
+      }
+    } catch {
+      // Cache is optional; the server read below is the source of truth.
+    }
+
+    try {
+      const summariesSnapshot = await getDocs(summariesQuery);
+      if (!summariesSnapshot.empty) {
+        applyProfilesSnapshot(summariesSnapshot);
+        return;
+      }
+
+      const profilesSnapshot = await getDocs(collection(db, 'profiles'));
+      const fullProfileRows = mapProfileSnapshot(profilesSnapshot);
+      setProfiles(fullProfileRows);
+      backfillProfileSummaries(fullProfileRows).catch((error) => {
+        console.error('Error backfilling profile summaries:', error);
+      });
+    } catch (error) {
+      console.error('Error fetching profiles:', error);
+      setProfilesError("Could not load profiles.");
+    } finally {
+      setProfilesLoading(false);
+    }
+  }, [applyProfilesSnapshot, backfillProfileSummaries, mapProfileSnapshot]);
+
+  const fetchUserStats = useCallback(async () => {
+    setUserStatsLoading(true);
+    setUserStatsError("");
+    const userStatsQuery = query(collection(db, 'logs'), orderBy('createdAt', 'desc'), limit(500));
+    const querySnapshot = await getDocs(userStatsQuery);
     const users = {};
 
     querySnapshot.docs.forEach((docSnap) => {
@@ -91,23 +136,51 @@ export default function ProfileList() {
     });
 
     setUserStats(stats);
-  };
+    setUserStatsLoading(false);
+  }, []);
 
   useEffect(() => {
-    fetchProfiles();
-    fetchUserStats().catch((error) => {
-      console.error('Error fetching user stats:', error);
-    });
+    let cancelled = false;
 
     const fetchRecentLogs = async () => {
+      setRecentLogsLoading(true);
+      setRecentLogsError("");
       const logsQuery = query(collection(db, 'logs'), orderBy('createdAt', 'desc'), limit(5));
+      try {
+        const cachedSnapshot = await getDocsFromCache(logsQuery);
+        if (!cachedSnapshot.empty) {
+          setRecentLogs(cachedSnapshot.docs.map((docSnap) => ({ id: docSnap.id, ...docSnap.data() })));
+        }
+      } catch {
+        // Cache is optional; the server read below is the source of truth.
+      }
       const snapshot = await getDocs(logsQuery);
       setRecentLogs(snapshot.docs.map((docSnap) => ({ id: docSnap.id, ...docSnap.data() })));
+      setRecentLogsLoading(false);
     };
-    fetchRecentLogs().catch((error) => {
-      console.error('Error fetching recent logs:', error);
-    });
-  }, []);
+
+    const loadDashboard = async () => {
+      await fetchProfiles();
+      if (cancelled) return;
+
+      fetchUserStats().catch((error) => {
+        console.error('Error fetching user stats:', error);
+        setUserStatsError("Could not load user activity.");
+        setUserStatsLoading(false);
+      });
+
+      fetchRecentLogs().catch((error) => {
+        console.error('Error fetching recent logs:', error);
+        setRecentLogsError("Could not load recent logs.");
+        setRecentLogsLoading(false);
+      });
+    };
+
+    loadDashboard();
+    return () => {
+      cancelled = true;
+    };
+  }, [fetchProfiles, fetchUserStats]);
 
   const addProfile = async () => {
     if (!newName.trim()) return;
@@ -122,7 +195,10 @@ export default function ProfileList() {
     const confirmed = window.confirm(`Are you sure you want to delete profile "${name}"?`);
     if (!confirmed) return;
 
-    await deleteDoc(doc(db, "profiles", id));
+    await Promise.all([
+      deleteDoc(doc(db, "profiles", id)),
+      deleteDoc(doc(db, "profileSummaries", id)),
+    ]);
     fetchProfiles();
   };
 
@@ -183,7 +259,25 @@ export default function ProfileList() {
             </tr>
           </thead>
           <tbody>
-            {profiles.map(profile => (
+            {profilesLoading && profiles.length === 0 ? (
+              <tr>
+                <td colSpan="4" className="border border-gray-300 px-4 py-8 text-center text-gray-500">
+                  Loading profiles...
+                </td>
+              </tr>
+            ) : profilesError ? (
+              <tr>
+                <td colSpan="4" className="border border-gray-300 px-4 py-8 text-center text-red-600">
+                  {profilesError}
+                </td>
+              </tr>
+            ) : profiles.length === 0 ? (
+              <tr>
+                <td colSpan="4" className="border border-gray-300 px-4 py-8 text-center text-gray-500">
+                  No profiles found.
+                </td>
+              </tr>
+            ) : profiles.map(profile => (
               <tr key={profile.profileId} className="hover:bg-gray-50">
                 <td className="border border-gray-300 px-4 py-2 font-medium">{profile.profileName}</td>
                 <td className="border border-gray-300 px-4 py-2">{profile.profileId}</td>
@@ -235,7 +329,19 @@ export default function ProfileList() {
               </tr>
             </thead>
             <tbody>
-              {userStats.length === 0 ? (
+              {userStatsLoading && userStats.length === 0 ? (
+                <tr>
+                  <td colSpan="3" className="border border-gray-300 px-4 py-8 text-center text-gray-500">
+                    Loading user activity...
+                  </td>
+                </tr>
+              ) : userStatsError ? (
+                <tr>
+                  <td colSpan="3" className="border border-gray-300 px-4 py-8 text-center text-red-600">
+                    {userStatsError}
+                  </td>
+                </tr>
+              ) : userStats.length === 0 ? (
                 <tr>
                   <td colSpan="3" className="border border-gray-300 px-4 py-8 text-center text-gray-500">
                     No user activity found.
@@ -268,7 +374,11 @@ export default function ProfileList() {
           </button>
         </div>
 
-        <LogsTable logs={recentLogs} />
+        <LogsTable
+          logs={recentLogs}
+          loading={recentLogsLoading}
+          error={recentLogsError}
+        />
       </div>
     </div>
   );

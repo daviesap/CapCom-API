@@ -20,6 +20,8 @@ function renderSortArrow(activeKey, sortKey, sortDirection) {
 
 export default function LogsTable({
   logs,
+  loading = false,
+  error = "",
   sortable = false,
   sortKey = "createdAt",
   sortDirection = "desc",
@@ -57,7 +59,19 @@ export default function LogsTable({
           </tr>
         </thead>
         <tbody>
-          {logs.length === 0 ? (
+          {loading && logs.length === 0 ? (
+            <tr>
+              <td colSpan="8" className="border border-gray-300 px-4 py-8 text-center text-gray-500">
+                Loading log entries...
+              </td>
+            </tr>
+          ) : error ? (
+            <tr>
+              <td colSpan="8" className="border border-gray-300 px-4 py-8 text-center text-red-600">
+                {error}
+              </td>
+            </tr>
+          ) : logs.length === 0 ? (
             <tr>
               <td colSpan="8" className="border border-gray-300 px-4 py-8 text-center text-gray-500">
                 No log entries found.
