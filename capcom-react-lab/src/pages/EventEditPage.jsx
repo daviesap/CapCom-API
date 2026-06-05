@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import Loading from "../components/Loading.jsx";
 import { getEvent, updateEvent } from "../services/eventService.js";
@@ -9,9 +9,17 @@ import {
 } from "../services/scheduleDayService.js";
 import {
   createScheduleDetail,
+  deleteScheduleDetail,
   getScheduleDetails,
   updateScheduleDetail,
+  updateScheduleDetailOrder,
 } from "../services/scheduleDetailService.js";
+import {
+  createTag,
+  deleteTag,
+  getTags,
+  updateTag,
+} from "../services/tagService.js";
 
 const emptyEventForm = {
   name: "",
@@ -20,6 +28,11 @@ const emptyEventForm = {
   endDate: "",
   scheduleStartDate: "",
   scheduleEndDate: "",
+};
+
+const emptyTagForm = {
+  name: "",
+  colour: "#DCEEFF",
 };
 
 function formatFriendlyDate(dateString) {
@@ -46,11 +59,46 @@ function formatDetailDate(dateString) {
   return `${weekday} ${day}${suffix} ${month}`;
 }
 
+function normaliseHexColour(colour) {
+  const trimmedColour = String(colour || "").trim();
+  if (!trimmedColour) return "";
+  const withHash = trimmedColour.startsWith("#") ? trimmedColour : `#${trimmedColour}`;
+  return /^#[0-9a-fA-F]{6}$/.test(withHash) ? withHash.toUpperCase() : "";
+}
+
+function hexToRgba(colour, alpha) {
+  const normalisedColour = normaliseHexColour(colour);
+  if (!normalisedColour) return "";
+  const red = parseInt(normalisedColour.slice(1, 3), 16);
+  const green = parseInt(normalisedColour.slice(3, 5), 16);
+  const blue = parseInt(normalisedColour.slice(5, 7), 16);
+  return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
+}
+
+function getTagStyle(tag) {
+  const colour = normaliseHexColour(tag?.colour);
+  if (!colour) return undefined;
+  return {
+    backgroundColor: hexToRgba(colour, 0.16),
+    borderColor: hexToRgba(colour, 0.36),
+  };
+}
+
+function getRowTagStyle(tag) {
+  const colour = normaliseHexColour(tag?.colour);
+  if (!colour) return undefined;
+  return {
+    backgroundColor: hexToRgba(colour, 0.12),
+    borderColor: hexToRgba(colour, 0.28),
+  };
+}
+
 export default function EventEditPage() {
   const { eventId } = useParams();
   const [form, setForm] = useState(emptyEventForm);
+  const [savedEventForm, setSavedEventForm] = useState(emptyEventForm);
+  const [isEditingEventDetails, setIsEditingEventDetails] = useState(false);
   const [scheduleDays, setScheduleDays] = useState([]);
-  const [savedScheduleDays, setSavedScheduleDays] = useState({});
   const [editingDayId, setEditingDayId] = useState("");
   const [editingDayDraft, setEditingDayDraft] = useState({
     summary: "",
@@ -60,36 +108,52 @@ export default function EventEditPage() {
   const [detailsByDayId, setDetailsByDayId] = useState({});
   const [draftDetailsByDayId, setDraftDetailsByDayId] = useState({});
   const [savedDetailsById, setSavedDetailsById] = useState({});
+  const [tags, setTags] = useState([]);
+  const [tagForm, setTagForm] = useState(emptyTagForm);
+  const [editingTagId, setEditingTagId] = useState("");
+  const [editingDetailId, setEditingDetailId] = useState("");
+  const [openActionMenuId, setOpenActionMenuId] = useState("");
+  const [selectedTagFilterId, setSelectedTagFilterId] = useState("");
   const [activeTab, setActiveTab] = useState("details");
+  const [activeSettingsTab, setActiveSettingsTab] = useState("tags");
   const [loading, setLoading] = useState(true);
   const [savingEvent, setSavingEvent] = useState(false);
   const [savingDayId, setSavingDayId] = useState("");
   const [savingDetailId, setSavingDetailId] = useState("");
   const [savingDraftDayId, setSavingDraftDayId] = useState("");
+  const [savingTag, setSavingTag] = useState(false);
+  const [deletingTagId, setDeletingTagId] = useState("");
+  const [reorderingDayId, setReorderingDayId] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const suppressDetailBlurRef = useRef(false);
+  const draggedDetailIdRef = useRef("");
 
   useEffect(() => {
     const loadPage = async () => {
       setLoading(true);
       setError("");
       try {
-        const [event, days] = await Promise.all([
+        const [event, days, eventTags] = await Promise.all([
           getEvent(eventId),
           getScheduleDays(eventId),
+          getTags(eventId),
         ]);
         if (!event) {
           setError("Event not found.");
           return;
         }
-        setForm({
+        const loadedEventForm = {
           name: event.name || "",
           clientName: event.clientName || "",
           startDate: event.startDate || "",
           endDate: event.endDate || "",
           scheduleStartDate: event.scheduleStartDate || event.startDate || "",
           scheduleEndDate: event.scheduleEndDate || event.endDate || "",
-        });
+        };
+        setForm(loadedEventForm);
+        setSavedEventForm(loadedEventForm);
+        setTags(eventTags);
         applyScheduleDays(days);
       } catch (loadError) {
         console.error(loadError);
@@ -102,8 +166,46 @@ export default function EventEditPage() {
     loadPage();
   }, [eventId]);
 
+  useEffect(() => {
+    if (!openActionMenuId) return undefined;
+
+    const closeMenuOnOutsideClick = (event) => {
+      if (!event.target.closest(".action-menu")) {
+        setOpenActionMenuId("");
+      }
+    };
+
+    document.addEventListener("mousedown", closeMenuOnOutsideClick);
+    return () => document.removeEventListener("mousedown", closeMenuOnOutsideClick);
+  }, [openActionMenuId]);
+
+  const usedTagIds = useMemo(() => {
+    return new Set(
+      Object.values(detailsByDayId)
+        .flat()
+        .map((detail) => detail.tagId)
+        .filter(Boolean)
+    );
+  }, [detailsByDayId]);
+
+  const usedTags = useMemo(() => {
+    return tags.filter((tag) => usedTagIds.has(tag.id));
+  }, [tags, usedTagIds]);
+
+  useEffect(() => {
+    if (selectedTagFilterId && !usedTagIds.has(selectedTagFilterId)) {
+      setSelectedTagFilterId("");
+    }
+  }, [selectedTagFilterId, usedTagIds]);
+
   const updateField = (field, value) => {
     setForm((current) => ({ ...current, [field]: value }));
+  };
+
+  const cancelEditingEventDetails = () => {
+    setForm(savedEventForm);
+    setIsEditingEventDetails(false);
+    setError("");
   };
 
   const loadScheduleDays = async () => {
@@ -111,19 +213,12 @@ export default function EventEditPage() {
     applyScheduleDays(days);
   };
 
+  const loadTags = async () => {
+    setTags(await getTags(eventId));
+  };
+
   const applyScheduleDays = (days) => {
     setScheduleDays(days);
-    setSavedScheduleDays(
-      Object.fromEntries(
-        days.map((day) => [
-          day.id,
-          {
-            summary: day.summary || "",
-            endOfDayTarget: day.endOfDayTarget || "",
-          },
-        ])
-      )
-    );
     loadScheduleDetails(days);
   };
 
@@ -138,11 +233,14 @@ export default function EventEditPage() {
     setSavedDetailsById(
       Object.fromEntries(
         detailsEntries.flatMap(([, details]) =>
-          details.map((detail) => [
+          details.map((detail, detailIndex) => [
             detail.id,
             {
               time: detail.time || "",
               description: detail.description || "",
+              sortOrder: typeof detail.sortOrder === "number" ? detail.sortOrder : detailIndex,
+              colour: normaliseHexColour(detail.colour),
+              tagId: detail.tagId || "",
             },
           ])
         )
@@ -192,13 +290,6 @@ export default function EventEditPage() {
       });
       updateDayField(day.id, "summary", values.summary || "");
       updateDayField(day.id, "endOfDayTarget", values.endOfDayTarget || "");
-      setSavedScheduleDays((current) => ({
-        ...current,
-        [day.id]: {
-          summary: values.summary || "",
-          endOfDayTarget: values.endOfDayTarget || "",
-        },
-      }));
       cancelEditingDay();
       setMessage("Schedule day saved.");
     } catch (saveError) {
@@ -219,6 +310,164 @@ export default function EventEditPage() {
     }));
   };
 
+  const getTagById = (tagId) => tags.find((tag) => tag.id === tagId) || null;
+
+  const assignDetailTag = async (dayId, detail, tagId) => {
+    setSavingDetailId(detail.id);
+    setError("");
+    setDetailsByDayId((current) => ({
+      ...current,
+      [dayId]: (current[dayId] || []).map((nextDetail) =>
+        nextDetail.id === detail.id ? { ...nextDetail, tagId } : nextDetail
+      ),
+    }));
+
+    try {
+      await updateScheduleDetail(detail.id, {
+        time: detail.time || "",
+        description: detail.description || "",
+        sortOrder: detail.sortOrder,
+        colour: normaliseHexColour(detail.colour),
+        tagId,
+      });
+      setSavedDetailsById((current) => ({
+        ...current,
+        [detail.id]: {
+          time: detail.time || "",
+          description: detail.description || "",
+          sortOrder: detail.sortOrder,
+          colour: normaliseHexColour(detail.colour),
+          tagId,
+        },
+      }));
+    } catch (tagError) {
+      console.error(tagError);
+      setError("Could not update row tag.");
+      await loadScheduleDetails(scheduleDays);
+    } finally {
+      setSavingDetailId("");
+    }
+  };
+
+  const updateTagFormField = (field, value) => {
+    setTagForm((current) => ({ ...current, [field]: value }));
+  };
+
+  const resetTagForm = () => {
+    setEditingTagId("");
+    setTagForm(emptyTagForm);
+  };
+
+  const startEditingTag = (tag) => {
+    setEditingTagId(tag.id);
+    setTagForm({
+      name: tag.name || "",
+      colour: normaliseHexColour(tag.colour) || emptyTagForm.colour,
+    });
+    setError("");
+    setMessage("");
+  };
+
+  const saveTag = async (submitEvent) => {
+    submitEvent.preventDefault();
+    setSavingTag(true);
+    setError("");
+    setMessage("");
+
+    try {
+      const name = tagForm.name.trim();
+      const colour = normaliseHexColour(tagForm.colour);
+      if (!name || !colour) {
+        setError("Tag name and valid hex colour are required.");
+        return;
+      }
+
+      if (editingTagId) {
+        await updateTag(editingTagId, { name, colour });
+        setMessage("Tag saved.");
+      } else {
+        await createTag({ eventId, name, colour });
+        setMessage("Tag created.");
+      }
+      resetTagForm();
+      await loadTags();
+    } catch (tagError) {
+      console.error(tagError);
+      setError("Could not save tag.");
+    } finally {
+      setSavingTag(false);
+    }
+  };
+
+  const removeTag = async (tagId) => {
+    setDeletingTagId(tagId);
+    setError("");
+    setMessage("");
+
+    try {
+      await deleteTag(tagId);
+      if (editingTagId === tagId) resetTagForm();
+      await loadTags();
+      setMessage("Tag deleted.");
+    } catch (tagError) {
+      console.error(tagError);
+      setError("Could not delete tag.");
+    } finally {
+      setDeletingTagId("");
+    }
+  };
+
+  const hasDetailChanges = (detail) => {
+    const savedDetail = savedDetailsById[detail.id] || {
+      time: "",
+      description: "",
+      colour: "",
+      tagId: "",
+    };
+    return (
+      (detail.time || "") !== savedDetail.time ||
+      (detail.description || "") !== savedDetail.description ||
+      normaliseHexColour(detail.colour) !== savedDetail.colour ||
+      (detail.tagId || "") !== savedDetail.tagId
+    );
+  };
+
+  const beginRowAction = () => {
+    suppressDetailBlurRef.current = true;
+    endRowAction();
+  };
+
+  const endRowAction = () => {
+    setTimeout(() => {
+      suppressDetailBlurRef.current = false;
+    }, 0);
+  };
+
+  const closeActionMenu = () => {
+    setOpenActionMenuId("");
+  };
+
+  const startEditingDetail = (detailId) => {
+    setEditingDetailId(detailId);
+    setOpenActionMenuId("");
+    setMessage("");
+    setError("");
+  };
+
+  const cancelEditingDetail = (dayId, detailId) => {
+    const savedDetail = savedDetailsById[detailId];
+    if (savedDetail) {
+      setDetailsByDayId((current) => ({
+        ...current,
+        [dayId]: (current[dayId] || []).map((detail) =>
+          detail.id === detailId ? { ...detail, ...savedDetail } : detail
+        ),
+      }));
+    }
+    setEditingDetailId("");
+    setOpenActionMenuId("");
+  };
+
   const saveDetail = async (dayId, detail) => {
     setSavingDetailId(detail.id);
     setError("");
@@ -227,12 +476,18 @@ export default function EventEditPage() {
       await updateScheduleDetail(detail.id, {
         time: detail.time || "",
         description: detail.description || "",
+        sortOrder: detail.sortOrder,
+        colour: normaliseHexColour(detail.colour),
+        tagId: detail.tagId || "",
       });
       setSavedDetailsById((current) => ({
         ...current,
         [detail.id]: {
           time: detail.time || "",
           description: detail.description || "",
+          sortOrder: detail.sortOrder,
+          colour: normaliseHexColour(detail.colour),
+          tagId: detail.tagId || "",
         },
       }));
 
@@ -241,6 +496,8 @@ export default function EventEditPage() {
         ...current,
         [dayId]: details,
       }));
+      setEditingDetailId((current) => (current === detail.id ? "" : current));
+      setOpenActionMenuId("");
     } catch (saveError) {
       console.error(saveError);
       setError("Could not save schedule detail.");
@@ -250,10 +507,229 @@ export default function EventEditPage() {
     }
   };
 
+  const saveDetailOnBlur = (event, dayId, detail) => {
+    if (suppressDetailBlurRef.current) return;
+    if (event.currentTarget.contains(event.relatedTarget)) return;
+
+    setOpenActionMenuId("");
+
+    if (hasDetailChanges(detail)) {
+      saveDetail(dayId, detail);
+      return;
+    }
+
+    setEditingDetailId((current) => (current === detail.id ? "" : current));
+  };
+
+  const deleteDetail = async (dayId, detailId) => {
+    setSavingDetailId(detailId);
+    setError("");
+
+    try {
+      await deleteScheduleDetail(detailId);
+      setDetailsByDayId((current) => ({
+        ...current,
+        [dayId]: (current[dayId] || []).filter((detail) => detail.id !== detailId),
+      }));
+      setSavedDetailsById((current) => {
+        const remainingDetails = { ...current };
+        delete remainingDetails[detailId];
+        return remainingDetails;
+      });
+      setEditingDetailId("");
+      setOpenActionMenuId("");
+    } catch (deleteError) {
+      console.error(deleteError);
+      setError("Could not delete schedule detail.");
+      await loadScheduleDetails(scheduleDays);
+    } finally {
+      setSavingDetailId("");
+    }
+  };
+
+  const persistDetailOrder = async (dayId, nextDetails) => {
+    const orderedDetails = nextDetails.map((detail, detailIndex) => ({
+      ...detail,
+      sortOrder: detailIndex,
+    }));
+
+    setDetailsByDayId((current) => ({
+      ...current,
+      [dayId]: orderedDetails,
+    }));
+    setSavedDetailsById((current) => ({
+      ...current,
+      ...Object.fromEntries(
+        orderedDetails.map((detail) => [
+          detail.id,
+          {
+            time: detail.time || "",
+            description: detail.description || "",
+            sortOrder: detail.sortOrder,
+            colour: normaliseHexColour(detail.colour),
+            tagId: detail.tagId || "",
+          },
+        ])
+      ),
+    }));
+    setReorderingDayId(dayId);
+    setError("");
+
+    try {
+      await updateScheduleDetailOrder(orderedDetails);
+    } catch (reorderError) {
+      console.error(reorderError);
+      setError("Could not reorder schedule details.");
+      await loadScheduleDetails(scheduleDays);
+    } finally {
+      setReorderingDayId("");
+    }
+  };
+
+  const reorderDetail = async (dayId, detailId, targetDetailId) => {
+    if (!targetDetailId || detailId === targetDetailId || reorderingDayId) return;
+
+    const currentDetails = detailsByDayId[dayId] || [];
+    const fromIndex = currentDetails.findIndex((detail) => detail.id === detailId);
+    const toIndex = currentDetails.findIndex((detail) => detail.id === targetDetailId);
+    if (fromIndex < 0 || toIndex < 0) return;
+
+    const detail = currentDetails[fromIndex];
+    const targetDetail = currentDetails[toIndex];
+    if ((detail.time || "") !== (targetDetail.time || "")) return;
+
+    const nextDetails = [...currentDetails];
+    const [movedDetail] = nextDetails.splice(fromIndex, 1);
+    const adjustedToIndex = fromIndex < toIndex ? toIndex - 1 : toIndex;
+    nextDetails.splice(adjustedToIndex, 0, movedDetail);
+    await persistDetailOrder(dayId, nextDetails);
+  };
+
+  const moveDetail = async (dayId, detailId, direction) => {
+    if (reorderingDayId) return;
+
+    const currentDetails = detailsByDayId[dayId] || [];
+    const detailIndex = currentDetails.findIndex((detail) => detail.id === detailId);
+    const targetIndex = detailIndex + direction;
+    if (detailIndex < 0 || targetIndex < 0 || targetIndex >= currentDetails.length) return;
+
+    const detail = currentDetails[detailIndex];
+    const targetDetail = currentDetails[targetIndex];
+    if ((detail.time || "") !== (targetDetail.time || "")) return;
+
+    const nextDetails = [...currentDetails];
+    [nextDetails[detailIndex], nextDetails[targetIndex]] = [
+      nextDetails[targetIndex],
+      nextDetails[detailIndex],
+    ];
+    closeActionMenu();
+    await persistDetailOrder(dayId, nextDetails);
+  };
+
+  const canMoveDetail = (dayDetails, detailIndex, direction) => {
+    const targetDetail = dayDetails[detailIndex + direction];
+    if (!targetDetail) return false;
+    return (dayDetails[detailIndex]?.time || "") === (targetDetail.time || "");
+  };
+
+  const getAdjacentDay = (dayId, direction) => {
+    const dayIndex = scheduleDays.findIndex((day) => day.id === dayId);
+    if (dayIndex < 0) return null;
+    return scheduleDays[dayIndex + direction] || null;
+  };
+
+  const getNextSortOrder = (dayId) => {
+    return (
+      (detailsByDayId[dayId] || []).reduce(
+        (maxSortOrder, detail, detailIndex) =>
+          Math.max(
+            maxSortOrder,
+            typeof detail.sortOrder === "number" ? detail.sortOrder : detailIndex
+          ),
+        -1
+      ) + 1
+    );
+  };
+
+  const moveDetailToDay = async (sourceDayId, targetDayId, detail) => {
+    if (!targetDayId || savingDetailId === detail.id) return;
+
+    setSavingDetailId(detail.id);
+    setError("");
+    closeActionMenu();
+
+    try {
+      await updateScheduleDetail(detail.id, {
+        time: detail.time || "",
+        description: detail.description || "",
+        sortOrder: getNextSortOrder(targetDayId),
+        scheduleDayId: targetDayId,
+        colour: normaliseHexColour(detail.colour),
+        tagId: detail.tagId || "",
+      });
+      await loadScheduleDetails(scheduleDays);
+      setEditingDetailId("");
+    } catch (moveError) {
+      console.error(moveError);
+      setError("Could not move schedule detail.");
+      await loadScheduleDetails(scheduleDays);
+    } finally {
+      setSavingDetailId("");
+    }
+  };
+
+  const duplicateDetail = async (dayId, detail) => {
+    if (savingDetailId === detail.id) return;
+
+    setSavingDetailId(detail.id);
+    setError("");
+    closeActionMenu();
+
+    try {
+      await createScheduleDetail({
+        scheduleDayId: dayId,
+        time: detail.time || "",
+        description: detail.description || "",
+        sortOrder: getNextSortOrder(dayId),
+        colour: normaliseHexColour(detail.colour),
+        tagId: detail.tagId || "",
+      });
+      const details = await getScheduleDetails(dayId);
+      setDetailsByDayId((current) => ({
+        ...current,
+        [dayId]: details,
+      }));
+      setSavedDetailsById((current) => ({
+        ...current,
+        ...Object.fromEntries(
+          details.map((nextDetail, detailIndex) => [
+            nextDetail.id,
+            {
+              time: nextDetail.time || "",
+              description: nextDetail.description || "",
+              sortOrder:
+                typeof nextDetail.sortOrder === "number" ? nextDetail.sortOrder : detailIndex,
+              colour: normaliseHexColour(nextDetail.colour),
+              tagId: nextDetail.tagId || "",
+            },
+          ])
+        ),
+      }));
+    } catch (duplicateError) {
+      console.error(duplicateError);
+      setError("Could not duplicate schedule detail.");
+    } finally {
+      setSavingDetailId("");
+    }
+  };
+
   const addDraftDetail = (dayId) => {
     setDraftDetailsByDayId((current) => ({
       ...current,
-      [dayId]: [...(current[dayId] || []), { time: "", description: "" }],
+      [dayId]: [
+        ...(current[dayId] || []),
+        { time: "", description: "", colour: "", tagId: selectedTagFilterId || "" },
+      ],
     }));
   };
 
@@ -282,6 +758,8 @@ export default function EventEditPage() {
         scheduleDayId: dayId,
         time: draft.time,
         description: draft.description,
+        colour: normaliseHexColour(draft.colour),
+        tagId: draft.tagId || "",
       });
       removeDraftDetail(dayId, draftIndex);
 
@@ -293,11 +771,14 @@ export default function EventEditPage() {
       setSavedDetailsById((current) => ({
         ...current,
         ...Object.fromEntries(
-          details.map((detail) => [
+          details.map((detail, detailIndex) => [
             detail.id,
             {
               time: detail.time || "",
               description: detail.description || "",
+              sortOrder: typeof detail.sortOrder === "number" ? detail.sortOrder : detailIndex,
+              colour: normaliseHexColour(detail.colour),
+              tagId: detail.tagId || "",
             },
           ])
         ),
@@ -328,6 +809,8 @@ export default function EventEditPage() {
         form.scheduleStartDate,
         form.scheduleEndDate
       );
+      setSavedEventForm(form);
+      setIsEditingEventDetails(false);
       applyScheduleDays(days);
       setMessage("Event saved and schedule days synced.");
     } catch (saveError) {
@@ -344,8 +827,7 @@ export default function EventEditPage() {
     <main className="page">
       <div className="page-header">
         <div>
-          <h1 className="page-title">Edit Event</h1>
-          <p className="page-subtitle">{form.name || eventId}</p>
+          <h1 className="page-title">{form.name || eventId}</h1>
         </div>
         <div className="actions inline-actions">
           <Link className="button secondary" to={`/events/${eventId}`}>
@@ -379,77 +861,137 @@ export default function EventEditPage() {
         >
           Detail
         </button>
+        <button
+          className={activeTab === "settings" ? "tab active" : "tab"}
+          type="button"
+          onClick={() => setActiveTab("settings")}
+        >
+          Settings
+        </button>
       </nav>
 
       {activeTab === "details" ? (
       <section className="panel">
-        <h2>Event</h2>
+        <div className="panel-heading">
+          <h2>Event</h2>
+          {!isEditingEventDetails ? (
+            <button
+              className="button secondary"
+              type="button"
+              onClick={() => {
+                setIsEditingEventDetails(true);
+                setMessage("");
+                setError("");
+              }}
+            >
+              Edit
+            </button>
+          ) : null}
+        </div>
         <form onSubmit={handleEventSave}>
           <div className="form-grid">
             <div className="form-row">
               <label htmlFor="editName">Name</label>
-              <input
-                id="editName"
-                value={form.name}
-                onChange={(event) => updateField("name", event.target.value)}
-                required
-              />
+              {isEditingEventDetails ? (
+                <input
+                  id="editName"
+                  value={form.name}
+                  onChange={(event) => updateField("name", event.target.value)}
+                  required
+                />
+              ) : (
+                <span className="readonly-value">{form.name || "-"}</span>
+              )}
             </div>
             <div className="form-row">
               <label htmlFor="editClientName">Client</label>
-              <input
-                id="editClientName"
-                value={form.clientName}
-                onChange={(event) => updateField("clientName", event.target.value)}
-                required
-              />
+              {isEditingEventDetails ? (
+                <input
+                  id="editClientName"
+                  value={form.clientName}
+                  onChange={(event) => updateField("clientName", event.target.value)}
+                  required
+                />
+              ) : (
+                <span className="readonly-value">{form.clientName || "-"}</span>
+              )}
             </div>
             <div className="form-row">
               <label htmlFor="editStartDate">Start date</label>
-              <input
-                id="editStartDate"
-                type="date"
-                value={form.startDate}
-                onChange={(event) => updateField("startDate", event.target.value)}
-                required
-              />
+              {isEditingEventDetails ? (
+                <input
+                  id="editStartDate"
+                  type="date"
+                  value={form.startDate}
+                  onChange={(event) => updateField("startDate", event.target.value)}
+                  required
+                />
+              ) : (
+                <span className="readonly-value">{formatFriendlyDate(form.startDate) || "-"}</span>
+              )}
             </div>
             <div className="form-row">
               <label htmlFor="editEndDate">End date</label>
-              <input
-                id="editEndDate"
-                type="date"
-                value={form.endDate}
-                onChange={(event) => updateField("endDate", event.target.value)}
-                required
-              />
+              {isEditingEventDetails ? (
+                <input
+                  id="editEndDate"
+                  type="date"
+                  value={form.endDate}
+                  onChange={(event) => updateField("endDate", event.target.value)}
+                  required
+                />
+              ) : (
+                <span className="readonly-value">{formatFriendlyDate(form.endDate) || "-"}</span>
+              )}
             </div>
             <div className="form-row">
               <label htmlFor="editScheduleStartDate">Schedule start date</label>
-              <input
-                id="editScheduleStartDate"
-                type="date"
-                value={form.scheduleStartDate}
-                onChange={(event) => updateField("scheduleStartDate", event.target.value)}
-                required
-              />
+              {isEditingEventDetails ? (
+                <input
+                  id="editScheduleStartDate"
+                  type="date"
+                  value={form.scheduleStartDate}
+                  onChange={(event) => updateField("scheduleStartDate", event.target.value)}
+                  required
+                />
+              ) : (
+                <span className="readonly-value">
+                  {formatFriendlyDate(form.scheduleStartDate) || "-"}
+                </span>
+              )}
             </div>
             <div className="form-row">
               <label htmlFor="editScheduleEndDate">Schedule end date</label>
-              <input
-                id="editScheduleEndDate"
-                type="date"
-                value={form.scheduleEndDate}
-                onChange={(event) => updateField("scheduleEndDate", event.target.value)}
-                required
-              />
+              {isEditingEventDetails ? (
+                <input
+                  id="editScheduleEndDate"
+                  type="date"
+                  value={form.scheduleEndDate}
+                  onChange={(event) => updateField("scheduleEndDate", event.target.value)}
+                  required
+                />
+              ) : (
+                <span className="readonly-value">
+                  {formatFriendlyDate(form.scheduleEndDate) || "-"}
+                </span>
+              )}
             </div>
           </div>
-          <div className="actions">
-            <button className="button" type="submit" disabled={savingEvent}>
-              {savingEvent ? "Saving..." : "Save Event"}
-            </button>
-          </div>
+          {isEditingEventDetails ? (
+            <div className="actions">
+              <button className="button" type="submit" disabled={savingEvent}>
+                {savingEvent ? "Saving..." : "Save Event"}
+              </button>
+              <button
+                className="button secondary"
+                type="button"
+                disabled={savingEvent}
+                onClick={cancelEditingEventDetails}
+              >
+                Cancel
+              </button>
+            </div>
+          ) : null}
         </form>
       </section>
       ) : null}
@@ -551,25 +1093,63 @@ export default function EventEditPage() {
 
       {activeTab === "detail" ? (
       <section className="panel">
-        <h2>Detail</h2>
+        {usedTags.length > 0 ? (
+          <div className="tag-filter-bar" aria-label="Filter schedule rows by tag">
+            <button
+              className={!selectedTagFilterId ? "tag-filter-button active" : "tag-filter-button"}
+              type="button"
+              onClick={() => setSelectedTagFilterId("")}
+            >
+              All tags
+            </button>
+            {usedTags.map((tag) => (
+              <button
+                className={
+                  selectedTagFilterId === tag.id
+                    ? "tag-filter-button active"
+                    : "tag-filter-button"
+                }
+                type="button"
+                key={tag.id}
+                style={selectedTagFilterId === tag.id ? getTagStyle(tag) : undefined}
+                onClick={() =>
+                  setSelectedTagFilterId((current) => (current === tag.id ? "" : tag.id))
+                }
+              >
+                <span
+                  className="tag-dot"
+                  style={{ backgroundColor: normaliseHexColour(tag.colour) }}
+                />
+                {tag.name}
+              </button>
+            ))}
+          </div>
+        ) : null}
         {scheduleDays.length === 0 ? (
           <p className="item-meta">No schedule days yet.</p>
         ) : (
           <section className="list">
             {scheduleDays.map((day) => {
-              const dayDetails = detailsByDayId[day.id] || [];
+              const allDayDetails = detailsByDayId[day.id] || [];
+              const dayDetails = selectedTagFilterId
+                ? allDayDetails.filter((detail) => detail.tagId === selectedTagFilterId)
+                : allDayDetails;
               const draftDetails = draftDetailsByDayId[day.id] || [];
 
               return (
                 <article className="list-item" key={day.id}>
-                  <div className="day-card-content">
-                    <div className="day-heading">
-                      <div>
-                        <p className="item-title">{formatDetailDate(day.date)}</p>
-                        {day.summary ? (
-                          <p className="item-meta">{day.summary}</p>
-                        ) : null}
-                      </div>
+	                  <div className="day-card-content">
+	                    <div className="day-heading">
+	                      <div>
+	                        <p className="item-title day-title-line">
+	                          <span>{formatDetailDate(day.date)}</span>
+	                          {day.summary ? (
+	                            <span className="item-meta day-title-summary">{day.summary}</span>
+	                          ) : null}
+	                        </p>
+	                      </div>
+	                    </div>
+                    <div className="day-card-actions">
                       <button
                         className="small-button"
                         type="button"
@@ -577,8 +1157,6 @@ export default function EventEditPage() {
                       >
                         Add row
                       </button>
-                    </div>
-                    <div className="day-card-actions">
                       <button
                         className="compact-button"
                         type="button"
@@ -589,47 +1167,264 @@ export default function EventEditPage() {
                     </div>
 
                     {dayDetails.length === 0 && draftDetails.length === 0 ? (
-                      <p className="item-meta">No schedule details yet.</p>
+                      <p className="item-meta">
+                        {selectedTagFilterId ? "No rows for selected tag." : "No schedule details yet."}
+                      </p>
                     ) : (
                       <div className="detail-list">
-                        {dayDetails.map((detail) => {
-                          const savedDetail = savedDetailsById[detail.id] || {
-                            time: "",
-                            description: "",
-                          };
-                          const hasUnsavedEdit =
-                            (detail.time || "") !== savedDetail.time ||
-                            (detail.description || "") !== savedDetail.description;
+                        {dayDetails.map((detail, detailIndex) => {
+                          const isEditingDetail = editingDetailId === detail.id;
+                          const canMoveUp = canMoveDetail(dayDetails, detailIndex, -1);
+                          const canMoveDown = canMoveDetail(dayDetails, detailIndex, 1);
+                          const previousDay = getAdjacentDay(day.id, -1);
+                          const nextDay = getAdjacentDay(day.id, 1);
 
                           return (
-                            <div className="detail-row" key={detail.id}>
-                              <input
-                                className="plain-input detail-time-input"
-                                aria-label={`Time for ${detail.description || "schedule detail"}`}
-                                type="time"
-                                value={detail.time || ""}
-                                onChange={(event) =>
-                                  updateDetailField(day.id, detail.id, "time", event.target.value)
+                            <div
+                              className={
+                                isEditingDetail ? "detail-row" : "detail-row draggable-row"
+                              }
+                              key={detail.id}
+                              style={getRowTagStyle(getTagById(detail.tagId))}
+                              draggable={!isEditingDetail}
+                              onDragStart={(event) => {
+                                draggedDetailIdRef.current = detail.id;
+                                event.dataTransfer.effectAllowed = "move";
+                              }}
+                              onDragOver={(event) => {
+                                const draggedDetail = dayDetails.find(
+                                  (nextDetail) => nextDetail.id === draggedDetailIdRef.current
+                                );
+                                if (
+                                  draggedDetail &&
+                                  draggedDetail.id !== detail.id &&
+                                  (draggedDetail.time || "") === (detail.time || "")
+                                ) {
+                                  event.preventDefault();
+                                  event.dataTransfer.dropEffect = "move";
                                 }
-                              />
-                              <input
-                                className="plain-input"
-                                aria-label={`Description for ${detail.time}`}
-                                value={detail.description || ""}
-                                onChange={(event) =>
-                                  updateDetailField(day.id, detail.id, "description", event.target.value)
-                                }
-                              />
-                              {hasUnsavedEdit ? (
-                                <button
-                                  className="button secondary"
-                                  type="button"
+                              }}
+                              onDrop={(event) => {
+                                event.preventDefault();
+                                reorderDetail(day.id, draggedDetailIdRef.current, detail.id);
+                                draggedDetailIdRef.current = "";
+                              }}
+                              onDragEnd={() => {
+                                draggedDetailIdRef.current = "";
+                              }}
+                              onBlur={
+                                isEditingDetail
+                                  ? (event) => saveDetailOnBlur(event, day.id, detail)
+                                  : undefined
+                              }
+                            >
+                              {isEditingDetail ? (
+                                <>
+                                  <input
+                                    className="plain-input detail-time-input"
+                                    aria-label={`Time for ${detail.description || "schedule detail"}`}
+                                    type="time"
+                                    value={detail.time || ""}
+                                    onChange={(event) =>
+                                      updateDetailField(day.id, detail.id, "time", event.target.value)
+                                    }
+                                  />
+                                  <input
+                                    className="plain-input"
+                                    aria-label={`Description for ${detail.time}`}
+                                    value={detail.description || ""}
+                                    onChange={(event) =>
+                                      updateDetailField(day.id, detail.id, "description", event.target.value)
+                                    }
+                                  />
+                                </>
+                              ) : (
+                                <>
+                                  <span className="display-text detail-time-display">
+                                    {detail.time || ""}
+                                  </span>
+                                  <span className="display-text">
+                                    {detail.description || ""}
+                                  </span>
+                                </>
+                              )}
+                              <div
+                                className="tag-select-wrap"
+                                style={getTagStyle(getTagById(detail.tagId))}
+                              >
+                                <span
+                                  className="tag-dot"
+                                  style={{
+                                    backgroundColor:
+                                      normaliseHexColour(getTagById(detail.tagId)?.colour) ||
+                                      "transparent",
+                                  }}
+                                />
+                                <select
+                                  aria-label={`Tag for ${detail.description || "schedule detail"}`}
+                                  value={getTagById(detail.tagId) ? detail.tagId : ""}
                                   disabled={savingDetailId === detail.id}
-                                  onClick={() => saveDetail(day.id, detail)}
+                                  onChange={(event) =>
+                                    assignDetailTag(day.id, detail, event.target.value)
+                                  }
                                 >
-                                  {savingDetailId === detail.id ? "Saving..." : "Save"}
-                                </button>
-                              ) : null}
+                                  <option value="">No tag</option>
+                                  {tags.map((tag) => (
+                                    <option key={tag.id} value={tag.id}>
+                                      {tag.name}
+                                    </option>
+                                  ))}
+                                </select>
+                              </div>
+                              <div className="detail-row-actions">
+                                {!isEditingDetail ? (
+                                  <button
+                                    className="compact-button"
+                                    type="button"
+                                    onClick={() => startEditingDetail(detail.id)}
+                                  >
+                                    Edit
+                                  </button>
+                                ) : null}
+                                <div
+                                  className="action-menu"
+                                  onBlur={(event) => {
+                                    if (!event.currentTarget.contains(event.relatedTarget)) {
+                                      setOpenActionMenuId("");
+                                    }
+                                  }}
+                                >
+                                  <button
+                                    className={
+                                      openActionMenuId === detail.id
+                                        ? "action-menu-trigger active"
+                                        : "action-menu-trigger"
+                                    }
+                                    type="button"
+                                    aria-label="Row actions"
+                                    aria-expanded={openActionMenuId === detail.id}
+                                    onMouseDown={beginRowAction}
+                                    onClick={() => {
+                                      setOpenActionMenuId((current) =>
+                                        current === detail.id ? "" : detail.id
+                                      );
+                                      endRowAction();
+                                    }}
+                                  >
+                                    <span aria-hidden="true">...</span>
+                                  </button>
+                                  {openActionMenuId === detail.id ? (
+                                  <div
+                                    className="action-menu-list"
+                                    onMouseDown={beginRowAction}
+                                  >
+                                    {!isEditingDetail ? (
+                                      <>
+                                        <button
+                                          className="action-menu-item"
+                                          type="button"
+                                          disabled={!canMoveUp || reorderingDayId === day.id}
+                                          onClick={() => {
+                                            moveDetail(day.id, detail.id, -1);
+                                            endRowAction();
+                                          }}
+                                        >
+                                          Move up
+                                        </button>
+                                        <button
+                                          className="action-menu-item"
+                                          type="button"
+                                          disabled={!canMoveDown || reorderingDayId === day.id}
+                                          onClick={() => {
+                                            moveDetail(day.id, detail.id, 1);
+                                            endRowAction();
+                                          }}
+                                        >
+                                          Move down
+                                        </button>
+                                        {previousDay ? (
+                                          <button
+                                            className="action-menu-item"
+                                            type="button"
+                                            disabled={savingDetailId === detail.id}
+                                            onClick={() => {
+                                              moveDetailToDay(day.id, previousDay.id, detail);
+                                              endRowAction();
+                                            }}
+                                          >
+                                            Move to previous day
+                                          </button>
+                                        ) : null}
+                                        {nextDay ? (
+                                          <button
+                                            className="action-menu-item"
+                                            type="button"
+                                            disabled={savingDetailId === detail.id}
+                                            onClick={() => {
+                                              moveDetailToDay(day.id, nextDay.id, detail);
+                                              endRowAction();
+                                            }}
+                                          >
+                                            Move to next day
+                                          </button>
+                                        ) : null}
+                                        <button
+                                          className="action-menu-item"
+                                          type="button"
+                                          disabled={savingDetailId === detail.id}
+                                          onClick={() => {
+                                            duplicateDetail(day.id, detail);
+                                            endRowAction();
+                                          }}
+                                        >
+                                          Duplicate
+                                        </button>
+                                      </>
+                                    ) : null}
+                                    {isEditingDetail ? (
+                                      <>
+                                        <button
+                                          className="action-menu-item primary"
+                                          type="button"
+                                          disabled={savingDetailId === detail.id}
+                                          onClick={() => {
+                                            closeActionMenu();
+                                            saveDetail(day.id, detail);
+                                            endRowAction();
+                                          }}
+                                        >
+                                          {savingDetailId === detail.id ? "Saving..." : "Save"}
+                                        </button>
+                                        <button
+                                          className="action-menu-item"
+                                          type="button"
+                                          disabled={savingDetailId === detail.id}
+                                          onClick={() => {
+                                            closeActionMenu();
+                                            cancelEditingDetail(day.id, detail.id);
+                                            endRowAction();
+                                          }}
+                                        >
+                                          Cancel
+                                        </button>
+                                      </>
+                                    ) : null}
+                                    <button
+                                      className="action-menu-item danger"
+                                      type="button"
+                                      disabled={savingDetailId === detail.id}
+                                      onClick={() => {
+                                        closeActionMenu();
+                                        deleteDetail(day.id, detail.id);
+                                        endRowAction();
+                                      }}
+                                    >
+                                      Delete
+                                    </button>
+                                  </div>
+                                  ) : null}
+                                </div>
+                              </div>
                             </div>
                           );
                         })}
@@ -652,6 +1447,33 @@ export default function EventEditPage() {
                               placeholder="Description"
                               required
                             />
+                            <div
+                              className="tag-select-wrap"
+                              style={getTagStyle(getTagById(draft.tagId))}
+                            >
+                              <span
+                                className="tag-dot"
+                                style={{
+                                  backgroundColor:
+                                    normaliseHexColour(getTagById(draft.tagId)?.colour) ||
+                                    "transparent",
+                                }}
+                              />
+                              <select
+                                aria-label="New detail tag"
+                                value={getTagById(draft.tagId) ? draft.tagId : ""}
+                                onChange={(event) =>
+                                  updateDraftDetail(day.id, draftIndex, "tagId", event.target.value)
+                                }
+                              >
+                                <option value="">No tag</option>
+                                {tags.map((tag) => (
+                                  <option key={tag.id} value={tag.id}>
+                                    {tag.name}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
                             <div className="draft-actions">
                               <button
                                 className="button secondary"
@@ -682,6 +1504,111 @@ export default function EventEditPage() {
             })}
           </section>
         )}
+      </section>
+      ) : null}
+
+      {activeTab === "settings" ? (
+      <section className="panel">
+        <h2>Settings</h2>
+        <nav className="tabs nested-tabs" aria-label="Settings sections">
+          <button
+            className={activeSettingsTab === "tags" ? "tab active" : "tab"}
+            type="button"
+            onClick={() => setActiveSettingsTab("tags")}
+          >
+            Tags
+          </button>
+        </nav>
+
+        {activeSettingsTab === "tags" ? (
+          <div className="settings-section">
+            <form className="tag-form" onSubmit={saveTag}>
+              <div className="form-grid">
+                <div className="form-row">
+                  <label htmlFor="tagName">Tag name</label>
+                  <input
+                    id="tagName"
+                    value={tagForm.name}
+                    onChange={(event) => updateTagFormField("name", event.target.value)}
+                    placeholder="Confirmed"
+                    required
+                  />
+                </div>
+                <div className="form-row">
+                  <label htmlFor="tagColour">Colour</label>
+                  <div className="tag-colour-field">
+                    <input
+                      id="tagColourPicker"
+                      className="colour-picker"
+                      aria-label="Tag colour picker"
+                      type="color"
+                      value={normaliseHexColour(tagForm.colour) || emptyTagForm.colour}
+                      onChange={(event) => updateTagFormField("colour", event.target.value)}
+                    />
+                    <input
+                      id="tagColour"
+                      value={tagForm.colour}
+                      onChange={(event) => updateTagFormField("colour", event.target.value)}
+                      placeholder="#DCEEFF"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="actions">
+                <button className="button" type="submit" disabled={savingTag}>
+                  {savingTag ? "Saving..." : editingTagId ? "Save tag" : "Create tag"}
+                </button>
+                {editingTagId ? (
+                  <button
+                    className="button secondary"
+                    type="button"
+                    disabled={savingTag}
+                    onClick={resetTagForm}
+                  >
+                    Cancel
+                  </button>
+                ) : null}
+              </div>
+            </form>
+
+            {tags.length === 0 ? (
+              <p className="item-meta">No tags yet.</p>
+            ) : (
+              <div className="tag-list">
+                {tags.map((tag) => (
+                  <div className="tag-list-row" key={tag.id}>
+                    <span className="tag-chip" style={getTagStyle(tag)}>
+                      <span
+                        className="tag-dot"
+                        style={{ backgroundColor: normaliseHexColour(tag.colour) }}
+                      />
+                      {tag.name}
+                    </span>
+                    <span className="item-meta">{normaliseHexColour(tag.colour)}</span>
+                    <div className="tag-list-actions">
+                      <button
+                        className="compact-button"
+                        type="button"
+                        onClick={() => startEditingTag(tag)}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="compact-button"
+                        type="button"
+                        disabled={deletingTagId === tag.id}
+                        onClick={() => removeTag(tag.id)}
+                      >
+                        {deletingTagId === tag.id ? "Deleting..." : "Delete"}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        ) : null}
       </section>
       ) : null}
 
