@@ -53,6 +53,26 @@ button:disabled {
   gap: 12px;
 }
 
+.connection-pill {
+  border: 1px solid #c9d3dc;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 8px;
+}
+
+.connection-pill.online {
+  background: #eaf8f0;
+  border-color: #bde6ce;
+  color: #1f7a4d;
+}
+
+.connection-pill.offline {
+  background: #fff3e5;
+  border-color: #f4c99b;
+  color: #8a4d10;
+}
+
 .page {
   margin: 0 auto;
   max-width: 960px;
@@ -76,6 +96,31 @@ button:disabled {
 .page-subtitle {
   color: #5d6d7e;
   margin: 6px 0 0;
+}
+
+.cache-status {
+  align-items: center;
+  color: #5d6d7e;
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 13px;
+  gap: 6px;
+  margin: 8px 0 0;
+}
+
+.status-dot {
+  border-radius: 999px;
+  display: inline-block;
+  height: 8px;
+  width: 8px;
+}
+
+.status-dot.online {
+  background: #1f7a4d;
+}
+
+.status-dot.offline {
+  background: #c46a14;
 }
 
 .panel {
@@ -746,6 +791,16 @@ textarea {
 
 .success-message {
   color: #1f7a4d;
+}
+
+.offline-message {
+  background: #fff8ed;
+  border: 1px solid #f3d2aa;
+  border-radius: 8px;
+  color: #8a4d10;
+  margin: 0 0 14px;
+  padding: 10px 12px;
+  text-align: left;
 }
 
 .error {

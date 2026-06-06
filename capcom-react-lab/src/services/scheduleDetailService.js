@@ -11,6 +11,12 @@ import {
   writeBatch,
 } from "firebase/firestore";
 import { db } from "../firebase/firestore";
+import {
+  assertOnline,
+  cacheScheduleDetails,
+  getCachedScheduleDetails,
+  isBrowserOffline,
+} from "./localScheduleCache.js";
 
 const scheduleDetailsRef = collection(db, "scheduleDetails");
 
@@ -31,17 +37,27 @@ function sortScheduleDetails(details) {
 }
 
 export async function getScheduleDetails(scheduleDayId) {
+  if (isBrowserOffline()) return getCachedScheduleDetails(scheduleDayId);
+
   const detailsQuery = query(
     scheduleDetailsRef,
     where("scheduleDayId", "==", scheduleDayId)
   );
-  const snapshot = await getDocs(detailsQuery);
-  return sortScheduleDetails(
-    snapshot.docs.map((detailDoc) => ({
-      id: detailDoc.id,
-      ...detailDoc.data(),
-    }))
-  );
+  try {
+    const snapshot = await getDocs(detailsQuery);
+    const details = sortScheduleDetails(
+      snapshot.docs.map((detailDoc) => ({
+        id: detailDoc.id,
+        ...detailDoc.data(),
+      }))
+    );
+    cacheScheduleDetails(scheduleDayId, details);
+    return details;
+  } catch (error) {
+    const cachedDetails = getCachedScheduleDetails(scheduleDayId);
+    if (cachedDetails.length > 0) return cachedDetails;
+    throw error;
+  }
 }
 
 export async function createScheduleDetail({
@@ -52,6 +68,7 @@ export async function createScheduleDetail({
   colour,
   tagId,
 }) {
+  assertOnline();
   const dayDetails = await getScheduleDetails(scheduleDayId);
   const nextSortOrder =
     typeof sortOrder === "number"
@@ -77,6 +94,7 @@ export async function updateScheduleDetail(
   detailId,
   { time, description, sortOrder, scheduleDayId, colour, tagId }
 ) {
+  assertOnline();
   const updates = {
     time,
     description,
@@ -103,10 +121,12 @@ export async function updateScheduleDetail(
 }
 
 export async function deleteScheduleDetail(detailId) {
+  assertOnline();
   return deleteDoc(doc(db, "scheduleDetails", detailId));
 }
 
 export async function updateScheduleDetailOrder(details) {
+  assertOnline();
   const batch = writeBatch(db);
 
   details.forEach((detail, index) => {

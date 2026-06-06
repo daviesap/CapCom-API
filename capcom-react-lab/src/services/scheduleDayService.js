@@ -9,25 +9,42 @@ import {
   writeBatch,
 } from "firebase/firestore";
 import { db } from "../firebase/firestore";
+import {
+  assertOnline,
+  cacheScheduleDays,
+  getCachedScheduleDays,
+  isBrowserOffline,
+} from "./localScheduleCache.js";
 
 const scheduleDaysRef = collection(db, "scheduleDays");
 const scheduleDetailsRef = collection(db, "scheduleDetails");
 
 export async function getScheduleDays(eventId) {
+  if (isBrowserOffline()) return getCachedScheduleDays(eventId);
+
   const daysQuery = query(
     scheduleDaysRef,
     where("eventId", "==", eventId)
   );
-  const snapshot = await getDocs(daysQuery);
-  return snapshot.docs
-    .map((dayDoc) => ({
-      id: dayDoc.id,
-      ...dayDoc.data(),
-    }))
-    .sort((a, b) => String(a.date).localeCompare(String(b.date)));
+  try {
+    const snapshot = await getDocs(daysQuery);
+    const days = snapshot.docs
+      .map((dayDoc) => ({
+        id: dayDoc.id,
+        ...dayDoc.data(),
+      }))
+      .sort((a, b) => String(a.date).localeCompare(String(b.date)));
+    cacheScheduleDays(eventId, days);
+    return days;
+  } catch (error) {
+    const cachedDays = getCachedScheduleDays(eventId);
+    if (cachedDays.length > 0) return cachedDays;
+    throw error;
+  }
 }
 
 export async function createScheduleDay({ eventId, date }) {
+  assertOnline();
   const batch = writeBatch(db);
   const dayRef = doc(scheduleDaysRef);
   batch.set(dayRef, {
@@ -42,6 +59,7 @@ export async function createScheduleDay({ eventId, date }) {
 }
 
 export async function updateScheduleDay(dayId, { summary, endOfDayTarget }) {
+  assertOnline();
   return updateDoc(doc(db, "scheduleDays", dayId), {
     summary,
     endOfDayTarget,
@@ -71,6 +89,7 @@ function getDateRange(startDate, endDate) {
 }
 
 export async function syncScheduleDaysToRange(eventId, startDate, endDate) {
+  assertOnline();
   const requiredDates = getDateRange(startDate, endDate);
   const existingDays = await getScheduleDays(eventId);
   const existingDates = new Set(existingDays.map((day) => day.date));

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import EmptyState from "../components/EmptyState.jsx";
 import Loading from "../components/Loading.jsx";
+import useOnlineStatus from "../hooks/useOnlineStatus.js";
 import { createEvent, getEvents } from "../services/eventService.js";
 import { syncScheduleDaysToRange } from "../services/scheduleDayService.js";
 
@@ -15,6 +16,8 @@ const emptyForm = {
 };
 
 export default function EventListPage() {
+  const isOnline = useOnlineStatus();
+  const isOffline = !isOnline;
   const [events, setEvents] = useState([]);
   const [form, setForm] = useState(emptyForm);
   const [showCreateOverlay, setShowCreateOverlay] = useState(false);
@@ -52,6 +55,10 @@ export default function EventListPage() {
 
   const handleSubmit = async (submitEvent) => {
     submitEvent.preventDefault();
+    if (isOffline) {
+      setError("Creating events is disabled while offline.");
+      return;
+    }
     setSaving(true);
     setError("");
 
@@ -87,6 +94,7 @@ export default function EventListPage() {
         <button
           className="button"
           type="button"
+          disabled={isOffline}
           onClick={() => {
             setError("");
             setShowCreateOverlay(true);
@@ -97,6 +105,9 @@ export default function EventListPage() {
       </div>
 
       {error && !showCreateOverlay ? <p className="error">{error}</p> : null}
+      {isOffline ? (
+        <p className="message offline-message">Offline mode: previously loaded schedules are read-only.</p>
+      ) : null}
       {loading ? <Loading label="Loading events..." /> : null}
       {!loading && events.length === 0 ? <EmptyState message="No events yet." /> : null}
 
@@ -206,7 +217,7 @@ export default function EventListPage() {
                 </div>
               </div>
               <div className="actions">
-                <button className="button" type="submit" disabled={saving}>
+                <button className="button" type="submit" disabled={saving || isOffline}>
                   {saving ? "Creating..." : "Create Event"}
                 </button>
                 <button

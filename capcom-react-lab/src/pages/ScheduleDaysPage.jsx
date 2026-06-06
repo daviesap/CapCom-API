@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import EmptyState from "../components/EmptyState.jsx";
 import Loading from "../components/Loading.jsx";
+import ScheduleCacheStatus from "../components/ScheduleCacheStatus.jsx";
+import useOnlineStatus from "../hooks/useOnlineStatus.js";
 import { getEvent } from "../services/eventService.js";
 import { getScheduleDays } from "../services/scheduleDayService.js";
 import {
@@ -12,6 +14,8 @@ import {
 
 export default function ScheduleDaysPage() {
   const { eventId } = useParams();
+  const isOnline = useOnlineStatus();
+  const isOffline = !isOnline;
   const [event, setEvent] = useState(null);
   const [days, setDays] = useState([]);
   const [detailsByDayId, setDetailsByDayId] = useState({});
@@ -75,6 +79,10 @@ export default function ScheduleDaysPage() {
   };
 
   const saveDetail = async (dayId, detail) => {
+    if (isOffline) {
+      setError("Editing is disabled while offline.");
+      return;
+    }
     setSavingDetailId(detail.id);
     setError("");
 
@@ -106,6 +114,7 @@ export default function ScheduleDaysPage() {
   };
 
   const addDraftDetail = (dayId) => {
+    if (isOffline) return;
     setDraftDetailsByDayId((current) => ({
       ...current,
       [dayId]: [...(current[dayId] || []), { time: "", description: "" }],
@@ -129,6 +138,10 @@ export default function ScheduleDaysPage() {
   };
 
   const saveDraftDetail = async (dayId, draftIndex, draft) => {
+    if (isOffline) {
+      setError("Editing is disabled while offline.");
+      return;
+    }
     setSavingDraftDayId(dayId);
     setError("");
 
@@ -173,6 +186,7 @@ export default function ScheduleDaysPage() {
         <div>
           <h1 className="page-title">Schedule Days</h1>
           <p className="page-subtitle">{event?.name || eventId}</p>
+          <ScheduleCacheStatus eventId={eventId} />
         </div>
         <Link className="button secondary" to={`/events/${eventId}`}>
           Back to Event
@@ -180,6 +194,9 @@ export default function ScheduleDaysPage() {
       </div>
 
       {error ? <p className="error">{error}</p> : null}
+      {isOffline ? (
+        <p className="message offline-message">Offline mode: schedule editing is disabled.</p>
+      ) : null}
       {days.length === 0 ? <EmptyState message="No schedule days yet." /> : null}
 
       <section className="list">
@@ -195,6 +212,7 @@ export default function ScheduleDaysPage() {
                   <button
                     className="small-button"
                     type="button"
+                    disabled={isOffline}
                     onClick={() => addDraftDetail(day.id)}
                   >
                     Add row
@@ -221,6 +239,7 @@ export default function ScheduleDaysPage() {
                             aria-label={`Time for ${detail.description || "schedule detail"}`}
                             type="time"
                             value={detail.time || ""}
+                            disabled={isOffline}
                             onChange={(event) =>
                               updateDetailField(day.id, detail.id, "time", event.target.value)
                             }
@@ -229,6 +248,7 @@ export default function ScheduleDaysPage() {
                             className="plain-input"
                             aria-label={`Description for ${detail.time}`}
                             value={detail.description || ""}
+                            disabled={isOffline}
                             onChange={(event) =>
                               updateDetailField(day.id, detail.id, "description", event.target.value)
                             }
@@ -237,7 +257,7 @@ export default function ScheduleDaysPage() {
                             <button
                               className="button secondary"
                               type="button"
-                              disabled={savingDetailId === detail.id}
+                              disabled={savingDetailId === detail.id || isOffline}
                               onClick={() => saveDetail(day.id, detail)}
                             >
                               {savingDetailId === detail.id ? "Saving..." : "Save"}
@@ -252,6 +272,7 @@ export default function ScheduleDaysPage() {
                           aria-label="New detail time"
                           type="time"
                           value={draft.time}
+                          disabled={isOffline}
                           onChange={(event) =>
                             updateDraftDetail(day.id, draftIndex, "time", event.target.value)
                           }
@@ -259,6 +280,7 @@ export default function ScheduleDaysPage() {
                         <input
                           aria-label="New detail description"
                           value={draft.description}
+                          disabled={isOffline}
                           onChange={(event) =>
                             updateDraftDetail(day.id, draftIndex, "description", event.target.value)
                           }
@@ -269,6 +291,7 @@ export default function ScheduleDaysPage() {
                           <button
                             className="button secondary"
                             type="button"
+                            disabled={isOffline}
                             onClick={() => removeDraftDetail(day.id, draftIndex)}
                           >
                             Cancel
@@ -276,7 +299,7 @@ export default function ScheduleDaysPage() {
                           <button
                             className="button"
                             type="button"
-                            disabled={savingDraftDayId === day.id || !draft.description.trim()}
+                          disabled={savingDraftDayId === day.id || !draft.description.trim() || isOffline}
                             onClick={() => saveDraftDetail(day.id, draftIndex, draft)}
                           >
                             {savingDraftDayId === day.id ? "Saving..." : "Save"}

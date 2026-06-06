@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import Loading from "../components/Loading.jsx";
+import ScheduleCacheStatus from "../components/ScheduleCacheStatus.jsx";
+import useOnlineStatus from "../hooks/useOnlineStatus.js";
 import { getEvent, updateEvent } from "../services/eventService.js";
 import {
   getScheduleDays,
@@ -95,6 +97,8 @@ function getRowTagStyle(tag) {
 
 export default function EventEditPage() {
   const { eventId } = useParams();
+  const isOnline = useOnlineStatus();
+  const isOffline = !isOnline;
   const [form, setForm] = useState(emptyEventForm);
   const [savedEventForm, setSavedEventForm] = useState(emptyEventForm);
   const [isEditingEventDetails, setIsEditingEventDetails] = useState(false);
@@ -279,6 +283,10 @@ export default function EventEditPage() {
   };
 
   const saveDay = async (day, values = day) => {
+    if (isOffline) {
+      setError("Editing is disabled while offline.");
+      return;
+    }
     setSavingDayId(day.id);
     setMessage("");
     setError("");
@@ -313,6 +321,10 @@ export default function EventEditPage() {
   const getTagById = (tagId) => tags.find((tag) => tag.id === tagId) || null;
 
   const assignDetailTag = async (dayId, detail, tagId) => {
+    if (isOffline) {
+      setError("Editing is disabled while offline.");
+      return;
+    }
     setSavingDetailId(detail.id);
     setError("");
     setDetailsByDayId((current) => ({
@@ -370,6 +382,10 @@ export default function EventEditPage() {
 
   const saveTag = async (submitEvent) => {
     submitEvent.preventDefault();
+    if (isOffline) {
+      setError("Editing is disabled while offline.");
+      return;
+    }
     setSavingTag(true);
     setError("");
     setMessage("");
@@ -400,6 +416,10 @@ export default function EventEditPage() {
   };
 
   const removeTag = async (tagId) => {
+    if (isOffline) {
+      setError("Editing is disabled while offline.");
+      return;
+    }
     setDeletingTagId(tagId);
     setError("");
     setMessage("");
@@ -448,6 +468,7 @@ export default function EventEditPage() {
   };
 
   const startEditingDetail = (detailId) => {
+    if (isOffline) return;
     setEditingDetailId(detailId);
     setOpenActionMenuId("");
     setMessage("");
@@ -469,6 +490,10 @@ export default function EventEditPage() {
   };
 
   const saveDetail = async (dayId, detail) => {
+    if (isOffline) {
+      setError("Editing is disabled while offline.");
+      return;
+    }
     setSavingDetailId(detail.id);
     setError("");
 
@@ -522,6 +547,10 @@ export default function EventEditPage() {
   };
 
   const deleteDetail = async (dayId, detailId) => {
+    if (isOffline) {
+      setError("Editing is disabled while offline.");
+      return;
+    }
     setSavingDetailId(detailId);
     setError("");
 
@@ -548,6 +577,10 @@ export default function EventEditPage() {
   };
 
   const persistDetailOrder = async (dayId, nextDetails) => {
+    if (isOffline) {
+      setError("Editing is disabled while offline.");
+      return;
+    }
     const orderedDetails = nextDetails.map((detail, detailIndex) => ({
       ...detail,
       sortOrder: detailIndex,
@@ -652,6 +685,10 @@ export default function EventEditPage() {
   };
 
   const moveDetailToDay = async (sourceDayId, targetDayId, detail) => {
+    if (isOffline) {
+      setError("Editing is disabled while offline.");
+      return;
+    }
     if (!targetDayId || savingDetailId === detail.id) return;
 
     setSavingDetailId(detail.id);
@@ -679,6 +716,10 @@ export default function EventEditPage() {
   };
 
   const duplicateDetail = async (dayId, detail) => {
+    if (isOffline) {
+      setError("Editing is disabled while offline.");
+      return;
+    }
     if (savingDetailId === detail.id) return;
 
     setSavingDetailId(detail.id);
@@ -724,6 +765,7 @@ export default function EventEditPage() {
   };
 
   const addDraftDetail = (dayId) => {
+    if (isOffline) return;
     setDraftDetailsByDayId((current) => ({
       ...current,
       [dayId]: [
@@ -750,6 +792,10 @@ export default function EventEditPage() {
   };
 
   const saveDraftDetail = async (dayId, draftIndex, draft) => {
+    if (isOffline) {
+      setError("Editing is disabled while offline.");
+      return;
+    }
     setSavingDraftDayId(dayId);
     setError("");
 
@@ -793,6 +839,10 @@ export default function EventEditPage() {
 
   const handleEventSave = async (submitEvent) => {
     submitEvent.preventDefault();
+    if (isOffline) {
+      setError("Editing is disabled while offline.");
+      return;
+    }
     setSavingEvent(true);
     setMessage("");
     setError("");
@@ -828,6 +878,7 @@ export default function EventEditPage() {
       <div className="page-header">
         <div>
           <h1 className="page-title">{form.name || eventId}</h1>
+          <ScheduleCacheStatus eventId={eventId} />
         </div>
         <div className="actions inline-actions">
           <Link className="button secondary" to={`/events/${eventId}`}>
@@ -837,6 +888,9 @@ export default function EventEditPage() {
       </div>
 
       {error ? <p className="error">{error}</p> : null}
+      {isOffline ? (
+        <p className="message offline-message">Offline mode: previously loaded schedules are read-only.</p>
+      ) : null}
       {message ? <p className="message success-message">{message}</p> : null}
 
       <nav className="tabs" aria-label="Event edit sections">
@@ -878,6 +932,7 @@ export default function EventEditPage() {
             <button
               className="button secondary"
               type="button"
+              disabled={isOffline}
               onClick={() => {
                 setIsEditingEventDetails(true);
                 setMessage("");
@@ -896,6 +951,7 @@ export default function EventEditPage() {
                 <input
                   id="editName"
                   value={form.name}
+                  disabled={isOffline}
                   onChange={(event) => updateField("name", event.target.value)}
                   required
                 />
@@ -909,6 +965,7 @@ export default function EventEditPage() {
                 <input
                   id="editClientName"
                   value={form.clientName}
+                  disabled={isOffline}
                   onChange={(event) => updateField("clientName", event.target.value)}
                   required
                 />
@@ -923,6 +980,7 @@ export default function EventEditPage() {
                   id="editStartDate"
                   type="date"
                   value={form.startDate}
+                  disabled={isOffline}
                   onChange={(event) => updateField("startDate", event.target.value)}
                   required
                 />
@@ -937,6 +995,7 @@ export default function EventEditPage() {
                   id="editEndDate"
                   type="date"
                   value={form.endDate}
+                  disabled={isOffline}
                   onChange={(event) => updateField("endDate", event.target.value)}
                   required
                 />
@@ -951,6 +1010,7 @@ export default function EventEditPage() {
                   id="editScheduleStartDate"
                   type="date"
                   value={form.scheduleStartDate}
+                  disabled={isOffline}
                   onChange={(event) => updateField("scheduleStartDate", event.target.value)}
                   required
                 />
@@ -967,6 +1027,7 @@ export default function EventEditPage() {
                   id="editScheduleEndDate"
                   type="date"
                   value={form.scheduleEndDate}
+                  disabled={isOffline}
                   onChange={(event) => updateField("scheduleEndDate", event.target.value)}
                   required
                 />
@@ -979,13 +1040,13 @@ export default function EventEditPage() {
           </div>
           {isEditingEventDetails ? (
             <div className="actions">
-              <button className="button" type="submit" disabled={savingEvent}>
+              <button className="button" type="submit" disabled={savingEvent || isOffline}>
                 {savingEvent ? "Saving..." : "Save Event"}
               </button>
               <button
                 className="button secondary"
                 type="button"
-                disabled={savingEvent}
+                disabled={savingEvent || isOffline}
                 onClick={cancelEditingEventDetails}
               >
                 Cancel
@@ -1023,6 +1084,7 @@ export default function EventEditPage() {
                           <input
                             aria-label={`Summary for ${formatFriendlyDate(day.date)}`}
                             value={editingDayDraft.summary}
+                            disabled={isOffline}
                             onChange={(event) =>
                               updateEditingDayField("summary", event.target.value)
                             }
@@ -1039,6 +1101,7 @@ export default function EventEditPage() {
                             <input
                               aria-label={`End of day target for ${formatFriendlyDate(day.date)}`}
                               value={editingDayDraft.endOfDayTarget}
+                              disabled={isOffline}
                               onChange={(event) =>
                                 updateEditingDayField("endOfDayTarget", event.target.value)
                               }
@@ -1055,7 +1118,7 @@ export default function EventEditPage() {
                                 <button
                                   className="compact-button primary"
                                   type="button"
-                                  disabled={savingDayId === day.id}
+                                  disabled={savingDayId === day.id || isOffline}
                                   onClick={() => saveDay(day, editingDayDraft)}
                                 >
                                   {savingDayId === day.id ? "Saving..." : "Save"}
@@ -1063,7 +1126,7 @@ export default function EventEditPage() {
                                 <button
                                   className="compact-button"
                                   type="button"
-                                  disabled={savingDayId === day.id}
+                                  disabled={savingDayId === day.id || isOffline}
                                   onClick={cancelEditingDay}
                                 >
                                   Cancel
@@ -1073,6 +1136,7 @@ export default function EventEditPage() {
                               <button
                                 className="compact-button"
                                 type="button"
+                                disabled={isOffline}
                                 onClick={() => startEditingDay(day, "inline")}
                               >
                                 Edit
@@ -1153,6 +1217,7 @@ export default function EventEditPage() {
                       <button
                         className="small-button"
                         type="button"
+                        disabled={isOffline}
                         onClick={() => addDraftDetail(day.id)}
                       >
                         Add row
@@ -1160,6 +1225,7 @@ export default function EventEditPage() {
                       <button
                         className="compact-button"
                         type="button"
+                        disabled={isOffline}
                         onClick={() => startEditingDay(day, "overlay")}
                       >
                         Edit day
@@ -1186,7 +1252,7 @@ export default function EventEditPage() {
                               }
                               key={detail.id}
                               style={getRowTagStyle(getTagById(detail.tagId))}
-                              draggable={!isEditingDetail}
+                              draggable={!isEditingDetail && !isOffline}
                               onDragStart={(event) => {
                                 draggedDetailIdRef.current = detail.id;
                                 event.dataTransfer.effectAllowed = "move";
@@ -1225,6 +1291,7 @@ export default function EventEditPage() {
                                     aria-label={`Time for ${detail.description || "schedule detail"}`}
                                     type="time"
                                     value={detail.time || ""}
+                                    disabled={isOffline}
                                     onChange={(event) =>
                                       updateDetailField(day.id, detail.id, "time", event.target.value)
                                     }
@@ -1233,6 +1300,7 @@ export default function EventEditPage() {
                                     className="plain-input"
                                     aria-label={`Description for ${detail.time}`}
                                     value={detail.description || ""}
+                                    disabled={isOffline}
                                     onChange={(event) =>
                                       updateDetailField(day.id, detail.id, "description", event.target.value)
                                     }
@@ -1263,7 +1331,7 @@ export default function EventEditPage() {
                                 <select
                                   aria-label={`Tag for ${detail.description || "schedule detail"}`}
                                   value={getTagById(detail.tagId) ? detail.tagId : ""}
-                                  disabled={savingDetailId === detail.id}
+                                  disabled={savingDetailId === detail.id || isOffline}
                                   onChange={(event) =>
                                     assignDetailTag(day.id, detail, event.target.value)
                                   }
@@ -1281,6 +1349,7 @@ export default function EventEditPage() {
                                   <button
                                     className="compact-button"
                                     type="button"
+                                    disabled={isOffline}
                                     onClick={() => startEditingDetail(detail.id)}
                                   >
                                     Edit
@@ -1303,6 +1372,7 @@ export default function EventEditPage() {
                                     type="button"
                                     aria-label="Row actions"
                                     aria-expanded={openActionMenuId === detail.id}
+                                    disabled={isOffline}
                                     onMouseDown={beginRowAction}
                                     onClick={() => {
                                       setOpenActionMenuId((current) =>
@@ -1323,7 +1393,7 @@ export default function EventEditPage() {
                                         <button
                                           className="action-menu-item"
                                           type="button"
-                                          disabled={!canMoveUp || reorderingDayId === day.id}
+                                    disabled={!canMoveUp || reorderingDayId === day.id || isOffline}
                                           onClick={() => {
                                             moveDetail(day.id, detail.id, -1);
                                             endRowAction();
@@ -1334,7 +1404,7 @@ export default function EventEditPage() {
                                         <button
                                           className="action-menu-item"
                                           type="button"
-                                          disabled={!canMoveDown || reorderingDayId === day.id}
+                                    disabled={!canMoveDown || reorderingDayId === day.id || isOffline}
                                           onClick={() => {
                                             moveDetail(day.id, detail.id, 1);
                                             endRowAction();
@@ -1346,7 +1416,7 @@ export default function EventEditPage() {
                                           <button
                                             className="action-menu-item"
                                             type="button"
-                                            disabled={savingDetailId === detail.id}
+                                            disabled={savingDetailId === detail.id || isOffline}
                                             onClick={() => {
                                               moveDetailToDay(day.id, previousDay.id, detail);
                                               endRowAction();
@@ -1359,7 +1429,7 @@ export default function EventEditPage() {
                                           <button
                                             className="action-menu-item"
                                             type="button"
-                                            disabled={savingDetailId === detail.id}
+                                            disabled={savingDetailId === detail.id || isOffline}
                                             onClick={() => {
                                               moveDetailToDay(day.id, nextDay.id, detail);
                                               endRowAction();
@@ -1371,7 +1441,7 @@ export default function EventEditPage() {
                                         <button
                                           className="action-menu-item"
                                           type="button"
-                                          disabled={savingDetailId === detail.id}
+                                          disabled={savingDetailId === detail.id || isOffline}
                                           onClick={() => {
                                             duplicateDetail(day.id, detail);
                                             endRowAction();
@@ -1386,7 +1456,7 @@ export default function EventEditPage() {
                                         <button
                                           className="action-menu-item primary"
                                           type="button"
-                                          disabled={savingDetailId === detail.id}
+                                          disabled={savingDetailId === detail.id || isOffline}
                                           onClick={() => {
                                             closeActionMenu();
                                             saveDetail(day.id, detail);
@@ -1398,7 +1468,7 @@ export default function EventEditPage() {
                                         <button
                                           className="action-menu-item"
                                           type="button"
-                                          disabled={savingDetailId === detail.id}
+                                          disabled={savingDetailId === detail.id || isOffline}
                                           onClick={() => {
                                             closeActionMenu();
                                             cancelEditingDetail(day.id, detail.id);
@@ -1412,7 +1482,7 @@ export default function EventEditPage() {
                                     <button
                                       className="action-menu-item danger"
                                       type="button"
-                                      disabled={savingDetailId === detail.id}
+                                      disabled={savingDetailId === detail.id || isOffline}
                                       onClick={() => {
                                         closeActionMenu();
                                         deleteDetail(day.id, detail.id);
@@ -1434,6 +1504,7 @@ export default function EventEditPage() {
                               aria-label="New detail time"
                               type="time"
                               value={draft.time}
+                              disabled={isOffline}
                               onChange={(event) =>
                                 updateDraftDetail(day.id, draftIndex, "time", event.target.value)
                               }
@@ -1441,6 +1512,7 @@ export default function EventEditPage() {
                             <input
                               aria-label="New detail description"
                               value={draft.description}
+                              disabled={isOffline}
                               onChange={(event) =>
                                 updateDraftDetail(day.id, draftIndex, "description", event.target.value)
                               }
@@ -1462,6 +1534,7 @@ export default function EventEditPage() {
                               <select
                                 aria-label="New detail tag"
                                 value={getTagById(draft.tagId) ? draft.tagId : ""}
+                                disabled={isOffline}
                                 onChange={(event) =>
                                   updateDraftDetail(day.id, draftIndex, "tagId", event.target.value)
                                 }
@@ -1478,6 +1551,7 @@ export default function EventEditPage() {
                               <button
                                 className="button secondary"
                                 type="button"
+                                disabled={isOffline}
                                 onClick={() => removeDraftDetail(day.id, draftIndex)}
                               >
                                 Cancel
@@ -1485,7 +1559,7 @@ export default function EventEditPage() {
                               <button
                                 className="button"
                                 type="button"
-                                disabled={savingDraftDayId === day.id || !draft.description.trim()}
+                                disabled={savingDraftDayId === day.id || !draft.description.trim() || isOffline}
                                 onClick={() => saveDraftDetail(day.id, draftIndex, draft)}
                               >
                                 {savingDraftDayId === day.id ? "Saving..." : "Save"}
@@ -1529,6 +1603,7 @@ export default function EventEditPage() {
                   <input
                     id="tagName"
                     value={tagForm.name}
+                    disabled={isOffline}
                     onChange={(event) => updateTagFormField("name", event.target.value)}
                     placeholder="Confirmed"
                     required
@@ -1543,11 +1618,13 @@ export default function EventEditPage() {
                       aria-label="Tag colour picker"
                       type="color"
                       value={normaliseHexColour(tagForm.colour) || emptyTagForm.colour}
+                      disabled={isOffline}
                       onChange={(event) => updateTagFormField("colour", event.target.value)}
                     />
                     <input
                       id="tagColour"
                       value={tagForm.colour}
+                      disabled={isOffline}
                       onChange={(event) => updateTagFormField("colour", event.target.value)}
                       placeholder="#DCEEFF"
                       required
@@ -1556,14 +1633,14 @@ export default function EventEditPage() {
                 </div>
               </div>
               <div className="actions">
-                <button className="button" type="submit" disabled={savingTag}>
+                <button className="button" type="submit" disabled={savingTag || isOffline}>
                   {savingTag ? "Saving..." : editingTagId ? "Save tag" : "Create tag"}
                 </button>
                 {editingTagId ? (
                   <button
                     className="button secondary"
                     type="button"
-                    disabled={savingTag}
+                    disabled={savingTag || isOffline}
                     onClick={resetTagForm}
                   >
                     Cancel
@@ -1590,6 +1667,7 @@ export default function EventEditPage() {
                       <button
                         className="compact-button"
                         type="button"
+                        disabled={isOffline}
                         onClick={() => startEditingTag(tag)}
                       >
                         Edit
@@ -1597,7 +1675,7 @@ export default function EventEditPage() {
                       <button
                         className="compact-button"
                         type="button"
-                        disabled={deletingTagId === tag.id}
+                        disabled={deletingTagId === tag.id || isOffline}
                         onClick={() => removeTag(tag.id)}
                       >
                         {deletingTagId === tag.id ? "Deleting..." : "Delete"}
@@ -1644,6 +1722,7 @@ export default function EventEditPage() {
                 <input
                   id="overlayDaySummary"
                   value={editingDayDraft.summary}
+                  disabled={isOffline}
                   onChange={(event) => updateEditingDayField("summary", event.target.value)}
                 />
               </div>
@@ -1652,6 +1731,7 @@ export default function EventEditPage() {
                 <input
                   id="overlayDayTarget"
                   value={editingDayDraft.endOfDayTarget}
+                  disabled={isOffline}
                   onChange={(event) => updateEditingDayField("endOfDayTarget", event.target.value)}
                 />
               </div>
@@ -1661,7 +1741,7 @@ export default function EventEditPage() {
               <button
                 className="button"
                 type="button"
-                disabled={savingDayId === editingDayId}
+                disabled={savingDayId === editingDayId || isOffline}
                 onClick={() => {
                   const day = scheduleDays.find((nextDay) => nextDay.id === editingDayId);
                   if (day) saveDay(day, editingDayDraft);
@@ -1672,7 +1752,7 @@ export default function EventEditPage() {
               <button
                 className="button secondary"
                 type="button"
-                disabled={savingDayId === editingDayId}
+                disabled={savingDayId === editingDayId || isOffline}
                 onClick={cancelEditingDay}
               >
                 Cancel

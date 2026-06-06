@@ -1,0 +1,19 @@
+{
+  "name": "CapCom v2",
+  "short_name": "CapCom",
+  "description": "Offline-ready schedule management for events.",
+  "start_url": "/events",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f4f6f8",
+  "theme_color": "#1f6feb",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/pwa-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

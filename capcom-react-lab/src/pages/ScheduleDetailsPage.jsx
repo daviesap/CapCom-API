@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import EmptyState from "../components/EmptyState.jsx";
 import Loading from "../components/Loading.jsx";
+import useOnlineStatus from "../hooks/useOnlineStatus.js";
 import {
   createScheduleDetail,
   getScheduleDetails,
@@ -14,6 +15,8 @@ const emptyForm = {
 
 export default function ScheduleDetailsPage() {
   const { eventId, scheduleDayId } = useParams();
+  const isOnline = useOnlineStatus();
+  const isOffline = !isOnline;
   const [details, setDetails] = useState([]);
   const [form, setForm] = useState(emptyForm);
   const [loading, setLoading] = useState(true);
@@ -43,6 +46,10 @@ export default function ScheduleDetailsPage() {
 
   const handleSubmit = async (submitEvent) => {
     submitEvent.preventDefault();
+    if (isOffline) {
+      setError("Editing is disabled while offline.");
+      return;
+    }
     setSaving(true);
     setError("");
 
@@ -78,6 +85,9 @@ export default function ScheduleDetailsPage() {
 
       <section className="panel">
         <h2>Add Schedule Detail</h2>
+        {isOffline ? (
+          <p className="message offline-message">Offline mode: schedule editing is disabled.</p>
+        ) : null}
         <form onSubmit={handleSubmit}>
           <div className="form-grid">
             <div className="form-row">
@@ -86,6 +96,7 @@ export default function ScheduleDetailsPage() {
                 id="time"
                 type="time"
                 value={form.time}
+                disabled={isOffline}
                 onChange={(event) => updateField("time", event.target.value)}
                 required
               />
@@ -95,13 +106,14 @@ export default function ScheduleDetailsPage() {
               <textarea
                 id="description"
                 value={form.description}
+                disabled={isOffline}
                 onChange={(event) => updateField("description", event.target.value)}
                 required
               />
             </div>
           </div>
           <div className="actions">
-            <button className="button" type="submit" disabled={saving}>
+            <button className="button" type="submit" disabled={saving || isOffline}>
               {saving ? "Adding..." : "Add Detail"}
             </button>
           </div>
