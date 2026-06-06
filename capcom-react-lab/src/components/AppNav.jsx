@@ -4,7 +4,7 @@ import { CapcomIcon } from "../icons/capcomIcons.jsx";
 
 const navItems = [
   { to: "/events", label: "Events", icon: "event" },
-  { to: "/suppliers", label: "Companies", icon: "company" },
+  { to: "/companies", label: "Companies", icon: "company" },
   { to: "/admin", label: "Admin", icon: "admin", requiresAdmin: true },
   { to: "/profile", label: "Profile", icon: "profile" },
 ];

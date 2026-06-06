@@ -9,7 +9,7 @@ import EventEditPage from "../pages/EventEditPage.jsx";
 import ProfilePage from "../pages/ProfilePage.jsx";
 import ScheduleDaysPage from "../pages/ScheduleDaysPage.jsx";
 import ScheduleDetailsPage from "../pages/ScheduleDetailsPage.jsx";
-import SuppliersPage from "../pages/SuppliersPage.jsx";
+import CompaniesPage from "../pages/CompaniesPage.jsx";
 
 function ProtectedRoute() {
   const { user, authLoading } = useAuth();
@@ -45,7 +45,7 @@ export default function AppRoutes() {
             path="/events/:eventId/days/:scheduleDayId/details"
             element={<ScheduleDetailsPage />}
           />
-          <Route path="/suppliers" element={<SuppliersPage />} />
+          <Route path="/companies" element={<CompaniesPage />} />
           <Route path="/admin" element={<AdminPage />} />
           <Route path="/profile" element={<ProfilePage />} />
         </Route>

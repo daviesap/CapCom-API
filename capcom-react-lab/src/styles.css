@@ -810,8 +810,8 @@ textarea {
 
 .tag-select-wrap,
 .location-select-wrap,
-.supplier-select-wrap,
-.supplier-dropdown {
+.company-select-wrap,
+.company-dropdown {
   align-items: center;
   background: #ffffff;
   border: 1px solid #d9e0e7;
@@ -833,13 +833,13 @@ textarea {
   padding: 3px 7px;
 }
 
-.supplier-dropdown {
+.company-dropdown {
   display: block;
   padding: 0;
   position: relative;
 }
 
-.supplier-dropdown-trigger {
+.company-dropdown-trigger {
   align-items: center;
   cursor: pointer;
   display: flex;
@@ -852,7 +852,7 @@ textarea {
   white-space: nowrap;
 }
 
-.supplier-dropdown-menu {
+.company-dropdown-menu {
   background: #ffffff;
   border: 1px solid #d9e0e7;
   border-radius: 8px;
@@ -869,7 +869,7 @@ textarea {
   z-index: 30;
 }
 
-.supplier-dropdown-option {
+.company-dropdown-option {
   align-items: center;
   border-radius: 6px;
   cursor: pointer;
@@ -878,29 +878,29 @@ textarea {
   padding: 6px 8px;
 }
 
-.supplier-dropdown-option:hover {
+.company-dropdown-option:hover {
   background: #f4f6f8;
 }
 
-.supplier-dropdown-option input {
+.company-dropdown-option input {
   height: 14px;
   width: 14px;
 }
 
-.supplier-dropdown-empty {
+.company-dropdown-empty {
   color: #6b7280;
   font-size: 13px;
   padding: 6px 8px;
 }
 
-.supplier-select-wrap {
+.company-select-wrap {
   align-items: stretch;
   padding: 2px;
 }
 
 .tag-select-wrap select,
 .location-select-wrap select,
-.supplier-select-wrap select {
+.company-select-wrap select {
   appearance: none;
   background: transparent;
   border: 0;
@@ -915,12 +915,12 @@ textarea {
   width: 100%;
 }
 
-.supplier-select-wrap select[multiple] {
+.company-select-wrap select[multiple] {
   min-height: 54px;
   overflow: auto;
 }
 
-.supplier-select-wrap option {
+.company-select-wrap option {
   border-radius: 4px;
   padding: 3px 5px;
 }
@@ -981,12 +981,12 @@ textarea {
   justify-content: flex-end;
 }
 
-.supplier-list {
+.company-list {
   display: grid;
   gap: 10px;
 }
 
-.supplier-toolbar {
+.company-toolbar {
   align-items: end;
   display: flex;
   flex-wrap: wrap;
@@ -994,13 +994,13 @@ textarea {
   justify-content: flex-end;
 }
 
-.supplier-form {
+.company-form {
   border-top: 1px solid #e6ebf0;
   margin-top: 18px;
   padding-top: 16px;
 }
 
-.supplier-form-heading h3 {
+.company-form-heading h3 {
   font-size: 16px;
   line-height: 1.25;
   margin: 0 0 12px;
@@ -1075,7 +1075,7 @@ textarea {
   justify-content: flex-end;
 }
 
-.supplier-list-row {
+.company-list-row {
   align-items: start;
   border: 1px solid #e1e7ee;
   border-radius: 6px;
@@ -1085,16 +1085,16 @@ textarea {
   padding: 12px;
 }
 
-.supplier-list-row.drop-target {
+.company-list-row.drop-target {
   background: #eef4ff;
   border-color: #7ea6f7;
 }
 
-.draggable-supplier-row {
+.draggable-company-row {
   cursor: grab;
 }
 
-.draggable-supplier-row:active {
+.draggable-company-row:active {
   cursor: grabbing;
 }
 
@@ -1109,31 +1109,31 @@ textarea {
   padding: 5px 9px;
 }
 
-.supplier-list-row h3 {
+.company-list-row h3 {
   font-size: 16px;
   line-height: 1.25;
   margin: 0 0 6px;
 }
 
-.supplier-address {
+.company-address {
   white-space: pre-wrap;
 }
 
-.supplier-list-actions {
+.company-list-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
   justify-content: flex-end;
 }
 
-.supplier-accordion-heading {
+.company-accordion-heading {
   align-items: flex-start;
   display: flex;
   gap: 12px;
   justify-content: space-between;
 }
 
-.supplier-accordion-trigger {
+.company-accordion-trigger {
   align-items: flex-start;
   background: transparent;
   border: 0;
@@ -1145,12 +1145,12 @@ textarea {
   text-align: left;
 }
 
-.supplier-accordion-trigger:hover .supplier-accordion-title,
-.supplier-accordion-trigger:focus-visible .supplier-accordion-title {
+.company-accordion-trigger:hover .company-accordion-title,
+.company-accordion-trigger:focus-visible .company-accordion-title {
   color: #1f4fbf;
 }
 
-.supplier-accordion-trigger:focus-visible {
+.company-accordion-trigger:focus-visible {
   border-radius: 6px;
   outline: 2px solid #7ea6f7;
   outline-offset: 3px;
@@ -1172,22 +1172,22 @@ textarea {
   width: 24px;
 }
 
-.supplier-accordion-title {
+.company-accordion-title {
   display: block;
   font-size: 16px;
   font-weight: 700;
   line-height: 1.25;
 }
 
-.supplier-accordion-meta {
+.company-accordion-meta {
   display: block;
 }
 
-.supplier-accordion-body {
+.company-accordion-body {
   margin-top: 10px;
 }
 
-.supplier-contact-list {
+.company-contact-list {
   border-top: 1px solid #e6ebf0;
   display: grid;
   gap: 8px;
@@ -1195,7 +1195,7 @@ textarea {
   padding-top: 12px;
 }
 
-.supplier-contact-row {
+.company-contact-row {
   align-items: flex-start;
   background: #f8fafc;
   border: 1px solid #e6ebf0;
@@ -1206,7 +1206,7 @@ textarea {
   padding: 10px;
 }
 
-.supplier-contact-row.drop-target {
+.company-contact-row.drop-target {
   background: #eef4ff;
   border-color: #7ea6f7;
 }
@@ -1232,26 +1232,26 @@ textarea {
   padding: 4px 8px;
 }
 
-.supplier-contact-methods {
+.company-contact-methods {
   display: flex;
   flex-wrap: wrap;
   gap: 8px 12px;
   margin-top: 4px;
 }
 
-.supplier-contact-methods a {
+.company-contact-methods a {
   color: #1f4fbf;
   font-size: 14px;
   overflow-wrap: anywhere;
 }
 
-.supplier-contact-form {
+.company-contact-form {
   border-top: 1px solid #e6ebf0;
   margin-top: 14px;
   padding-top: 14px;
 }
 
-.supplier-client-select {
+.company-client-select {
   min-width: min(260px, 100%);
 }
 
@@ -1380,8 +1380,8 @@ textarea {
 
   .tag-select-wrap,
   .location-select-wrap,
-  .supplier-dropdown,
-  .supplier-select-wrap {
+  .company-dropdown,
+  .company-select-wrap {
     grid-column: 2 / -1;
   }
 
@@ -1401,20 +1401,20 @@ textarea {
     justify-content: flex-start;
   }
 
-  .supplier-list-row {
+  .company-list-row {
     grid-template-columns: 1fr;
   }
 
-  .supplier-accordion-heading,
-  .supplier-contact-row {
+  .company-accordion-heading,
+  .company-contact-row {
     grid-template-columns: 1fr;
   }
 
-  .supplier-accordion-heading {
+  .company-accordion-heading {
     display: grid;
   }
 
-  .supplier-list-actions {
+  .company-list-actions {
     justify-content: flex-start;
   }
 
@@ -1739,8 +1739,8 @@ textarea {
   .draft-actions,
   .tag-select-wrap,
   .location-select-wrap,
-  .supplier-dropdown,
-  .supplier-select-wrap {
+  .company-dropdown,
+  .company-select-wrap {
     grid-column: 1;
   }
 

@@ -51,37 +51,37 @@ service cloud.firestore {
       return isSuperAdmin();
     }
 
-    function canReadSupplierData(supplier) {
-      return supplier.clientId is string
-        && canReadClient(supplier.clientId);
+    function canReadCompanyData(company) {
+      return company.clientId is string
+        && canReadClient(company.clientId);
     }
 
-    function canManageSupplierData(supplier) {
-      return supplier.clientId is string
+    function canManageCompanyData(company) {
+      return company.clientId is string
         && (
           isSuperAdmin()
-          || (isClientAdmin() && currentUser().clientId == supplier.clientId)
+          || (isClientAdmin() && currentUser().clientId == company.clientId)
         );
     }
 
-    function supplierPath(supplierId) {
-      return /databases/$(database)/documents/suppliers/$(supplierId);
+    function companyPath(companyId) {
+      return /databases/$(database)/documents/companies/$(companyId);
     }
 
-    function supplierData(supplierId) {
-      return get(supplierPath(supplierId)).data;
+    function companyData(companyId) {
+      return get(companyPath(companyId)).data;
     }
 
-    function canReadSupplierContactData(contact) {
-      return contact.supplierId is string
-        && exists(supplierPath(contact.supplierId))
-        && canReadSupplierData(supplierData(contact.supplierId));
+    function canReadCompanyContactData(contact) {
+      return contact.companyId is string
+        && exists(companyPath(contact.companyId))
+        && canReadCompanyData(companyData(contact.companyId));
     }
 
-    function canManageSupplierContactData(contact) {
-      return contact.supplierId is string
-        && exists(supplierPath(contact.supplierId))
-        && canManageSupplierData(supplierData(contact.supplierId));
+    function canManageCompanyContactData(contact) {
+      return contact.companyId is string
+        && exists(companyPath(contact.companyId))
+        && canManageCompanyData(companyData(contact.companyId));
     }
 
     function eventPath(eventId) {
@@ -231,20 +231,20 @@ service cloud.firestore {
       allow delete: if false;
     }
 
-    match /suppliers/{supplierId} {
-      allow get, list: if canReadSupplierData(resource.data);
-      allow create: if canManageSupplierData(request.resource.data);
-      allow update: if canManageSupplierData(resource.data)
-        && canManageSupplierData(request.resource.data);
-      allow delete: if canManageSupplierData(resource.data);
+    match /companies/{companyId} {
+      allow get, list: if canReadCompanyData(resource.data);
+      allow create: if canManageCompanyData(request.resource.data);
+      allow update: if canManageCompanyData(resource.data)
+        && canManageCompanyData(request.resource.data);
+      allow delete: if canManageCompanyData(resource.data);
     }
 
-    match /supplierContacts/{contactId} {
-      allow get, list: if canReadSupplierContactData(resource.data);
-      allow create: if canManageSupplierContactData(request.resource.data);
-      allow update: if canManageSupplierContactData(resource.data)
-        && canManageSupplierContactData(request.resource.data);
-      allow delete: if canManageSupplierContactData(resource.data);
+    match /companyContacts/{contactId} {
+      allow get, list: if canReadCompanyContactData(resource.data);
+      allow create: if canManageCompanyContactData(request.resource.data);
+      allow update: if canManageCompanyContactData(resource.data)
+        && canManageCompanyContactData(request.resource.data);
+      allow delete: if canManageCompanyContactData(resource.data);
     }
 
     match /events/{eventId} {

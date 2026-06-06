@@ -151,7 +151,7 @@ export async function createScheduleDetail({
   colour,
   tagId,
   locationId,
-  supplierIds,
+  companyIds,
 }) {
   assertOnline();
   const dayDetails = await getScheduleDetails(scheduleDayId);
@@ -174,7 +174,7 @@ export async function createScheduleDetail({
       colour: colour || "",
       tagId: tagId || "",
       locationId: locationId || "",
-      supplierIds: Array.isArray(supplierIds) ? supplierIds : [],
+      companyIds: Array.isArray(companyIds) ? companyIds : [],
       createdAt: serverTimestamp(),
     });
   } catch (error) {
@@ -187,7 +187,7 @@ export async function createScheduleDetail({
 
 export async function updateScheduleDetail(
   detailId,
-  { eventId, time, description, sortOrder, scheduleDayId, colour, tagId, locationId, supplierIds }
+  { eventId, time, description, sortOrder, scheduleDayId, colour, tagId, locationId, companyIds }
 ) {
   assertOnline();
   const updates = {
@@ -220,8 +220,8 @@ export async function updateScheduleDetail(
     updates.locationId = locationId;
   }
 
-  if (Array.isArray(supplierIds)) {
-    updates.supplierIds = supplierIds;
+  if (Array.isArray(companyIds)) {
+    updates.companyIds = companyIds;
   }
 
   try {

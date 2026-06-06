@@ -13,17 +13,17 @@ import {
 import { db } from "../firebase/firestore";
 import { assertOnline } from "./localScheduleCache.js";
 
-const supplierContactsRef = collection(db, "supplierContacts");
+const companyContactsRef = collection(db, "companyContacts");
 const FIRESTORE_IN_QUERY_LIMIT = 30;
 
 function logWriteError(action, error, context = {}) {
   console.error(`Firestore write failed: ${action}`, { ...context, error });
 }
 
-function sortSupplierContacts(contacts) {
+function sortCompanyContacts(contacts) {
   return [...contacts].sort((a, b) => {
-    const supplierComparison = String(a.supplierId || "").localeCompare(String(b.supplierId || ""));
-    if (supplierComparison !== 0) return supplierComparison;
+    const companyComparison = String(a.companyId || "").localeCompare(String(b.companyId || ""));
+    if (companyComparison !== 0) return companyComparison;
 
     const orderComparison = getSortOrder(a) - getSortOrder(b);
     if (orderComparison !== 0) return orderComparison;
@@ -39,16 +39,16 @@ function getSortOrder(contact, fallbackIndex = 0) {
   return typeof contact.sortOrder === "number" ? contact.sortOrder : fallbackIndex;
 }
 
-export async function getSupplierContacts(supplierIds = []) {
-  const uniqueSupplierIds = [...new Set(supplierIds.filter(Boolean))];
-  if (uniqueSupplierIds.length === 0) return [];
+export async function getCompanyContacts(companyIds = []) {
+  const uniqueCompanyIds = [...new Set(companyIds.filter(Boolean))];
+  if (uniqueCompanyIds.length === 0) return [];
 
   const contacts = [];
-  for (let index = 0; index < uniqueSupplierIds.length; index += FIRESTORE_IN_QUERY_LIMIT) {
-    const supplierIdChunk = uniqueSupplierIds.slice(index, index + FIRESTORE_IN_QUERY_LIMIT);
+  for (let index = 0; index < uniqueCompanyIds.length; index += FIRESTORE_IN_QUERY_LIMIT) {
+    const companyIdChunk = uniqueCompanyIds.slice(index, index + FIRESTORE_IN_QUERY_LIMIT);
     const contactsQuery = query(
-      supplierContactsRef,
-      where("supplierId", "in", supplierIdChunk)
+      companyContactsRef,
+      where("companyId", "in", companyIdChunk)
     );
     const snapshot = await getDocs(contactsQuery);
     contacts.push(
@@ -59,12 +59,12 @@ export async function getSupplierContacts(supplierIds = []) {
     );
   }
 
-  return sortSupplierContacts(contacts);
+  return sortCompanyContacts(contacts);
 }
 
-export async function createSupplierContact({ supplierId, name, email, phone, role }) {
+export async function createCompanyContact({ companyId, name, email, phone, role }) {
   assertOnline();
-  const existingContacts = await getSupplierContacts([supplierId]);
+  const existingContacts = await getCompanyContacts([companyId]);
   const sortOrder = existingContacts.reduce(
     (maxSortOrder, contact, contactIndex) =>
       Math.max(maxSortOrder, getSortOrder(contact, contactIndex)),
@@ -72,8 +72,8 @@ export async function createSupplierContact({ supplierId, name, email, phone, ro
   ) + 1;
 
   try {
-    return await addDoc(supplierContactsRef, {
-      supplierId,
+    return await addDoc(companyContactsRef, {
+      companyId,
       name,
       email,
       phone,
@@ -83,16 +83,16 @@ export async function createSupplierContact({ supplierId, name, email, phone, ro
       updatedAt: serverTimestamp(),
     });
   } catch (error) {
-    logWriteError("create supplier contact", error, { supplierId, name });
+    logWriteError("create company contact", error, { companyId, name });
     throw error;
   }
 }
 
-export async function updateSupplierContact(contactId, { supplierId, name, email, phone, role }) {
+export async function updateCompanyContact(contactId, { companyId, name, email, phone, role }) {
   assertOnline();
   try {
-    return await updateDoc(doc(db, "supplierContacts", contactId), {
-      supplierId,
+    return await updateDoc(doc(db, "companyContacts", contactId), {
+      companyId,
       name,
       email,
       phone,
@@ -100,17 +100,17 @@ export async function updateSupplierContact(contactId, { supplierId, name, email
       updatedAt: serverTimestamp(),
     });
   } catch (error) {
-    logWriteError("update supplier contact", error, { contactId, supplierId, name });
+    logWriteError("update company contact", error, { contactId, companyId, name });
     throw error;
   }
 }
 
-export async function updateSupplierContactOrder(contacts) {
+export async function updateCompanyContactOrder(contacts) {
   assertOnline();
   const batch = writeBatch(db);
 
   contacts.forEach((contact, index) => {
-    batch.update(doc(db, "supplierContacts", contact.id), {
+    batch.update(doc(db, "companyContacts", contact.id), {
       sortOrder: index,
       updatedAt: serverTimestamp(),
     });
@@ -119,19 +119,19 @@ export async function updateSupplierContactOrder(contacts) {
   try {
     return await batch.commit();
   } catch (error) {
-    logWriteError("update supplier contact order", error, {
+    logWriteError("update company contact order", error, {
       contactIds: contacts.map((contact) => contact.id),
     });
     throw error;
   }
 }
 
-export async function deleteSupplierContact(contactId) {
+export async function deleteCompanyContact(contactId) {
   assertOnline();
   try {
-    return await deleteDoc(doc(db, "supplierContacts", contactId));
+    return await deleteDoc(doc(db, "companyContacts", contactId));
   } catch (error) {
-    logWriteError("delete supplier contact", error, { contactId });
+    logWriteError("delete company contact", error, { contactId });
     throw error;
   }
 }

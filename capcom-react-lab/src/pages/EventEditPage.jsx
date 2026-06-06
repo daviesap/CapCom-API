@@ -8,7 +8,7 @@ import { getClients } from "../services/clientService.js";
 import {
   getEvent,
   updateEvent,
-  updateEventContactSupplierOrder,
+  updateEventContactCompanyOrder,
 } from "../services/eventService.js";
 import {
   getScheduleDays,
@@ -36,13 +36,13 @@ import {
   updateLocation,
 } from "../services/locationService.js";
 import {
-  createSupplierContact,
-  deleteSupplierContact,
-  getSupplierContacts,
-  updateSupplierContact,
-  updateSupplierContactOrder,
-} from "../services/supplierContactService.js";
-import { getSuppliers } from "../services/supplierService.js";
+  createCompanyContact,
+  deleteCompanyContact,
+  getCompanyContacts,
+  updateCompanyContact,
+  updateCompanyContactOrder,
+} from "../services/companyContactService.js";
+import { getCompanies } from "../services/companyService.js";
 
 const emptyEventForm = {
   name: "",
@@ -52,7 +52,7 @@ const emptyEventForm = {
   endDate: "",
   scheduleStartDate: "",
   scheduleEndDate: "",
-  contactSupplierOrder: [],
+  contactCompanyOrder: [],
 };
 
 const emptyTagForm = {
@@ -65,7 +65,7 @@ const emptyLocationForm = {
   parentLocationId: "",
 };
 
-const emptySupplierContactForm = {
+const emptyCompanyContactForm = {
   name: "",
   email: "",
   phone: "",
@@ -184,20 +184,20 @@ export default function EventEditPage() {
   const [savedDetailsById, setSavedDetailsById] = useState({});
   const [tags, setTags] = useState([]);
   const [locations, setLocations] = useState([]);
-  const [suppliers, setSuppliers] = useState([]);
-  const [supplierContactsBySupplierId, setSupplierContactsBySupplierId] = useState({});
+  const [companies, setCompanies] = useState([]);
+  const [companyContactsByCompanyId, setCompanyContactsByCompanyId] = useState({});
   const [tagForm, setTagForm] = useState(emptyTagForm);
   const [locationForm, setLocationForm] = useState(emptyLocationForm);
-  const [supplierContactForm, setSupplierContactForm] = useState(emptySupplierContactForm);
+  const [companyContactForm, setCompanyContactForm] = useState(emptyCompanyContactForm);
   const [editingTagId, setEditingTagId] = useState("");
   const [editingLocationId, setEditingLocationId] = useState("");
-  const [editingSupplierContactId, setEditingSupplierContactId] = useState("");
-  const [editingSupplierContactSupplierId, setEditingSupplierContactSupplierId] = useState("");
+  const [editingCompanyContactId, setEditingCompanyContactId] = useState("");
+  const [editingCompanyContactCompanyId, setEditingCompanyContactCompanyId] = useState("");
   const [editingDetailCell, setEditingDetailCell] = useState(null);
   const [openActionMenuId, setOpenActionMenuId] = useState("");
   const [selectedTagFilterId, setSelectedTagFilterId] = useState("");
-  const [selectedSupplierFilterIds, setSelectedSupplierFilterIds] = useState([]);
-  const [openContactSupplierIds, setOpenContactSupplierIds] = useState([]);
+  const [selectedCompanyFilterIds, setSelectedCompanyFilterIds] = useState([]);
+  const [openContactCompanyIds, setOpenContactCompanyIds] = useState([]);
   const [activeTab, setActiveTab] = useState("info");
   const [activeInfoTab, setActiveInfoTab] = useState("contacts");
   const [activeSettingsTab, setActiveSettingsTab] = useState("tags");
@@ -205,8 +205,8 @@ export default function EventEditPage() {
   const [detailsLoading, setDetailsLoading] = useState(false);
   const [tagsLoading, setTagsLoading] = useState(false);
   const [locationsLoading, setLocationsLoading] = useState(false);
-  const [suppliersLoading, setSuppliersLoading] = useState(false);
-  const [supplierContactsLoading, setSupplierContactsLoading] = useState(false);
+  const [companiesLoading, setCompaniesLoading] = useState(false);
+  const [companyContactsLoading, setCompanyContactsLoading] = useState(false);
   const [savingEvent, setSavingEvent] = useState(false);
   const [savingDayId, setSavingDayId] = useState("");
   const [savingDetailId, setSavingDetailId] = useState("");
@@ -215,25 +215,25 @@ export default function EventEditPage() {
   const [deletingTagId, setDeletingTagId] = useState("");
   const [savingLocation, setSavingLocation] = useState(false);
   const [deletingLocationId, setDeletingLocationId] = useState("");
-  const [savingSupplierContact, setSavingSupplierContact] = useState(false);
-  const [deletingSupplierContactId, setDeletingSupplierContactId] = useState("");
-  const [reorderingSupplierContactId, setReorderingSupplierContactId] = useState("");
-  const [savingContactSupplierOrder, setSavingContactSupplierOrder] = useState(false);
+  const [savingCompanyContact, setSavingCompanyContact] = useState(false);
+  const [deletingCompanyContactId, setDeletingCompanyContactId] = useState("");
+  const [reorderingCompanyContactId, setReorderingCompanyContactId] = useState("");
+  const [savingContactCompanyOrder, setSavingContactCompanyOrder] = useState(false);
   const [reorderingDayId, setReorderingDayId] = useState("");
   const [movingLocationId, setMovingLocationId] = useState("");
   const [locationDropTargetId, setLocationDropTargetId] = useState("");
-  const [contactSupplierDropTargetId, setContactSupplierDropTargetId] = useState("");
-  const [supplierContactDropTargetId, setSupplierContactDropTargetId] = useState("");
+  const [contactCompanyDropTargetId, setContactCompanyDropTargetId] = useState("");
+  const [companyContactDropTargetId, setCompanyContactDropTargetId] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const suppressDetailBlurRef = useRef(false);
   const detailCellInputRef = useRef(null);
   const draggedDetailIdRef = useRef("");
   const draggedLocationIdRef = useRef("");
-  const draggedContactSupplierIdRef = useRef("");
-  const draggedSupplierContactIdRef = useRef("");
-  const canManageSupplierContacts = isSuperAdmin || isClientAdmin;
-  const canManageContactSupplierOrder = canManageSupplierContacts;
+  const draggedContactCompanyIdRef = useRef("");
+  const draggedCompanyContactIdRef = useRef("");
+  const canManageCompanyContacts = isSuperAdmin || isClientAdmin;
+  const canManageContactCompanyOrder = canManageCompanyContacts;
   const editableClients = clients.filter((client) => (
     client.isActive !== false || client.id === form.clientId
   ));
@@ -248,7 +248,7 @@ export default function EventEditPage() {
       setDetailsLoading(false);
       setTagsLoading(false);
       setLocationsLoading(false);
-      setSuppliersLoading(false);
+      setCompaniesLoading(false);
       setError("");
       try {
         const event = await getEvent(eventId, userProfile);
@@ -273,8 +273,8 @@ export default function EventEditPage() {
           endDate: event.endDate || "",
           scheduleStartDate: event.scheduleStartDate || event.startDate || "",
           scheduleEndDate: event.scheduleEndDate || event.endDate || "",
-          contactSupplierOrder: Array.isArray(event.contactSupplierOrder)
-            ? event.contactSupplierOrder
+          contactCompanyOrder: Array.isArray(event.contactCompanyOrder)
+            ? event.contactCompanyOrder
             : [],
         };
         setForm(loadedEventForm);
@@ -327,11 +327,11 @@ export default function EventEditPage() {
             errorMessage: "Could not load locations. Other event data is still available.",
           }),
           loadOptionalEditorData({
-            label: "suppliers",
-            setLoadingState: setSuppliersLoading,
-            loadData: () => getSuppliers(loadedEventForm.clientId),
-            applyData: setSuppliers,
-            errorMessage: "Could not load suppliers. Other event data is still available.",
+            label: "companies",
+            setLoadingState: setCompaniesLoading,
+            loadData: () => getCompanies(loadedEventForm.clientId),
+            applyData: setCompanies,
+            errorMessage: "Could not load companies. Other event data is still available.",
           }),
         ]);
       } catch (loadError) {
@@ -344,7 +344,7 @@ export default function EventEditPage() {
           setDetailsLoading(false);
           setTagsLoading(false);
           setLocationsLoading(false);
-          setSuppliersLoading(false);
+          setCompaniesLoading(false);
         }
       }
     };
@@ -367,6 +367,19 @@ export default function EventEditPage() {
     document.addEventListener("mousedown", closeMenuOnOutsideClick);
     return () => document.removeEventListener("mousedown", closeMenuOnOutsideClick);
   }, [openActionMenuId]);
+
+  useEffect(() => {
+    const closeCompanyDropdownsOnOutsideClick = (event) => {
+      if (event.target.closest(".company-dropdown")) return;
+      document
+        .querySelectorAll(".company-dropdown[open]")
+        .forEach((dropdown) => dropdown.removeAttribute("open"));
+    };
+
+    document.addEventListener("mousedown", closeCompanyDropdownsOnOutsideClick);
+    return () =>
+      document.removeEventListener("mousedown", closeCompanyDropdownsOnOutsideClick);
+  }, []);
 
   useEffect(() => {
     if (!editingDetailCell) return;
@@ -411,27 +424,27 @@ export default function EventEditPage() {
       }));
   }, [locations]);
 
-  const usedSupplierIds = useMemo(() => {
+  const usedCompanyIds = useMemo(() => {
     return new Set(
       Object.values(detailsByDayId)
         .flat()
-        .flatMap((detail) => detail.supplierIds || [])
+        .flatMap((detail) => detail.companyIds || [])
         .filter(Boolean)
     );
   }, [detailsByDayId]);
 
-  const usedSuppliers = useMemo(() => {
-    return suppliers.filter((supplier) => usedSupplierIds.has(supplier.id));
-  }, [suppliers, usedSupplierIds]);
+  const usedCompanies = useMemo(() => {
+    return companies.filter((company) => usedCompanyIds.has(company.id));
+  }, [companies, usedCompanyIds]);
   const showTagColumn = tags.length > 0;
   const showLocationColumn = locationOptions.length > 0;
-  const showSupplierColumn = suppliers.length > 0;
+  const showCompanyColumn = companies.length > 0;
   const detailRowGridColumnParts = [
     "76px",
     "minmax(0, 1fr)",
     showTagColumn ? "128px" : "",
     showLocationColumn ? "150px" : "",
-    showSupplierColumn ? "150px" : "",
+    showCompanyColumn ? "150px" : "",
     "auto",
   ].filter(Boolean);
   const detailRowGridColumns = detailRowGridColumnParts.join(" ");
@@ -442,86 +455,86 @@ export default function EventEditPage() {
     "--detail-actions-column": detailActionGridColumn,
   });
 
-  const contactSuppliers = useMemo(() => {
+  const contactCompanies = useMemo(() => {
     const scheduleDetails = Object.values(detailsByDayId).flat();
-    const detailCountBySupplierId = scheduleDetails.reduce((counts, detail) => {
-      (detail.supplierIds || []).forEach((supplierId) => {
-        if (!supplierId) return;
-        counts[supplierId] = (counts[supplierId] || 0) + 1;
+    const detailCountByCompanyId = scheduleDetails.reduce((counts, detail) => {
+      (detail.companyIds || []).forEach((companyId) => {
+        if (!companyId) return;
+        counts[companyId] = (counts[companyId] || 0) + 1;
       });
       return counts;
     }, {});
 
-    const supplierOrder = Array.isArray(form.contactSupplierOrder)
-      ? form.contactSupplierOrder
+    const companyOrder = Array.isArray(form.contactCompanyOrder)
+      ? form.contactCompanyOrder
       : [];
-    const orderBySupplierId = new Map(
-      supplierOrder.map((supplierId, supplierIndex) => [supplierId, supplierIndex])
+    const orderByCompanyId = new Map(
+      companyOrder.map((companyId, companyIndex) => [companyId, companyIndex])
     );
 
-    return usedSuppliers
-      .map((supplier) => ({
-        ...supplier,
-        scheduleDetailCount: detailCountBySupplierId[supplier.id] || 0,
+    return usedCompanies
+      .map((company) => ({
+        ...company,
+        scheduleDetailCount: detailCountByCompanyId[company.id] || 0,
       }))
-      .sort((supplierA, supplierB) => {
-        const supplierAOrder = orderBySupplierId.has(supplierA.id)
-          ? orderBySupplierId.get(supplierA.id)
+      .sort((companyA, companyB) => {
+        const companyAOrder = orderByCompanyId.has(companyA.id)
+          ? orderByCompanyId.get(companyA.id)
           : Number.MAX_SAFE_INTEGER;
-        const supplierBOrder = orderBySupplierId.has(supplierB.id)
-          ? orderBySupplierId.get(supplierB.id)
+        const companyBOrder = orderByCompanyId.has(companyB.id)
+          ? orderByCompanyId.get(companyB.id)
           : Number.MAX_SAFE_INTEGER;
 
-        if (supplierAOrder !== supplierBOrder) return supplierAOrder - supplierBOrder;
-        return String(supplierA.supplierName || "").localeCompare(
-          String(supplierB.supplierName || "")
+        if (companyAOrder !== companyBOrder) return companyAOrder - companyBOrder;
+        return String(companyA.companyName || "").localeCompare(
+          String(companyB.companyName || "")
         );
       });
-  }, [detailsByDayId, form.contactSupplierOrder, usedSuppliers]);
+  }, [detailsByDayId, form.contactCompanyOrder, usedCompanies]);
 
-  const contactSupplierIds = useMemo(
-    () => contactSuppliers.map((supplier) => supplier.id),
-    [contactSuppliers]
+  const contactCompanyIds = useMemo(
+    () => contactCompanies.map((company) => company.id),
+    [contactCompanies]
   );
 
   useEffect(() => {
-    setOpenContactSupplierIds((current) => {
-      const currentOpenSupplierIds = current.filter((supplierId) =>
-        contactSupplierIds.includes(supplierId)
+    setOpenContactCompanyIds((current) => {
+      const currentOpenCompanyIds = current.filter((companyId) =>
+        contactCompanyIds.includes(companyId)
       );
-      const nextSupplierIds = contactSupplierIds.filter(
-        (supplierId) => !current.includes(supplierId)
+      const nextCompanyIds = contactCompanyIds.filter(
+        (companyId) => !current.includes(companyId)
       );
-      return [...currentOpenSupplierIds, ...nextSupplierIds];
+      return [...currentOpenCompanyIds, ...nextCompanyIds];
     });
-  }, [contactSupplierIds]);
+  }, [contactCompanyIds]);
 
   useEffect(() => {
     let cancelled = false;
 
     const loadContacts = async () => {
-      if (contactSupplierIds.length === 0) {
-        setSupplierContactsBySupplierId({});
+      if (contactCompanyIds.length === 0) {
+        setCompanyContactsByCompanyId({});
         return;
       }
 
-      setSupplierContactsLoading(true);
+      setCompanyContactsLoading(true);
       try {
-        const contacts = await getSupplierContacts(contactSupplierIds);
+        const contacts = await getCompanyContacts(contactCompanyIds);
         if (cancelled) return;
-        setSupplierContactsBySupplierId(
+        setCompanyContactsByCompanyId(
           Object.fromEntries(
-            contactSupplierIds.map((supplierId) => [
-              supplierId,
-              contacts.filter((contact) => contact.supplierId === supplierId),
+            contactCompanyIds.map((companyId) => [
+              companyId,
+              contacts.filter((contact) => contact.companyId === companyId),
             ])
           )
         );
       } catch (loadError) {
-        console.error("Could not load supplier contacts.", loadError);
-        if (!cancelled) setError("Could not load supplier contacts.");
+        console.error("Could not load company contacts.", loadError);
+        if (!cancelled) setError("Could not load company contacts.");
       } finally {
-        if (!cancelled) setSupplierContactsLoading(false);
+        if (!cancelled) setCompanyContactsLoading(false);
       }
     };
 
@@ -529,7 +542,7 @@ export default function EventEditPage() {
     return () => {
       cancelled = true;
     };
-  }, [contactSupplierIds]);
+  }, [contactCompanyIds]);
 
   useEffect(() => {
     if (selectedTagFilterId && !usedTagIds.has(selectedTagFilterId)) {
@@ -538,10 +551,10 @@ export default function EventEditPage() {
   }, [selectedTagFilterId, usedTagIds]);
 
   useEffect(() => {
-    setSelectedSupplierFilterIds((current) =>
-      current.filter((supplierId) => usedSupplierIds.has(supplierId))
+    setSelectedCompanyFilterIds((current) =>
+      current.filter((companyId) => usedCompanyIds.has(companyId))
     );
-  }, [usedSupplierIds]);
+  }, [usedCompanyIds]);
 
   const updateField = (field, value) => {
     setForm((current) => ({ ...current, [field]: value }));
@@ -591,15 +604,15 @@ export default function EventEditPage() {
     }
   };
 
-  const loadSuppliers = async (clientId = form.clientId) => {
-    setSuppliersLoading(true);
+  const loadCompanies = async (clientId = form.clientId) => {
+    setCompaniesLoading(true);
     try {
-      setSuppliers(await getSuppliers(clientId));
+      setCompanies(await getCompanies(clientId));
     } catch (loadError) {
-      console.error("Could not load suppliers.", loadError);
-      setError("Could not load suppliers.");
+      console.error("Could not load companies.", loadError);
+      setError("Could not load companies.");
     } finally {
-      setSuppliersLoading(false);
+      setCompaniesLoading(false);
     }
   };
 
@@ -637,7 +650,7 @@ export default function EventEditPage() {
               colour: normaliseHexColour(detail.colour),
               tagId: detail.tagId || "",
               locationId: detail.locationId || "",
-              supplierIds: detail.supplierIds || [],
+              companyIds: detail.companyIds || [],
             },
           ])
         )
@@ -711,71 +724,71 @@ export default function EventEditPage() {
     }));
   };
 
-  const toggleSupplierFilter = (supplierId) => {
-    setSelectedSupplierFilterIds((current) =>
-      current.includes(supplierId)
-        ? current.filter((currentSupplierId) => currentSupplierId !== supplierId)
-        : [...current, supplierId]
+  const toggleCompanyFilter = (companyId) => {
+    setSelectedCompanyFilterIds((current) =>
+      current.includes(companyId)
+        ? current.filter((currentCompanyId) => currentCompanyId !== companyId)
+        : [...current, companyId]
     );
   };
 
-  const toggleContactSupplierOpen = (supplierId) => {
-    setOpenContactSupplierIds((current) =>
-      current.includes(supplierId)
-        ? current.filter((currentSupplierId) => currentSupplierId !== supplierId)
-        : [...current, supplierId]
+  const toggleContactCompanyOpen = (companyId) => {
+    setOpenContactCompanyIds((current) =>
+      current.includes(companyId)
+        ? current.filter((currentCompanyId) => currentCompanyId !== companyId)
+        : [...current, companyId]
     );
   };
 
-  const reloadSupplierContacts = async (supplierIds = contactSupplierIds) => {
-    if (supplierIds.length === 0) {
-      setSupplierContactsBySupplierId({});
+  const reloadCompanyContacts = async (companyIds = contactCompanyIds) => {
+    if (companyIds.length === 0) {
+      setCompanyContactsByCompanyId({});
       return;
     }
 
-    setSupplierContactsLoading(true);
+    setCompanyContactsLoading(true);
     try {
-      const contacts = await getSupplierContacts(supplierIds);
-      setSupplierContactsBySupplierId(
+      const contacts = await getCompanyContacts(companyIds);
+      setCompanyContactsByCompanyId(
         Object.fromEntries(
-          supplierIds.map((supplierId) => [
-            supplierId,
-            contacts.filter((contact) => contact.supplierId === supplierId),
+          companyIds.map((companyId) => [
+            companyId,
+            contacts.filter((contact) => contact.companyId === companyId),
           ])
         )
       );
     } catch (loadError) {
-      console.error("Could not load supplier contacts.", loadError);
-      setError("Could not load supplier contacts.");
+      console.error("Could not load company contacts.", loadError);
+      setError("Could not load company contacts.");
     } finally {
-      setSupplierContactsLoading(false);
+      setCompanyContactsLoading(false);
     }
   };
 
-  const updateSupplierContactFormField = (field, value) => {
-    setSupplierContactForm((current) => ({ ...current, [field]: value }));
+  const updateCompanyContactFormField = (field, value) => {
+    setCompanyContactForm((current) => ({ ...current, [field]: value }));
   };
 
-  const resetSupplierContactForm = () => {
-    setEditingSupplierContactId("");
-    setEditingSupplierContactSupplierId("");
-    setSupplierContactForm(emptySupplierContactForm);
+  const resetCompanyContactForm = () => {
+    setEditingCompanyContactId("");
+    setEditingCompanyContactCompanyId("");
+    setCompanyContactForm(emptyCompanyContactForm);
   };
 
-  const startAddingSupplierContact = (supplierId) => {
-    if (!canManageSupplierContacts || isOffline) return;
-    setEditingSupplierContactId("");
-    setEditingSupplierContactSupplierId(supplierId);
-    setSupplierContactForm(emptySupplierContactForm);
+  const startAddingCompanyContact = (companyId) => {
+    if (!canManageCompanyContacts || isOffline) return;
+    setEditingCompanyContactId("");
+    setEditingCompanyContactCompanyId(companyId);
+    setCompanyContactForm(emptyCompanyContactForm);
     setMessage("");
     setError("");
   };
 
-  const startEditingSupplierContact = (supplierId, contact) => {
-    if (!canManageSupplierContacts || isOffline) return;
-    setEditingSupplierContactId(contact.id);
-    setEditingSupplierContactSupplierId(supplierId);
-    setSupplierContactForm({
+  const startEditingCompanyContact = (companyId, contact) => {
+    if (!canManageCompanyContacts || isOffline) return;
+    setEditingCompanyContactId(contact.id);
+    setEditingCompanyContactCompanyId(companyId);
+    setCompanyContactForm({
       name: contact.name || "",
       email: contact.email || "",
       phone: contact.phone || "",
@@ -785,96 +798,96 @@ export default function EventEditPage() {
     setError("");
   };
 
-  const saveSupplierContact = async (submitEvent) => {
+  const saveCompanyContact = async (submitEvent) => {
     submitEvent.preventDefault();
     if (isOffline) {
       setError("Editing is disabled while offline.");
       return;
     }
-    if (!canManageSupplierContacts) {
-      setError("Your role cannot manage supplier contacts.");
+    if (!canManageCompanyContacts) {
+      setError("Your role cannot manage company contacts.");
       return;
     }
-    if (!editingSupplierContactSupplierId) return;
+    if (!editingCompanyContactCompanyId) return;
 
-    const name = supplierContactForm.name.trim();
-    const email = supplierContactForm.email.trim();
-    const phone = supplierContactForm.phone.trim();
-    const role = supplierContactForm.role.trim();
+    const name = companyContactForm.name.trim();
+    const email = companyContactForm.email.trim();
+    const phone = companyContactForm.phone.trim();
+    const role = companyContactForm.role.trim();
     if (!name) {
       setError("Contact name is required.");
       return;
     }
 
-    setSavingSupplierContact(true);
+    setSavingCompanyContact(true);
     setMessage("");
     setError("");
 
     try {
-      if (editingSupplierContactId) {
-        await updateSupplierContact(editingSupplierContactId, {
-          supplierId: editingSupplierContactSupplierId,
+      if (editingCompanyContactId) {
+        await updateCompanyContact(editingCompanyContactId, {
+          companyId: editingCompanyContactCompanyId,
           name,
           email,
           phone,
           role,
         });
-        setMessage("Supplier contact saved.");
+        setMessage("Company contact saved.");
       } else {
-        await createSupplierContact({
-          supplierId: editingSupplierContactSupplierId,
+        await createCompanyContact({
+          companyId: editingCompanyContactCompanyId,
           name,
           email,
           phone,
           role,
         });
-        setMessage("Supplier contact created.");
+        setMessage("Company contact created.");
       }
 
-      resetSupplierContactForm();
-      await reloadSupplierContacts();
+      resetCompanyContactForm();
+      await reloadCompanyContacts();
     } catch (contactError) {
       console.error(contactError);
-      setError("Could not save supplier contact.");
+      setError("Could not save company contact.");
     } finally {
-      setSavingSupplierContact(false);
+      setSavingCompanyContact(false);
     }
   };
 
-  const removeSupplierContact = async (contactId) => {
+  const removeCompanyContact = async (contactId) => {
     if (isOffline) {
       setError("Editing is disabled while offline.");
       return;
     }
-    if (!canManageSupplierContacts) {
-      setError("Your role cannot manage supplier contacts.");
+    if (!canManageCompanyContacts) {
+      setError("Your role cannot manage company contacts.");
       return;
     }
 
-    setDeletingSupplierContactId(contactId);
+    setDeletingCompanyContactId(contactId);
     setMessage("");
     setError("");
 
     try {
-      await deleteSupplierContact(contactId);
-      if (editingSupplierContactId === contactId) resetSupplierContactForm();
-      await reloadSupplierContacts();
-      setMessage("Supplier contact deleted.");
+      await deleteCompanyContact(contactId);
+      if (editingCompanyContactId === contactId) resetCompanyContactForm();
+      await reloadCompanyContacts();
+      setMessage("Company contact deleted.");
     } catch (contactError) {
       console.error(contactError);
-      setError("Could not delete supplier contact.");
+      setError("Could not delete company contact.");
     } finally {
-      setDeletingSupplierContactId("");
+      setDeletingCompanyContactId("");
     }
   };
 
-  const reorderSupplierContact = async (supplierId, sourceContactId, targetContactId) => {
-    if (!canManageSupplierContacts || isOffline || reorderingSupplierContactId) return;
-    if (!supplierId || !sourceContactId || !targetContactId || sourceContactId === targetContactId) {
+  const reorderCompanyContact = async (companyId, sourceContactId, targetContactId) => {
+    if (!canManageCompanyContacts || isOffline || reorderingCompanyContactId) return;
+    if (!companyId || !sourceContactId || !targetContactId || sourceContactId === targetContactId) {
       return;
     }
 
-    const currentContacts = supplierContactsBySupplierId[supplierId] || [];
+    const currentContacts = companyContactsByCompanyId[companyId] || [];
     const sourceIndex = currentContacts.findIndex((contact) => contact.id === sourceContactId);
     const targetIndex = currentContacts.findIndex((contact) => contact.id === targetContactId);
     if (sourceIndex < 0 || targetIndex < 0) return;
@@ -887,85 +900,85 @@ export default function EventEditPage() {
       sortOrder: contactIndex,
     }));
 
-    setSupplierContactsBySupplierId((current) => ({
+    setCompanyContactsByCompanyId((current) => ({
       ...current,
-      [supplierId]: orderedContacts,
+      [companyId]: orderedContacts,
     }));
-    setSupplierContactDropTargetId("");
-    setReorderingSupplierContactId(supplierId);
+    setCompanyContactDropTargetId("");
+    setReorderingCompanyContactId(companyId);
     setMessage("");
     setError("");
 
     try {
-      await updateSupplierContactOrder(orderedContacts);
+      await updateCompanyContactOrder(orderedContacts);
     } catch (reorderError) {
       console.error(reorderError);
-      setError("Could not reorder supplier contacts.");
-      await reloadSupplierContacts();
+      setError("Could not reorder company contacts.");
+      await reloadCompanyContacts();
     } finally {
-      setReorderingSupplierContactId("");
+      setReorderingCompanyContactId("");
     }
   };
 
-  const reorderContactSupplier = async (sourceSupplierId, targetSupplierId) => {
-    if (!canManageContactSupplierOrder || isOffline || savingContactSupplierOrder) return;
-    if (!sourceSupplierId || !targetSupplierId || sourceSupplierId === targetSupplierId) return;
+  const reorderContactCompany = async (sourceCompanyId, targetCompanyId) => {
+    if (!canManageContactCompanyOrder || isOffline || savingContactCompanyOrder) return;
+    if (!sourceCompanyId || !targetCompanyId || sourceCompanyId === targetCompanyId) return;
 
-    const supplierIds = contactSuppliers.map((supplier) => supplier.id);
-    const sourceIndex = supplierIds.indexOf(sourceSupplierId);
-    const targetIndex = supplierIds.indexOf(targetSupplierId);
+    const companyIds = contactCompanies.map((company) => company.id);
+    const sourceIndex = companyIds.indexOf(sourceCompanyId);
+    const targetIndex = companyIds.indexOf(targetCompanyId);
     if (sourceIndex < 0 || targetIndex < 0) return;
 
-    const nextSupplierIds = [...supplierIds];
-    const [movedSupplierId] = nextSupplierIds.splice(sourceIndex, 1);
-    nextSupplierIds.splice(targetIndex, 0, movedSupplierId);
+    const nextCompanyIds = [...companyIds];
+    const [movedCompanyId] = nextCompanyIds.splice(sourceIndex, 1);
+    nextCompanyIds.splice(targetIndex, 0, movedCompanyId);
 
     setForm((current) => ({
       ...current,
-      contactSupplierOrder: nextSupplierIds,
+      contactCompanyOrder: nextCompanyIds,
     }));
-    setContactSupplierDropTargetId("");
-    setSavingContactSupplierOrder(true);
+    setContactCompanyDropTargetId("");
+    setSavingContactCompanyOrder(true);
     setMessage("");
     setError("");
 
     try {
-      await updateEventContactSupplierOrder(eventId, nextSupplierIds, userProfile);
+      await updateEventContactCompanyOrder(eventId, nextCompanyIds, userProfile);
       setSavedEventForm((current) => ({
         ...current,
-        contactSupplierOrder: nextSupplierIds,
+        contactCompanyOrder: nextCompanyIds,
       }));
     } catch (orderError) {
       console.error(orderError);
-      setError("Could not save contact supplier order.");
+      setError("Could not save contact company order.");
       setForm((current) => ({
         ...current,
-        contactSupplierOrder: savedEventForm.contactSupplierOrder || [],
+        contactCompanyOrder: savedEventForm.contactCompanyOrder || [],
       }));
     } finally {
-      setSavingContactSupplierOrder(false);
+      setSavingContactCompanyOrder(false);
     }
   };
 
   const getTagById = (tagId) => tags.find((tag) => tag.id === tagId) || null;
   const getLocationById = (locationId) =>
     locationOptions.find((location) => location.id === locationId) || null;
-  const getSupplierLabel = (supplierIds = []) => {
-    const selectedSuppliers = suppliers.filter((supplier) => supplierIds.includes(supplier.id));
-    if (selectedSuppliers.length === 0) return "No supplier";
-    if (selectedSuppliers.length === 1) return selectedSuppliers[0].supplierName;
-    return `${selectedSuppliers.length} suppliers`;
+  const getCompanyLabel = (companyIds = []) => {
+    const selectedCompanies = companies.filter((company) => companyIds.includes(company.id));
+    if (selectedCompanies.length === 0) return "No company";
+    if (selectedCompanies.length === 1) return selectedCompanies[0].companyName;
+    return `${selectedCompanies.length} companies`;
   };
-  const toggleSupplierIds = (supplierIds = [], supplierId) =>
-    supplierIds.includes(supplierId)
-      ? supplierIds.filter((currentSupplierId) => currentSupplierId !== supplierId)
-      : [...supplierIds, supplierId];
+  const toggleCompanyIds = (companyIds = [], companyId) =>
+    companyIds.includes(companyId)
+      ? companyIds.filter((currentCompanyId) => currentCompanyId !== companyId)
+      : [...companyIds, companyId];
   const getNoRowsMessage = () => {
-    if (selectedTagFilterId && selectedSupplierFilterIds.length > 0) {
-      return "No rows for selected tag and suppliers.";
+    if (selectedTagFilterId && selectedCompanyFilterIds.length > 0) {
+      return "No rows for selected tag and companies.";
     }
     if (selectedTagFilterId) return "No rows for selected tag.";
-    if (selectedSupplierFilterIds.length > 0) return "No rows for selected suppliers.";
+    if (selectedCompanyFilterIds.length > 0) return "No rows for selected companies.";
     return "No schedule details yet.";
   };
 
@@ -992,7 +1005,7 @@ export default function EventEditPage() {
         colour: normaliseHexColour(detail.colour),
         tagId,
         locationId: detail.locationId || "",
-        supplierIds: detail.supplierIds || [],
+        companyIds: detail.companyIds || [],
       });
       setSavedDetailsById((current) => ({
         ...current,
@@ -1003,7 +1016,7 @@ export default function EventEditPage() {
           colour: normaliseHexColour(detail.colour),
           tagId,
           locationId: detail.locationId || "",
-          supplierIds: detail.supplierIds || [],
+          companyIds: detail.companyIds || [],
         },
       }));
     } catch (tagError) {
@@ -1038,7 +1051,7 @@ export default function EventEditPage() {
         colour: normaliseHexColour(detail.colour),
         tagId: detail.tagId || "",
         locationId,
-        supplierIds: detail.supplierIds || [],
+        companyIds: detail.companyIds || [],
       });
       setSavedDetailsById((current) => ({
         ...current,
@@ -1049,7 +1062,7 @@ export default function EventEditPage() {
           colour: normaliseHexColour(detail.colour),
           tagId: detail.tagId || "",
           locationId,
-          supplierIds: detail.supplierIds || [],
+          companyIds: detail.companyIds || [],
         },
       }));
     } catch (locationError) {
@@ -1061,7 +1074,7 @@ export default function EventEditPage() {
     }
   };
 
-  const assignDetailSuppliers = async (dayId, detail, supplierIds) => {
+  const assignDetailCompanies = async (dayId, detail, companyIds) => {
     if (isOffline) {
       setError("Editing is disabled while offline.");
       return;
@@ -1071,7 +1084,7 @@ export default function EventEditPage() {
     setDetailsByDayId((current) => ({
       ...current,
       [dayId]: (current[dayId] || []).map((nextDetail) =>
-        nextDetail.id === detail.id ? { ...nextDetail, supplierIds } : nextDetail
+        nextDetail.id === detail.id ? { ...nextDetail, companyIds } : nextDetail
       ),
     }));
 
@@ -1084,7 +1097,7 @@ export default function EventEditPage() {
         colour: normaliseHexColour(detail.colour),
         tagId: detail.tagId || "",
         locationId: detail.locationId || "",
-        supplierIds,
+        companyIds,
       });
       setSavedDetailsById((current) => ({
         ...current,
@@ -1095,12 +1108,12 @@ export default function EventEditPage() {
           colour: normaliseHexColour(detail.colour),
           tagId: detail.tagId || "",
           locationId: detail.locationId || "",
-          supplierIds,
+          companyIds,
         },
       }));
-    } catch (supplierError) {
-      console.error(supplierError);
-      setError("Could not update row supplier.");
+    } catch (companyError) {
+      console.error(companyError);
+      setError("Could not update row company.");
       await loadScheduleDetails(scheduleDays);
     } finally {
       setSavingDetailId("");
@@ -1427,7 +1440,7 @@ export default function EventEditPage() {
         colour: normaliseHexColour(detail.colour),
         tagId: detail.tagId || "",
         locationId: detail.locationId || "",
-        supplierIds: detail.supplierIds || [],
+        companyIds: detail.companyIds || [],
       });
       setSavedDetailsById((current) => ({
         ...current,
@@ -1438,7 +1451,7 @@ export default function EventEditPage() {
           colour: normaliseHexColour(detail.colour),
           tagId: detail.tagId || "",
           locationId: detail.locationId || "",
-          supplierIds: detail.supplierIds || [],
+          companyIds: detail.companyIds || [],
         },
       }));
       setEditingDetailCell(nextCell);
@@ -1546,7 +1559,7 @@ export default function EventEditPage() {
             colour: normaliseHexColour(detail.colour),
             tagId: detail.tagId || "",
             locationId: detail.locationId || "",
-            supplierIds: detail.supplierIds || [],
+            companyIds: detail.companyIds || [],
           },
         ])
       ),
@@ -1651,7 +1664,7 @@ export default function EventEditPage() {
         colour: normaliseHexColour(detail.colour),
         tagId: detail.tagId || "",
         locationId: detail.locationId || "",
-        supplierIds: detail.supplierIds || [],
+        companyIds: detail.companyIds || [],
       });
       await loadScheduleDetails(scheduleDays);
       setEditingDetailCell((current) => (current?.detailId === detail.id ? null : current));
@@ -1685,7 +1698,7 @@ export default function EventEditPage() {
         colour: normaliseHexColour(detail.colour),
         tagId: detail.tagId || "",
         locationId: detail.locationId || "",
-        supplierIds: detail.supplierIds || [],
+        companyIds: detail.companyIds || [],
       });
       const details = await getScheduleDetails(dayId);
       setDetailsByDayId((current) => ({
@@ -1705,7 +1718,7 @@ export default function EventEditPage() {
               colour: normaliseHexColour(nextDetail.colour),
               tagId: nextDetail.tagId || "",
               locationId: nextDetail.locationId || "",
-              supplierIds: nextDetail.supplierIds || [],
+              companyIds: nextDetail.companyIds || [],
             },
           ])
         ),
@@ -1730,7 +1743,7 @@ export default function EventEditPage() {
           colour: "",
           tagId: selectedTagFilterId || "",
           locationId: "",
-          supplierIds: [],
+          companyIds: [],
         },
       ],
     }));
@@ -1769,7 +1782,7 @@ export default function EventEditPage() {
         colour: normaliseHexColour(draft.colour),
         tagId: draft.tagId || "",
         locationId: draft.locationId || "",
-        supplierIds: draft.supplierIds || [],
+        companyIds: draft.companyIds || [],
       });
       removeDraftDetail(dayId, draftIndex);
 
@@ -1790,7 +1803,7 @@ export default function EventEditPage() {
               colour: normaliseHexColour(detail.colour),
               tagId: detail.tagId || "",
               locationId: detail.locationId || "",
-              supplierIds: detail.supplierIds || [],
+              companyIds: detail.companyIds || [],
             },
           ])
         ),
@@ -1843,7 +1856,7 @@ export default function EventEditPage() {
       setSavedEventForm(nextEventForm);
       setIsEditingEventDetails(false);
       applyScheduleDays(days);
-      await loadSuppliers(nextEventForm.clientId);
+      await loadCompanies(nextEventForm.clientId);
       setMessage("Event saved.");
     } catch (saveError) {
       console.error(saveError);
@@ -2099,8 +2112,8 @@ export default function EventEditPage() {
       {locationsLoading && activeTab === "settings" ? (
         <p className="message">Loading locations...</p>
       ) : null}
-      {suppliersLoading && (activeTab === "info" || activeTab === "detail") ? (
-        <p className="message">Loading suppliers...</p>
+      {companiesLoading && (activeTab === "info" || activeTab === "detail") ? (
+        <p className="message">Loading companies...</p>
       ) : null}
 
       <nav className="tabs" aria-label="Event edit sections">
@@ -2156,162 +2169,162 @@ export default function EventEditPage() {
 
         {activeInfoTab === "contacts" ? (
           <div className="settings-section">
-            {detailsLoading || suppliersLoading ? (
+            {detailsLoading || companiesLoading ? (
               <p className="item-meta">Loading contacts...</p>
-            ) : contactSuppliers.length === 0 ? (
-              <p className="item-meta">No suppliers are tagged in this event schedule yet.</p>
+            ) : contactCompanies.length === 0 ? (
+              <p className="item-meta">No companies are tagged in this event schedule yet.</p>
             ) : (
-              <div className="supplier-list">
-                {contactSuppliers.map((supplier) => {
-                  const supplierContacts = supplierContactsBySupplierId[supplier.id] || [];
-                  const isEditingThisSupplierContact =
-                    editingSupplierContactSupplierId === supplier.id;
-                  const isSupplierOpen = openContactSupplierIds.includes(supplier.id);
+              <div className="company-list">
+                {contactCompanies.map((company) => {
+                  const companyContacts = companyContactsByCompanyId[company.id] || [];
+                  const isEditingThisCompanyContact =
+                    editingCompanyContactCompanyId === company.id;
+                  const isCompanyOpen = openContactCompanyIds.includes(company.id);
 
                   return (
                     <div
                       className={[
-                        "supplier-list-row",
-                        canManageContactSupplierOrder && !isOffline ? "draggable-supplier-row" : "",
-                        contactSupplierDropTargetId === supplier.id ? "drop-target" : "",
+                        "company-list-row",
+                        canManageContactCompanyOrder && !isOffline ? "draggable-company-row" : "",
+                        contactCompanyDropTargetId === company.id ? "drop-target" : "",
                       ].filter(Boolean).join(" ")}
-                      key={supplier.id}
-                      draggable={canManageContactSupplierOrder && !isOffline && !savingContactSupplierOrder}
+                      key={company.id}
+                      draggable={canManageContactCompanyOrder && !isOffline && !savingContactCompanyOrder}
                       onDragStart={(event) => {
-                        if (event.target.closest(".supplier-contact-row")) return;
-                        if (!canManageContactSupplierOrder || isOffline) return;
-                        draggedContactSupplierIdRef.current = supplier.id;
+                        if (event.target.closest(".company-contact-row")) return;
+                        if (!canManageContactCompanyOrder || isOffline) return;
+                        draggedContactCompanyIdRef.current = company.id;
                         event.dataTransfer.effectAllowed = "move";
                       }}
                       onDragOver={(event) => {
                         if (
-                          !canManageContactSupplierOrder ||
+                          !canManageContactCompanyOrder ||
                           isOffline ||
-                          savingContactSupplierOrder ||
-                          !draggedContactSupplierIdRef.current ||
-                          draggedContactSupplierIdRef.current === supplier.id
+                          savingContactCompanyOrder ||
+                          !draggedContactCompanyIdRef.current ||
+                          draggedContactCompanyIdRef.current === company.id
                         ) {
                           return;
                         }
                         event.preventDefault();
                         event.dataTransfer.dropEffect = "move";
-                        setContactSupplierDropTargetId(supplier.id);
+                        setContactCompanyDropTargetId(company.id);
                       }}
                       onDragLeave={() => {
-                        setContactSupplierDropTargetId((current) =>
-                          current === supplier.id ? "" : current
+                        setContactCompanyDropTargetId((current) =>
+                          current === company.id ? "" : current
                         );
                       }}
                       onDrop={(event) => {
                         event.preventDefault();
-                        const draggedSupplierId = draggedContactSupplierIdRef.current;
-                        draggedContactSupplierIdRef.current = "";
-                        reorderContactSupplier(draggedSupplierId, supplier.id);
+                        const draggedCompanyId = draggedContactCompanyIdRef.current;
+                        draggedContactCompanyIdRef.current = "";
+                        reorderContactCompany(draggedCompanyId, company.id);
                       }}
                       onDragEnd={() => {
-                        draggedContactSupplierIdRef.current = "";
-                        setContactSupplierDropTargetId("");
+                        draggedContactCompanyIdRef.current = "";
+                        setContactCompanyDropTargetId("");
                       }}
                     >
                       <div>
-                        <div className="supplier-accordion-heading">
+                        <div className="company-accordion-heading">
                           <button
-                            className="supplier-accordion-trigger"
+                            className="company-accordion-trigger"
                             type="button"
-                            aria-expanded={isSupplierOpen}
-                            onClick={() => toggleContactSupplierOpen(supplier.id)}
+                            aria-expanded={isCompanyOpen}
+                            onClick={() => toggleContactCompanyOpen(company.id)}
                           >
                             <span className="accordion-indicator" aria-hidden="true">
-                              {isSupplierOpen ? "v" : ">"}
+                              {isCompanyOpen ? "v" : ">"}
                             </span>
                             <span>
-                              <span className="supplier-accordion-title">
-                                {supplier.supplierName || "Unnamed supplier"}
+                              <span className="company-accordion-title">
+                                {company.companyName || "Unnamed company"}
                               </span>
-                              <span className="item-meta supplier-accordion-meta">
-                                {supplierContacts.length} contact
-                                {supplierContacts.length === 1 ? "" : "s"}
+                              <span className="item-meta company-accordion-meta">
+                                {companyContacts.length} contact
+                                {companyContacts.length === 1 ? "" : "s"}
                               </span>
                             </span>
                           </button>
-                          {canManageSupplierContacts ? (
+                          {canManageCompanyContacts ? (
                             <button
                               className="compact-button"
                               type="button"
-                              disabled={isOffline || savingSupplierContact}
-                              onClick={() => startAddingSupplierContact(supplier.id)}
+                              disabled={isOffline || savingCompanyContact}
+                              onClick={() => startAddingCompanyContact(company.id)}
                             >
                               Add contact
                             </button>
                           ) : null}
                         </div>
 
-                        {isSupplierOpen ? (
-                          <div className="supplier-accordion-body">
-                            {supplier.address ? (
-                              <p className="item-meta supplier-address">{supplier.address}</p>
+                        {isCompanyOpen ? (
+                          <div className="company-accordion-body">
+                            {company.address ? (
+                              <p className="item-meta company-address">{company.address}</p>
                             ) : null}
 
-                            {supplierContactsLoading ? (
+                            {companyContactsLoading ? (
                               <p className="item-meta">Loading contacts...</p>
-                            ) : supplierContacts.length === 0 ? (
+                            ) : companyContacts.length === 0 ? (
                               <p className="item-meta">No contacts yet.</p>
                             ) : (
-                              <div className="supplier-contact-list">
-                                {supplierContacts.map((contact) => (
+                              <div className="company-contact-list">
+                                {companyContacts.map((contact) => (
                                   <div
                                     className={[
-                                      "supplier-contact-row",
-                                      canManageSupplierContacts && !isOffline
+                                      "company-contact-row",
+                                      canManageCompanyContacts && !isOffline
                                         ? "draggable-contact-row"
                                         : "",
-                                      supplierContactDropTargetId === contact.id
+                                      companyContactDropTargetId === contact.id
                                         ? "drop-target"
                                         : "",
                                     ].filter(Boolean).join(" ")}
                                     key={contact.id}
                                     draggable={
-                                      canManageSupplierContacts &&
+                                      canManageCompanyContacts &&
                                       !isOffline &&
-                                      reorderingSupplierContactId !== supplier.id
+                                      reorderingCompanyContactId !== company.id
                                     }
                                     onDragStart={(event) => {
-                                      if (!canManageSupplierContacts || isOffline) return;
+                                      if (!canManageCompanyContacts || isOffline) return;
                                       event.stopPropagation();
-                                      draggedSupplierContactIdRef.current = contact.id;
+                                      draggedCompanyContactIdRef.current = contact.id;
                                       event.dataTransfer.effectAllowed = "move";
                                     }}
                                     onDragOver={(event) => {
                                       if (
-                                        !canManageSupplierContacts ||
+                                        !canManageCompanyContacts ||
                                         isOffline ||
-                                        reorderingSupplierContactId ||
-                                        !draggedSupplierContactIdRef.current ||
-                                        draggedSupplierContactIdRef.current === contact.id
+                                        reorderingCompanyContactId ||
+                                        !draggedCompanyContactIdRef.current ||
+                                        draggedCompanyContactIdRef.current === contact.id
                                       ) {
                                         return;
                                       }
                                       event.preventDefault();
                                       event.stopPropagation();
                                       event.dataTransfer.dropEffect = "move";
-                                      setSupplierContactDropTargetId(contact.id);
+                                      setCompanyContactDropTargetId(contact.id);
                                     }}
                                     onDragLeave={() => {
-                                      setSupplierContactDropTargetId((current) =>
+                                      setCompanyContactDropTargetId((current) =>
                                         current === contact.id ? "" : current
                                       );
                                     }}
                                     onDrop={(event) => {
                                       event.preventDefault();
                                       event.stopPropagation();
-                                      const draggedContactId = draggedSupplierContactIdRef.current;
-                                      draggedSupplierContactIdRef.current = "";
-                                      reorderSupplierContact(supplier.id, draggedContactId, contact.id);
+                                      const draggedContactId = draggedCompanyContactIdRef.current;
+                                      draggedCompanyContactIdRef.current = "";
+                                      reorderCompanyContact(company.id, draggedContactId, contact.id);
                                     }}
                                     onDragEnd={(event) => {
                                       event.stopPropagation();
-                                      draggedSupplierContactIdRef.current = "";
-                                      setSupplierContactDropTargetId("");
+                                      draggedCompanyContactIdRef.current = "";
+                                      setCompanyContactDropTargetId("");
                                     }}
                                   >
                                     <div>
@@ -2319,7 +2332,7 @@ export default function EventEditPage() {
                                       {contact.role ? (
                                         <p className="item-meta">{contact.role}</p>
                                       ) : null}
-                                      <div className="supplier-contact-methods">
+                                      <div className="company-contact-methods">
                                         {contact.email ? (
                                           <a href={`mailto:${contact.email}`}>{contact.email}</a>
                                         ) : null}
@@ -2328,18 +2341,18 @@ export default function EventEditPage() {
                                         ) : null}
                                       </div>
                                     </div>
-                                    {canManageSupplierContacts ? (
-                                      <div className="supplier-list-actions">
+                                    {canManageCompanyContacts ? (
+                                      <div className="company-list-actions">
                                         <span className="contact-drag-handle" aria-hidden="true">
-                                          {reorderingSupplierContactId === supplier.id
+                                          {reorderingCompanyContactId === company.id
                                             ? "Saving"
                                             : "Drag"}
                                         </span>
                                         <button
                                           className="compact-button"
                                           type="button"
-                                          disabled={isOffline || savingSupplierContact}
-                                          onClick={() => startEditingSupplierContact(supplier.id, contact)}
+                                          disabled={isOffline || savingCompanyContact}
+                                          onClick={() => startEditingCompanyContact(company.id, contact)}
                                         >
                                           Edit
                                         </button>
@@ -2347,13 +2360,13 @@ export default function EventEditPage() {
                                           className="compact-button"
                                           type="button"
                                           disabled={
-                                            deletingSupplierContactId === contact.id ||
+                                            deletingCompanyContactId === contact.id ||
                                             isOffline ||
-                                            savingSupplierContact
+                                            savingCompanyContact
                                           }
-                                          onClick={() => removeSupplierContact(contact.id)}
+                                          onClick={() => removeCompanyContact(contact.id)}
                                         >
-                                          {deletingSupplierContactId === contact.id
+                                          {deletingCompanyContactId === contact.id
                                             ? "Deleting..."
                                             : "Delete"}
                                         </button>
@@ -2364,53 +2377,53 @@ export default function EventEditPage() {
                               </div>
                             )}
 
-                            {canManageSupplierContacts && isEditingThisSupplierContact ? (
-                              <form className="supplier-contact-form" onSubmit={saveSupplierContact}>
+                            {canManageCompanyContacts && isEditingThisCompanyContact ? (
+                              <form className="company-contact-form" onSubmit={saveCompanyContact}>
                                 <div className="form-grid">
                                   <div className="form-row">
-                                    <label htmlFor={`supplierContactName-${supplier.id}`}>Name</label>
+                                    <label htmlFor={`companyContactName-${company.id}`}>Name</label>
                                     <input
-                                      id={`supplierContactName-${supplier.id}`}
-                                      value={supplierContactForm.name}
-                                      disabled={savingSupplierContact || isOffline}
+                                      id={`companyContactName-${company.id}`}
+                                      value={companyContactForm.name}
+                                      disabled={savingCompanyContact || isOffline}
                                       onChange={(event) =>
-                                        updateSupplierContactFormField("name", event.target.value)
+                                        updateCompanyContactFormField("name", event.target.value)
                                       }
                                       required
                                     />
                                   </div>
                                   <div className="form-row">
-                                    <label htmlFor={`supplierContactRole-${supplier.id}`}>Role</label>
+                                    <label htmlFor={`companyContactRole-${company.id}`}>Role</label>
                                     <input
-                                      id={`supplierContactRole-${supplier.id}`}
-                                      value={supplierContactForm.role}
-                                      disabled={savingSupplierContact || isOffline}
+                                      id={`companyContactRole-${company.id}`}
+                                      value={companyContactForm.role}
+                                      disabled={savingCompanyContact || isOffline}
                                       onChange={(event) =>
-                                        updateSupplierContactFormField("role", event.target.value)
+                                        updateCompanyContactFormField("role", event.target.value)
                                       }
                                     />
                                   </div>
                                   <div className="form-row">
-                                    <label htmlFor={`supplierContactEmail-${supplier.id}`}>Email</label>
+                                    <label htmlFor={`companyContactEmail-${company.id}`}>Email</label>
                                     <input
-                                      id={`supplierContactEmail-${supplier.id}`}
+                                      id={`companyContactEmail-${company.id}`}
                                       type="email"
-                                      value={supplierContactForm.email}
-                                      disabled={savingSupplierContact || isOffline}
+                                      value={companyContactForm.email}
+                                      disabled={savingCompanyContact || isOffline}
                                       onChange={(event) =>
-                                        updateSupplierContactFormField("email", event.target.value)
+                                        updateCompanyContactFormField("email", event.target.value)
                                       }
                                     />
                                   </div>
                                   <div className="form-row">
-                                    <label htmlFor={`supplierContactPhone-${supplier.id}`}>Phone</label>
+                                    <label htmlFor={`companyContactPhone-${company.id}`}>Phone</label>
                                     <input
-                                      id={`supplierContactPhone-${supplier.id}`}
+                                      id={`companyContactPhone-${company.id}`}
                                       type="tel"
-                                      value={supplierContactForm.phone}
-                                      disabled={savingSupplierContact || isOffline}
+                                      value={companyContactForm.phone}
+                                      disabled={savingCompanyContact || isOffline}
                                       onChange={(event) =>
-                                        updateSupplierContactFormField("phone", event.target.value)
+                                        updateCompanyContactFormField("phone", event.target.value)
                                       }
                                     />
                                   </div>
@@ -2419,19 +2432,19 @@ export default function EventEditPage() {
                                   <button
                                     className="button"
                                     type="submit"
-                                    disabled={savingSupplierContact || isOffline}
+                                    disabled={savingCompanyContact || isOffline}
                                   >
-                                    {savingSupplierContact
+                                    {savingCompanyContact
                                       ? "Saving..."
-                                      : editingSupplierContactId
+                                      : editingCompanyContactId
                                         ? "Save contact"
                                         : "Create contact"}
                                   </button>
                                   <button
                                     className="button secondary"
                                     type="button"
-                                    disabled={savingSupplierContact || isOffline}
-                                    onClick={resetSupplierContactForm}
+                                    disabled={savingCompanyContact || isOffline}
+                                    onClick={resetCompanyContactForm}
                                   >
                                     Cancel
                                   </button>
@@ -2441,9 +2454,9 @@ export default function EventEditPage() {
                           </div>
                         ) : null}
                       </div>
-                      {canManageContactSupplierOrder ? (
+                      {canManageContactCompanyOrder ? (
                         <span className="drag-handle" aria-hidden="true">
-                          {savingContactSupplierOrder ? "Saving" : "Drag"}
+                          {savingContactCompanyOrder ? "Saving" : "Drag"}
                         </span>
                       ) : null}
                     </div>
@@ -2565,7 +2578,7 @@ export default function EventEditPage() {
 
       {activeTab === "detail" ? (
       <section className="panel">
-        {usedTags.length > 0 || usedSuppliers.length > 0 ? (
+        {usedTags.length > 0 || usedCompanies.length > 0 ? (
           <div className="filter-groups" aria-label="Filter schedule rows">
             {usedTags.length > 0 ? (
               <div className="tag-filter-bar" aria-label="Filter schedule rows by tag">
@@ -2599,31 +2612,31 @@ export default function EventEditPage() {
                 ))}
               </div>
             ) : null}
-            {usedSuppliers.length > 0 ? (
-              <div className="tag-filter-bar" aria-label="Filter schedule rows by supplier">
+            {usedCompanies.length > 0 ? (
+              <div className="tag-filter-bar" aria-label="Filter schedule rows by company">
                 <button
                   className={
-                    selectedSupplierFilterIds.length === 0
+                    selectedCompanyFilterIds.length === 0
                       ? "tag-filter-button active"
                       : "tag-filter-button"
                   }
                   type="button"
-                  onClick={() => setSelectedSupplierFilterIds([])}
+                  onClick={() => setSelectedCompanyFilterIds([])}
                 >
-                  All suppliers
+                  All companies
                 </button>
-                {usedSuppliers.map((supplier) => (
+                {usedCompanies.map((company) => (
                   <button
                     className={
-                      selectedSupplierFilterIds.includes(supplier.id)
+                      selectedCompanyFilterIds.includes(company.id)
                         ? "tag-filter-button active"
                         : "tag-filter-button"
                     }
                     type="button"
-                    key={supplier.id}
-                    onClick={() => toggleSupplierFilter(supplier.id)}
+                    key={company.id}
+                    onClick={() => toggleCompanyFilter(company.id)}
                   >
-                    {supplier.supplierName}
+                    {company.companyName}
                   </button>
                 ))}
               </div>
@@ -2638,12 +2651,12 @@ export default function EventEditPage() {
               const allDayDetails = detailsByDayId[day.id] || [];
               const dayDetails = allDayDetails.filter((detail) => {
                 const matchesTag = !selectedTagFilterId || detail.tagId === selectedTagFilterId;
-                const matchesSupplier =
-                  selectedSupplierFilterIds.length === 0 ||
-                  selectedSupplierFilterIds.some((supplierId) =>
-                    (detail.supplierIds || []).includes(supplierId)
+                const matchesCompany =
+                  selectedCompanyFilterIds.length === 0 ||
+                  selectedCompanyFilterIds.some((companyId) =>
+                    (detail.companyIds || []).includes(companyId)
                   );
-                return matchesTag && matchesSupplier;
+                return matchesTag && matchesCompany;
               });
               const draftDetails = draftDetailsByDayId[day.id] || [];
 
@@ -2853,30 +2866,30 @@ export default function EventEditPage() {
                                   </select>
                                 </div>
                               ) : null}
-                              {showSupplierColumn ? (
-                                <details className="supplier-dropdown">
+                              {showCompanyColumn ? (
+                                <details className="company-dropdown">
                                   <summary
-                                    aria-label={`Supplier for ${detail.description || "schedule detail"}`}
-                                    className="supplier-dropdown-trigger"
+                                    aria-label={`Company for ${detail.description || "schedule detail"}`}
+                                    className="company-dropdown-trigger"
                                   >
-                                    {getSupplierLabel(detail.supplierIds || [])}
+                                    {getCompanyLabel(detail.companyIds || [])}
                                   </summary>
-                                  <div className="supplier-dropdown-menu">
-                                    {suppliers.map((supplier) => (
-                                      <label className="supplier-dropdown-option" key={supplier.id}>
+                                  <div className="company-dropdown-menu">
+                                    {companies.map((company) => (
+                                      <label className="company-dropdown-option" key={company.id}>
                                         <input
                                           type="checkbox"
-                                          checked={(detail.supplierIds || []).includes(supplier.id)}
+                                          checked={(detail.companyIds || []).includes(company.id)}
                                           disabled={savingDetailId === detail.id || isOffline}
                                           onChange={() =>
-                                            assignDetailSuppliers(
+                                            assignDetailCompanies(
                                               day.id,
                                               detail,
-                                              toggleSupplierIds(detail.supplierIds || [], supplier.id)
+                                              toggleCompanyIds(detail.companyIds || [], company.id)
                                             )
                                           }
                                         />
-                                        <span>{supplier.supplierName}</span>
+                                        <span>{company.companyName}</span>
                                       </label>
                                     ))}
                                   </div>
@@ -3073,31 +3086,31 @@ export default function EventEditPage() {
                                 </select>
                               </div>
                             ) : null}
-                            {showSupplierColumn ? (
-                              <details className="supplier-dropdown">
+                            {showCompanyColumn ? (
+                              <details className="company-dropdown">
                                 <summary
-                                  aria-label="New detail supplier"
-                                  className="supplier-dropdown-trigger"
+                                  aria-label="New detail company"
+                                  className="company-dropdown-trigger"
                                 >
-                                  {getSupplierLabel(draft.supplierIds || [])}
+                                  {getCompanyLabel(draft.companyIds || [])}
                                 </summary>
-                                <div className="supplier-dropdown-menu">
-                                  {suppliers.map((supplier) => (
-                                    <label className="supplier-dropdown-option" key={supplier.id}>
+                                <div className="company-dropdown-menu">
+                                  {companies.map((company) => (
+                                    <label className="company-dropdown-option" key={company.id}>
                                       <input
                                         type="checkbox"
-                                        checked={(draft.supplierIds || []).includes(supplier.id)}
+                                        checked={(draft.companyIds || []).includes(company.id)}
                                         disabled={isOffline}
                                         onChange={() =>
                                           updateDraftDetail(
                                             day.id,
                                             draftIndex,
-                                            "supplierIds",
-                                            toggleSupplierIds(draft.supplierIds || [], supplier.id)
+                                            "companyIds",
+                                            toggleCompanyIds(draft.companyIds || [], company.id)
                                           )
                                         }
                                       />
-                                      <span>{supplier.supplierName}</span>
+                                      <span>{company.companyName}</span>
                                     </label>
                                   ))}
                                 </div>

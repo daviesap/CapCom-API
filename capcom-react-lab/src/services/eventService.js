@@ -155,7 +155,7 @@ export async function updateEvent(eventId, eventData, userProfile) {
   }
 }
 
-export async function updateEventContactSupplierOrder(eventId, contactSupplierOrder, userProfile) {
+export async function updateEventContactCompanyOrder(eventId, contactCompanyOrder, userProfile) {
   assertOnline();
   try {
     const existingEvent = await getEvent(eventId, userProfile);
@@ -164,11 +164,11 @@ export async function updateEventContactSupplierOrder(eventId, contactSupplierOr
     }
 
     return await updateDoc(doc(db, "events", eventId), {
-      contactSupplierOrder: Array.isArray(contactSupplierOrder) ? contactSupplierOrder : [],
+      contactCompanyOrder: Array.isArray(contactCompanyOrder) ? contactCompanyOrder : [],
       updatedAt: serverTimestamp(),
     });
   } catch (error) {
-    logWriteError("update event contact supplier order", error, { eventId });
+    logWriteError("update event contact company order", error, { eventId });
     throw error;
   } finally {
     // Saving state is owned by the calling component.
