@@ -1,16 +1,21 @@
 import { NavLink } from "react-router-dom";
+import { useAuth } from "../auth/AuthProvider.jsx";
 import { CapcomIcon } from "../icons/capcomIcons.jsx";
 
 const navItems = [
   { to: "/events", label: "Events", icon: "event" },
-  { to: "/admin", label: "Admin", icon: "admin" },
+  { to: "/admin", label: "Admin", icon: "admin", requiresAdmin: true },
   { to: "/profile", label: "Profile", icon: "profile" },
 ];
 
 export default function AppNav({ variant }) {
+  const { isSuperAdmin, isClientAdmin } = useAuth();
+  const canAccessAdmin = isSuperAdmin || isClientAdmin;
+  const visibleNavItems = navItems.filter((item) => !item.requiresAdmin || canAccessAdmin);
+
   return (
     <div className={`app-nav app-nav-${variant}`}>
-      {navItems.map((item) => (
+      {visibleNavItems.map((item) => (
         <NavLink
           className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}
           key={item.to}

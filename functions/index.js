@@ -23,10 +23,11 @@ import { merge } from "lodash-es";
 
 // ===== Imports — Firebase =====
 import { defineSecret } from "firebase-functions/params";
-import { onRequest } from "firebase-functions/v2/https";
+import { HttpsError, onCall, onRequest } from "firebase-functions/v2/https";
 import { initializeApp, applicationDefault } from "firebase-admin/app";
 import { getFirestore, FieldValue } from "firebase-admin/firestore";
 import { getStorage } from "firebase-admin/storage";
+import { getAuth } from "firebase-admin/auth";
 
 
 // ===== Imports — Local modules =====
@@ -53,6 +54,7 @@ initializeApp({
 });
 
 const db = getFirestore();
+const adminAuth = getAuth();
 const LOCAL_OUTPUT_DIR = path.join(process.cwd(), "local-emulator", "output");
 const runningEmulated = !!process.env.FUNCTIONS_EMULATOR || !!process.env.FIREBASE_EMULATOR_HUB;
 
@@ -63,6 +65,145 @@ const ACTIONS = {
   MEALS_PIVOT_V2: "mealsPivotv2",
   GENERATE_HOME: "generateHome" // New action to generate home page
 };
+
+const USER_ROLES = {
+  SUPER_ADMIN: "SuperAdmin",
+  CLIENT_ADMIN: "ClientAdmin",
+  CLIENT_USER: "ClientUser",
+};
+
+function requireString(value, fieldName) {
+  const normalised = String(value || "").trim();
+  if (!normalised) {
+    throw new HttpsError("invalid-argument", `${fieldName} is required.`);
+  }
+  return normalised;
+}
+
+function normaliseNewUserPayload(data) {
+  const role = requireString(data?.role, "role");
+  if (![USER_ROLES.CLIENT_ADMIN, USER_ROLES.CLIENT_USER].includes(role)) {
+    throw new HttpsError("invalid-argument", "Only ClientAdmin and ClientUser roles can be created here.");
+  }
+
+  return {
+    email: requireString(data?.email, "email").toLowerCase(),
+    displayName: requireString(data?.displayName, "displayName"),
+    role,
+    clientId: requireString(data?.clientId, "clientId"),
+  };
+}
+
+async function getActiveCallerProfile(uid) {
+  const profileSnap = await db.collection("users").doc(uid).get();
+  if (!profileSnap.exists || profileSnap.data()?.isActive !== true) {
+    throw new HttpsError("permission-denied", "Your user profile is not active.");
+  }
+
+  return {
+    id: profileSnap.id,
+    ...profileSnap.data(),
+  };
+}
+
+function canCreateRequestedRole(callerProfile, newUserData) {
+  if (callerProfile.role === USER_ROLES.SUPER_ADMIN) {
+    return [USER_ROLES.CLIENT_ADMIN, USER_ROLES.CLIENT_USER].includes(newUserData.role);
+  }
+
+  return callerProfile.role === USER_ROLES.CLIENT_ADMIN
+    && callerProfile.clientId === newUserData.clientId
+    && newUserData.role === USER_ROLES.CLIENT_USER;
+}
+
+async function requireActiveClient(clientId) {
+  const clientSnap = await db.collection("clients").doc(clientId).get();
+  if (!clientSnap.exists) {
+    throw new HttpsError("not-found", "Client not found.");
+  }
+
+  if (clientSnap.data()?.isActive === false) {
+    throw new HttpsError("failed-precondition", "Cannot create users for an inactive client.");
+  }
+
+  return {
+    id: clientSnap.id,
+    ...clientSnap.data(),
+  };
+}
+
+export const createAuthUserProfile = onCall({
+  region: "europe-west2",
+}, async (request) => {
+  if (!request.auth?.uid) {
+    throw new HttpsError("unauthenticated", "You must be signed in.");
+  }
+
+  const callerProfile = await getActiveCallerProfile(request.auth.uid);
+  const newUserData = normaliseNewUserPayload(request.data);
+
+  if (!canCreateRequestedRole(callerProfile, newUserData)) {
+    throw new HttpsError("permission-denied", "You do not have permission to create this user.");
+  }
+
+  await requireActiveClient(newUserData.clientId);
+
+  const existingAuthUser = await adminAuth.getUserByEmail(newUserData.email).catch((error) => {
+    if (error?.code === "auth/user-not-found") return null;
+    throw error;
+  });
+
+  if (existingAuthUser) {
+    throw new HttpsError("already-exists", "A Firebase Auth user already exists for this email.");
+  }
+
+  let authUser = null;
+  try {
+    authUser = await adminAuth.createUser({
+      email: newUserData.email,
+      displayName: newUserData.displayName,
+      disabled: false,
+      emailVerified: false,
+    });
+
+    const profileRef = db.collection("users").doc(authUser.uid);
+    const existingProfile = await profileRef.get();
+    if (existingProfile.exists) {
+      throw new HttpsError("already-exists", "A Firestore user profile already exists for this UID.");
+    }
+
+    await profileRef.set({
+      email: newUserData.email,
+      displayName: newUserData.displayName,
+      role: newUserData.role,
+      clientId: newUserData.clientId,
+      isActive: true,
+      createdAt: FieldValue.serverTimestamp(),
+      createdBy: request.auth.uid,
+      updatedAt: FieldValue.serverTimestamp(),
+    });
+
+    return {
+      uid: authUser.uid,
+      email: newUserData.email,
+      role: newUserData.role,
+      clientId: newUserData.clientId,
+    };
+  } catch (error) {
+    if (authUser?.uid) {
+      await adminAuth.deleteUser(authUser.uid).catch((deleteError) => {
+        console.error("Failed to roll back Firebase Auth user after profile creation error.", {
+          uid: authUser.uid,
+          deleteError,
+        });
+      });
+    }
+
+    if (error instanceof HttpsError) throw error;
+    console.error("Failed to create auth user profile.", error);
+    throw new HttpsError("internal", "Could not create user.");
+  }
+});
 
 // ===== Helpers — URLs & logging =====
 /**

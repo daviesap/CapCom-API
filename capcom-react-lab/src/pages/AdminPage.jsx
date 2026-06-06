@@ -9,12 +9,13 @@ import {
   getClients,
   updateClient,
 } from "../services/clientService.js";
+import { sendUserPasswordResetEmail } from "../services/authEmailService.js";
 import {
   canManageUserProfile,
-  createUserProfile,
   getUserProfiles,
   updateUserProfile,
 } from "../services/userService.js";
+import { createAuthUserProfile } from "../services/functionService.js";
 
 const emptyClientForm = {
   clientName: "",
@@ -45,6 +46,10 @@ function slugifyClientName(clientName) {
 function getClientName(clients, clientId) {
   if (!clientId) return "None";
   return clients.find((client) => client.id === clientId)?.clientName || clientId;
+}
+
+function getSaveErrorMessage(error, fallbackMessage) {
+  return error?.message || fallbackMessage;
 }
 
 export default function AdminPage() {
@@ -258,7 +263,7 @@ export default function AdminPage() {
       const uid = editingUserId || userForm.uid.trim();
       const userData = getUserFormData();
 
-      if (!uid) {
+      if (editingUserId && !uid) {
         setUserError("Firebase Auth UID is required.");
         return;
       }
@@ -272,15 +277,22 @@ export default function AdminPage() {
         await updateUserProfile(editingUserId, userData, userProfile);
         setUserMessage("User profile updated.");
       } else {
-        await createUserProfile(uid, userData, userProfile);
-        setUserMessage("User profile created.");
+        const createdUser = await createAuthUserProfile(userData);
+        try {
+          await sendUserPasswordResetEmail(createdUser.email);
+          setUserMessage(`Auth user created and password reset email sent to ${createdUser.email}.`);
+        } catch (emailError) {
+          console.error(emailError);
+          setUserMessage(`Auth user and profile created for ${createdUser.email}.`);
+          setUserError(getSaveErrorMessage(emailError, "Could not send password reset email."));
+        }
       }
 
       resetUserForm();
       await loadUsers();
     } catch (saveError) {
       console.error(saveError);
-      setUserError("Could not save user profile.");
+      setUserError(getSaveErrorMessage(saveError, "Could not save user profile."));
     } finally {
       setUserSaving(false);
     }
@@ -309,6 +321,22 @@ export default function AdminPage() {
     } catch (saveError) {
       console.error(saveError);
       setUserError("Could not update user profile status.");
+    } finally {
+      setUserSaving(false);
+    }
+  };
+
+  const sendPasswordReset = async (profile) => {
+    setUserSaving(true);
+    setUserMessage("");
+    setUserError("");
+
+    try {
+      await sendUserPasswordResetEmail(profile.email);
+      setUserMessage(`Password reset email sent to ${profile.email}.`);
+    } catch (emailError) {
+      console.error(emailError);
+      setUserError(getSaveErrorMessage(emailError, "Could not send password reset email."));
     } finally {
       setUserSaving(false);
     }
@@ -496,7 +524,9 @@ export default function AdminPage() {
               <div>
                 <h2>{editingUserId ? "Edit User Profile" : "Create User Profile"}</h2>
                 <p className="page-subtitle">
-                  This creates the Firestore profile for an existing Firebase Auth user.
+                  {editingUserId
+                    ? "Edit the Firestore profile for this Firebase Auth user."
+                    : "Create a Firebase Auth user and matching Firestore profile."}
                 </p>
               </div>
             </div>
@@ -506,16 +536,17 @@ export default function AdminPage() {
 
             <form onSubmit={handleUserSubmit}>
               <div className="form-grid">
-                <div className="form-row full">
-                  <label htmlFor="uid">Firebase Auth UID</label>
-                  <input
-                    id="uid"
-                    value={userForm.uid}
-                    disabled={userSaving || Boolean(editingUserId)}
-                    onChange={(event) => updateUserField("uid", event.target.value)}
-                    required
-                  />
-                </div>
+                {editingUserId ? (
+                  <div className="form-row full">
+                    <label htmlFor="uid">Firebase Auth UID</label>
+                    <input
+                      id="uid"
+                      value={userForm.uid}
+                      disabled
+                      required
+                    />
+                  </div>
+                ) : null}
                 <div className="form-row">
                   <label htmlFor="email">Email</label>
                   <input
@@ -579,21 +610,23 @@ export default function AdminPage() {
                     />
                   )}
                 </div>
-                <label className="checkbox-row form-row full" htmlFor="userIsActive">
-                  <input
-                    id="userIsActive"
-                    type="checkbox"
-                    checked={userForm.isActive}
-                    disabled={userSaving}
-                    onChange={(event) => updateUserField("isActive", event.target.checked)}
-                  />
-                  <span>User profile is active</span>
-                </label>
+                {editingUserId ? (
+                  <label className="checkbox-row form-row full" htmlFor="userIsActive">
+                    <input
+                      id="userIsActive"
+                      type="checkbox"
+                      checked={userForm.isActive}
+                      disabled={userSaving}
+                      onChange={(event) => updateUserField("isActive", event.target.checked)}
+                    />
+                    <span>User profile is active</span>
+                  </label>
+                ) : null}
               </div>
 
               <div className="actions">
                 <button className="button" type="submit" disabled={userSaving}>
-                  {userSaving ? "Saving..." : editingUserId ? "Save User" : "Create User"}
+                  {userSaving ? "Saving..." : editingUserId ? "Save User" : "Create Auth User"}
                 </button>
                 {editingUserId ? (
                   <button
@@ -614,7 +647,7 @@ export default function AdminPage() {
               <div>
                 <h2>Users</h2>
                 <p className="page-subtitle">
-                  Profiles only. Firebase Auth accounts are still created separately.
+                  New users are created in Firebase Auth and Firestore together.
                 </p>
               </div>
             </div>
@@ -650,6 +683,14 @@ export default function AdminPage() {
                         onClick={() => startEditingUser(profile)}
                       >
                         Edit
+                      </button>
+                      <button
+                        className="button secondary"
+                        type="button"
+                        disabled={userSaving || !canEditProfile || !profile.email}
+                        onClick={() => sendPasswordReset(profile)}
+                      >
+                        Send Reset
                       </button>
                       <button
                         className={profile.isActive !== false ? "button secondary" : "button"}

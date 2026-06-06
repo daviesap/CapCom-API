@@ -3,10 +3,252 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // 🔧 These rules are managed in GitHub (see firestore.rules in repo)
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function userPath(uid) {
+      return /databases/$(database)/documents/users/$(uid);
+    }
+
+    function currentUser() {
+      return get(userPath(request.auth.uid)).data;
+    }
+
+    function hasActiveProfile() {
+      return signedIn()
+        && exists(userPath(request.auth.uid))
+        && currentUser().isActive == true;
+    }
+
+    function isSuperAdmin() {
+      return hasActiveProfile()
+        && currentUser().role == "SuperAdmin";
+    }
+
+    function isClientAdmin() {
+      return hasActiveProfile()
+        && currentUser().role == "ClientAdmin"
+        && currentUser().clientId is string;
+    }
+
+    function isClientUser() {
+      return hasActiveProfile()
+        && currentUser().role == "ClientUser"
+        && currentUser().clientId is string;
+    }
+
+    function isOwnClient(clientId) {
+      return hasActiveProfile()
+        && currentUser().clientId == clientId;
+    }
+
+    function canReadClient(clientId) {
+      return isSuperAdmin() || isOwnClient(clientId);
+    }
+
+    function canManageClient() {
+      return isSuperAdmin();
+    }
+
+    function eventPath(eventId) {
+      return /databases/$(database)/documents/events/$(eventId);
+    }
+
+    function eventData(eventId) {
+      return get(eventPath(eventId)).data;
+    }
+
+    function canReadEventData(event) {
+      return hasActiveProfile()
+        && (
+          isSuperAdmin()
+          || (event.clientId is string && currentUser().clientId == event.clientId)
+        );
+    }
+
+    function canManageEventData(event) {
+      return hasActiveProfile()
+        && (
+          isSuperAdmin()
+          || (event.clientId is string && isClientAdmin() && currentUser().clientId == event.clientId)
+        );
+    }
+
+    function canCreateEventData(event) {
+      return hasActiveProfile()
+        && event.clientId is string
+        && (
+          isSuperAdmin()
+          || (isClientAdmin() && currentUser().clientId == event.clientId)
+        );
+    }
+
+    function canReadEvent(eventId) {
+      return exists(eventPath(eventId))
+        && canReadEventData(eventData(eventId));
+    }
+
+    function canManageEvent(eventId) {
+      return exists(eventPath(eventId))
+        && canManageEventData(eventData(eventId));
+    }
+
+    function scheduleDayPath(scheduleDayId) {
+      return /databases/$(database)/documents/scheduleDays/$(scheduleDayId);
+    }
+
+    function scheduleDayData(scheduleDayId) {
+      return get(scheduleDayPath(scheduleDayId)).data;
+    }
+
+    function canReadScheduleDayData(scheduleDay) {
+      return scheduleDay.eventId is string
+        && canReadEvent(scheduleDay.eventId);
+    }
+
+    function canManageScheduleDayData(scheduleDay) {
+      return scheduleDay.eventId is string
+        && canManageEvent(scheduleDay.eventId);
+    }
+
+    function canReadScheduleDetailData(scheduleDetail) {
+      return (scheduleDetail.eventId is string && canReadEvent(scheduleDetail.eventId))
+        || (
+          scheduleDetail.scheduleDayId is string
+          && exists(scheduleDayPath(scheduleDetail.scheduleDayId))
+          && canReadScheduleDayData(scheduleDayData(scheduleDetail.scheduleDayId))
+        );
+    }
+
+    function canManageScheduleDetailData(scheduleDetail) {
+      return (scheduleDetail.eventId is string && canManageEvent(scheduleDetail.eventId))
+        || (
+          scheduleDetail.scheduleDayId is string
+          && exists(scheduleDayPath(scheduleDetail.scheduleDayId))
+          && canManageScheduleDayData(scheduleDayData(scheduleDetail.scheduleDayId))
+        );
+    }
+
+    function canReadUserProfile(userProfile, uid) {
+      return signedIn()
+        && (
+          request.auth.uid == uid
+          || isSuperAdmin()
+          || (isClientAdmin() && userProfile.clientId == currentUser().clientId)
+        );
+    }
+
+    function canCreateUserProfile(userProfile) {
+      return hasActiveProfile()
+        && userProfile.isActive is bool
+        && (
+          (
+            isSuperAdmin()
+            && userProfile.role in ["ClientAdmin", "ClientUser"]
+            && userProfile.clientId is string
+          )
+          || (
+            isClientAdmin()
+            && userProfile.role == "ClientUser"
+            && userProfile.clientId == currentUser().clientId
+          )
+        );
+    }
+
+    function canUpdateUserProfile(existingProfile, nextProfile) {
+      return hasActiveProfile()
+        && nextProfile.isActive is bool
+        && (
+          (
+            isSuperAdmin()
+            && existingProfile.role != "SuperAdmin"
+            && nextProfile.role in ["ClientAdmin", "ClientUser"]
+            && nextProfile.clientId is string
+          )
+          || (
+            isClientAdmin()
+            && existingProfile.role == "ClientUser"
+            && existingProfile.clientId == currentUser().clientId
+            && nextProfile.role == "ClientUser"
+            && nextProfile.clientId == currentUser().clientId
+          )
+        );
+    }
+
+    match /users/{uid} {
+      allow get, list: if canReadUserProfile(resource.data, uid);
+      allow create: if canCreateUserProfile(request.resource.data);
+      allow update: if canUpdateUserProfile(resource.data, request.resource.data);
+      allow delete: if false;
+    }
+
+    match /clients/{clientId} {
+      allow get, list: if canReadClient(clientId);
+      allow create, update: if canManageClient();
+      allow delete: if false;
+    }
+
+    match /events/{eventId} {
+      allow get, list: if canReadEventData(resource.data);
+      allow create: if canCreateEventData(request.resource.data);
+      allow update: if canManageEventData(resource.data)
+        && canCreateEventData(request.resource.data);
+      allow delete: if canManageEventData(resource.data);
+    }
+
+    match /scheduleDays/{scheduleDayId} {
+      allow get, list: if canReadScheduleDayData(resource.data);
+      allow create: if canManageScheduleDayData(request.resource.data);
+      allow update: if canManageScheduleDayData(resource.data)
+        && canManageScheduleDayData(request.resource.data);
+      allow delete: if canManageScheduleDayData(resource.data);
+    }
+
+    match /scheduleDetails/{scheduleDetailId} {
+      allow get, list: if canReadScheduleDetailData(resource.data);
+      allow create: if canManageScheduleDetailData(request.resource.data);
+      allow update: if canManageScheduleDetailData(resource.data)
+        && canManageScheduleDetailData(request.resource.data);
+      allow delete: if canManageScheduleDetailData(resource.data);
+    }
+
+    match /tag/{tagId} {
+      allow get, list: if resource.data.eventId is string
+        && canReadEvent(resource.data.eventId);
+      allow create: if request.resource.data.eventId is string
+        && canManageEvent(request.resource.data.eventId);
+      allow update: if resource.data.eventId is string
+        && request.resource.data.eventId == resource.data.eventId
+        && canManageEvent(resource.data.eventId);
+      allow delete: if resource.data.eventId is string
+        && canManageEvent(resource.data.eventId);
+    }
+
+    // Legacy collections used by the existing PDF/profile frontend.
+    // Keep authenticated access for now so this RBAC change does not break that app.
+    match /profiles/{document} {
+      allow read, write: if signedIn();
+    }
+
+    match /profileSummaries/{document} {
+      allow read, write: if signedIn();
+    }
+
+    match /logs/{document} {
+      allow read, write: if signedIn();
+    }
+
+    match /pdfCreationLog/{document} {
+      allow read, write: if signedIn();
+    }
+
+    match /allowedEmails/{document} {
+      allow read, write: if signedIn();
+    }
 
     match /{document=**} {
-      allow read, write: if request.auth != null;
+      allow read, write: if false;
     }
   }
 }
