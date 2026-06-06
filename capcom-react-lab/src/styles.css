@@ -570,8 +570,8 @@ textarea {
   border-radius: 8px;
   font-size: 13px;
   font-weight: 400;
-  min-height: 28px;
-  padding: 3px 8px;
+  height: var(--detail-row-control-height);
+  padding: 0 8px;
 }
 
 .compact-button.primary {
@@ -665,6 +665,7 @@ textarea {
 }
 
 .detail-row {
+  --detail-row-control-height: 36px;
   display: grid;
   gap: 6px;
   grid-template-columns: var(
@@ -690,6 +691,32 @@ textarea {
   justify-self: start;
 }
 
+.detail-cell {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: #17202a;
+  display: block;
+  font: inherit;
+  height: var(--detail-row-control-height);
+  min-width: 0;
+  overflow: hidden;
+  padding: 0 8px;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.detail-cell:hover:not(:disabled),
+.detail-cell:focus-visible {
+  background: #f7f9fb;
+  border-color: #d9e0e7;
+}
+
+.detail-cell:disabled {
+  color: #17202a;
+}
+
 .detail-row-actions {
   display: flex;
   gap: 4px;
@@ -708,7 +735,7 @@ textarea {
   border-radius: 8px;
   color: #6b7280;
   display: flex;
-  height: 28px;
+  height: var(--detail-row-control-height);
   justify-content: center;
   line-height: 1;
   list-style: none;
@@ -784,7 +811,17 @@ textarea {
 .tag-select-wrap,
 .location-select-wrap,
 .supplier-select-wrap,
-.supplier-dropdown,
+.supplier-dropdown {
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #d9e0e7;
+  border-radius: 6px;
+  display: inline-flex;
+  gap: 5px;
+  height: var(--detail-row-control-height);
+  padding: 0 10px;
+}
+
 .tag-chip {
   align-items: center;
   background: #ffffff;
@@ -808,9 +845,9 @@ textarea {
   display: flex;
   font-size: 13px;
   font-weight: 400;
-  min-height: 26px;
+  height: 100%;
   overflow: hidden;
-  padding: 3px 8px;
+  padding: 0 8px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -870,8 +907,11 @@ textarea {
   color: #17202a;
   font-size: 13px;
   font-weight: 400;
+  height: auto;
+  line-height: 1.2;
   min-width: 0;
   outline: 0;
+  padding: 0;
   width: 100%;
 }
 
@@ -1235,8 +1275,8 @@ textarea {
   border-color: #b9d9f3;
   font-size: 14px;
   font-weight: 400;
-  min-height: 26px;
-  padding: 4px 8px;
+  height: var(--detail-row-control-height);
+  padding: 0 8px;
   width: 100%;
 }
 

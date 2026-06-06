@@ -193,7 +193,7 @@ export default function EventEditPage() {
   const [editingLocationId, setEditingLocationId] = useState("");
   const [editingSupplierContactId, setEditingSupplierContactId] = useState("");
   const [editingSupplierContactSupplierId, setEditingSupplierContactSupplierId] = useState("");
-  const [editingDetailId, setEditingDetailId] = useState("");
+  const [editingDetailCell, setEditingDetailCell] = useState(null);
   const [openActionMenuId, setOpenActionMenuId] = useState("");
   const [selectedTagFilterId, setSelectedTagFilterId] = useState("");
   const [selectedSupplierFilterIds, setSelectedSupplierFilterIds] = useState([]);
@@ -227,6 +227,7 @@ export default function EventEditPage() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const suppressDetailBlurRef = useRef(false);
+  const detailCellInputRef = useRef(null);
   const draggedDetailIdRef = useRef("");
   const draggedLocationIdRef = useRef("");
   const draggedContactSupplierIdRef = useRef("");
@@ -366,6 +367,14 @@ export default function EventEditPage() {
     document.addEventListener("mousedown", closeMenuOnOutsideClick);
     return () => document.removeEventListener("mousedown", closeMenuOnOutsideClick);
   }, [openActionMenuId]);
+
+  useEffect(() => {
+    if (!editingDetailCell) return;
+    window.requestAnimationFrame(() => {
+      detailCellInputRef.current?.focus();
+      detailCellInputRef.current?.select?.();
+    });
+  }, [editingDetailCell]);
 
   const usedTagIds = useMemo(() => {
     return new Set(
@@ -1351,25 +1360,6 @@ export default function EventEditPage() {
     }
   };
 
-  const hasDetailChanges = (detail) => {
-    const savedDetail = savedDetailsById[detail.id] || {
-      time: "",
-      description: "",
-      colour: "",
-      tagId: "",
-      locationId: "",
-      supplierIds: [],
-    };
-    return (
-      (detail.time || "") !== savedDetail.time ||
-      (detail.description || "") !== savedDetail.description ||
-      normaliseHexColour(detail.colour) !== savedDetail.colour ||
-      (detail.tagId || "") !== savedDetail.tagId ||
-      (detail.locationId || "") !== savedDetail.locationId ||
-      JSON.stringify(detail.supplierIds || []) !== JSON.stringify(savedDetail.supplierIds || [])
-    );
-  };
-
   const beginRowAction = () => {
     suppressDetailBlurRef.current = true;
     endRowAction();
@@ -1385,33 +1375,46 @@ export default function EventEditPage() {
     setOpenActionMenuId("");
   };
 
-  const startEditingDetail = (detailId) => {
+  const isEditingDetailCell = (detailId, field) =>
+    editingDetailCell?.detailId === detailId && editingDetailCell?.field === field;
+
+  const startEditingDetailCell = (dayId, detailId, field) => {
     if (isOffline) return;
-    setEditingDetailId(detailId);
+    setEditingDetailCell({ dayId, detailId, field });
     setOpenActionMenuId("");
     setMessage("");
     setError("");
   };
 
-  const cancelEditingDetail = (dayId, detailId) => {
+  const cancelEditingDetailCell = (dayId, detailId, field) => {
     const savedDetail = savedDetailsById[detailId];
     if (savedDetail) {
       setDetailsByDayId((current) => ({
         ...current,
         [dayId]: (current[dayId] || []).map((detail) =>
-          detail.id === detailId ? { ...detail, ...savedDetail } : detail
+          detail.id === detailId ? { ...detail, [field]: savedDetail[field] || "" } : detail
         ),
       }));
     }
-    setEditingDetailId("");
+    setEditingDetailCell(null);
     setOpenActionMenuId("");
   };
 
-  const saveDetail = async (dayId, detail) => {
+  const saveDetailCell = async (dayId, detail, nextCell = null) => {
     if (isOffline) {
       setError("Editing is disabled while offline.");
       return;
     }
+    const savedDetail = savedDetailsById[detail.id] || {};
+    const hasCellChanges =
+      (detail.time || "") !== (savedDetail.time || "") ||
+      (detail.description || "") !== (savedDetail.description || "");
+
+    if (!hasCellChanges) {
+      setEditingDetailCell(nextCell);
+      return;
+    }
+
     setSavingDetailId(detail.id);
     setError("");
 
@@ -1438,13 +1441,7 @@ export default function EventEditPage() {
           supplierIds: detail.supplierIds || [],
         },
       }));
-
-      const details = await getScheduleDetails(dayId);
-      setDetailsByDayId((current) => ({
-        ...current,
-        [dayId]: details,
-      }));
-      setEditingDetailId((current) => (current === detail.id ? "" : current));
+      setEditingDetailCell(nextCell);
       setOpenActionMenuId("");
     } catch (saveError) {
       console.error(saveError);
@@ -1455,18 +1452,42 @@ export default function EventEditPage() {
     }
   };
 
-  const saveDetailOnBlur = (event, dayId, detail) => {
-    if (suppressDetailBlurRef.current) return;
-    if (event.currentTarget.contains(event.relatedTarget)) return;
+  const getNextDetailCell = (dayId, dayDetails, detailIndex, field, shiftKey) => {
+    if (shiftKey) {
+      if (field === "description") {
+        return { dayId, detailId: dayDetails[detailIndex].id, field: "time" };
+      }
+      const previousDetail = dayDetails[detailIndex - 1];
+      return previousDetail ? { dayId, detailId: previousDetail.id, field: "description" } : null;
+    }
 
-    setOpenActionMenuId("");
+    if (field === "time") {
+      return { dayId, detailId: dayDetails[detailIndex].id, field: "description" };
+    }
+    const nextDetail = dayDetails[detailIndex + 1];
+    return nextDetail ? { dayId, detailId: nextDetail.id, field: "time" } : null;
+  };
 
-    if (hasDetailChanges(detail)) {
-      saveDetail(dayId, detail);
+  const handleDetailCellKeyDown = (event, dayId, dayDetails, detail, detailIndex, field) => {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      cancelEditingDetailCell(dayId, detail.id, field);
       return;
     }
 
-    setEditingDetailId((current) => (current === detail.id ? "" : current));
+    if (event.key === "Tab") {
+      event.preventDefault();
+      suppressDetailBlurRef.current = true;
+      saveDetailCell(
+        dayId,
+        detail,
+        getNextDetailCell(dayId, dayDetails, detailIndex, field, event.shiftKey)
+      ).finally(() => {
+        setTimeout(() => {
+          suppressDetailBlurRef.current = false;
+        }, 0);
+      });
+    }
   };
 
   const deleteDetail = async (dayId, detailId) => {
@@ -1488,7 +1509,7 @@ export default function EventEditPage() {
         delete remainingDetails[detailId];
         return remainingDetails;
       });
-      setEditingDetailId("");
+      setEditingDetailCell((current) => (current?.detailId === detailId ? null : current));
       setOpenActionMenuId("");
     } catch (deleteError) {
       console.error(deleteError);
@@ -1633,7 +1654,7 @@ export default function EventEditPage() {
         supplierIds: detail.supplierIds || [],
       });
       await loadScheduleDetails(scheduleDays);
-      setEditingDetailId("");
+      setEditingDetailCell((current) => (current?.detailId === detail.id ? null : current));
     } catch (moveError) {
       console.error(moveError);
       setError("Could not move schedule detail.");
@@ -2663,7 +2684,11 @@ export default function EventEditPage() {
                     ) : (
                       <div className="detail-list">
                         {dayDetails.map((detail, detailIndex) => {
-                          const isEditingDetail = editingDetailId === detail.id;
+                          const isEditingTime = isEditingDetailCell(detail.id, "time");
+                          const isEditingDescription = isEditingDetailCell(
+                            detail.id,
+                            "description"
+                          );
                           const canMoveUp = canMoveDetail(dayDetails, detailIndex, -1);
                           const canMoveDown = canMoveDetail(dayDetails, detailIndex, 1);
                           const previousDay = getAdjacentDay(day.id, -1);
@@ -2671,12 +2696,10 @@ export default function EventEditPage() {
 
                           return (
                             <div
-                              className={
-                                isEditingDetail ? "detail-row" : "detail-row draggable-row"
-                              }
+                              className="detail-row draggable-row"
                               key={detail.id}
                               style={getDetailRowStyle(getRowTagStyle(getTagById(detail.tagId)))}
-                              draggable={!isEditingDetail && !isOffline}
+                              draggable={!isEditingTime && !isEditingDescription && !isOffline}
                               onDragStart={(event) => {
                                 draggedDetailIdRef.current = detail.id;
                                 event.dataTransfer.effectAllowed = "move";
@@ -2702,43 +2725,84 @@ export default function EventEditPage() {
                               onDragEnd={() => {
                                 draggedDetailIdRef.current = "";
                               }}
-                              onBlur={
-                                isEditingDetail
-                                  ? (event) => saveDetailOnBlur(event, day.id, detail)
-                                  : undefined
-                              }
                             >
-                              {isEditingDetail ? (
-                                <>
-                                  <input
-                                    className="plain-input detail-time-input"
-                                    aria-label={`Time for ${detail.description || "schedule detail"}`}
-                                    type="time"
-                                    value={detail.time || ""}
-                                    disabled={isOffline}
-                                    onChange={(event) =>
-                                      updateDetailField(day.id, detail.id, "time", event.target.value)
-                                    }
-                                  />
-                                  <input
-                                    className="plain-input"
-                                    aria-label={`Description for ${detail.time}`}
-                                    value={detail.description || ""}
-                                    disabled={isOffline}
-                                    onChange={(event) =>
-                                      updateDetailField(day.id, detail.id, "description", event.target.value)
-                                    }
-                                  />
-                                </>
+                              {isEditingTime ? (
+                                <input
+                                  ref={detailCellInputRef}
+                                  className="plain-input detail-time-input"
+                                  aria-label={`Time for ${detail.description || "schedule detail"}`}
+                                  type="time"
+                                  value={detail.time || ""}
+                                  disabled={isOffline}
+                                  onBlur={() => {
+                                    if (suppressDetailBlurRef.current) return;
+                                    saveDetailCell(day.id, detail);
+                                  }}
+                                  onChange={(event) =>
+                                    updateDetailField(day.id, detail.id, "time", event.target.value)
+                                  }
+                                  onKeyDown={(event) =>
+                                    handleDetailCellKeyDown(
+                                      event,
+                                      day.id,
+                                      dayDetails,
+                                      detail,
+                                      detailIndex,
+                                      "time"
+                                    )
+                                  }
+                                />
                               ) : (
-                                <>
-                                  <span className="display-text detail-time-display">
-                                    {detail.time || ""}
-                                  </span>
-                                  <span className="display-text">
-                                    {detail.description || ""}
-                                  </span>
-                                </>
+                                <button
+                                  className="detail-cell detail-time-display"
+                                  type="button"
+                                  disabled={isOffline}
+                                  onClick={() => startEditingDetailCell(day.id, detail.id, "time")}
+                                >
+                                  {detail.time || "tbc"}
+                                </button>
+                              )}
+                              {isEditingDescription ? (
+                                <input
+                                  ref={detailCellInputRef}
+                                  className="plain-input"
+                                  aria-label={`Description for ${detail.time || "tbc"}`}
+                                  value={detail.description || ""}
+                                  disabled={isOffline}
+                                  onBlur={() => {
+                                    if (suppressDetailBlurRef.current) return;
+                                    saveDetailCell(day.id, detail);
+                                  }}
+                                  onChange={(event) =>
+                                    updateDetailField(
+                                      day.id,
+                                      detail.id,
+                                      "description",
+                                      event.target.value
+                                    )
+                                  }
+                                  onKeyDown={(event) =>
+                                    handleDetailCellKeyDown(
+                                      event,
+                                      day.id,
+                                      dayDetails,
+                                      detail,
+                                      detailIndex,
+                                      "description"
+                                    )
+                                  }
+                                />
+                              ) : (
+                                <button
+                                  className="detail-cell"
+                                  type="button"
+                                  disabled={isOffline}
+                                  onClick={() =>
+                                    startEditingDetailCell(day.id, detail.id, "description")
+                                  }
+                                >
+                                  {detail.description || ""}
+                                </button>
                               )}
                               {showTagColumn ? (
                                 <div
@@ -2819,16 +2883,6 @@ export default function EventEditPage() {
                                 </details>
                               ) : null}
                               <div className="detail-row-actions">
-                                {!isEditingDetail ? (
-                                  <button
-                                    className="compact-button"
-                                    type="button"
-                                    disabled={isOffline}
-                                    onClick={() => startEditingDetail(detail.id)}
-                                  >
-                                    Edit
-                                  </button>
-                                ) : null}
                                 <div
                                   className="action-menu"
                                   onBlur={(event) => {
@@ -2862,97 +2916,65 @@ export default function EventEditPage() {
                                     className="action-menu-list"
                                     onMouseDown={beginRowAction}
                                   >
-                                    {!isEditingDetail ? (
-                                      <>
-                                        <button
-                                          className="action-menu-item"
-                                          type="button"
-                                    disabled={!canMoveUp || reorderingDayId === day.id || isOffline}
-                                          onClick={() => {
-                                            moveDetail(day.id, detail.id, -1);
-                                            endRowAction();
-                                          }}
-                                        >
-                                          Move up
-                                        </button>
-                                        <button
-                                          className="action-menu-item"
-                                          type="button"
-                                    disabled={!canMoveDown || reorderingDayId === day.id || isOffline}
-                                          onClick={() => {
-                                            moveDetail(day.id, detail.id, 1);
-                                            endRowAction();
-                                          }}
-                                        >
-                                          Move down
-                                        </button>
-                                        {previousDay ? (
-                                          <button
-                                            className="action-menu-item"
-                                            type="button"
-                                            disabled={savingDetailId === detail.id || isOffline}
-                                            onClick={() => {
-                                              moveDetailToDay(day.id, previousDay.id, detail);
-                                              endRowAction();
-                                            }}
-                                          >
-                                            Move to previous day
-                                          </button>
-                                        ) : null}
-                                        {nextDay ? (
-                                          <button
-                                            className="action-menu-item"
-                                            type="button"
-                                            disabled={savingDetailId === detail.id || isOffline}
-                                            onClick={() => {
-                                              moveDetailToDay(day.id, nextDay.id, detail);
-                                              endRowAction();
-                                            }}
-                                          >
-                                            Move to next day
-                                          </button>
-                                        ) : null}
-                                        <button
-                                          className="action-menu-item"
-                                          type="button"
-                                          disabled={savingDetailId === detail.id || isOffline}
-                                          onClick={() => {
-                                            duplicateDetail(day.id, detail);
-                                            endRowAction();
-                                          }}
-                                        >
-                                          Duplicate
-                                        </button>
-                                      </>
+                                    <button
+                                      className="action-menu-item"
+                                      type="button"
+                                      disabled={!canMoveUp || reorderingDayId === day.id || isOffline}
+                                      onClick={() => {
+                                        moveDetail(day.id, detail.id, -1);
+                                        endRowAction();
+                                      }}
+                                    >
+                                      Move up
+                                    </button>
+                                    <button
+                                      className="action-menu-item"
+                                      type="button"
+                                      disabled={!canMoveDown || reorderingDayId === day.id || isOffline}
+                                      onClick={() => {
+                                        moveDetail(day.id, detail.id, 1);
+                                        endRowAction();
+                                      }}
+                                    >
+                                      Move down
+                                    </button>
+                                    {previousDay ? (
+                                      <button
+                                        className="action-menu-item"
+                                        type="button"
+                                        disabled={savingDetailId === detail.id || isOffline}
+                                        onClick={() => {
+                                          moveDetailToDay(day.id, previousDay.id, detail);
+                                          endRowAction();
+                                        }}
+                                      >
+                                        Move to previous day
+                                      </button>
                                     ) : null}
-                                    {isEditingDetail ? (
-                                      <>
-                                        <button
-                                          className="action-menu-item primary"
-                                          type="button"
-                                          disabled={savingDetailId === detail.id || isOffline}
-                                          onClick={() => {
-                                            closeActionMenu();
-                                            saveDetail(day.id, detail);
-                                            endRowAction();
-                                          }}
-                                        >
-                                          {savingDetailId === detail.id ? "Saving..." : "Save"}
-                                        </button>
-                                        <button
-                                          className="action-menu-item"
-                                          type="button"
-                                          disabled={savingDetailId === detail.id || isOffline}
-                                          onClick={() => {
-                                            closeActionMenu();
-                                            cancelEditingDetail(day.id, detail.id);
-                                            endRowAction();
-                                          }}
-                                        >
-                                          Cancel
-                                        </button>
-                                      </>
+                                    {nextDay ? (
+                                      <button
+                                        className="action-menu-item"
+                                        type="button"
+                                        disabled={savingDetailId === detail.id || isOffline}
+                                        onClick={() => {
+                                          moveDetailToDay(day.id, nextDay.id, detail);
+                                          endRowAction();
+                                        }}
+                                      >
+                                        Move to next day
+                                      </button>
                                     ) : null}
+                                    <button
+                                      className="action-menu-item"
+                                      type="button"
+                                      disabled={savingDetailId === detail.id || isOffline}
+                                      onClick={() => {
+                                        duplicateDetail(day.id, detail);
+                                        endRowAction();
+                                      }}
+                                    >
+                                      Duplicate
+                                    </button>
                                     <button
                                       className="action-menu-item danger"
                                       type="button"
