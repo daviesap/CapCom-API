@@ -8,14 +8,68 @@ It does not use the existing CapCom frontend or Cloud Functions.
 
 Top-level Firestore collections:
 
+- `clients`
 - `events`
 - `scheduleDays`
 - `scheduleDetails`
+- `users`
 
 Relationships are stored with simple IDs:
 
 - `scheduleDays.eventId` points to an event document.
 - `scheduleDetails.scheduleDayId` points to a schedule day document.
+
+Planned access model:
+
+- `users/{uid}` is keyed by the Firebase Authentication user UID.
+- `users.role` is one of `SuperAdmin`, `ClientAdmin`, or `ClientUser`.
+- `users.clientId` is `null` for `SuperAdmin` users.
+- `users.clientId` points to `clients/{clientId}` for `ClientAdmin` and `ClientUser` users.
+- `clients/{clientId}` stores client account metadata. Events can later be linked to clients with a `clientId` field.
+
+Example `clients/{clientId}` document:
+
+```json
+{
+  "clientName": "Acme Events",
+  "clientSlug": "acme",
+  "logoUrl": "",
+  "primaryColour": "",
+  "secondaryColour": "",
+  "createdAt": "serverTimestamp",
+  "createdBy": "uid",
+  "updatedAt": "serverTimestamp",
+  "isActive": true
+}
+```
+
+Example `users/{uid}` document for a site-wide admin:
+
+```json
+{
+  "email": "andrew@example.com",
+  "displayName": "Andrew Davies",
+  "role": "SuperAdmin",
+  "clientId": null,
+  "isActive": true,
+  "createdAt": "serverTimestamp",
+  "updatedAt": "serverTimestamp"
+}
+```
+
+Example `users/{uid}` document for a client user:
+
+```json
+{
+  "email": "user@acme.com",
+  "displayName": "Jane Smith",
+  "role": "ClientUser",
+  "clientId": "acmeClientId",
+  "isActive": true,
+  "createdAt": "serverTimestamp",
+  "updatedAt": "serverTimestamp"
+}
+```
 
 ## Setup
 

@@ -2,7 +2,7 @@ import { useAuth } from "../auth/AuthProvider.jsx";
 import { CapcomIcon } from "../icons/capcomIcons.jsx";
 
 export default function ProfilePage() {
-  const { user, logout } = useAuth();
+  const { user, userProfile, profileLoading, profileError, logout } = useAuth();
 
   return (
     <section className="page">
@@ -37,7 +37,29 @@ export default function ProfilePage() {
             <dt>Authentication status</dt>
             <dd>{user ? "Signed in" : "Signed out"}</dd>
           </div>
+          <div>
+            <dt>Access role</dt>
+            <dd>
+              {profileLoading ? "Loading..." : userProfile?.role || "No Firestore profile"}
+            </dd>
+          </div>
+          <div>
+            <dt>Client ID</dt>
+            <dd>{profileLoading ? "Loading..." : userProfile?.clientId || "None"}</dd>
+          </div>
+          <div>
+            <dt>Account active</dt>
+            <dd>
+              {profileLoading
+                ? "Loading..."
+                : userProfile
+                  ? userProfile.isActive ? "Yes" : "No"
+                  : "Unknown"}
+            </dd>
+          </div>
         </dl>
+
+        {profileError ? <p className="error">{profileError}</p> : null}
 
         <div className="actions profile-actions">
           <button className="button secondary icon-text-button" type="button" onClick={logout}>
