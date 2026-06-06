@@ -1038,14 +1038,21 @@ export default function EventEditPage() {
     companyIds.includes(companyId)
       ? companyIds.filter((currentCompanyId) => currentCompanyId !== companyId)
       : [...companyIds, companyId];
+  const activeScheduleFilterCount = [
+    selectedTagFilterId,
+    selectedLocationFilterIds.length > 0,
+    selectedSubLocationFilterIds.length > 0,
+    selectedCompanyFilterIds.length > 0,
+  ].filter(Boolean).length;
+  const hasActiveScheduleFilters = activeScheduleFilterCount > 0;
+  const clearScheduleFilters = () => {
+    setSelectedTagFilterId("");
+    setSelectedLocationFilterIds([]);
+    setSelectedSubLocationFilterIds([]);
+    setSelectedCompanyFilterIds([]);
+  };
   const getNoRowsMessage = () => {
-    const activeFilterCount = [
-      selectedTagFilterId,
-      selectedLocationFilterIds.length > 0,
-      selectedSubLocationFilterIds.length > 0,
-      selectedCompanyFilterIds.length > 0,
-    ].filter(Boolean).length;
-    if (activeFilterCount > 1) return "No rows for selected filters.";
+    if (activeScheduleFilterCount > 1) return "No rows for selected filters.";
     if (selectedTagFilterId) return "No rows for selected tag.";
     if (selectedLocationFilterIds.length > 0) return "No rows for selected locations.";
     if (selectedSubLocationFilterIds.length > 0) return "No rows for selected sub locations.";
@@ -2654,6 +2661,17 @@ export default function EventEditPage() {
         usedSubLocationFilters.length > 0 ||
         usedCompanies.length > 0 ? (
           <div className="filter-groups" aria-label="Filter schedule rows">
+            {hasActiveScheduleFilters ? (
+              <div className="tag-filter-bar" aria-label="Clear schedule row filters">
+                <button
+                  className="tag-filter-button"
+                  type="button"
+                  onClick={clearScheduleFilters}
+                >
+                  Clear filters
+                </button>
+              </div>
+            ) : null}
             {usedTags.length > 0 ? (
               <div className="tag-filter-bar" aria-label="Filter schedule rows by tag">
                 <button
