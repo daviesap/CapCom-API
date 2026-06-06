@@ -5,7 +5,11 @@ import Loading from "../components/Loading.jsx";
 import ScheduleCacheStatus from "../components/ScheduleCacheStatus.jsx";
 import useOnlineStatus from "../hooks/useOnlineStatus.js";
 import { getClients } from "../services/clientService.js";
-import { getEvent, updateEvent } from "../services/eventService.js";
+import {
+  getEvent,
+  updateEvent,
+  updateEventContactSupplierOrder,
+} from "../services/eventService.js";
 import {
   getScheduleDays,
   syncScheduleDaysToRange,
@@ -31,6 +35,13 @@ import {
   getLocations,
   updateLocation,
 } from "../services/locationService.js";
+import {
+  createSupplierContact,
+  deleteSupplierContact,
+  getSupplierContacts,
+  updateSupplierContact,
+  updateSupplierContactOrder,
+} from "../services/supplierContactService.js";
 import { getSuppliers } from "../services/supplierService.js";
 
 const emptyEventForm = {
@@ -41,6 +52,7 @@ const emptyEventForm = {
   endDate: "",
   scheduleStartDate: "",
   scheduleEndDate: "",
+  contactSupplierOrder: [],
 };
 
 const emptyTagForm = {
@@ -51,6 +63,13 @@ const emptyTagForm = {
 const emptyLocationForm = {
   name: "",
   parentLocationId: "",
+};
+
+const emptySupplierContactForm = {
+  name: "",
+  email: "",
+  phone: "",
+  role: "",
 };
 
 function formatFriendlyDate(dateString) {
@@ -75,6 +94,39 @@ function formatDetailDate(dateString) {
   const weekday = new Intl.DateTimeFormat("en-GB", { weekday: "long" }).format(date);
   const month = new Intl.DateTimeFormat("en-GB", { month: "long" }).format(date);
   return `${weekday} ${day}${suffix} ${month}`;
+}
+
+function formatDateOrdinal(date) {
+  const day = date.getDate();
+  const suffix =
+    day % 10 === 1 && day !== 11 ? "st" :
+    day % 10 === 2 && day !== 12 ? "nd" :
+    day % 10 === 3 && day !== 13 ? "rd" :
+    "th";
+  return `${day}${suffix}`;
+}
+
+function formatEventDateRange(startDateString, endDateString) {
+  if (!startDateString && !endDateString) return "";
+  if (!startDateString) return formatFriendlyDate(endDateString);
+  if (!endDateString || startDateString === endDateString) return formatFriendlyDate(startDateString);
+
+  const startDate = new Date(`${startDateString}T00:00:00`);
+  const endDate = new Date(`${endDateString}T00:00:00`);
+  const startMonth = new Intl.DateTimeFormat("en-GB", { month: "long" }).format(startDate);
+  const endMonth = new Intl.DateTimeFormat("en-GB", { month: "long" }).format(endDate);
+  const startYear = startDate.getFullYear();
+  const endYear = endDate.getFullYear();
+
+  if (startYear === endYear && startMonth === endMonth) {
+    return `${formatDateOrdinal(startDate)} to ${formatDateOrdinal(endDate)} ${endMonth} ${endYear}`;
+  }
+
+  if (startYear === endYear) {
+    return `${formatDateOrdinal(startDate)} ${startMonth} to ${formatDateOrdinal(endDate)} ${endMonth} ${endYear}`;
+  }
+
+  return `${formatDateOrdinal(startDate)} ${startMonth} ${startYear} to ${formatDateOrdinal(endDate)} ${endMonth} ${endYear}`;
 }
 
 function normaliseHexColour(colour) {
@@ -113,7 +165,7 @@ function getRowTagStyle(tag) {
 
 export default function EventEditPage() {
   const { eventId } = useParams();
-  const { userProfile, profileLoading, isSuperAdmin } = useAuth();
+  const { userProfile, profileLoading, isSuperAdmin, isClientAdmin } = useAuth();
   const isOnline = useOnlineStatus();
   const isOffline = !isOnline;
   const [form, setForm] = useState(emptyEventForm);
@@ -133,21 +185,28 @@ export default function EventEditPage() {
   const [tags, setTags] = useState([]);
   const [locations, setLocations] = useState([]);
   const [suppliers, setSuppliers] = useState([]);
+  const [supplierContactsBySupplierId, setSupplierContactsBySupplierId] = useState({});
   const [tagForm, setTagForm] = useState(emptyTagForm);
   const [locationForm, setLocationForm] = useState(emptyLocationForm);
+  const [supplierContactForm, setSupplierContactForm] = useState(emptySupplierContactForm);
   const [editingTagId, setEditingTagId] = useState("");
   const [editingLocationId, setEditingLocationId] = useState("");
+  const [editingSupplierContactId, setEditingSupplierContactId] = useState("");
+  const [editingSupplierContactSupplierId, setEditingSupplierContactSupplierId] = useState("");
   const [editingDetailId, setEditingDetailId] = useState("");
   const [openActionMenuId, setOpenActionMenuId] = useState("");
   const [selectedTagFilterId, setSelectedTagFilterId] = useState("");
   const [selectedSupplierFilterIds, setSelectedSupplierFilterIds] = useState([]);
-  const [activeTab, setActiveTab] = useState("details");
+  const [openContactSupplierIds, setOpenContactSupplierIds] = useState([]);
+  const [activeTab, setActiveTab] = useState("info");
+  const [activeInfoTab, setActiveInfoTab] = useState("contacts");
   const [activeSettingsTab, setActiveSettingsTab] = useState("tags");
   const [loading, setLoading] = useState(true);
   const [detailsLoading, setDetailsLoading] = useState(false);
   const [tagsLoading, setTagsLoading] = useState(false);
   const [locationsLoading, setLocationsLoading] = useState(false);
   const [suppliersLoading, setSuppliersLoading] = useState(false);
+  const [supplierContactsLoading, setSupplierContactsLoading] = useState(false);
   const [savingEvent, setSavingEvent] = useState(false);
   const [savingDayId, setSavingDayId] = useState("");
   const [savingDetailId, setSavingDetailId] = useState("");
@@ -156,14 +215,24 @@ export default function EventEditPage() {
   const [deletingTagId, setDeletingTagId] = useState("");
   const [savingLocation, setSavingLocation] = useState(false);
   const [deletingLocationId, setDeletingLocationId] = useState("");
+  const [savingSupplierContact, setSavingSupplierContact] = useState(false);
+  const [deletingSupplierContactId, setDeletingSupplierContactId] = useState("");
+  const [reorderingSupplierContactId, setReorderingSupplierContactId] = useState("");
+  const [savingContactSupplierOrder, setSavingContactSupplierOrder] = useState(false);
   const [reorderingDayId, setReorderingDayId] = useState("");
   const [movingLocationId, setMovingLocationId] = useState("");
   const [locationDropTargetId, setLocationDropTargetId] = useState("");
+  const [contactSupplierDropTargetId, setContactSupplierDropTargetId] = useState("");
+  const [supplierContactDropTargetId, setSupplierContactDropTargetId] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const suppressDetailBlurRef = useRef(false);
   const draggedDetailIdRef = useRef("");
   const draggedLocationIdRef = useRef("");
+  const draggedContactSupplierIdRef = useRef("");
+  const draggedSupplierContactIdRef = useRef("");
+  const canManageSupplierContacts = isSuperAdmin || isClientAdmin;
+  const canManageContactSupplierOrder = canManageSupplierContacts;
   const editableClients = clients.filter((client) => (
     client.isActive !== false || client.id === form.clientId
   ));
@@ -203,6 +272,9 @@ export default function EventEditPage() {
           endDate: event.endDate || "",
           scheduleStartDate: event.scheduleStartDate || event.startDate || "",
           scheduleEndDate: event.scheduleEndDate || event.endDate || "",
+          contactSupplierOrder: Array.isArray(event.contactSupplierOrder)
+            ? event.contactSupplierOrder
+            : [],
         };
         setForm(loadedEventForm);
         setSavedEventForm(loadedEventForm);
@@ -342,6 +414,113 @@ export default function EventEditPage() {
   const usedSuppliers = useMemo(() => {
     return suppliers.filter((supplier) => usedSupplierIds.has(supplier.id));
   }, [suppliers, usedSupplierIds]);
+  const showTagColumn = tags.length > 0;
+  const showLocationColumn = locationOptions.length > 0;
+  const showSupplierColumn = suppliers.length > 0;
+  const detailRowGridColumnParts = [
+    "76px",
+    "minmax(0, 1fr)",
+    showTagColumn ? "128px" : "",
+    showLocationColumn ? "150px" : "",
+    showSupplierColumn ? "150px" : "",
+    "auto",
+  ].filter(Boolean);
+  const detailRowGridColumns = detailRowGridColumnParts.join(" ");
+  const detailActionGridColumn = detailRowGridColumnParts.length;
+  const getDetailRowStyle = (rowStyle) => ({
+    ...rowStyle,
+    "--detail-row-columns": detailRowGridColumns,
+    "--detail-actions-column": detailActionGridColumn,
+  });
+
+  const contactSuppliers = useMemo(() => {
+    const scheduleDetails = Object.values(detailsByDayId).flat();
+    const detailCountBySupplierId = scheduleDetails.reduce((counts, detail) => {
+      (detail.supplierIds || []).forEach((supplierId) => {
+        if (!supplierId) return;
+        counts[supplierId] = (counts[supplierId] || 0) + 1;
+      });
+      return counts;
+    }, {});
+
+    const supplierOrder = Array.isArray(form.contactSupplierOrder)
+      ? form.contactSupplierOrder
+      : [];
+    const orderBySupplierId = new Map(
+      supplierOrder.map((supplierId, supplierIndex) => [supplierId, supplierIndex])
+    );
+
+    return usedSuppliers
+      .map((supplier) => ({
+        ...supplier,
+        scheduleDetailCount: detailCountBySupplierId[supplier.id] || 0,
+      }))
+      .sort((supplierA, supplierB) => {
+        const supplierAOrder = orderBySupplierId.has(supplierA.id)
+          ? orderBySupplierId.get(supplierA.id)
+          : Number.MAX_SAFE_INTEGER;
+        const supplierBOrder = orderBySupplierId.has(supplierB.id)
+          ? orderBySupplierId.get(supplierB.id)
+          : Number.MAX_SAFE_INTEGER;
+
+        if (supplierAOrder !== supplierBOrder) return supplierAOrder - supplierBOrder;
+        return String(supplierA.supplierName || "").localeCompare(
+          String(supplierB.supplierName || "")
+        );
+      });
+  }, [detailsByDayId, form.contactSupplierOrder, usedSuppliers]);
+
+  const contactSupplierIds = useMemo(
+    () => contactSuppliers.map((supplier) => supplier.id),
+    [contactSuppliers]
+  );
+
+  useEffect(() => {
+    setOpenContactSupplierIds((current) => {
+      const currentOpenSupplierIds = current.filter((supplierId) =>
+        contactSupplierIds.includes(supplierId)
+      );
+      const nextSupplierIds = contactSupplierIds.filter(
+        (supplierId) => !current.includes(supplierId)
+      );
+      return [...currentOpenSupplierIds, ...nextSupplierIds];
+    });
+  }, [contactSupplierIds]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadContacts = async () => {
+      if (contactSupplierIds.length === 0) {
+        setSupplierContactsBySupplierId({});
+        return;
+      }
+
+      setSupplierContactsLoading(true);
+      try {
+        const contacts = await getSupplierContacts(contactSupplierIds);
+        if (cancelled) return;
+        setSupplierContactsBySupplierId(
+          Object.fromEntries(
+            contactSupplierIds.map((supplierId) => [
+              supplierId,
+              contacts.filter((contact) => contact.supplierId === supplierId),
+            ])
+          )
+        );
+      } catch (loadError) {
+        console.error("Could not load supplier contacts.", loadError);
+        if (!cancelled) setError("Could not load supplier contacts.");
+      } finally {
+        if (!cancelled) setSupplierContactsLoading(false);
+      }
+    };
+
+    loadContacts();
+    return () => {
+      cancelled = true;
+    };
+  }, [contactSupplierIds]);
 
   useEffect(() => {
     if (selectedTagFilterId && !usedTagIds.has(selectedTagFilterId)) {
@@ -529,6 +708,234 @@ export default function EventEditPage() {
         ? current.filter((currentSupplierId) => currentSupplierId !== supplierId)
         : [...current, supplierId]
     );
+  };
+
+  const toggleContactSupplierOpen = (supplierId) => {
+    setOpenContactSupplierIds((current) =>
+      current.includes(supplierId)
+        ? current.filter((currentSupplierId) => currentSupplierId !== supplierId)
+        : [...current, supplierId]
+    );
+  };
+
+  const reloadSupplierContacts = async (supplierIds = contactSupplierIds) => {
+    if (supplierIds.length === 0) {
+      setSupplierContactsBySupplierId({});
+      return;
+    }
+
+    setSupplierContactsLoading(true);
+    try {
+      const contacts = await getSupplierContacts(supplierIds);
+      setSupplierContactsBySupplierId(
+        Object.fromEntries(
+          supplierIds.map((supplierId) => [
+            supplierId,
+            contacts.filter((contact) => contact.supplierId === supplierId),
+          ])
+        )
+      );
+    } catch (loadError) {
+      console.error("Could not load supplier contacts.", loadError);
+      setError("Could not load supplier contacts.");
+    } finally {
+      setSupplierContactsLoading(false);
+    }
+  };
+
+  const updateSupplierContactFormField = (field, value) => {
+    setSupplierContactForm((current) => ({ ...current, [field]: value }));
+  };
+
+  const resetSupplierContactForm = () => {
+    setEditingSupplierContactId("");
+    setEditingSupplierContactSupplierId("");
+    setSupplierContactForm(emptySupplierContactForm);
+  };
+
+  const startAddingSupplierContact = (supplierId) => {
+    if (!canManageSupplierContacts || isOffline) return;
+    setEditingSupplierContactId("");
+    setEditingSupplierContactSupplierId(supplierId);
+    setSupplierContactForm(emptySupplierContactForm);
+    setMessage("");
+    setError("");
+  };
+
+  const startEditingSupplierContact = (supplierId, contact) => {
+    if (!canManageSupplierContacts || isOffline) return;
+    setEditingSupplierContactId(contact.id);
+    setEditingSupplierContactSupplierId(supplierId);
+    setSupplierContactForm({
+      name: contact.name || "",
+      email: contact.email || "",
+      phone: contact.phone || "",
+      role: contact.role || "",
+    });
+    setMessage("");
+    setError("");
+  };
+
+  const saveSupplierContact = async (submitEvent) => {
+    submitEvent.preventDefault();
+    if (isOffline) {
+      setError("Editing is disabled while offline.");
+      return;
+    }
+    if (!canManageSupplierContacts) {
+      setError("Your role cannot manage supplier contacts.");
+      return;
+    }
+    if (!editingSupplierContactSupplierId) return;
+
+    const name = supplierContactForm.name.trim();
+    const email = supplierContactForm.email.trim();
+    const phone = supplierContactForm.phone.trim();
+    const role = supplierContactForm.role.trim();
+    if (!name) {
+      setError("Contact name is required.");
+      return;
+    }
+
+    setSavingSupplierContact(true);
+    setMessage("");
+    setError("");
+
+    try {
+      if (editingSupplierContactId) {
+        await updateSupplierContact(editingSupplierContactId, {
+          supplierId: editingSupplierContactSupplierId,
+          name,
+          email,
+          phone,
+          role,
+        });
+        setMessage("Supplier contact saved.");
+      } else {
+        await createSupplierContact({
+          supplierId: editingSupplierContactSupplierId,
+          name,
+          email,
+          phone,
+          role,
+        });
+        setMessage("Supplier contact created.");
+      }
+
+      resetSupplierContactForm();
+      await reloadSupplierContacts();
+    } catch (contactError) {
+      console.error(contactError);
+      setError("Could not save supplier contact.");
+    } finally {
+      setSavingSupplierContact(false);
+    }
+  };
+
+  const removeSupplierContact = async (contactId) => {
+    if (isOffline) {
+      setError("Editing is disabled while offline.");
+      return;
+    }
+    if (!canManageSupplierContacts) {
+      setError("Your role cannot manage supplier contacts.");
+      return;
+    }
+
+    setDeletingSupplierContactId(contactId);
+    setMessage("");
+    setError("");
+
+    try {
+      await deleteSupplierContact(contactId);
+      if (editingSupplierContactId === contactId) resetSupplierContactForm();
+      await reloadSupplierContacts();
+      setMessage("Supplier contact deleted.");
+    } catch (contactError) {
+      console.error(contactError);
+      setError("Could not delete supplier contact.");
+    } finally {
+      setDeletingSupplierContactId("");
+    }
+  };
+
+  const reorderSupplierContact = async (supplierId, sourceContactId, targetContactId) => {
+    if (!canManageSupplierContacts || isOffline || reorderingSupplierContactId) return;
+    if (!supplierId || !sourceContactId || !targetContactId || sourceContactId === targetContactId) {
+      return;
+    }
+
+    const currentContacts = supplierContactsBySupplierId[supplierId] || [];
+    const sourceIndex = currentContacts.findIndex((contact) => contact.id === sourceContactId);
+    const targetIndex = currentContacts.findIndex((contact) => contact.id === targetContactId);
+    if (sourceIndex < 0 || targetIndex < 0) return;
+
+    const nextContacts = [...currentContacts];
+    const [movedContact] = nextContacts.splice(sourceIndex, 1);
+    nextContacts.splice(targetIndex, 0, movedContact);
+    const orderedContacts = nextContacts.map((contact, contactIndex) => ({
+      ...contact,
+      sortOrder: contactIndex,
+    }));
+
+    setSupplierContactsBySupplierId((current) => ({
+      ...current,
+      [supplierId]: orderedContacts,
+    }));
+    setSupplierContactDropTargetId("");
+    setReorderingSupplierContactId(supplierId);
+    setMessage("");
+    setError("");
+
+    try {
+      await updateSupplierContactOrder(orderedContacts);
+    } catch (reorderError) {
+      console.error(reorderError);
+      setError("Could not reorder supplier contacts.");
+      await reloadSupplierContacts();
+    } finally {
+      setReorderingSupplierContactId("");
+    }
+  };
+
+  const reorderContactSupplier = async (sourceSupplierId, targetSupplierId) => {
+    if (!canManageContactSupplierOrder || isOffline || savingContactSupplierOrder) return;
+    if (!sourceSupplierId || !targetSupplierId || sourceSupplierId === targetSupplierId) return;
+
+    const supplierIds = contactSuppliers.map((supplier) => supplier.id);
+    const sourceIndex = supplierIds.indexOf(sourceSupplierId);
+    const targetIndex = supplierIds.indexOf(targetSupplierId);
+    if (sourceIndex < 0 || targetIndex < 0) return;
+
+    const nextSupplierIds = [...supplierIds];
+    const [movedSupplierId] = nextSupplierIds.splice(sourceIndex, 1);
+    nextSupplierIds.splice(targetIndex, 0, movedSupplierId);
+
+    setForm((current) => ({
+      ...current,
+      contactSupplierOrder: nextSupplierIds,
+    }));
+    setContactSupplierDropTargetId("");
+    setSavingContactSupplierOrder(true);
+    setMessage("");
+    setError("");
+
+    try {
+      await updateEventContactSupplierOrder(eventId, nextSupplierIds, userProfile);
+      setSavedEventForm((current) => ({
+        ...current,
+        contactSupplierOrder: nextSupplierIds,
+      }));
+    } catch (orderError) {
+      console.error(orderError);
+      setError("Could not save contact supplier order.");
+      setForm((current) => ({
+        ...current,
+        contactSupplierOrder: savedEventForm.contactSupplierOrder || [],
+      }));
+    } finally {
+      setSavingContactSupplierOrder(false);
+    }
   };
 
   const getTagById = (tagId) => tags.find((tag) => tag.id === tagId) || null;
@@ -1386,18 +1793,24 @@ export default function EventEditPage() {
     setError("");
 
     try {
+      if (form.startDate > form.endDate) {
+        setError("Event start date must be before or equal to event end date.");
+        return;
+      }
+
       if (form.scheduleStartDate > form.scheduleEndDate) {
         setError("Schedule start date must be before or equal to schedule end date.");
         return;
       }
 
       const selectedClient = clients.find((client) => client.id === form.clientId);
+      const nextEventForm = {
+        ...form,
+        clientName: selectedClient?.clientName || form.clientName,
+      };
       await updateEvent(
         eventId,
-        {
-          ...form,
-          clientName: selectedClient?.clientName || form.clientName,
-        },
+        nextEventForm,
         userProfile
       );
       const days = await syncScheduleDaysToRange(
@@ -1405,11 +1818,12 @@ export default function EventEditPage() {
         form.scheduleStartDate,
         form.scheduleEndDate
       );
-      setSavedEventForm(form);
+      setForm(nextEventForm);
+      setSavedEventForm(nextEventForm);
       setIsEditingEventDetails(false);
       applyScheduleDays(days);
-      await loadSuppliers(form.clientId);
-      setMessage("Event saved and schedule days synced.");
+      await loadSuppliers(nextEventForm.clientId);
+      setMessage("Event saved.");
     } catch (saveError) {
       console.error(saveError);
       setError("Could not save event or sync schedule days.");
@@ -1519,12 +1933,131 @@ export default function EventEditPage() {
 
   return (
     <main className="page">
-      <div className="page-header">
-        <div>
-          <h1 className="page-title">{form.name || eventId}</h1>
-          <ScheduleCacheStatus eventId={eventId} />
+      <section className="event-edit-header">
+        <div className="event-edit-header-summary">
+          <div>
+            <h1 className="event-edit-title">{form.name || eventId}</h1>
+            <p className="event-edit-date-range">
+              {formatEventDateRange(form.startDate, form.endDate) || "No event dates"}
+            </p>
+            <ScheduleCacheStatus eventId={eventId} />
+          </div>
+          {!isEditingEventDetails ? (
+            <button
+              className="button secondary"
+              type="button"
+              disabled={isOffline}
+              onClick={() => {
+                setIsEditingEventDetails(true);
+                setMessage("");
+                setError("");
+              }}
+            >
+              Edit
+            </button>
+          ) : null}
         </div>
-      </div>
+
+        {isEditingEventDetails ? (
+          <form className="event-header-form" onSubmit={handleEventSave}>
+            <div className="form-grid">
+              <div className="form-row">
+                <label htmlFor="editName">Name</label>
+                <input
+                  id="editName"
+                  value={form.name}
+                  disabled={isOffline}
+                  onChange={(event) => updateField("name", event.target.value)}
+                  required
+                />
+              </div>
+              <div className="form-row">
+                <label htmlFor={isSuperAdmin ? "editClientId" : "editClientName"}>Client</label>
+                {isSuperAdmin ? (
+                  <select
+                    id="editClientId"
+                    value={form.clientId}
+                    disabled={isOffline}
+                    onChange={(event) => updateClient(event.target.value)}
+                    required
+                  >
+                    <option value="">Choose a client</option>
+                    {editableClients.map((client) => (
+                      <option key={client.id} value={client.id}>
+                        {client.clientName}{client.isActive === false ? " (inactive)" : ""}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <input
+                    id="editClientName"
+                    value={form.clientName}
+                    disabled
+                    required
+                  />
+                )}
+              </div>
+              <div className="form-row">
+                <label htmlFor="editStartDate">Start date</label>
+                <input
+                  id="editStartDate"
+                  type="date"
+                  value={form.startDate}
+                  disabled={isOffline}
+                  onChange={(event) => updateField("startDate", event.target.value)}
+                  required
+                />
+              </div>
+              <div className="form-row">
+                <label htmlFor="editEndDate">End date</label>
+                <input
+                  id="editEndDate"
+                  type="date"
+                  value={form.endDate}
+                  disabled={isOffline}
+                  onChange={(event) => updateField("endDate", event.target.value)}
+                  required
+                />
+              </div>
+              <div className="form-row">
+                <label htmlFor="editScheduleStartDate">Schedule start date</label>
+                <input
+                  id="editScheduleStartDate"
+                  type="date"
+                  value={form.scheduleStartDate}
+                  disabled={isOffline}
+                  onChange={(event) => updateField("scheduleStartDate", event.target.value)}
+                  required
+                />
+              </div>
+              <div className="form-row">
+                <label htmlFor="editScheduleEndDate">Schedule end date</label>
+                <input
+                  id="editScheduleEndDate"
+                  type="date"
+                  value={form.scheduleEndDate}
+                  disabled={isOffline}
+                  onChange={(event) => updateField("scheduleEndDate", event.target.value)}
+                  required
+                />
+              </div>
+            </div>
+            <div className="actions">
+              <button className="button" type="submit" disabled={savingEvent || isOffline}>
+                {savingEvent ? "Saving..." : "Save event"}
+              </button>
+              <button
+                className="button secondary"
+                type="button"
+                disabled={savingEvent || isOffline}
+                onClick={cancelEditingEventDetails}
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        ) : null}
+      </section>
 
       {error ? <p className="error">{error}</p> : null}
       {isOffline ? (
@@ -1536,7 +2069,7 @@ export default function EventEditPage() {
           This event does not have a clientId yet. Choose a client and save the event to finish the assignment.
         </p>
       ) : null}
-      {detailsLoading && activeTab === "detail" ? (
+      {detailsLoading && (activeTab === "info" || activeTab === "detail") ? (
         <p className="message">Loading schedule details...</p>
       ) : null}
       {tagsLoading && activeTab === "settings" ? (
@@ -1545,17 +2078,17 @@ export default function EventEditPage() {
       {locationsLoading && activeTab === "settings" ? (
         <p className="message">Loading locations...</p>
       ) : null}
-      {suppliersLoading && activeTab === "detail" ? (
+      {suppliersLoading && (activeTab === "info" || activeTab === "detail") ? (
         <p className="message">Loading suppliers...</p>
       ) : null}
 
       <nav className="tabs" aria-label="Event edit sections">
         <button
-          className={activeTab === "details" ? "tab active" : "tab"}
+          className={activeTab === "info" ? "tab active" : "tab"}
           type="button"
-          onClick={() => setActiveTab("details")}
+          onClick={() => setActiveTab("info")}
         >
-          Details
+          Info
         </button>
         <button
           className={activeTab === "summary" ? "tab active" : "tab"}
@@ -1580,150 +2113,334 @@ export default function EventEditPage() {
         </button>
       </nav>
 
-      {activeTab === "details" ? (
+      {activeTab === "info" ? (
       <section className="panel">
-        <div className="panel-heading">
-          <h2>Event</h2>
-          {!isEditingEventDetails ? (
-            <button
-              className="button secondary"
-              type="button"
-              disabled={isOffline}
-              onClick={() => {
-                setIsEditingEventDetails(true);
-                setMessage("");
-                setError("");
-              }}
-            >
-              Edit
-            </button>
-          ) : null}
-        </div>
-        <form onSubmit={handleEventSave}>
-          <div className="form-grid">
-            <div className="form-row">
-              <label htmlFor="editName">Name</label>
-              {isEditingEventDetails ? (
-                <input
-                  id="editName"
-                  value={form.name}
-                  disabled={isOffline}
-                  onChange={(event) => updateField("name", event.target.value)}
-                  required
-                />
-              ) : (
-                <span className="readonly-value">{form.name || "-"}</span>
-              )}
-            </div>
-            <div className="form-row">
-              <label htmlFor={isSuperAdmin ? "editClientId" : "editClientName"}>Client</label>
-              {isEditingEventDetails && isSuperAdmin ? (
-                <select
-                  id="editClientId"
-                  value={form.clientId}
-                  disabled={isOffline}
-                  onChange={(event) => updateClient(event.target.value)}
-                  required
-                >
-                  <option value="">Choose a client</option>
-                  {editableClients.map((client) => (
-                    <option key={client.id} value={client.id}>
-                      {client.clientName}{client.isActive === false ? " (inactive)" : ""}
-                    </option>
-                  ))}
-                </select>
-              ) : isEditingEventDetails ? (
-                <input
-                  id="editClientName"
-                  value={form.clientName}
-                  disabled
-                  required
-                />
-              ) : (
-                <span className="readonly-value">{form.clientName || form.clientId || "-"}</span>
-              )}
-            </div>
-            <div className="form-row">
-              <label htmlFor="editStartDate">Start date</label>
-              {isEditingEventDetails ? (
-                <input
-                  id="editStartDate"
-                  type="date"
-                  value={form.startDate}
-                  disabled={isOffline}
-                  onChange={(event) => updateField("startDate", event.target.value)}
-                  required
-                />
-              ) : (
-                <span className="readonly-value">{formatFriendlyDate(form.startDate) || "-"}</span>
-              )}
-            </div>
-            <div className="form-row">
-              <label htmlFor="editEndDate">End date</label>
-              {isEditingEventDetails ? (
-                <input
-                  id="editEndDate"
-                  type="date"
-                  value={form.endDate}
-                  disabled={isOffline}
-                  onChange={(event) => updateField("endDate", event.target.value)}
-                  required
-                />
-              ) : (
-                <span className="readonly-value">{formatFriendlyDate(form.endDate) || "-"}</span>
-              )}
-            </div>
-            <div className="form-row">
-              <label htmlFor="editScheduleStartDate">Schedule start date</label>
-              {isEditingEventDetails ? (
-                <input
-                  id="editScheduleStartDate"
-                  type="date"
-                  value={form.scheduleStartDate}
-                  disabled={isOffline}
-                  onChange={(event) => updateField("scheduleStartDate", event.target.value)}
-                  required
-                />
-              ) : (
-                <span className="readonly-value">
-                  {formatFriendlyDate(form.scheduleStartDate) || "-"}
-                </span>
-              )}
-            </div>
-            <div className="form-row">
-              <label htmlFor="editScheduleEndDate">Schedule end date</label>
-              {isEditingEventDetails ? (
-                <input
-                  id="editScheduleEndDate"
-                  type="date"
-                  value={form.scheduleEndDate}
-                  disabled={isOffline}
-                  onChange={(event) => updateField("scheduleEndDate", event.target.value)}
-                  required
-                />
-              ) : (
-                <span className="readonly-value">
-                  {formatFriendlyDate(form.scheduleEndDate) || "-"}
-                </span>
-              )}
+        <h2>Info</h2>
+        <nav className="tabs nested-tabs" aria-label="Info sections">
+          <button
+            className={activeInfoTab === "contacts" ? "tab active" : "tab"}
+            type="button"
+            onClick={() => setActiveInfoTab("contacts")}
+          >
+            Contacts
+          </button>
+          <button
+            className={activeInfoTab === "keyInfo" ? "tab active" : "tab"}
+            type="button"
+            onClick={() => setActiveInfoTab("keyInfo")}
+          >
+            Key Info
+          </button>
+        </nav>
+
+        {activeInfoTab === "contacts" ? (
+          <div className="settings-section">
+            {detailsLoading || suppliersLoading ? (
+              <p className="item-meta">Loading contacts...</p>
+            ) : contactSuppliers.length === 0 ? (
+              <p className="item-meta">No suppliers are tagged in this event schedule yet.</p>
+            ) : (
+              <div className="supplier-list">
+                {contactSuppliers.map((supplier) => {
+                  const supplierContacts = supplierContactsBySupplierId[supplier.id] || [];
+                  const isEditingThisSupplierContact =
+                    editingSupplierContactSupplierId === supplier.id;
+                  const isSupplierOpen = openContactSupplierIds.includes(supplier.id);
+
+                  return (
+                    <div
+                      className={[
+                        "supplier-list-row",
+                        canManageContactSupplierOrder && !isOffline ? "draggable-supplier-row" : "",
+                        contactSupplierDropTargetId === supplier.id ? "drop-target" : "",
+                      ].filter(Boolean).join(" ")}
+                      key={supplier.id}
+                      draggable={canManageContactSupplierOrder && !isOffline && !savingContactSupplierOrder}
+                      onDragStart={(event) => {
+                        if (event.target.closest(".supplier-contact-row")) return;
+                        if (!canManageContactSupplierOrder || isOffline) return;
+                        draggedContactSupplierIdRef.current = supplier.id;
+                        event.dataTransfer.effectAllowed = "move";
+                      }}
+                      onDragOver={(event) => {
+                        if (
+                          !canManageContactSupplierOrder ||
+                          isOffline ||
+                          savingContactSupplierOrder ||
+                          !draggedContactSupplierIdRef.current ||
+                          draggedContactSupplierIdRef.current === supplier.id
+                        ) {
+                          return;
+                        }
+                        event.preventDefault();
+                        event.dataTransfer.dropEffect = "move";
+                        setContactSupplierDropTargetId(supplier.id);
+                      }}
+                      onDragLeave={() => {
+                        setContactSupplierDropTargetId((current) =>
+                          current === supplier.id ? "" : current
+                        );
+                      }}
+                      onDrop={(event) => {
+                        event.preventDefault();
+                        const draggedSupplierId = draggedContactSupplierIdRef.current;
+                        draggedContactSupplierIdRef.current = "";
+                        reorderContactSupplier(draggedSupplierId, supplier.id);
+                      }}
+                      onDragEnd={() => {
+                        draggedContactSupplierIdRef.current = "";
+                        setContactSupplierDropTargetId("");
+                      }}
+                    >
+                      <div>
+                        <div className="supplier-accordion-heading">
+                          <button
+                            className="supplier-accordion-trigger"
+                            type="button"
+                            aria-expanded={isSupplierOpen}
+                            onClick={() => toggleContactSupplierOpen(supplier.id)}
+                          >
+                            <span className="accordion-indicator" aria-hidden="true">
+                              {isSupplierOpen ? "v" : ">"}
+                            </span>
+                            <span>
+                              <span className="supplier-accordion-title">
+                                {supplier.supplierName || "Unnamed supplier"}
+                              </span>
+                              <span className="item-meta supplier-accordion-meta">
+                                {supplierContacts.length} contact
+                                {supplierContacts.length === 1 ? "" : "s"}
+                              </span>
+                            </span>
+                          </button>
+                          {canManageSupplierContacts ? (
+                            <button
+                              className="compact-button"
+                              type="button"
+                              disabled={isOffline || savingSupplierContact}
+                              onClick={() => startAddingSupplierContact(supplier.id)}
+                            >
+                              Add contact
+                            </button>
+                          ) : null}
+                        </div>
+
+                        {isSupplierOpen ? (
+                          <div className="supplier-accordion-body">
+                            {supplier.address ? (
+                              <p className="item-meta supplier-address">{supplier.address}</p>
+                            ) : null}
+
+                            {supplierContactsLoading ? (
+                              <p className="item-meta">Loading contacts...</p>
+                            ) : supplierContacts.length === 0 ? (
+                              <p className="item-meta">No contacts yet.</p>
+                            ) : (
+                              <div className="supplier-contact-list">
+                                {supplierContacts.map((contact) => (
+                                  <div
+                                    className={[
+                                      "supplier-contact-row",
+                                      canManageSupplierContacts && !isOffline
+                                        ? "draggable-contact-row"
+                                        : "",
+                                      supplierContactDropTargetId === contact.id
+                                        ? "drop-target"
+                                        : "",
+                                    ].filter(Boolean).join(" ")}
+                                    key={contact.id}
+                                    draggable={
+                                      canManageSupplierContacts &&
+                                      !isOffline &&
+                                      reorderingSupplierContactId !== supplier.id
+                                    }
+                                    onDragStart={(event) => {
+                                      if (!canManageSupplierContacts || isOffline) return;
+                                      event.stopPropagation();
+                                      draggedSupplierContactIdRef.current = contact.id;
+                                      event.dataTransfer.effectAllowed = "move";
+                                    }}
+                                    onDragOver={(event) => {
+                                      if (
+                                        !canManageSupplierContacts ||
+                                        isOffline ||
+                                        reorderingSupplierContactId ||
+                                        !draggedSupplierContactIdRef.current ||
+                                        draggedSupplierContactIdRef.current === contact.id
+                                      ) {
+                                        return;
+                                      }
+                                      event.preventDefault();
+                                      event.stopPropagation();
+                                      event.dataTransfer.dropEffect = "move";
+                                      setSupplierContactDropTargetId(contact.id);
+                                    }}
+                                    onDragLeave={() => {
+                                      setSupplierContactDropTargetId((current) =>
+                                        current === contact.id ? "" : current
+                                      );
+                                    }}
+                                    onDrop={(event) => {
+                                      event.preventDefault();
+                                      event.stopPropagation();
+                                      const draggedContactId = draggedSupplierContactIdRef.current;
+                                      draggedSupplierContactIdRef.current = "";
+                                      reorderSupplierContact(supplier.id, draggedContactId, contact.id);
+                                    }}
+                                    onDragEnd={(event) => {
+                                      event.stopPropagation();
+                                      draggedSupplierContactIdRef.current = "";
+                                      setSupplierContactDropTargetId("");
+                                    }}
+                                  >
+                                    <div>
+                                      <p className="item-title">{contact.name}</p>
+                                      {contact.role ? (
+                                        <p className="item-meta">{contact.role}</p>
+                                      ) : null}
+                                      <div className="supplier-contact-methods">
+                                        {contact.email ? (
+                                          <a href={`mailto:${contact.email}`}>{contact.email}</a>
+                                        ) : null}
+                                        {contact.phone ? (
+                                          <a href={`tel:${contact.phone}`}>{contact.phone}</a>
+                                        ) : null}
+                                      </div>
+                                    </div>
+                                    {canManageSupplierContacts ? (
+                                      <div className="supplier-list-actions">
+                                        <span className="contact-drag-handle" aria-hidden="true">
+                                          {reorderingSupplierContactId === supplier.id
+                                            ? "Saving"
+                                            : "Drag"}
+                                        </span>
+                                        <button
+                                          className="compact-button"
+                                          type="button"
+                                          disabled={isOffline || savingSupplierContact}
+                                          onClick={() => startEditingSupplierContact(supplier.id, contact)}
+                                        >
+                                          Edit
+                                        </button>
+                                        <button
+                                          className="compact-button"
+                                          type="button"
+                                          disabled={
+                                            deletingSupplierContactId === contact.id ||
+                                            isOffline ||
+                                            savingSupplierContact
+                                          }
+                                          onClick={() => removeSupplierContact(contact.id)}
+                                        >
+                                          {deletingSupplierContactId === contact.id
+                                            ? "Deleting..."
+                                            : "Delete"}
+                                        </button>
+                                      </div>
+                                    ) : null}
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+
+                            {canManageSupplierContacts && isEditingThisSupplierContact ? (
+                              <form className="supplier-contact-form" onSubmit={saveSupplierContact}>
+                                <div className="form-grid">
+                                  <div className="form-row">
+                                    <label htmlFor={`supplierContactName-${supplier.id}`}>Name</label>
+                                    <input
+                                      id={`supplierContactName-${supplier.id}`}
+                                      value={supplierContactForm.name}
+                                      disabled={savingSupplierContact || isOffline}
+                                      onChange={(event) =>
+                                        updateSupplierContactFormField("name", event.target.value)
+                                      }
+                                      required
+                                    />
+                                  </div>
+                                  <div className="form-row">
+                                    <label htmlFor={`supplierContactRole-${supplier.id}`}>Role</label>
+                                    <input
+                                      id={`supplierContactRole-${supplier.id}`}
+                                      value={supplierContactForm.role}
+                                      disabled={savingSupplierContact || isOffline}
+                                      onChange={(event) =>
+                                        updateSupplierContactFormField("role", event.target.value)
+                                      }
+                                    />
+                                  </div>
+                                  <div className="form-row">
+                                    <label htmlFor={`supplierContactEmail-${supplier.id}`}>Email</label>
+                                    <input
+                                      id={`supplierContactEmail-${supplier.id}`}
+                                      type="email"
+                                      value={supplierContactForm.email}
+                                      disabled={savingSupplierContact || isOffline}
+                                      onChange={(event) =>
+                                        updateSupplierContactFormField("email", event.target.value)
+                                      }
+                                    />
+                                  </div>
+                                  <div className="form-row">
+                                    <label htmlFor={`supplierContactPhone-${supplier.id}`}>Phone</label>
+                                    <input
+                                      id={`supplierContactPhone-${supplier.id}`}
+                                      type="tel"
+                                      value={supplierContactForm.phone}
+                                      disabled={savingSupplierContact || isOffline}
+                                      onChange={(event) =>
+                                        updateSupplierContactFormField("phone", event.target.value)
+                                      }
+                                    />
+                                  </div>
+                                </div>
+                                <div className="actions">
+                                  <button
+                                    className="button"
+                                    type="submit"
+                                    disabled={savingSupplierContact || isOffline}
+                                  >
+                                    {savingSupplierContact
+                                      ? "Saving..."
+                                      : editingSupplierContactId
+                                        ? "Save contact"
+                                        : "Create contact"}
+                                  </button>
+                                  <button
+                                    className="button secondary"
+                                    type="button"
+                                    disabled={savingSupplierContact || isOffline}
+                                    onClick={resetSupplierContactForm}
+                                  >
+                                    Cancel
+                                  </button>
+                                </div>
+                              </form>
+                            ) : null}
+                          </div>
+                        ) : null}
+                      </div>
+                      {canManageContactSupplierOrder ? (
+                        <span className="drag-handle" aria-hidden="true">
+                          {savingContactSupplierOrder ? "Saving" : "Drag"}
+                        </span>
+                      ) : null}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        ) : null}
+
+        {activeInfoTab === "keyInfo" ? (
+          <div className="placeholder-panel">
+            <div>
+              <h2>Key Info</h2>
+              <p className="item-meta">Placeholder content.</p>
             </div>
           </div>
-          {isEditingEventDetails ? (
-            <div className="actions">
-              <button className="button" type="submit" disabled={savingEvent || isOffline}>
-                {savingEvent ? "Saving..." : "Save Event"}
-              </button>
-              <button
-                className="button secondary"
-                type="button"
-                disabled={savingEvent || isOffline}
-                onClick={cancelEditingEventDetails}
-              >
-                Cancel
-              </button>
-            </div>
-          ) : null}
-        </form>
+        ) : null}
       </section>
       ) : null}
 
@@ -1958,7 +2675,7 @@ export default function EventEditPage() {
                                 isEditingDetail ? "detail-row" : "detail-row draggable-row"
                               }
                               key={detail.id}
-                              style={getRowTagStyle(getTagById(detail.tagId))}
+                              style={getDetailRowStyle(getRowTagStyle(getTagById(detail.tagId)))}
                               draggable={!isEditingDetail && !isOffline}
                               onDragStart={(event) => {
                                 draggedDetailIdRef.current = detail.id;
@@ -2023,63 +2740,65 @@ export default function EventEditPage() {
                                   </span>
                                 </>
                               )}
-                              <div
-                                className="tag-select-wrap"
-                                style={getTagStyle(getTagById(detail.tagId))}
-                              >
-                                <span
-                                  className="tag-dot"
-                                  style={{
-                                    backgroundColor:
-                                      normaliseHexColour(getTagById(detail.tagId)?.colour) ||
-                                      "transparent",
-                                  }}
-                                />
-                                <select
-                                  aria-label={`Tag for ${detail.description || "schedule detail"}`}
-                                  value={getTagById(detail.tagId) ? detail.tagId : ""}
-                                  disabled={savingDetailId === detail.id || isOffline}
-                                  onChange={(event) =>
-                                    assignDetailTag(day.id, detail, event.target.value)
-                                  }
+                              {showTagColumn ? (
+                                <div
+                                  className="tag-select-wrap"
+                                  style={getTagStyle(getTagById(detail.tagId))}
                                 >
-                                  <option value="">No tag</option>
-                                  {tags.map((tag) => (
-                                    <option key={tag.id} value={tag.id}>
-                                      {tag.name}
-                                    </option>
-                                  ))}
-                                </select>
-                              </div>
-                              <div className="location-select-wrap">
-                                <select
-                                  aria-label={`Location for ${detail.description || "schedule detail"}`}
-                                  value={getLocationById(detail.locationId) ? detail.locationId : ""}
-                                  disabled={savingDetailId === detail.id || isOffline}
-                                  onChange={(event) =>
-                                    assignDetailLocation(day.id, detail, event.target.value)
-                                  }
-                                >
-                                  <option value="">No location</option>
-                                  {locationOptions.map((location) => (
-                                    <option key={location.id} value={location.id}>
-                                      {location.displayName}
-                                    </option>
-                                  ))}
-                                </select>
-                              </div>
-                              <details className="supplier-dropdown">
-                                <summary
-                                  aria-label={`Supplier for ${detail.description || "schedule detail"}`}
-                                  className="supplier-dropdown-trigger"
-                                >
-                                  {getSupplierLabel(detail.supplierIds || [])}
-                                </summary>
-                                <div className="supplier-dropdown-menu">
-                                  {suppliers.length === 0 ? (
-                                    <span className="supplier-dropdown-empty">No suppliers</span>
-                                  ) : (
-                                    suppliers.map((supplier) => (
+                                  <span
+                                    className="tag-dot"
+                                    style={{
+                                      backgroundColor:
+                                        normaliseHexColour(getTagById(detail.tagId)?.colour) ||
+                                        "transparent",
+                                    }}
+                                  />
+                                  <select
+                                    aria-label={`Tag for ${detail.description || "schedule detail"}`}
+                                    value={getTagById(detail.tagId) ? detail.tagId : ""}
+                                    disabled={savingDetailId === detail.id || isOffline}
+                                    onChange={(event) =>
+                                      assignDetailTag(day.id, detail, event.target.value)
+                                    }
+                                  >
+                                    <option value="">No tag</option>
+                                    {tags.map((tag) => (
+                                      <option key={tag.id} value={tag.id}>
+                                        {tag.name}
+                                      </option>
+                                    ))}
+                                  </select>
+                                </div>
+                              ) : null}
+                              {showLocationColumn ? (
+                                <div className="location-select-wrap">
+                                  <select
+                                    aria-label={`Location for ${detail.description || "schedule detail"}`}
+                                    value={getLocationById(detail.locationId) ? detail.locationId : ""}
+                                    disabled={savingDetailId === detail.id || isOffline}
+                                    onChange={(event) =>
+                                      assignDetailLocation(day.id, detail, event.target.value)
+                                    }
+                                  >
+                                    <option value="">No location</option>
+                                    {locationOptions.map((location) => (
+                                      <option key={location.id} value={location.id}>
+                                        {location.displayName}
+                                      </option>
+                                    ))}
+                                  </select>
+                                </div>
+                              ) : null}
+                              {showSupplierColumn ? (
+                                <details className="supplier-dropdown">
+                                  <summary
+                                    aria-label={`Supplier for ${detail.description || "schedule detail"}`}
+                                    className="supplier-dropdown-trigger"
+                                  >
+                                    {getSupplierLabel(detail.supplierIds || [])}
+                                  </summary>
+                                  <div className="supplier-dropdown-menu">
+                                    {suppliers.map((supplier) => (
                                       <label className="supplier-dropdown-option" key={supplier.id}>
                                         <input
                                           type="checkbox"
@@ -2095,10 +2814,10 @@ export default function EventEditPage() {
                                         />
                                         <span>{supplier.supplierName}</span>
                                       </label>
-                                    ))
-                                  )}
-                                </div>
-                              </details>
+                                    ))}
+                                  </div>
+                                </details>
+                              ) : null}
                               <div className="detail-row-actions">
                                 {!isEditingDetail ? (
                                   <button
@@ -2254,7 +2973,11 @@ export default function EventEditPage() {
                           );
                         })}
                         {draftDetails.map((draft, draftIndex) => (
-                          <div className="detail-row draft-row" key={`draft-${draftIndex}`}>
+                          <div
+                            className="detail-row draft-row"
+                            key={`draft-${draftIndex}`}
+                            style={getDetailRowStyle()}
+                          >
                             <input
                               aria-label="New detail time"
                               type="time"
@@ -2274,68 +2997,70 @@ export default function EventEditPage() {
                               placeholder="Description"
                               required
                             />
-                            <div
-                              className="tag-select-wrap"
-                              style={getTagStyle(getTagById(draft.tagId))}
-                            >
-                              <span
-                                className="tag-dot"
-                                style={{
-                                  backgroundColor:
-                                    normaliseHexColour(getTagById(draft.tagId)?.colour) ||
-                                    "transparent",
-                                }}
-                              />
-                              <select
-                                aria-label="New detail tag"
-                                value={getTagById(draft.tagId) ? draft.tagId : ""}
-                                disabled={isOffline}
-                                onChange={(event) =>
-                                  updateDraftDetail(day.id, draftIndex, "tagId", event.target.value)
-                                }
+                            {showTagColumn ? (
+                              <div
+                                className="tag-select-wrap"
+                                style={getTagStyle(getTagById(draft.tagId))}
                               >
-                                <option value="">No tag</option>
-                                {tags.map((tag) => (
-                                  <option key={tag.id} value={tag.id}>
-                                    {tag.name}
-                                  </option>
-                                ))}
-                              </select>
-                            </div>
-                            <div className="location-select-wrap">
-                              <select
-                                aria-label="New detail location"
-                                value={getLocationById(draft.locationId) ? draft.locationId : ""}
-                                disabled={isOffline}
-                                onChange={(event) =>
-                                  updateDraftDetail(
-                                    day.id,
-                                    draftIndex,
-                                    "locationId",
-                                    event.target.value
-                                  )
-                                }
-                              >
-                                <option value="">No location</option>
-                                {locationOptions.map((location) => (
-                                  <option key={location.id} value={location.id}>
-                                    {location.displayName}
-                                  </option>
-                                ))}
-                              </select>
-                            </div>
-                            <details className="supplier-dropdown">
-                              <summary
-                                aria-label="New detail supplier"
-                                className="supplier-dropdown-trigger"
-                              >
-                                {getSupplierLabel(draft.supplierIds || [])}
-                              </summary>
-                              <div className="supplier-dropdown-menu">
-                                {suppliers.length === 0 ? (
-                                  <span className="supplier-dropdown-empty">No suppliers</span>
-                                ) : (
-                                  suppliers.map((supplier) => (
+                                <span
+                                  className="tag-dot"
+                                  style={{
+                                    backgroundColor:
+                                      normaliseHexColour(getTagById(draft.tagId)?.colour) ||
+                                      "transparent",
+                                  }}
+                                />
+                                <select
+                                  aria-label="New detail tag"
+                                  value={getTagById(draft.tagId) ? draft.tagId : ""}
+                                  disabled={isOffline}
+                                  onChange={(event) =>
+                                    updateDraftDetail(day.id, draftIndex, "tagId", event.target.value)
+                                  }
+                                >
+                                  <option value="">No tag</option>
+                                  {tags.map((tag) => (
+                                    <option key={tag.id} value={tag.id}>
+                                      {tag.name}
+                                    </option>
+                                  ))}
+                                </select>
+                              </div>
+                            ) : null}
+                            {showLocationColumn ? (
+                              <div className="location-select-wrap">
+                                <select
+                                  aria-label="New detail location"
+                                  value={getLocationById(draft.locationId) ? draft.locationId : ""}
+                                  disabled={isOffline}
+                                  onChange={(event) =>
+                                    updateDraftDetail(
+                                      day.id,
+                                      draftIndex,
+                                      "locationId",
+                                      event.target.value
+                                    )
+                                  }
+                                >
+                                  <option value="">No location</option>
+                                  {locationOptions.map((location) => (
+                                    <option key={location.id} value={location.id}>
+                                      {location.displayName}
+                                    </option>
+                                  ))}
+                                </select>
+                              </div>
+                            ) : null}
+                            {showSupplierColumn ? (
+                              <details className="supplier-dropdown">
+                                <summary
+                                  aria-label="New detail supplier"
+                                  className="supplier-dropdown-trigger"
+                                >
+                                  {getSupplierLabel(draft.supplierIds || [])}
+                                </summary>
+                                <div className="supplier-dropdown-menu">
+                                  {suppliers.map((supplier) => (
                                     <label className="supplier-dropdown-option" key={supplier.id}>
                                       <input
                                         type="checkbox"
@@ -2352,10 +3077,10 @@ export default function EventEditPage() {
                                       />
                                       <span>{supplier.supplierName}</span>
                                     </label>
-                                  ))
-                                )}
-                              </div>
-                            </details>
+                                  ))}
+                                </div>
+                              </details>
+                            ) : null}
                             <div className="draft-actions">
                               <button
                                 className="button secondary"

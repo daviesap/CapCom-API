@@ -28,6 +28,7 @@ export default function SuppliersPage() {
   const [selectedClientId, setSelectedClientId] = useState("");
   const [suppliers, setSuppliers] = useState([]);
   const [supplierForm, setSupplierForm] = useState(emptySupplierForm);
+  const [isSupplierFormOpen, setIsSupplierFormOpen] = useState(false);
   const [editingSupplierId, setEditingSupplierId] = useState("");
   const [clientsLoading, setClientsLoading] = useState(false);
   const [suppliersLoading, setSuppliersLoading] = useState(false);
@@ -104,11 +105,21 @@ export default function SuppliersPage() {
   };
 
   const resetSupplierForm = () => {
+    setIsSupplierFormOpen(false);
     setEditingSupplierId("");
     setSupplierForm(emptySupplierForm);
   };
 
+  const startAddingSupplier = () => {
+    setIsSupplierFormOpen(true);
+    setEditingSupplierId("");
+    setSupplierForm(emptySupplierForm);
+    setError("");
+    setMessage("");
+  };
+
   const startEditingSupplier = (supplier) => {
+    setIsSupplierFormOpen(true);
     setEditingSupplierId(supplier.id);
     setSupplierForm({
       supplierName: supplier.supplierName || "",
@@ -220,84 +231,42 @@ export default function SuppliersPage() {
           <div>
             <h2>{selectedClient?.clientName || "Suppliers"}</h2>
             <p className="page-subtitle">
-              {canManageSuppliers ? "Create and maintain suppliers for this client." : "View suppliers for your client."}
+              {canManageSuppliers ? "Maintain suppliers for this client." : "View suppliers for your client."}
             </p>
           </div>
-          {isSuperAdmin ? (
-            <div className="form-row supplier-client-select">
-              <label htmlFor="supplierClientId">Client</label>
-              <select
-                id="supplierClientId"
-                value={selectedClientId}
-                disabled={clientsLoading}
-                onChange={(event) => setSelectedClientId(event.target.value)}
+          <div className="supplier-toolbar">
+            {isSuperAdmin ? (
+              <div className="form-row supplier-client-select">
+                <label htmlFor="supplierClientId">Client</label>
+                <select
+                  id="supplierClientId"
+                  value={selectedClientId}
+                  disabled={clientsLoading}
+                  onChange={(event) => setSelectedClientId(event.target.value)}
+                >
+                  <option value="">Choose a client</option>
+                  {clients.map((client) => (
+                    <option key={client.id} value={client.id}>
+                      {client.clientName}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            ) : null}
+            {canManageSuppliers ? (
+              <button
+                className="button"
+                type="button"
+                disabled={isOffline || !selectedClientId}
+                onClick={startAddingSupplier}
               >
-                <option value="">Choose a client</option>
-                {clients.map((client) => (
-                  <option key={client.id} value={client.id}>
-                    {client.clientName}
-                  </option>
-                ))}
-              </select>
-            </div>
-          ) : null}
+                Add supplier
+              </button>
+            ) : null}
+          </div>
         </div>
 
         {clientsLoading ? <p className="message">Loading clients...</p> : null}
-
-        {canManageSuppliers ? (
-          <form className="supplier-form" onSubmit={saveSupplier}>
-            <div className="form-grid">
-              <div className="form-row">
-                <label htmlFor="supplierName">Supplier name</label>
-                <input
-                  id="supplierName"
-                  value={supplierForm.supplierName}
-                  disabled={savingSupplier || isOffline || !selectedClientId}
-                  onChange={(event) =>
-                    updateSupplierFormField("supplierName", event.target.value)
-                  }
-                  placeholder="Supplier name"
-                  required
-                />
-              </div>
-              <div className="form-row full">
-                <label htmlFor="supplierAddress">Address</label>
-                <textarea
-                  id="supplierAddress"
-                  value={supplierForm.address}
-                  disabled={savingSupplier || isOffline || !selectedClientId}
-                  onChange={(event) => updateSupplierFormField("address", event.target.value)}
-                  placeholder="Supplier address"
-                  rows="4"
-                />
-              </div>
-            </div>
-            <div className="actions">
-              <button
-                className="button"
-                type="submit"
-                disabled={savingSupplier || isOffline || !selectedClientId}
-              >
-                {savingSupplier
-                  ? "Saving..."
-                  : editingSupplierId
-                    ? "Save supplier"
-                    : "Create supplier"}
-              </button>
-              {editingSupplierId ? (
-                <button
-                  className="button secondary"
-                  type="button"
-                  disabled={savingSupplier || isOffline}
-                  onClick={resetSupplierForm}
-                >
-                  Cancel
-                </button>
-              ) : null}
-            </div>
-          </form>
-        ) : null}
 
         {suppliersLoading ? (
           <p className="item-meta">Loading suppliers...</p>
@@ -337,6 +306,61 @@ export default function SuppliersPage() {
             ))}
           </div>
         )}
+
+        {canManageSuppliers && isSupplierFormOpen ? (
+          <form className="supplier-form" onSubmit={saveSupplier}>
+            <div className="supplier-form-heading">
+              <h3>{editingSupplierId ? "Edit supplier" : "Add supplier"}</h3>
+            </div>
+            <div className="form-grid">
+              <div className="form-row">
+                <label htmlFor="supplierName">Supplier name</label>
+                <input
+                  id="supplierName"
+                  value={supplierForm.supplierName}
+                  disabled={savingSupplier || isOffline || !selectedClientId}
+                  onChange={(event) =>
+                    updateSupplierFormField("supplierName", event.target.value)
+                  }
+                  placeholder="Supplier name"
+                  required
+                />
+              </div>
+              <div className="form-row full">
+                <label htmlFor="supplierAddress">Address</label>
+                <textarea
+                  id="supplierAddress"
+                  value={supplierForm.address}
+                  disabled={savingSupplier || isOffline || !selectedClientId}
+                  onChange={(event) => updateSupplierFormField("address", event.target.value)}
+                  placeholder="Supplier address"
+                  rows="4"
+                />
+              </div>
+            </div>
+            <div className="actions">
+              <button
+                className="button"
+                type="submit"
+                disabled={savingSupplier || isOffline || !selectedClientId}
+              >
+                {savingSupplier
+                  ? "Saving..."
+                  : editingSupplierId
+                    ? "Save supplier"
+                    : "Create supplier"}
+              </button>
+              <button
+                className="button secondary"
+                type="button"
+                disabled={savingSupplier || isOffline}
+                onClick={resetSupplierForm}
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        ) : null}
       </section>
     </main>
   );

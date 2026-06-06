@@ -154,3 +154,23 @@ export async function updateEvent(eventId, eventData, userProfile) {
     // Saving state is owned by the calling component.
   }
 }
+
+export async function updateEventContactSupplierOrder(eventId, contactSupplierOrder, userProfile) {
+  assertOnline();
+  try {
+    const existingEvent = await getEvent(eventId, userProfile);
+    if (!canManageEvent(userProfile, existingEvent)) {
+      throw new Error("You do not have permission to update this event.");
+    }
+
+    return await updateDoc(doc(db, "events", eventId), {
+      contactSupplierOrder: Array.isArray(contactSupplierOrder) ? contactSupplierOrder : [],
+      updatedAt: serverTimestamp(),
+    });
+  } catch (error) {
+    logWriteError("update event contact supplier order", error, { eventId });
+    throw error;
+  } finally {
+    // Saving state is owned by the calling component.
+  }
+}
