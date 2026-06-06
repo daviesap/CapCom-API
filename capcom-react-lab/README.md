@@ -25,7 +25,11 @@ Planned access model:
 - `users.role` is one of `SuperAdmin`, `ClientAdmin`, or `ClientUser`.
 - `users.clientId` is `null` for `SuperAdmin` users.
 - `users.clientId` points to `clients/{clientId}` for `ClientAdmin` and `ClientUser` users.
-- `clients/{clientId}` stores client account metadata. Events can later be linked to clients with a `clientId` field.
+- `clients/{clientId}` stores client account metadata.
+- `events.clientId` points to `clients/{clientId}`.
+- `SuperAdmin` users can read all events and choose the client when creating an event.
+- `ClientAdmin` and `ClientUser` users read only events for their own `clientId`.
+- `ClientAdmin` users create events under their own `clientId`; `ClientUser` users cannot create events.
 
 Example `clients/{clientId}` document:
 

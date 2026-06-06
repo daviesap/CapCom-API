@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { useAuth } from "../auth/AuthProvider.jsx";
 import EmptyState from "../components/EmptyState.jsx";
 import Loading from "../components/Loading.jsx";
 import ScheduleCacheStatus from "../components/ScheduleCacheStatus.jsx";
@@ -15,6 +16,7 @@ import {
 
 export default function ScheduleDaysPage() {
   const { eventId } = useParams();
+  const { userProfile, profileLoading } = useAuth();
   const isOnline = useOnlineStatus();
   const isOffline = !isOnline;
   const [event, setEvent] = useState(null);
@@ -33,10 +35,15 @@ export default function ScheduleDaysPage() {
     setDetailsLoading(false);
     setError("");
     try {
-      const [eventRecord, dayRecords] = await Promise.all([
-        getEvent(eventId),
-        getScheduleDays(eventId),
-      ]);
+      const eventRecord = await getEvent(eventId, userProfile);
+      if (!eventRecord) {
+        setEvent(null);
+        setDays([]);
+        setError("Event not found.");
+        return;
+      }
+
+      const dayRecords = await getScheduleDays(eventId);
       setEvent(eventRecord);
       setDays(dayRecords);
 
@@ -54,8 +61,9 @@ export default function ScheduleDaysPage() {
   };
 
   useEffect(() => {
+    if (profileLoading) return;
     loadPage();
-  }, [eventId]);
+  }, [eventId, profileLoading, userProfile]);
 
   const setDetailsState = (nextDetailsByDayId) => {
     const detailsEntries = Object.entries(nextDetailsByDayId);

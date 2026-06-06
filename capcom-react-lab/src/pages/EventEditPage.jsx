@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
+import { useAuth } from "../auth/AuthProvider.jsx";
 import Loading from "../components/Loading.jsx";
 import ScheduleCacheStatus from "../components/ScheduleCacheStatus.jsx";
 import useOnlineStatus from "../hooks/useOnlineStatus.js";
+import { getClients } from "../services/clientService.js";
 import { getEvent, updateEvent } from "../services/eventService.js";
 import {
   getScheduleDays,
@@ -26,6 +28,7 @@ import {
 
 const emptyEventForm = {
   name: "",
+  clientId: "",
   clientName: "",
   startDate: "",
   endDate: "",
@@ -98,11 +101,13 @@ function getRowTagStyle(tag) {
 
 export default function EventEditPage() {
   const { eventId } = useParams();
+  const { userProfile, profileLoading, isSuperAdmin } = useAuth();
   const isOnline = useOnlineStatus();
   const isOffline = !isOnline;
   const [form, setForm] = useState(emptyEventForm);
   const [savedEventForm, setSavedEventForm] = useState(emptyEventForm);
   const [isEditingEventDetails, setIsEditingEventDetails] = useState(false);
+  const [clients, setClients] = useState([]);
   const [scheduleDays, setScheduleDays] = useState([]);
   const [editingDayId, setEditingDayId] = useState("");
   const [editingDayDraft, setEditingDayDraft] = useState({
@@ -137,6 +142,8 @@ export default function EventEditPage() {
   const draggedDetailIdRef = useRef("");
 
   useEffect(() => {
+    if (profileLoading) return undefined;
+
     let cancelled = false;
 
     const loadPage = async () => {
@@ -145,17 +152,23 @@ export default function EventEditPage() {
       setTagsLoading(false);
       setError("");
       try {
-        const [event, days] = await Promise.all([
-          getEvent(eventId),
-          getScheduleDays(eventId),
-        ]);
+        const event = await getEvent(eventId, userProfile);
         if (cancelled) return;
         if (!event) {
           setError("Event not found.");
           return;
         }
+
+        const [days, clientRecords] = await Promise.all([
+          getScheduleDays(eventId),
+          isSuperAdmin ? getClients() : Promise.resolve([]),
+        ]);
+        if (cancelled) return;
+
+        setClients(clientRecords);
         const loadedEventForm = {
           name: event.name || "",
+          clientId: event.clientId || "",
           clientName: event.clientName || "",
           startDate: event.startDate || "",
           endDate: event.endDate || "",
@@ -193,7 +206,7 @@ export default function EventEditPage() {
     return () => {
       cancelled = true;
     };
-  }, [eventId]);
+  }, [eventId, profileLoading, userProfile, isSuperAdmin]);
 
   useEffect(() => {
     if (!openActionMenuId) return undefined;
@@ -229,6 +242,15 @@ export default function EventEditPage() {
 
   const updateField = (field, value) => {
     setForm((current) => ({ ...current, [field]: value }));
+  };
+
+  const updateClient = (clientId) => {
+    const selectedClient = clients.find((client) => client.id === clientId);
+    setForm((current) => ({
+      ...current,
+      clientId,
+      clientName: selectedClient?.clientName || current.clientName,
+    }));
   };
 
   const cancelEditingEventDetails = () => {
@@ -900,7 +922,15 @@ export default function EventEditPage() {
         return;
       }
 
-      await updateEvent(eventId, form);
+      const selectedClient = clients.find((client) => client.id === form.clientId);
+      await updateEvent(
+        eventId,
+        {
+          ...form,
+          clientName: selectedClient?.clientName || form.clientName,
+        },
+        userProfile
+      );
       const days = await syncScheduleDaysToRange(
         eventId,
         form.scheduleStartDate,
@@ -1008,17 +1038,31 @@ export default function EventEditPage() {
               )}
             </div>
             <div className="form-row">
-              <label htmlFor="editClientName">Client</label>
-              {isEditingEventDetails ? (
+              <label htmlFor={isSuperAdmin ? "editClientId" : "editClientName"}>Client</label>
+              {isEditingEventDetails && isSuperAdmin ? (
+                <select
+                  id="editClientId"
+                  value={form.clientId}
+                  disabled={isOffline}
+                  onChange={(event) => updateClient(event.target.value)}
+                  required
+                >
+                  <option value="">Choose a client</option>
+                  {clients.map((client) => (
+                    <option key={client.id} value={client.id}>
+                      {client.clientName}
+                    </option>
+                  ))}
+                </select>
+              ) : isEditingEventDetails ? (
                 <input
                   id="editClientName"
                   value={form.clientName}
-                  disabled={isOffline}
-                  onChange={(event) => updateField("clientName", event.target.value)}
+                  disabled
                   required
                 />
               ) : (
-                <span className="readonly-value">{form.clientName || "-"}</span>
+                <span className="readonly-value">{form.clientName || form.clientId || "-"}</span>
               )}
             </div>
             <div className="form-row">

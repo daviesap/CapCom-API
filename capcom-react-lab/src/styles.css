@@ -15,6 +15,7 @@ a {
 
 button,
 input,
+select,
 textarea {
   font: inherit;
 }
@@ -318,6 +319,7 @@ label {
 }
 
 input,
+select,
 textarea {
   border: 1px solid #c9d3dc;
   border-radius: 6px;

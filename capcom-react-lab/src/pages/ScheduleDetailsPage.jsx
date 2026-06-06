@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { useAuth } from "../auth/AuthProvider.jsx";
 import EmptyState from "../components/EmptyState.jsx";
 import Loading from "../components/Loading.jsx";
 import useOnlineStatus from "../hooks/useOnlineStatus.js";
+import { getEvent } from "../services/eventService.js";
 import {
   createScheduleDetail,
   getScheduleDetails,
@@ -15,6 +17,7 @@ const emptyForm = {
 
 export default function ScheduleDetailsPage() {
   const { eventId, scheduleDayId } = useParams();
+  const { userProfile, profileLoading } = useAuth();
   const isOnline = useOnlineStatus();
   const isOffline = !isOnline;
   const [details, setDetails] = useState([]);
@@ -27,6 +30,13 @@ export default function ScheduleDetailsPage() {
     setLoading(true);
     setError("");
     try {
+      const eventRecord = await getEvent(eventId, userProfile);
+      if (!eventRecord) {
+        setDetails([]);
+        setError("Event not found.");
+        return;
+      }
+
       setDetails(await getScheduleDetails(scheduleDayId));
     } catch (loadError) {
       console.error(loadError);
@@ -37,8 +47,9 @@ export default function ScheduleDetailsPage() {
   };
 
   useEffect(() => {
+    if (profileLoading) return;
     loadDetails();
-  }, [scheduleDayId]);
+  }, [eventId, scheduleDayId, profileLoading, userProfile]);
 
   const updateField = (field, value) => {
     setForm((current) => ({ ...current, [field]: value }));

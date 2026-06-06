@@ -1,13 +1,17 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useAuth } from "../auth/AuthProvider.jsx";
+import { canCreateEvents } from "../auth/roles.js";
 import EmptyState from "../components/EmptyState.jsx";
 import Loading from "../components/Loading.jsx";
 import useOnlineStatus from "../hooks/useOnlineStatus.js";
+import { getClient, getClients } from "../services/clientService.js";
 import { createEvent, getEvents } from "../services/eventService.js";
 import { syncScheduleDaysToRange } from "../services/scheduleDayService.js";
 
 const emptyForm = {
   name: "",
+  clientId: "",
   clientName: "",
   startDate: "",
   endDate: "",
@@ -16,20 +20,30 @@ const emptyForm = {
 };
 
 export default function EventListPage() {
+  const {
+    userProfile,
+    profileLoading,
+    isSuperAdmin,
+    isClientAdmin,
+    isClientUser,
+  } = useAuth();
   const isOnline = useOnlineStatus();
   const isOffline = !isOnline;
   const [events, setEvents] = useState([]);
+  const [clients, setClients] = useState([]);
   const [form, setForm] = useState(emptyForm);
   const [showCreateOverlay, setShowCreateOverlay] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [clientsLoading, setClientsLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const userCanCreateEvents = canCreateEvents(userProfile);
 
   const loadEvents = async () => {
     setLoading(true);
     setError("");
     try {
-      setEvents(await getEvents());
+      setEvents(await getEvents(userProfile));
     } catch (loadError) {
       console.error(loadError);
       setError("Could not load events.");
@@ -39,11 +53,50 @@ export default function EventListPage() {
   };
 
   useEffect(() => {
+    if (profileLoading) return;
     loadEvents();
-  }, []);
+  }, [profileLoading, userProfile]);
+
+  useEffect(() => {
+    if (profileLoading) return;
+
+    const loadClients = async () => {
+      setClientsLoading(true);
+      try {
+        if (isSuperAdmin) {
+          setClients(await getClients());
+          return;
+        }
+
+        if (userProfile?.clientId) {
+          const client = await getClient(userProfile.clientId);
+          setClients(client ? [client] : []);
+          return;
+        }
+
+        setClients([]);
+      } catch (loadError) {
+        console.error(loadError);
+        setError("Could not load clients.");
+      } finally {
+        setClientsLoading(false);
+      }
+    };
+
+    loadClients();
+  }, [profileLoading, isSuperAdmin, userProfile]);
 
   const updateField = (field, value) => {
     setForm((current) => ({ ...current, [field]: value }));
+  };
+
+  const updateClient = (clientId) => {
+    const selectedClient = clients.find((client) => client.id === clientId);
+    setForm((current) => ({
+      ...current,
+      clientId,
+      clientName: selectedClient?.clientName || "",
+    }));
   };
 
   const closeCreateOverlay = () => {
@@ -59,6 +112,10 @@ export default function EventListPage() {
       setError("Creating events is disabled while offline.");
       return;
     }
+    if (!userCanCreateEvents) {
+      setError("Your role cannot create events.");
+      return;
+    }
     setSaving(true);
     setError("");
 
@@ -68,7 +125,19 @@ export default function EventListPage() {
         return;
       }
 
-      const newEvent = await createEvent(form);
+      if (isSuperAdmin && !form.clientId) {
+        setError("Choose a client before creating the event.");
+        return;
+      }
+
+      const selectedClient = clients.find((client) => client.id === form.clientId);
+      const eventData = {
+        ...form,
+        clientId: isClientAdmin ? userProfile.clientId : form.clientId,
+        clientName: selectedClient?.clientName || form.clientName,
+      };
+
+      const newEvent = await createEvent(eventData, userProfile);
       await syncScheduleDaysToRange(
         newEvent.id,
         form.scheduleStartDate,
@@ -94,9 +163,14 @@ export default function EventListPage() {
         <button
           className="button"
           type="button"
-          disabled={isOffline}
+          disabled={isOffline || profileLoading || !userCanCreateEvents}
           onClick={() => {
             setError("");
+            setForm({
+              ...emptyForm,
+              clientId: isClientAdmin ? userProfile?.clientId || "" : "",
+              clientName: isClientAdmin ? clients[0]?.clientName || "" : "",
+            });
             setShowCreateOverlay(true);
           }}
         >
@@ -107,6 +181,9 @@ export default function EventListPage() {
       {error && !showCreateOverlay ? <p className="error">{error}</p> : null}
       {isOffline ? (
         <p className="message offline-message">Offline mode: previously loaded schedules are read-only.</p>
+      ) : null}
+      {!profileLoading && isClientUser ? (
+        <p className="message">ClientUser accounts can view assigned client events but cannot create events.</p>
       ) : null}
       {loading ? <Loading label="Loading events..." /> : null}
       {!loading && events.length === 0 ? <EmptyState message="No events yet." /> : null}
@@ -161,15 +238,35 @@ export default function EventListPage() {
                     required
                   />
                 </div>
-                <div className="form-row">
-                  <label htmlFor="clientName">Client name</label>
-                  <input
-                    id="clientName"
-                    value={form.clientName}
-                    onChange={(event) => updateField("clientName", event.target.value)}
-                    required
-                  />
-                </div>
+                {isSuperAdmin ? (
+                  <div className="form-row">
+                    <label htmlFor="clientId">Client</label>
+                    <select
+                      id="clientId"
+                      value={form.clientId}
+                      disabled={clientsLoading}
+                      onChange={(event) => updateClient(event.target.value)}
+                      required
+                    >
+                      <option value="">Choose a client</option>
+                      {clients.map((client) => (
+                        <option key={client.id} value={client.id}>
+                          {client.clientName}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                ) : (
+                  <div className="form-row">
+                    <label htmlFor="clientName">Client</label>
+                    <input
+                      id="clientName"
+                      value={form.clientName || userProfile?.clientId || ""}
+                      disabled
+                      required
+                    />
+                  </div>
+                )}
                 <div className="form-row">
                   <label htmlFor="startDate">Start date</label>
                   <input
@@ -212,7 +309,11 @@ export default function EventListPage() {
                 </div>
               </div>
               <div className="actions">
-                <button className="button" type="submit" disabled={saving || isOffline}>
+                <button
+                  className="button"
+                  type="submit"
+                  disabled={saving || isOffline || clientsLoading || !userCanCreateEvents}
+                >
                   {saving ? "Creating..." : "Create Event"}
                 </button>
                 <button
