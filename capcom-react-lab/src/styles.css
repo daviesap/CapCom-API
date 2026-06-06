@@ -402,6 +402,13 @@ textarea {
   margin: 4px 0 0;
 }
 
+.inline-warning {
+  color: #8a4d10;
+  font-size: 13px;
+  font-weight: 700;
+  margin: 6px 0 0;
+}
+
 .day-title-line {
   align-items: baseline;
   display: flex;
@@ -843,6 +850,78 @@ textarea {
   outline: none;
 }
 
+.admin-grid {
+  display: grid;
+  gap: 18px;
+}
+
+.checkbox-row {
+  align-items: center;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.checkbox-row input {
+  height: 18px;
+  width: 18px;
+}
+
+.client-list {
+  display: grid;
+  gap: 10px;
+}
+
+.client-list-row {
+  align-items: center;
+  border: 1px solid #e1e7ee;
+  border-radius: 8px;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  padding: 12px;
+}
+
+.client-title-line {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.client-title-line h3 {
+  font-size: 17px;
+  line-height: 1.25;
+  margin: 0;
+}
+
+.status-pill {
+  border: 1px solid #c9d3dc;
+  border-radius: 999px;
+  display: inline-flex;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  padding: 5px 8px;
+}
+
+.status-pill.active {
+  background: #eaf8f0;
+  border-color: #bde6ce;
+  color: #1f7a4d;
+}
+
+.status-pill.inactive {
+  background: #f4f6f8;
+  color: #5d6d7e;
+}
+
+.client-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
 @media (max-width: 720px) {
   .detail-row {
     grid-template-columns: minmax(72px, 86px) minmax(0, 1fr) auto;
@@ -860,6 +939,14 @@ textarea {
     justify-content: flex-start;
   }
 
+  .client-list-row {
+    grid-template-columns: 1fr;
+  }
+
+  .client-actions {
+    justify-content: flex-start;
+  }
+
 }
 
 .message {
@@ -873,6 +960,16 @@ textarea {
 }
 
 .offline-message {
+  background: #fff8ed;
+  border: 1px solid #f3d2aa;
+  border-radius: 8px;
+  color: #8a4d10;
+  margin: 0 0 14px;
+  padding: 10px 12px;
+  text-align: left;
+}
+
+.warning-message {
   background: #fff8ed;
   border: 1px solid #f3d2aa;
   border-radius: 8px;
@@ -944,6 +1041,11 @@ textarea {
 
 .profile-details dd {
   margin: 0;
+}
+
+.copyable-value {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  overflow-wrap: anywhere;
 }
 
 .profile-actions {

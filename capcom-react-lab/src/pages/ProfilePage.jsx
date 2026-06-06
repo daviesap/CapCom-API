@@ -38,6 +38,10 @@ export default function ProfilePage() {
             <dd>{user ? "Signed in" : "Signed out"}</dd>
           </div>
           <div>
+            <dt>Firebase Auth UID</dt>
+            <dd className="copyable-value">{user?.uid || "Unavailable"}</dd>
+          </div>
+          <div>
             <dt>Access role</dt>
             <dd>
               {profileLoading ? "Loading..." : userProfile?.role || "No Firestore profile"}

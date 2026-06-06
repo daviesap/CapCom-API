@@ -30,6 +30,8 @@ Planned access model:
 - `SuperAdmin` users can read all events and choose the client when creating an event.
 - `ClientAdmin` and `ClientUser` users read only events for their own `clientId`.
 - `ClientAdmin` users create events under their own `clientId`; `ClientUser` users cannot create events.
+- Admin user management currently creates and edits Firestore `users/{uid}` profiles only.
+- Firebase Authentication accounts must still be created separately, and the Auth UID must be used as the Firestore user document ID.
 
 Example `clients/{clientId}` document:
 

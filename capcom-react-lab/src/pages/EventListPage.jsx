@@ -38,6 +38,7 @@ export default function EventListPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const userCanCreateEvents = canCreateEvents(userProfile);
+  const activeClients = clients.filter((client) => client.isActive !== false);
 
   const loadEvents = async () => {
     setLoading(true);
@@ -196,6 +197,10 @@ export default function EventListPage() {
               <p className="item-meta">
                 {event.clientName} | {event.startDate} to {event.endDate}
               </p>
+              <p className="item-meta">Client ID: {event.clientId || "Missing"}</p>
+              {isSuperAdmin && !event.clientId ? (
+                <p className="inline-warning">Missing client assignment</p>
+              ) : null}
             </div>
           </Link>
         ))}
@@ -249,7 +254,7 @@ export default function EventListPage() {
                       required
                     >
                       <option value="">Choose a client</option>
-                      {clients.map((client) => (
+                      {activeClients.map((client) => (
                         <option key={client.id} value={client.id}>
                           {client.clientName}
                         </option>

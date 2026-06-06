@@ -140,6 +140,9 @@ export default function EventEditPage() {
   const [error, setError] = useState("");
   const suppressDetailBlurRef = useRef(false);
   const draggedDetailIdRef = useRef("");
+  const editableClients = clients.filter((client) => (
+    client.isActive !== false || client.id === form.clientId
+  ));
 
   useEffect(() => {
     if (profileLoading) return undefined;
@@ -964,6 +967,11 @@ export default function EventEditPage() {
         <p className="message offline-message">Offline mode: previously loaded schedules are read-only.</p>
       ) : null}
       {message ? <p className="message success-message">{message}</p> : null}
+      {isSuperAdmin && !form.clientId ? (
+        <p className="message warning-message">
+          This event does not have a clientId yet. Choose a client and save the event to finish the assignment.
+        </p>
+      ) : null}
       {detailsLoading && activeTab === "detail" ? (
         <p className="message">Loading schedule details...</p>
       ) : null}
@@ -1048,9 +1056,9 @@ export default function EventEditPage() {
                   required
                 >
                   <option value="">Choose a client</option>
-                  {clients.map((client) => (
+                  {editableClients.map((client) => (
                     <option key={client.id} value={client.id}>
-                      {client.clientName}
+                      {client.clientName}{client.isActive === false ? " (inactive)" : ""}
                     </option>
                   ))}
                 </select>

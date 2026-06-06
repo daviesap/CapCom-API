@@ -1,5 +1,24 @@
-import { doc, getDoc } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  orderBy,
+  query,
+  serverTimestamp,
+  setDoc,
+  updateDoc,
+  where,
+} from "firebase/firestore";
+import {
+  USER_ROLES,
+  hasActiveProfile,
+  isClientAdmin,
+  isSuperAdmin,
+} from "../auth/roles.js";
 import { db } from "../firebase/firestore";
+
+const usersRef = collection(db, "users");
 
 export function getUserProfileRef(uid) {
   return doc(db, "users", uid);
@@ -15,4 +34,70 @@ export async function getUserProfile(uid) {
     id: userSnap.id,
     ...userSnap.data(),
   };
+}
+
+export async function getUserProfiles(currentUserProfile) {
+  if (!hasActiveProfile(currentUserProfile)) return [];
+
+  const usersQuery = isSuperAdmin(currentUserProfile)
+    ? query(usersRef, orderBy("email", "asc"))
+    : query(usersRef, where("clientId", "==", currentUserProfile.clientId || "__missing_client__"));
+
+  const snapshot = await getDocs(usersQuery);
+  return snapshot.docs
+    .map((userDoc) => ({
+      id: userDoc.id,
+      ...userDoc.data(),
+    }))
+    .sort((a, b) => (a.email || "").localeCompare(b.email || ""));
+}
+
+export function canManageUserProfile(currentUserProfile, targetUserProfile) {
+  if (!hasActiveProfile(currentUserProfile) || !targetUserProfile) return false;
+  if (isSuperAdmin(currentUserProfile)) {
+    return targetUserProfile.role !== USER_ROLES.SUPER_ADMIN;
+  }
+
+  return isClientAdmin(currentUserProfile)
+    && currentUserProfile.clientId
+    && targetUserProfile.role === USER_ROLES.CLIENT_USER
+    && targetUserProfile.clientId === currentUserProfile.clientId;
+}
+
+export async function createUserProfile(uid, userData, currentUserProfile) {
+  if (!uid) throw new Error("Firebase Auth UID is required.");
+  if (!canManageUserProfile(currentUserProfile, userData)) {
+    throw new Error("You do not have permission to create this user profile.");
+  }
+
+  const existingProfile = await getDoc(getUserProfileRef(uid));
+  if (existingProfile.exists()) {
+    throw new Error("A user profile already exists for this Firebase Auth UID.");
+  }
+
+  return await setDoc(getUserProfileRef(uid), {
+    email: userData.email,
+    displayName: userData.displayName,
+    role: userData.role,
+    clientId: userData.clientId || null,
+    isActive: userData.isActive,
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  });
+}
+
+export async function updateUserProfile(uid, userData, currentUserProfile) {
+  if (!uid) throw new Error("Firebase Auth UID is required.");
+  if (!canManageUserProfile(currentUserProfile, userData)) {
+    throw new Error("You do not have permission to update this user profile.");
+  }
+
+  return await updateDoc(getUserProfileRef(uid), {
+    email: userData.email,
+    displayName: userData.displayName,
+    role: userData.role,
+    clientId: userData.clientId || null,
+    isActive: userData.isActive,
+    updatedAt: serverTimestamp(),
+  });
 }
