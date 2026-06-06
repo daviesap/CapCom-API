@@ -196,6 +196,8 @@ export default function EventEditPage() {
   const [editingDetailCell, setEditingDetailCell] = useState(null);
   const [openActionMenuId, setOpenActionMenuId] = useState("");
   const [selectedTagFilterId, setSelectedTagFilterId] = useState("");
+  const [selectedLocationFilterIds, setSelectedLocationFilterIds] = useState([]);
+  const [selectedSubLocationFilterIds, setSelectedSubLocationFilterIds] = useState([]);
   const [selectedCompanyFilterIds, setSelectedCompanyFilterIds] = useState([]);
   const [openContactCompanyIds, setOpenContactCompanyIds] = useState([]);
   const [activeTab, setActiveTab] = useState("info");
@@ -424,6 +426,41 @@ export default function EventEditPage() {
       }));
   }, [locations]);
 
+  const locationById = useMemo(() => {
+    return new Map(locations.map((location) => [location.id, location]));
+  }, [locations]);
+
+  const usedLocationIds = useMemo(() => {
+    return new Set(
+      Object.values(detailsByDayId)
+        .flat()
+        .map((detail) => detail.locationId)
+        .filter(Boolean)
+    );
+  }, [detailsByDayId]);
+
+  const usedLocationFilterIds = useMemo(() => {
+    const filterIds = new Set();
+    usedLocationIds.forEach((locationId) => {
+      const location = locationById.get(locationId);
+      if (!location) return;
+      filterIds.add(location.parentLocationId || location.id);
+    });
+    return filterIds;
+  }, [locationById, usedLocationIds]);
+
+  const usedLocationFilters = useMemo(() => {
+    return locations.filter(
+      (location) => !location.parentLocationId && usedLocationFilterIds.has(location.id)
+    );
+  }, [locations, usedLocationFilterIds]);
+
+  const usedSubLocationFilters = useMemo(() => {
+    return locationOptions.filter(
+      (location) => location.parentLocationId && usedLocationIds.has(location.id)
+    );
+  }, [locationOptions, usedLocationIds]);
+
   const usedCompanyIds = useMemo(() => {
     return new Set(
       Object.values(detailsByDayId)
@@ -549,6 +586,18 @@ export default function EventEditPage() {
       setSelectedTagFilterId("");
     }
   }, [selectedTagFilterId, usedTagIds]);
+
+  useEffect(() => {
+    setSelectedLocationFilterIds((current) =>
+      current.filter((locationId) => usedLocationFilterIds.has(locationId))
+    );
+  }, [usedLocationFilterIds]);
+
+  useEffect(() => {
+    setSelectedSubLocationFilterIds((current) =>
+      current.filter((locationId) => usedLocationIds.has(locationId))
+    );
+  }, [usedLocationIds]);
 
   useEffect(() => {
     setSelectedCompanyFilterIds((current) =>
@@ -729,6 +778,22 @@ export default function EventEditPage() {
       current.includes(companyId)
         ? current.filter((currentCompanyId) => currentCompanyId !== companyId)
         : [...current, companyId]
+    );
+  };
+
+  const toggleLocationFilter = (locationId) => {
+    setSelectedLocationFilterIds((current) =>
+      current.includes(locationId)
+        ? current.filter((currentLocationId) => currentLocationId !== locationId)
+        : [...current, locationId]
+    );
+  };
+
+  const toggleSubLocationFilter = (locationId) => {
+    setSelectedSubLocationFilterIds((current) =>
+      current.includes(locationId)
+        ? current.filter((currentLocationId) => currentLocationId !== locationId)
+        : [...current, locationId]
     );
   };
 
@@ -974,10 +1039,16 @@ export default function EventEditPage() {
       ? companyIds.filter((currentCompanyId) => currentCompanyId !== companyId)
       : [...companyIds, companyId];
   const getNoRowsMessage = () => {
-    if (selectedTagFilterId && selectedCompanyFilterIds.length > 0) {
-      return "No rows for selected tag and companies.";
-    }
+    const activeFilterCount = [
+      selectedTagFilterId,
+      selectedLocationFilterIds.length > 0,
+      selectedSubLocationFilterIds.length > 0,
+      selectedCompanyFilterIds.length > 0,
+    ].filter(Boolean).length;
+    if (activeFilterCount > 1) return "No rows for selected filters.";
     if (selectedTagFilterId) return "No rows for selected tag.";
+    if (selectedLocationFilterIds.length > 0) return "No rows for selected locations.";
+    if (selectedSubLocationFilterIds.length > 0) return "No rows for selected sub locations.";
     if (selectedCompanyFilterIds.length > 0) return "No rows for selected companies.";
     return "No schedule details yet.";
   };
@@ -2578,7 +2649,10 @@ export default function EventEditPage() {
 
       {activeTab === "detail" ? (
       <section className="panel">
-        {usedTags.length > 0 || usedCompanies.length > 0 ? (
+        {usedTags.length > 0 ||
+        usedLocationFilters.length > 0 ||
+        usedSubLocationFilters.length > 0 ||
+        usedCompanies.length > 0 ? (
           <div className="filter-groups" aria-label="Filter schedule rows">
             {usedTags.length > 0 ? (
               <div className="tag-filter-bar" aria-label="Filter schedule rows by tag">
@@ -2608,6 +2682,64 @@ export default function EventEditPage() {
                       style={{ backgroundColor: normaliseHexColour(tag.colour) }}
                     />
                     {tag.name}
+                  </button>
+                ))}
+              </div>
+            ) : null}
+            {usedLocationFilters.length > 0 ? (
+              <div className="tag-filter-bar" aria-label="Filter schedule rows by location">
+                <button
+                  className={
+                    selectedLocationFilterIds.length === 0
+                      ? "tag-filter-button active"
+                      : "tag-filter-button"
+                  }
+                  type="button"
+                  onClick={() => setSelectedLocationFilterIds([])}
+                >
+                  All locations
+                </button>
+                {usedLocationFilters.map((location) => (
+                  <button
+                    className={
+                      selectedLocationFilterIds.includes(location.id)
+                        ? "tag-filter-button active"
+                        : "tag-filter-button"
+                    }
+                    type="button"
+                    key={location.id}
+                    onClick={() => toggleLocationFilter(location.id)}
+                  >
+                    {location.name}
+                  </button>
+                ))}
+              </div>
+            ) : null}
+            {usedSubLocationFilters.length > 0 ? (
+              <div className="tag-filter-bar" aria-label="Filter schedule rows by sub location">
+                <button
+                  className={
+                    selectedSubLocationFilterIds.length === 0
+                      ? "tag-filter-button active"
+                      : "tag-filter-button"
+                  }
+                  type="button"
+                  onClick={() => setSelectedSubLocationFilterIds([])}
+                >
+                  All sub locations
+                </button>
+                {usedSubLocationFilters.map((location) => (
+                  <button
+                    className={
+                      selectedSubLocationFilterIds.includes(location.id)
+                        ? "tag-filter-button active"
+                        : "tag-filter-button"
+                    }
+                    type="button"
+                    key={location.id}
+                    onClick={() => toggleSubLocationFilter(location.id)}
+                  >
+                    {location.displayName}
                   </button>
                 ))}
               </div>
@@ -2651,12 +2783,23 @@ export default function EventEditPage() {
               const allDayDetails = detailsByDayId[day.id] || [];
               const dayDetails = allDayDetails.filter((detail) => {
                 const matchesTag = !selectedTagFilterId || detail.tagId === selectedTagFilterId;
+                const detailLocation = detail.locationId
+                  ? locationById.get(detail.locationId)
+                  : null;
+                const detailTopLocationId =
+                  detailLocation?.parentLocationId || detailLocation?.id || "";
+                const matchesLocation =
+                  selectedLocationFilterIds.length === 0 ||
+                  selectedLocationFilterIds.includes(detailTopLocationId);
+                const matchesSubLocation =
+                  selectedSubLocationFilterIds.length === 0 ||
+                  selectedSubLocationFilterIds.includes(detail.locationId);
                 const matchesCompany =
                   selectedCompanyFilterIds.length === 0 ||
                   selectedCompanyFilterIds.some((companyId) =>
                     (detail.companyIds || []).includes(companyId)
                   );
-                return matchesTag && matchesCompany;
+                return matchesTag && matchesLocation && matchesSubLocation && matchesCompany;
               });
               const draftDetails = draftDetailsByDayId[day.id] || [];
 
