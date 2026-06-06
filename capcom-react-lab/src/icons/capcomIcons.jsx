@@ -26,7 +26,7 @@ export const capcomIcons = {
   profile: User,
   settings: Gear,
   signOut: SignOut,
-  supplier: Factory,
+  company: Factory,
   taskList: ListChecks,
   truck: Truck,
   users: Users,
