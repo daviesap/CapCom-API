@@ -25,6 +25,7 @@ import {
   getTags,
   updateTag,
 } from "../services/tagService.js";
+import { getSuppliers } from "../services/supplierService.js";
 
 const emptyEventForm = {
   name: "",
@@ -119,16 +120,19 @@ export default function EventEditPage() {
   const [draftDetailsByDayId, setDraftDetailsByDayId] = useState({});
   const [savedDetailsById, setSavedDetailsById] = useState({});
   const [tags, setTags] = useState([]);
+  const [suppliers, setSuppliers] = useState([]);
   const [tagForm, setTagForm] = useState(emptyTagForm);
   const [editingTagId, setEditingTagId] = useState("");
   const [editingDetailId, setEditingDetailId] = useState("");
   const [openActionMenuId, setOpenActionMenuId] = useState("");
   const [selectedTagFilterId, setSelectedTagFilterId] = useState("");
+  const [selectedSupplierFilterIds, setSelectedSupplierFilterIds] = useState([]);
   const [activeTab, setActiveTab] = useState("details");
   const [activeSettingsTab, setActiveSettingsTab] = useState("tags");
   const [loading, setLoading] = useState(true);
   const [detailsLoading, setDetailsLoading] = useState(false);
   const [tagsLoading, setTagsLoading] = useState(false);
+  const [suppliersLoading, setSuppliersLoading] = useState(false);
   const [savingEvent, setSavingEvent] = useState(false);
   const [savingDayId, setSavingDayId] = useState("");
   const [savingDetailId, setSavingDetailId] = useState("");
@@ -153,6 +157,7 @@ export default function EventEditPage() {
       setLoading(true);
       setDetailsLoading(false);
       setTagsLoading(false);
+      setSuppliersLoading(false);
       setError("");
       try {
         const event = await getEvent(eventId, userProfile);
@@ -185,12 +190,15 @@ export default function EventEditPage() {
 
         setDetailsLoading(true);
         setTagsLoading(true);
-        const [detailsByDay, eventTags] = await Promise.all([
+        setSuppliersLoading(true);
+        const [detailsByDay, eventTags, clientSuppliers] = await Promise.all([
           getScheduleDetailsForEvent(eventId, days.map((day) => day.id)),
           getTags(eventId),
+          getSuppliers(loadedEventForm.clientId),
         ]);
         if (cancelled) return;
         setTags(eventTags);
+        setSuppliers(clientSuppliers);
         setDetailsState(detailsByDay);
       } catch (loadError) {
         console.error("Could not load event editor.", loadError);
@@ -201,6 +209,7 @@ export default function EventEditPage() {
           setLoading(false);
           setDetailsLoading(false);
           setTagsLoading(false);
+          setSuppliersLoading(false);
         }
       }
     };
@@ -237,11 +246,30 @@ export default function EventEditPage() {
     return tags.filter((tag) => usedTagIds.has(tag.id));
   }, [tags, usedTagIds]);
 
+  const usedSupplierIds = useMemo(() => {
+    return new Set(
+      Object.values(detailsByDayId)
+        .flat()
+        .flatMap((detail) => detail.supplierIds || [])
+        .filter(Boolean)
+    );
+  }, [detailsByDayId]);
+
+  const usedSuppliers = useMemo(() => {
+    return suppliers.filter((supplier) => usedSupplierIds.has(supplier.id));
+  }, [suppliers, usedSupplierIds]);
+
   useEffect(() => {
     if (selectedTagFilterId && !usedTagIds.has(selectedTagFilterId)) {
       setSelectedTagFilterId("");
     }
   }, [selectedTagFilterId, usedTagIds]);
+
+  useEffect(() => {
+    setSelectedSupplierFilterIds((current) =>
+      current.filter((supplierId) => usedSupplierIds.has(supplierId))
+    );
+  }, [usedSupplierIds]);
 
   const updateField = (field, value) => {
     setForm((current) => ({ ...current, [field]: value }));
@@ -279,6 +307,18 @@ export default function EventEditPage() {
     }
   };
 
+  const loadSuppliers = async (clientId = form.clientId) => {
+    setSuppliersLoading(true);
+    try {
+      setSuppliers(await getSuppliers(clientId));
+    } catch (loadError) {
+      console.error("Could not load suppliers.", loadError);
+      setError("Could not load suppliers.");
+    } finally {
+      setSuppliersLoading(false);
+    }
+  };
+
   const applyScheduleDays = (days) => {
     setScheduleDays(days);
     loadScheduleDetails(days);
@@ -312,6 +352,7 @@ export default function EventEditPage() {
               sortOrder: typeof detail.sortOrder === "number" ? detail.sortOrder : detailIndex,
               colour: normaliseHexColour(detail.colour),
               tagId: detail.tagId || "",
+              supplierIds: detail.supplierIds || [],
             },
           ])
         )
@@ -385,7 +426,25 @@ export default function EventEditPage() {
     }));
   };
 
+  const toggleSupplierFilter = (supplierId) => {
+    setSelectedSupplierFilterIds((current) =>
+      current.includes(supplierId)
+        ? current.filter((currentSupplierId) => currentSupplierId !== supplierId)
+        : [...current, supplierId]
+    );
+  };
+
   const getTagById = (tagId) => tags.find((tag) => tag.id === tagId) || null;
+  const getSelectedSupplierIdsFromSelect = (selectElement) =>
+    Array.from(selectElement.selectedOptions).map((option) => option.value);
+  const getNoRowsMessage = () => {
+    if (selectedTagFilterId && selectedSupplierFilterIds.length > 0) {
+      return "No rows for selected tag and suppliers.";
+    }
+    if (selectedTagFilterId) return "No rows for selected tag.";
+    if (selectedSupplierFilterIds.length > 0) return "No rows for selected suppliers.";
+    return "No schedule details yet.";
+  };
 
   const assignDetailTag = async (dayId, detail, tagId) => {
     if (isOffline) {
@@ -409,6 +468,7 @@ export default function EventEditPage() {
         sortOrder: detail.sortOrder,
         colour: normaliseHexColour(detail.colour),
         tagId,
+        supplierIds: detail.supplierIds || [],
       });
       setSavedDetailsById((current) => ({
         ...current,
@@ -418,11 +478,56 @@ export default function EventEditPage() {
           sortOrder: detail.sortOrder,
           colour: normaliseHexColour(detail.colour),
           tagId,
+          supplierIds: detail.supplierIds || [],
         },
       }));
     } catch (tagError) {
       console.error(tagError);
       setError("Could not update row tag.");
+      await loadScheduleDetails(scheduleDays);
+    } finally {
+      setSavingDetailId("");
+    }
+  };
+
+  const assignDetailSuppliers = async (dayId, detail, supplierIds) => {
+    if (isOffline) {
+      setError("Editing is disabled while offline.");
+      return;
+    }
+    setSavingDetailId(detail.id);
+    setError("");
+    setDetailsByDayId((current) => ({
+      ...current,
+      [dayId]: (current[dayId] || []).map((nextDetail) =>
+        nextDetail.id === detail.id ? { ...nextDetail, supplierIds } : nextDetail
+      ),
+    }));
+
+    try {
+      await updateScheduleDetail(detail.id, {
+        eventId,
+        time: detail.time || "",
+        description: detail.description || "",
+        sortOrder: detail.sortOrder,
+        colour: normaliseHexColour(detail.colour),
+        tagId: detail.tagId || "",
+        supplierIds,
+      });
+      setSavedDetailsById((current) => ({
+        ...current,
+        [detail.id]: {
+          time: detail.time || "",
+          description: detail.description || "",
+          sortOrder: detail.sortOrder,
+          colour: normaliseHexColour(detail.colour),
+          tagId: detail.tagId || "",
+          supplierIds,
+        },
+      }));
+    } catch (supplierError) {
+      console.error(supplierError);
+      setError("Could not update row supplier.");
       await loadScheduleDetails(scheduleDays);
     } finally {
       setSavingDetailId("");
@@ -511,12 +616,14 @@ export default function EventEditPage() {
       description: "",
       colour: "",
       tagId: "",
+      supplierIds: [],
     };
     return (
       (detail.time || "") !== savedDetail.time ||
       (detail.description || "") !== savedDetail.description ||
       normaliseHexColour(detail.colour) !== savedDetail.colour ||
-      (detail.tagId || "") !== savedDetail.tagId
+      (detail.tagId || "") !== savedDetail.tagId ||
+      JSON.stringify(detail.supplierIds || []) !== JSON.stringify(savedDetail.supplierIds || [])
     );
   };
 
@@ -573,6 +680,7 @@ export default function EventEditPage() {
         sortOrder: detail.sortOrder,
         colour: normaliseHexColour(detail.colour),
         tagId: detail.tagId || "",
+        supplierIds: detail.supplierIds || [],
       });
       setSavedDetailsById((current) => ({
         ...current,
@@ -582,6 +690,7 @@ export default function EventEditPage() {
           sortOrder: detail.sortOrder,
           colour: normaliseHexColour(detail.colour),
           tagId: detail.tagId || "",
+          supplierIds: detail.supplierIds || [],
         },
       }));
 
@@ -670,6 +779,7 @@ export default function EventEditPage() {
             sortOrder: detail.sortOrder,
             colour: normaliseHexColour(detail.colour),
             tagId: detail.tagId || "",
+            supplierIds: detail.supplierIds || [],
           },
         ])
       ),
@@ -773,6 +883,7 @@ export default function EventEditPage() {
         scheduleDayId: targetDayId,
         colour: normaliseHexColour(detail.colour),
         tagId: detail.tagId || "",
+        supplierIds: detail.supplierIds || [],
       });
       await loadScheduleDetails(scheduleDays);
       setEditingDetailId("");
@@ -805,6 +916,7 @@ export default function EventEditPage() {
         sortOrder: getNextSortOrder(dayId),
         colour: normaliseHexColour(detail.colour),
         tagId: detail.tagId || "",
+        supplierIds: detail.supplierIds || [],
       });
       const details = await getScheduleDetails(dayId);
       setDetailsByDayId((current) => ({
@@ -823,6 +935,7 @@ export default function EventEditPage() {
                 typeof nextDetail.sortOrder === "number" ? nextDetail.sortOrder : detailIndex,
               colour: normaliseHexColour(nextDetail.colour),
               tagId: nextDetail.tagId || "",
+              supplierIds: nextDetail.supplierIds || [],
             },
           ])
         ),
@@ -841,7 +954,13 @@ export default function EventEditPage() {
       ...current,
       [dayId]: [
         ...(current[dayId] || []),
-        { time: "", description: "", colour: "", tagId: selectedTagFilterId || "" },
+        {
+          time: "",
+          description: "",
+          colour: "",
+          tagId: selectedTagFilterId || "",
+          supplierIds: [],
+        },
       ],
     }));
   };
@@ -878,6 +997,7 @@ export default function EventEditPage() {
         description: draft.description,
         colour: normaliseHexColour(draft.colour),
         tagId: draft.tagId || "",
+        supplierIds: draft.supplierIds || [],
       });
       removeDraftDetail(dayId, draftIndex);
 
@@ -897,6 +1017,7 @@ export default function EventEditPage() {
               sortOrder: typeof detail.sortOrder === "number" ? detail.sortOrder : detailIndex,
               colour: normaliseHexColour(detail.colour),
               tagId: detail.tagId || "",
+              supplierIds: detail.supplierIds || [],
             },
           ])
         ),
@@ -942,6 +1063,7 @@ export default function EventEditPage() {
       setSavedEventForm(form);
       setIsEditingEventDetails(false);
       applyScheduleDays(days);
+      await loadSuppliers(form.clientId);
       setMessage("Event saved and schedule days synced.");
     } catch (saveError) {
       console.error(saveError);
@@ -977,6 +1099,9 @@ export default function EventEditPage() {
       ) : null}
       {tagsLoading && activeTab === "settings" ? (
         <p className="message">Loading tags...</p>
+      ) : null}
+      {suppliersLoading && activeTab === "detail" ? (
+        <p className="message">Loading suppliers...</p>
       ) : null}
 
       <nav className="tabs" aria-label="Event edit sections">
@@ -1257,36 +1382,69 @@ export default function EventEditPage() {
 
       {activeTab === "detail" ? (
       <section className="panel">
-        {usedTags.length > 0 ? (
-          <div className="tag-filter-bar" aria-label="Filter schedule rows by tag">
-            <button
-              className={!selectedTagFilterId ? "tag-filter-button active" : "tag-filter-button"}
-              type="button"
-              onClick={() => setSelectedTagFilterId("")}
-            >
-              All tags
-            </button>
-            {usedTags.map((tag) => (
-              <button
-                className={
-                  selectedTagFilterId === tag.id
-                    ? "tag-filter-button active"
-                    : "tag-filter-button"
-                }
-                type="button"
-                key={tag.id}
-                style={selectedTagFilterId === tag.id ? getTagStyle(tag) : undefined}
-                onClick={() =>
-                  setSelectedTagFilterId((current) => (current === tag.id ? "" : tag.id))
-                }
-              >
-                <span
-                  className="tag-dot"
-                  style={{ backgroundColor: normaliseHexColour(tag.colour) }}
-                />
-                {tag.name}
-              </button>
-            ))}
+        {usedTags.length > 0 || usedSuppliers.length > 0 ? (
+          <div className="filter-groups" aria-label="Filter schedule rows">
+            {usedTags.length > 0 ? (
+              <div className="tag-filter-bar" aria-label="Filter schedule rows by tag">
+                <button
+                  className={!selectedTagFilterId ? "tag-filter-button active" : "tag-filter-button"}
+                  type="button"
+                  onClick={() => setSelectedTagFilterId("")}
+                >
+                  All tags
+                </button>
+                {usedTags.map((tag) => (
+                  <button
+                    className={
+                      selectedTagFilterId === tag.id
+                        ? "tag-filter-button active"
+                        : "tag-filter-button"
+                    }
+                    type="button"
+                    key={tag.id}
+                    style={selectedTagFilterId === tag.id ? getTagStyle(tag) : undefined}
+                    onClick={() =>
+                      setSelectedTagFilterId((current) => (current === tag.id ? "" : tag.id))
+                    }
+                  >
+                    <span
+                      className="tag-dot"
+                      style={{ backgroundColor: normaliseHexColour(tag.colour) }}
+                    />
+                    {tag.name}
+                  </button>
+                ))}
+              </div>
+            ) : null}
+            {usedSuppliers.length > 0 ? (
+              <div className="tag-filter-bar" aria-label="Filter schedule rows by supplier">
+                <button
+                  className={
+                    selectedSupplierFilterIds.length === 0
+                      ? "tag-filter-button active"
+                      : "tag-filter-button"
+                  }
+                  type="button"
+                  onClick={() => setSelectedSupplierFilterIds([])}
+                >
+                  All suppliers
+                </button>
+                {usedSuppliers.map((supplier) => (
+                  <button
+                    className={
+                      selectedSupplierFilterIds.includes(supplier.id)
+                        ? "tag-filter-button active"
+                        : "tag-filter-button"
+                    }
+                    type="button"
+                    key={supplier.id}
+                    onClick={() => toggleSupplierFilter(supplier.id)}
+                  >
+                    {supplier.supplierName}
+                  </button>
+                ))}
+              </div>
+            ) : null}
           </div>
         ) : null}
         {scheduleDays.length === 0 ? (
@@ -1295,9 +1453,15 @@ export default function EventEditPage() {
           <section className="list">
             {scheduleDays.map((day) => {
               const allDayDetails = detailsByDayId[day.id] || [];
-              const dayDetails = selectedTagFilterId
-                ? allDayDetails.filter((detail) => detail.tagId === selectedTagFilterId)
-                : allDayDetails;
+              const dayDetails = allDayDetails.filter((detail) => {
+                const matchesTag = !selectedTagFilterId || detail.tagId === selectedTagFilterId;
+                const matchesSupplier =
+                  selectedSupplierFilterIds.length === 0 ||
+                  selectedSupplierFilterIds.some((supplierId) =>
+                    (detail.supplierIds || []).includes(supplierId)
+                  );
+                return matchesTag && matchesSupplier;
+              });
               const draftDetails = draftDetailsByDayId[day.id] || [];
 
               return (
@@ -1333,9 +1497,7 @@ export default function EventEditPage() {
                     </div>
 
                     {dayDetails.length === 0 && draftDetails.length === 0 ? (
-                      <p className="item-meta">
-                        {selectedTagFilterId ? "No rows for selected tag." : "No schedule details yet."}
-                      </p>
+                      <p className="item-meta">{getNoRowsMessage()}</p>
                     ) : (
                       <div className="detail-list">
                         {dayDetails.map((detail, detailIndex) => {
@@ -1440,6 +1602,28 @@ export default function EventEditPage() {
                                   {tags.map((tag) => (
                                     <option key={tag.id} value={tag.id}>
                                       {tag.name}
+                                    </option>
+                                  ))}
+                                </select>
+                              </div>
+                              <div className="supplier-select-wrap">
+                                <select
+                                  aria-label={`Supplier for ${detail.description || "schedule detail"}`}
+                                  multiple
+                                  size={Math.min(Math.max(suppliers.length, 2), 4)}
+                                  value={detail.supplierIds || []}
+                                  disabled={savingDetailId === detail.id || isOffline}
+                                  onChange={(event) =>
+                                    assignDetailSuppliers(
+                                      day.id,
+                                      detail,
+                                      getSelectedSupplierIdsFromSelect(event.target)
+                                    )
+                                  }
+                                >
+                                  {suppliers.map((supplier) => (
+                                    <option key={supplier.id} value={supplier.id}>
+                                      {supplier.supplierName}
                                     </option>
                                   ))}
                                 </select>
@@ -1643,6 +1827,29 @@ export default function EventEditPage() {
                                 {tags.map((tag) => (
                                   <option key={tag.id} value={tag.id}>
                                     {tag.name}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                            <div className="supplier-select-wrap">
+                              <select
+                                aria-label="New detail supplier"
+                                multiple
+                                size={Math.min(Math.max(suppliers.length, 2), 4)}
+                                value={draft.supplierIds || []}
+                                disabled={isOffline}
+                                onChange={(event) =>
+                                  updateDraftDetail(
+                                    day.id,
+                                    draftIndex,
+                                    "supplierIds",
+                                    getSelectedSupplierIdsFromSelect(event.target)
+                                  )
+                                }
+                              >
+                                {suppliers.map((supplier) => (
+                                  <option key={supplier.id} value={supplier.id}>
+                                    {supplier.supplierName}
                                   </option>
                                 ))}
                               </select>

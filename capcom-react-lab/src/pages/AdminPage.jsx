@@ -62,9 +62,11 @@ export default function AdminPage() {
   } = useAuth();
   const canManageUsers = isSuperAdmin || isClientAdmin;
 
+  const [activeAdminSection, setActiveAdminSection] = useState("users");
   const [clients, setClients] = useState([]);
   const [clientForm, setClientForm] = useState(emptyClientForm);
   const [editingClientId, setEditingClientId] = useState("");
+  const [isClientFormOpen, setIsClientFormOpen] = useState(false);
   const [clientsLoading, setClientsLoading] = useState(false);
   const [clientSaving, setClientSaving] = useState(false);
   const [clientMessage, setClientMessage] = useState("");
@@ -73,6 +75,7 @@ export default function AdminPage() {
   const [userProfiles, setUserProfiles] = useState([]);
   const [userForm, setUserForm] = useState(emptyUserForm);
   const [editingUserId, setEditingUserId] = useState("");
+  const [isUserFormOpen, setIsUserFormOpen] = useState(false);
   const [usersLoading, setUsersLoading] = useState(false);
   const [userSaving, setUserSaving] = useState(false);
   const [userMessage, setUserMessage] = useState("");
@@ -142,6 +145,18 @@ export default function AdminPage() {
     setEditingClientId("");
   };
 
+  const closeClientForm = () => {
+    resetClientForm();
+    setIsClientFormOpen(false);
+  };
+
+  const openNewClientForm = () => {
+    resetClientForm();
+    setClientMessage("");
+    setClientError("");
+    setIsClientFormOpen(true);
+  };
+
   const startEditingClient = (client) => {
     setEditingClientId(client.id);
     setClientForm({
@@ -151,6 +166,7 @@ export default function AdminPage() {
     });
     setClientMessage("");
     setClientError("");
+    setIsClientFormOpen(true);
   };
 
   const handleClientSubmit = async (submitEvent) => {
@@ -178,6 +194,7 @@ export default function AdminPage() {
       }
 
       resetClientForm();
+      setIsClientFormOpen(false);
       await loadClients();
     } catch (saveError) {
       console.error(saveError);
@@ -226,6 +243,18 @@ export default function AdminPage() {
     setEditingUserId("");
   };
 
+  const closeUserForm = () => {
+    resetUserForm();
+    setIsUserFormOpen(false);
+  };
+
+  const openNewUserForm = () => {
+    resetUserForm();
+    setUserMessage("");
+    setUserError("");
+    setIsUserFormOpen(true);
+  };
+
   const startEditingUser = (profile) => {
     setEditingUserId(profile.id);
     setUserForm({
@@ -238,6 +267,7 @@ export default function AdminPage() {
     });
     setUserMessage("");
     setUserError("");
+    setIsUserFormOpen(true);
   };
 
   const getUserFormData = () => {
@@ -289,6 +319,7 @@ export default function AdminPage() {
       }
 
       resetUserForm();
+      setIsUserFormOpen(false);
       await loadUsers();
     } catch (saveError) {
       console.error(saveError);
@@ -347,6 +378,12 @@ export default function AdminPage() {
     resetUserForm();
   }, [profileLoading, canManageUsers, isClientAdmin, userProfile?.clientId]);
 
+  useEffect(() => {
+    if (!isSuperAdmin && activeAdminSection === "clients") {
+      setActiveAdminSection("users");
+    }
+  }, [activeAdminSection, isSuperAdmin]);
+
   return (
     <section className="page">
       <div className="page-header">
@@ -370,109 +407,137 @@ export default function AdminPage() {
 
       {profileLoading ? <p className="message">Loading access profile...</p> : null}
 
-      {!profileLoading && isSuperAdmin ? (
+      {!profileLoading && canManageUsers ? (
+        <div className="admin-subnav tabs" aria-label="Admin sections">
+          <button
+            className={activeAdminSection === "users" ? "tab active" : "tab"}
+            type="button"
+            onClick={() => setActiveAdminSection("users")}
+          >
+            Users
+          </button>
+          {isSuperAdmin ? (
+            <button
+              className={activeAdminSection === "clients" ? "tab active" : "tab"}
+              type="button"
+              onClick={() => setActiveAdminSection("clients")}
+            >
+              Clients
+            </button>
+          ) : null}
+        </div>
+      ) : null}
+
+      {!profileLoading && isSuperAdmin && activeAdminSection === "clients" ? (
         <div className="admin-grid">
-          <section className="panel">
-            <div className="panel-heading">
-              <div>
-                <h2>{editingClientId ? "Edit Client" : "Create Client"}</h2>
-                <p className="page-subtitle">Clients can be deactivated, not deleted.</p>
-              </div>
-            </div>
-
-            {clientError ? <p className="error">{clientError}</p> : null}
-            {clientMessage ? <p className="message success-message">{clientMessage}</p> : null}
-
-            <form onSubmit={handleClientSubmit}>
-              <div className="form-grid">
-                <div className="form-row">
-                  <label htmlFor="clientName">Client name</label>
-                  <input
-                    id="clientName"
-                    value={clientForm.clientName}
-                    disabled={clientSaving}
-                    onChange={(event) => updateClientField("clientName", event.target.value)}
-                    required
-                  />
-                </div>
-                <div className="form-row">
-                  <label htmlFor="clientSlug">Client slug</label>
-                  <input
-                    id="clientSlug"
-                    value={clientForm.clientSlug}
-                    disabled={clientSaving}
-                    onChange={(event) => updateClientField("clientSlug", event.target.value)}
-                    required
-                  />
-                </div>
-                <div className="form-row full">
-                  <label htmlFor="logoUrl">Logo URL</label>
-                  <input
-                    id="logoUrl"
-                    value={clientForm.logoUrl}
-                    disabled={clientSaving}
-                    onChange={(event) => updateClientField("logoUrl", event.target.value)}
-                  />
-                </div>
-                <div className="form-row">
-                  <label htmlFor="primaryColour">Primary colour</label>
-                  <input
-                    id="primaryColour"
-                    value={clientForm.primaryColour}
-                    disabled={clientSaving}
-                    placeholder="#1F6FEB"
-                    onChange={(event) => updateClientField("primaryColour", event.target.value)}
-                  />
-                </div>
-                <div className="form-row">
-                  <label htmlFor="secondaryColour">Secondary colour</label>
-                  <input
-                    id="secondaryColour"
-                    value={clientForm.secondaryColour}
-                    disabled={clientSaving}
-                    placeholder="#EEF4FF"
-                    onChange={(event) => updateClientField("secondaryColour", event.target.value)}
-                  />
-                </div>
-                <label className="checkbox-row form-row full" htmlFor="isActive">
-                  <input
-                    id="isActive"
-                    type="checkbox"
-                    checked={clientForm.isActive}
-                    disabled={clientSaving}
-                    onChange={(event) => updateClientField("isActive", event.target.checked)}
-                  />
-                  <span>Client is active</span>
-                </label>
-              </div>
-
-              <div className="actions">
-                <button className="button" type="submit" disabled={clientSaving}>
-                  {clientSaving ? "Saving..." : editingClientId ? "Save Client" : "Create Client"}
-                </button>
-                {editingClientId ? (
-                  <button
-                    className="button secondary"
-                    type="button"
-                    disabled={clientSaving}
-                    onClick={resetClientForm}
-                  >
-                    Cancel
-                  </button>
-                ) : null}
-              </div>
-            </form>
-          </section>
-
           <section className="panel">
             <div className="panel-heading">
               <div>
                 <h2>Clients</h2>
                 <p className="page-subtitle">Available when creating SuperAdmin events.</p>
               </div>
+              {!isClientFormOpen ? (
+                <button
+                  className="button"
+                  type="button"
+                  disabled={clientSaving}
+                  onClick={openNewClientForm}
+                >
+                  Create New Client
+                </button>
+              ) : null}
             </div>
 
             {clientsLoading ? <p className="message">Loading clients...</p> : null}
+            {clientError ? <p className="error">{clientError}</p> : null}
+            {clientMessage ? <p className="message success-message">{clientMessage}</p> : null}
+
+            {isClientFormOpen ? (
+              <form className="admin-inline-form" onSubmit={handleClientSubmit}>
+                <div className="panel-heading">
+                  <div>
+                    <h2>{editingClientId ? "Edit Client" : "Create New Client"}</h2>
+                    <p className="page-subtitle">Clients can be deactivated, not deleted.</p>
+                  </div>
+                </div>
+
+                <div className="form-grid">
+                  <div className="form-row">
+                    <label htmlFor="clientName">Client name</label>
+                    <input
+                      id="clientName"
+                      value={clientForm.clientName}
+                      disabled={clientSaving}
+                      onChange={(event) => updateClientField("clientName", event.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="form-row">
+                    <label htmlFor="clientSlug">Client slug</label>
+                    <input
+                      id="clientSlug"
+                      value={clientForm.clientSlug}
+                      disabled={clientSaving}
+                      onChange={(event) => updateClientField("clientSlug", event.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="form-row full">
+                    <label htmlFor="logoUrl">Logo URL</label>
+                    <input
+                      id="logoUrl"
+                      value={clientForm.logoUrl}
+                      disabled={clientSaving}
+                      onChange={(event) => updateClientField("logoUrl", event.target.value)}
+                    />
+                  </div>
+                  <div className="form-row">
+                    <label htmlFor="primaryColour">Primary colour</label>
+                    <input
+                      id="primaryColour"
+                      value={clientForm.primaryColour}
+                      disabled={clientSaving}
+                      placeholder="#1F6FEB"
+                      onChange={(event) => updateClientField("primaryColour", event.target.value)}
+                    />
+                  </div>
+                  <div className="form-row">
+                    <label htmlFor="secondaryColour">Secondary colour</label>
+                    <input
+                      id="secondaryColour"
+                      value={clientForm.secondaryColour}
+                      disabled={clientSaving}
+                      placeholder="#EEF4FF"
+                      onChange={(event) => updateClientField("secondaryColour", event.target.value)}
+                    />
+                  </div>
+                  <label className="checkbox-row form-row full" htmlFor="isActive">
+                    <input
+                      id="isActive"
+                      type="checkbox"
+                      checked={clientForm.isActive}
+                      disabled={clientSaving}
+                      onChange={(event) => updateClientField("isActive", event.target.checked)}
+                    />
+                    <span>Client is active</span>
+                  </label>
+                </div>
+
+                <div className="actions">
+                  <button className="button" type="submit" disabled={clientSaving}>
+                    {clientSaving ? "Saving..." : editingClientId ? "Save Client" : "Create Client"}
+                  </button>
+                  <button
+                    className="button secondary"
+                    type="button"
+                    disabled={clientSaving}
+                    onClick={closeClientForm}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            ) : null}
 
             {!clientsLoading && clients.length === 0 ? (
               <p className="message">No clients yet.</p>
@@ -517,131 +582,8 @@ export default function AdminPage() {
         </div>
       ) : null}
 
-      {!profileLoading && canManageUsers ? (
+      {!profileLoading && canManageUsers && activeAdminSection === "users" ? (
         <div className="admin-grid">
-          <section className="panel">
-            <div className="panel-heading">
-              <div>
-                <h2>{editingUserId ? "Edit User Profile" : "Create User Profile"}</h2>
-                <p className="page-subtitle">
-                  {editingUserId
-                    ? "Edit the Firestore profile for this Firebase Auth user."
-                    : "Create a Firebase Auth user and matching Firestore profile."}
-                </p>
-              </div>
-            </div>
-
-            {userError ? <p className="error">{userError}</p> : null}
-            {userMessage ? <p className="message success-message">{userMessage}</p> : null}
-
-            <form onSubmit={handleUserSubmit}>
-              <div className="form-grid">
-                {editingUserId ? (
-                  <div className="form-row full">
-                    <label htmlFor="uid">Firebase Auth UID</label>
-                    <input
-                      id="uid"
-                      value={userForm.uid}
-                      disabled
-                      required
-                    />
-                  </div>
-                ) : null}
-                <div className="form-row">
-                  <label htmlFor="email">Email</label>
-                  <input
-                    id="email"
-                    type="email"
-                    value={userForm.email}
-                    disabled={userSaving}
-                    onChange={(event) => updateUserField("email", event.target.value)}
-                    required
-                  />
-                </div>
-                <div className="form-row">
-                  <label htmlFor="displayName">Display name</label>
-                  <input
-                    id="displayName"
-                    value={userForm.displayName}
-                    disabled={userSaving}
-                    onChange={(event) => updateUserField("displayName", event.target.value)}
-                    required
-                  />
-                </div>
-                <div className="form-row">
-                  <label htmlFor="role">Role</label>
-                  {isSuperAdmin ? (
-                    <select
-                      id="role"
-                      value={userForm.role}
-                      disabled={userSaving}
-                      onChange={(event) => updateUserField("role", event.target.value)}
-                      required
-                    >
-                      <option value={USER_ROLES.CLIENT_ADMIN}>ClientAdmin</option>
-                      <option value={USER_ROLES.CLIENT_USER}>ClientUser</option>
-                    </select>
-                  ) : (
-                    <input id="role" value={USER_ROLES.CLIENT_USER} disabled />
-                  )}
-                </div>
-                <div className="form-row">
-                  <label htmlFor="clientId">Client</label>
-                  {isSuperAdmin ? (
-                    <select
-                      id="clientId"
-                      value={userForm.clientId}
-                      disabled={userSaving}
-                      onChange={(event) => updateUserField("clientId", event.target.value)}
-                      required
-                    >
-                      <option value="">Choose a client</option>
-                      {selectableClients.map((client) => (
-                        <option key={client.id} value={client.id}>
-                          {client.clientName}
-                        </option>
-                      ))}
-                    </select>
-                  ) : (
-                    <input
-                      id="clientId"
-                      value={getClientName(clients, userProfile?.clientId)}
-                      disabled
-                    />
-                  )}
-                </div>
-                {editingUserId ? (
-                  <label className="checkbox-row form-row full" htmlFor="userIsActive">
-                    <input
-                      id="userIsActive"
-                      type="checkbox"
-                      checked={userForm.isActive}
-                      disabled={userSaving}
-                      onChange={(event) => updateUserField("isActive", event.target.checked)}
-                    />
-                    <span>User profile is active</span>
-                  </label>
-                ) : null}
-              </div>
-
-              <div className="actions">
-                <button className="button" type="submit" disabled={userSaving}>
-                  {userSaving ? "Saving..." : editingUserId ? "Save User" : "Create Auth User"}
-                </button>
-                {editingUserId ? (
-                  <button
-                    className="button secondary"
-                    type="button"
-                    disabled={userSaving}
-                    onClick={resetUserForm}
-                  >
-                    Cancel
-                  </button>
-                ) : null}
-              </div>
-            </form>
-          </section>
-
           <section className="panel">
             <div className="panel-heading">
               <div>
@@ -650,9 +592,139 @@ export default function AdminPage() {
                   New users are created in Firebase Auth and Firestore together.
                 </p>
               </div>
+              {!isUserFormOpen ? (
+                <button
+                  className="button"
+                  type="button"
+                  disabled={userSaving}
+                  onClick={openNewUserForm}
+                >
+                  Add New User
+                </button>
+              ) : null}
             </div>
 
             {usersLoading ? <p className="message">Loading users...</p> : null}
+            {userError ? <p className="error">{userError}</p> : null}
+            {userMessage ? <p className="message success-message">{userMessage}</p> : null}
+
+            {isUserFormOpen ? (
+              <form className="admin-inline-form" onSubmit={handleUserSubmit}>
+                <div className="panel-heading">
+                  <div>
+                    <h2>{editingUserId ? "Edit User Profile" : "Add New User"}</h2>
+                    <p className="page-subtitle">
+                      {editingUserId
+                        ? "Edit the Firestore profile for this Firebase Auth user."
+                        : "Create a Firebase Auth user and matching Firestore profile."}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="form-grid">
+                  {editingUserId ? (
+                    <div className="form-row full">
+                      <label htmlFor="uid">Firebase Auth UID</label>
+                      <input
+                        id="uid"
+                        value={userForm.uid}
+                        disabled
+                        required
+                      />
+                    </div>
+                  ) : null}
+                  <div className="form-row">
+                    <label htmlFor="email">Email</label>
+                    <input
+                      id="email"
+                      type="email"
+                      value={userForm.email}
+                      disabled={userSaving}
+                      onChange={(event) => updateUserField("email", event.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="form-row">
+                    <label htmlFor="displayName">Display name</label>
+                    <input
+                      id="displayName"
+                      value={userForm.displayName}
+                      disabled={userSaving}
+                      onChange={(event) => updateUserField("displayName", event.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="form-row">
+                    <label htmlFor="role">Role</label>
+                    {isSuperAdmin ? (
+                      <select
+                        id="role"
+                        value={userForm.role}
+                        disabled={userSaving}
+                        onChange={(event) => updateUserField("role", event.target.value)}
+                        required
+                      >
+                        <option value={USER_ROLES.CLIENT_ADMIN}>ClientAdmin</option>
+                        <option value={USER_ROLES.CLIENT_USER}>ClientUser</option>
+                      </select>
+                    ) : (
+                      <input id="role" value={USER_ROLES.CLIENT_USER} disabled />
+                    )}
+                  </div>
+                  <div className="form-row">
+                    <label htmlFor="clientId">Client</label>
+                    {isSuperAdmin ? (
+                      <select
+                        id="clientId"
+                        value={userForm.clientId}
+                        disabled={userSaving}
+                        onChange={(event) => updateUserField("clientId", event.target.value)}
+                        required
+                      >
+                        <option value="">Choose a client</option>
+                        {selectableClients.map((client) => (
+                          <option key={client.id} value={client.id}>
+                            {client.clientName}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      <input
+                        id="clientId"
+                        value={getClientName(clients, userProfile?.clientId)}
+                        disabled
+                      />
+                    )}
+                  </div>
+                  {editingUserId ? (
+                    <label className="checkbox-row form-row full" htmlFor="userIsActive">
+                      <input
+                        id="userIsActive"
+                        type="checkbox"
+                        checked={userForm.isActive}
+                        disabled={userSaving}
+                        onChange={(event) => updateUserField("isActive", event.target.checked)}
+                      />
+                      <span>User profile is active</span>
+                    </label>
+                  ) : null}
+                </div>
+
+                <div className="actions">
+                  <button className="button" type="submit" disabled={userSaving}>
+                    {userSaving ? "Saving..." : editingUserId ? "Save User" : "Create Auth User"}
+                  </button>
+                  <button
+                    className="button secondary"
+                    type="button"
+                    disabled={userSaving}
+                    onClick={closeUserForm}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            ) : null}
 
             {!usersLoading && userProfiles.length === 0 ? (
               <p className="message">No user profiles yet.</p>

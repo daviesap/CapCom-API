@@ -75,18 +75,26 @@ export async function getScheduleDetailsForEvent(eventId, scheduleDayIds = []) {
   }
 
   try {
-    const eventScopedQuery = query(scheduleDetailsRef, where("eventId", "==", eventId));
-    const eventScopedSnapshot = await getDocs(eventScopedQuery);
-    const eventScopedDetails = eventScopedSnapshot.docs.map((detailDoc) => ({
-      id: detailDoc.id,
-      ...detailDoc.data(),
-    }));
-    const eventScopedDayIds = new Set(eventScopedDetails.map((detail) => detail.scheduleDayId));
+    try {
+      const eventScopedQuery = query(scheduleDetailsRef, where("eventId", "==", eventId));
+      const eventScopedSnapshot = await getDocs(eventScopedQuery);
+      const eventScopedDetails = eventScopedSnapshot.docs.map((detailDoc) => ({
+        id: detailDoc.id,
+        ...detailDoc.data(),
+      }));
+      const eventScopedDayIds = new Set(eventScopedDetails.map((detail) => detail.scheduleDayId));
 
-    if (eventScopedDetails.length > 0 && dayIds.every((dayId) => eventScopedDayIds.has(dayId))) {
-      const groupedDetails = groupDetailsByDay(dayIds, eventScopedDetails);
-      cacheDetailsByDay(groupedDetails);
-      return groupedDetails;
+      if (eventScopedDetails.length > 0 && dayIds.every((dayId) => eventScopedDayIds.has(dayId))) {
+        const groupedDetails = groupDetailsByDay(dayIds, eventScopedDetails);
+        cacheDetailsByDay(groupedDetails);
+        return groupedDetails;
+      }
+    } catch (eventScopedError) {
+      console.warn("Could not load event-scoped schedule details; falling back to day queries.", {
+        eventId,
+        dayCount: dayIds.length,
+        error: eventScopedError,
+      });
     }
 
     const legacyDetails = [];
@@ -142,6 +150,7 @@ export async function createScheduleDetail({
   sortOrder,
   colour,
   tagId,
+  supplierIds,
 }) {
   assertOnline();
   const dayDetails = await getScheduleDetails(scheduleDayId);
@@ -163,6 +172,7 @@ export async function createScheduleDetail({
       sortOrder: nextSortOrder,
       colour: colour || "",
       tagId: tagId || "",
+      supplierIds: Array.isArray(supplierIds) ? supplierIds : [],
       createdAt: serverTimestamp(),
     });
   } catch (error) {
@@ -175,7 +185,7 @@ export async function createScheduleDetail({
 
 export async function updateScheduleDetail(
   detailId,
-  { eventId, time, description, sortOrder, scheduleDayId, colour, tagId }
+  { eventId, time, description, sortOrder, scheduleDayId, colour, tagId, supplierIds }
 ) {
   assertOnline();
   const updates = {
@@ -202,6 +212,10 @@ export async function updateScheduleDetail(
 
   if (typeof tagId === "string") {
     updates.tagId = tagId;
+  }
+
+  if (Array.isArray(supplierIds)) {
+    updates.supplierIds = supplierIds;
   }
 
   try {

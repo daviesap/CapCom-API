@@ -51,6 +51,19 @@ service cloud.firestore {
       return isSuperAdmin();
     }
 
+    function canReadSupplierData(supplier) {
+      return supplier.clientId is string
+        && canReadClient(supplier.clientId);
+    }
+
+    function canManageSupplierData(supplier) {
+      return supplier.clientId is string
+        && (
+          isSuperAdmin()
+          || (isClientAdmin() && currentUser().clientId == supplier.clientId)
+        );
+    }
+
     function eventPath(eventId) {
       return /databases/$(database)/documents/events/$(eventId);
     }
@@ -187,6 +200,14 @@ service cloud.firestore {
       allow get, list: if canReadClient(clientId);
       allow create, update: if canManageClient();
       allow delete: if false;
+    }
+
+    match /suppliers/{supplierId} {
+      allow get, list: if canReadSupplierData(resource.data);
+      allow create: if canManageSupplierData(request.resource.data);
+      allow update: if canManageSupplierData(resource.data)
+        && canManageSupplierData(request.resource.data);
+      allow delete: if canManageSupplierData(resource.data);
     }
 
     match /events/{eventId} {
