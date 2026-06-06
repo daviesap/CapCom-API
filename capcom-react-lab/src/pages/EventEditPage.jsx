@@ -25,6 +25,12 @@ import {
   getTags,
   updateTag,
 } from "../services/tagService.js";
+import {
+  createLocation,
+  deleteLocation,
+  getLocations,
+  updateLocation,
+} from "../services/locationService.js";
 import { getSuppliers } from "../services/supplierService.js";
 
 const emptyEventForm = {
@@ -40,6 +46,11 @@ const emptyEventForm = {
 const emptyTagForm = {
   name: "",
   colour: "#DCEEFF",
+};
+
+const emptyLocationForm = {
+  name: "",
+  parentLocationId: "",
 };
 
 function formatFriendlyDate(dateString) {
@@ -120,9 +131,12 @@ export default function EventEditPage() {
   const [draftDetailsByDayId, setDraftDetailsByDayId] = useState({});
   const [savedDetailsById, setSavedDetailsById] = useState({});
   const [tags, setTags] = useState([]);
+  const [locations, setLocations] = useState([]);
   const [suppliers, setSuppliers] = useState([]);
   const [tagForm, setTagForm] = useState(emptyTagForm);
+  const [locationForm, setLocationForm] = useState(emptyLocationForm);
   const [editingTagId, setEditingTagId] = useState("");
+  const [editingLocationId, setEditingLocationId] = useState("");
   const [editingDetailId, setEditingDetailId] = useState("");
   const [openActionMenuId, setOpenActionMenuId] = useState("");
   const [selectedTagFilterId, setSelectedTagFilterId] = useState("");
@@ -132,6 +146,7 @@ export default function EventEditPage() {
   const [loading, setLoading] = useState(true);
   const [detailsLoading, setDetailsLoading] = useState(false);
   const [tagsLoading, setTagsLoading] = useState(false);
+  const [locationsLoading, setLocationsLoading] = useState(false);
   const [suppliersLoading, setSuppliersLoading] = useState(false);
   const [savingEvent, setSavingEvent] = useState(false);
   const [savingDayId, setSavingDayId] = useState("");
@@ -139,11 +154,16 @@ export default function EventEditPage() {
   const [savingDraftDayId, setSavingDraftDayId] = useState("");
   const [savingTag, setSavingTag] = useState(false);
   const [deletingTagId, setDeletingTagId] = useState("");
+  const [savingLocation, setSavingLocation] = useState(false);
+  const [deletingLocationId, setDeletingLocationId] = useState("");
   const [reorderingDayId, setReorderingDayId] = useState("");
+  const [movingLocationId, setMovingLocationId] = useState("");
+  const [locationDropTargetId, setLocationDropTargetId] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const suppressDetailBlurRef = useRef(false);
   const draggedDetailIdRef = useRef("");
+  const draggedLocationIdRef = useRef("");
   const editableClients = clients.filter((client) => (
     client.isActive !== false || client.id === form.clientId
   ));
@@ -157,6 +177,7 @@ export default function EventEditPage() {
       setLoading(true);
       setDetailsLoading(false);
       setTagsLoading(false);
+      setLocationsLoading(false);
       setSuppliersLoading(false);
       setError("");
       try {
@@ -190,14 +211,17 @@ export default function EventEditPage() {
 
         setDetailsLoading(true);
         setTagsLoading(true);
+        setLocationsLoading(true);
         setSuppliersLoading(true);
-        const [detailsByDay, eventTags, clientSuppliers] = await Promise.all([
+        const [detailsByDay, eventTags, eventLocations, clientSuppliers] = await Promise.all([
           getScheduleDetailsForEvent(eventId, days.map((day) => day.id)),
           getTags(eventId),
+          getLocations(eventId),
           getSuppliers(loadedEventForm.clientId),
         ]);
         if (cancelled) return;
         setTags(eventTags);
+        setLocations(eventLocations);
         setSuppliers(clientSuppliers);
         setDetailsState(detailsByDay);
       } catch (loadError) {
@@ -209,6 +233,7 @@ export default function EventEditPage() {
           setLoading(false);
           setDetailsLoading(false);
           setTagsLoading(false);
+          setLocationsLoading(false);
           setSuppliersLoading(false);
         }
       }
@@ -245,6 +270,28 @@ export default function EventEditPage() {
   const usedTags = useMemo(() => {
     return tags.filter((tag) => usedTagIds.has(tag.id));
   }, [tags, usedTagIds]);
+
+  const locationOptions = useMemo(() => {
+    const mainLocations = locations.filter((location) => !location.parentLocationId);
+    return mainLocations.flatMap((location) => [
+      { ...location, displayName: location.name || "" },
+      ...locations
+        .filter((subLocation) => subLocation.parentLocationId === location.id)
+        .map((subLocation) => ({
+          ...subLocation,
+          displayName: `${location.name || "Location"} / ${subLocation.name || ""}`,
+        })),
+    ]);
+  }, [locations]);
+
+  const locationTree = useMemo(() => {
+    return locations
+      .filter((location) => !location.parentLocationId)
+      .map((location) => ({
+        ...location,
+        children: locations.filter((subLocation) => subLocation.parentLocationId === location.id),
+      }));
+  }, [locations]);
 
   const usedSupplierIds = useMemo(() => {
     return new Set(
@@ -307,6 +354,18 @@ export default function EventEditPage() {
     }
   };
 
+  const loadLocations = async () => {
+    setLocationsLoading(true);
+    try {
+      setLocations(await getLocations(eventId));
+    } catch (loadError) {
+      console.error("Could not load locations.", loadError);
+      setError("Could not load locations.");
+    } finally {
+      setLocationsLoading(false);
+    }
+  };
+
   const loadSuppliers = async (clientId = form.clientId) => {
     setSuppliersLoading(true);
     try {
@@ -352,6 +411,7 @@ export default function EventEditPage() {
               sortOrder: typeof detail.sortOrder === "number" ? detail.sortOrder : detailIndex,
               colour: normaliseHexColour(detail.colour),
               tagId: detail.tagId || "",
+              locationId: detail.locationId || "",
               supplierIds: detail.supplierIds || [],
             },
           ])
@@ -435,8 +495,18 @@ export default function EventEditPage() {
   };
 
   const getTagById = (tagId) => tags.find((tag) => tag.id === tagId) || null;
-  const getSelectedSupplierIdsFromSelect = (selectElement) =>
-    Array.from(selectElement.selectedOptions).map((option) => option.value);
+  const getLocationById = (locationId) =>
+    locationOptions.find((location) => location.id === locationId) || null;
+  const getSupplierLabel = (supplierIds = []) => {
+    const selectedSuppliers = suppliers.filter((supplier) => supplierIds.includes(supplier.id));
+    if (selectedSuppliers.length === 0) return "No supplier";
+    if (selectedSuppliers.length === 1) return selectedSuppliers[0].supplierName;
+    return `${selectedSuppliers.length} suppliers`;
+  };
+  const toggleSupplierIds = (supplierIds = [], supplierId) =>
+    supplierIds.includes(supplierId)
+      ? supplierIds.filter((currentSupplierId) => currentSupplierId !== supplierId)
+      : [...supplierIds, supplierId];
   const getNoRowsMessage = () => {
     if (selectedTagFilterId && selectedSupplierFilterIds.length > 0) {
       return "No rows for selected tag and suppliers.";
@@ -468,6 +538,7 @@ export default function EventEditPage() {
         sortOrder: detail.sortOrder,
         colour: normaliseHexColour(detail.colour),
         tagId,
+        locationId: detail.locationId || "",
         supplierIds: detail.supplierIds || [],
       });
       setSavedDetailsById((current) => ({
@@ -478,12 +549,59 @@ export default function EventEditPage() {
           sortOrder: detail.sortOrder,
           colour: normaliseHexColour(detail.colour),
           tagId,
+          locationId: detail.locationId || "",
           supplierIds: detail.supplierIds || [],
         },
       }));
     } catch (tagError) {
       console.error(tagError);
       setError("Could not update row tag.");
+      await loadScheduleDetails(scheduleDays);
+    } finally {
+      setSavingDetailId("");
+    }
+  };
+
+  const assignDetailLocation = async (dayId, detail, locationId) => {
+    if (isOffline) {
+      setError("Editing is disabled while offline.");
+      return;
+    }
+    setSavingDetailId(detail.id);
+    setError("");
+    setDetailsByDayId((current) => ({
+      ...current,
+      [dayId]: (current[dayId] || []).map((nextDetail) =>
+        nextDetail.id === detail.id ? { ...nextDetail, locationId } : nextDetail
+      ),
+    }));
+
+    try {
+      await updateScheduleDetail(detail.id, {
+        eventId,
+        time: detail.time || "",
+        description: detail.description || "",
+        sortOrder: detail.sortOrder,
+        colour: normaliseHexColour(detail.colour),
+        tagId: detail.tagId || "",
+        locationId,
+        supplierIds: detail.supplierIds || [],
+      });
+      setSavedDetailsById((current) => ({
+        ...current,
+        [detail.id]: {
+          time: detail.time || "",
+          description: detail.description || "",
+          sortOrder: detail.sortOrder,
+          colour: normaliseHexColour(detail.colour),
+          tagId: detail.tagId || "",
+          locationId,
+          supplierIds: detail.supplierIds || [],
+        },
+      }));
+    } catch (locationError) {
+      console.error(locationError);
+      setError("Could not update row location.");
       await loadScheduleDetails(scheduleDays);
     } finally {
       setSavingDetailId("");
@@ -512,6 +630,7 @@ export default function EventEditPage() {
         sortOrder: detail.sortOrder,
         colour: normaliseHexColour(detail.colour),
         tagId: detail.tagId || "",
+        locationId: detail.locationId || "",
         supplierIds,
       });
       setSavedDetailsById((current) => ({
@@ -522,6 +641,7 @@ export default function EventEditPage() {
           sortOrder: detail.sortOrder,
           colour: normaliseHexColour(detail.colour),
           tagId: detail.tagId || "",
+          locationId: detail.locationId || "",
           supplierIds,
         },
       }));
@@ -610,12 +730,190 @@ export default function EventEditPage() {
     }
   };
 
+  const updateLocationFormField = (field, value) => {
+    setLocationForm((current) => ({ ...current, [field]: value }));
+  };
+
+  const resetLocationForm = () => {
+    setEditingLocationId("");
+    setLocationForm(emptyLocationForm);
+  };
+
+  const startEditingLocation = (location) => {
+    setEditingLocationId(location.id);
+    setLocationForm({
+      name: location.name || "",
+      parentLocationId: location.parentLocationId || "",
+    });
+    setError("");
+    setMessage("");
+  };
+
+  const startAddingSubLocation = (location) => {
+    if (isOffline || location.parentLocationId) return;
+    setEditingLocationId("");
+    setLocationForm({
+      name: "",
+      parentLocationId: location.id,
+    });
+    setError("");
+    setMessage("");
+  };
+
+  const saveLocation = async (submitEvent) => {
+    submitEvent.preventDefault();
+    if (isOffline) {
+      setError("Editing is disabled while offline.");
+      return;
+    }
+    setSavingLocation(true);
+    setError("");
+    setMessage("");
+
+    try {
+      const name = locationForm.name.trim();
+      const parentLocationId = locationForm.parentLocationId || "";
+      if (!name) {
+        setError("Location name is required.");
+        return;
+      }
+      if (editingLocationId && parentLocationId === editingLocationId) {
+        setError("A location cannot be its own parent.");
+        return;
+      }
+      if (
+        parentLocationId &&
+        locations.find((location) => location.id === parentLocationId)?.parentLocationId
+      ) {
+        setError("Sub-locations cannot contain other sub-locations.");
+        return;
+      }
+
+      if (editingLocationId) {
+        await updateLocation(editingLocationId, { name, parentLocationId });
+        setMessage("Location saved.");
+      } else {
+        await createLocation({ eventId, name, parentLocationId });
+        setMessage("Location created.");
+      }
+      resetLocationForm();
+      await loadLocations();
+    } catch (locationError) {
+      console.error(locationError);
+      setError("Could not save location.");
+    } finally {
+      setSavingLocation(false);
+    }
+  };
+
+  const moveLocation = async (locationId, parentLocationId) => {
+    if (isOffline) {
+      setError("Editing is disabled while offline.");
+      return;
+    }
+    const location = locations.find((currentLocation) => currentLocation.id === locationId);
+    const parentLocation = parentLocationId
+      ? locations.find((currentLocation) => currentLocation.id === parentLocationId)
+      : null;
+    if (!location || location.parentLocationId === parentLocationId) return;
+    if (locationId === parentLocationId) {
+      setError("A location cannot be moved under itself.");
+      return;
+    }
+    if (parentLocation?.parentLocationId) {
+      setError("Sub-locations cannot contain other sub-locations.");
+      return;
+    }
+    const childLocations = locations.filter(
+      (currentLocation) => currentLocation.parentLocationId === locationId
+    );
+
+    setMovingLocationId(locationId);
+    setLocationDropTargetId("");
+    setError("");
+    setMessage("");
+    setLocations((current) =>
+      current.map((currentLocation) => {
+        if (currentLocation.id === locationId) return { ...currentLocation, parentLocationId };
+        if (parentLocationId && currentLocation.parentLocationId === locationId) {
+          return { ...currentLocation, parentLocationId: "" };
+        }
+        return currentLocation;
+      })
+    );
+
+    try {
+      await Promise.all([
+        updateLocation(locationId, {
+          name: location.name || "",
+          parentLocationId,
+        }),
+        ...(parentLocationId
+          ? childLocations.map((childLocation) =>
+              updateLocation(childLocation.id, {
+                name: childLocation.name || "",
+                parentLocationId: "",
+              })
+            )
+          : []),
+      ]);
+      if (editingLocationId === locationId) {
+        setLocationForm((current) => ({ ...current, parentLocationId }));
+      }
+      setMessage(
+        parentLocationId && childLocations.length > 0
+          ? "Location moved. Its sub-locations were promoted to main locations."
+          : parentLocationId
+            ? "Location moved."
+            : "Location moved to main locations."
+      );
+    } catch (locationError) {
+      console.error(locationError);
+      setError("Could not move location.");
+      await loadLocations();
+    } finally {
+      setMovingLocationId("");
+    }
+  };
+
+  const removeLocation = async (locationId) => {
+    if (isOffline) {
+      setError("Editing is disabled while offline.");
+      return;
+    }
+    const childLocationIds = locations
+      .filter((location) => location.parentLocationId === locationId)
+      .map((location) => location.id);
+    const locationIdsToDelete = [locationId, ...childLocationIds];
+
+    setDeletingLocationId(locationId);
+    setError("");
+    setMessage("");
+
+    try {
+      await Promise.all(locationIdsToDelete.map((nextLocationId) => deleteLocation(nextLocationId)));
+      if (locationIdsToDelete.includes(editingLocationId)) resetLocationForm();
+      await loadLocations();
+      setMessage(
+        childLocationIds.length > 0
+          ? "Location and sub-locations deleted."
+          : "Location deleted."
+      );
+    } catch (locationError) {
+      console.error(locationError);
+      setError("Could not delete location.");
+    } finally {
+      setDeletingLocationId("");
+    }
+  };
+
   const hasDetailChanges = (detail) => {
     const savedDetail = savedDetailsById[detail.id] || {
       time: "",
       description: "",
       colour: "",
       tagId: "",
+      locationId: "",
       supplierIds: [],
     };
     return (
@@ -623,6 +921,7 @@ export default function EventEditPage() {
       (detail.description || "") !== savedDetail.description ||
       normaliseHexColour(detail.colour) !== savedDetail.colour ||
       (detail.tagId || "") !== savedDetail.tagId ||
+      (detail.locationId || "") !== savedDetail.locationId ||
       JSON.stringify(detail.supplierIds || []) !== JSON.stringify(savedDetail.supplierIds || [])
     );
   };
@@ -680,6 +979,7 @@ export default function EventEditPage() {
         sortOrder: detail.sortOrder,
         colour: normaliseHexColour(detail.colour),
         tagId: detail.tagId || "",
+        locationId: detail.locationId || "",
         supplierIds: detail.supplierIds || [],
       });
       setSavedDetailsById((current) => ({
@@ -690,6 +990,7 @@ export default function EventEditPage() {
           sortOrder: detail.sortOrder,
           colour: normaliseHexColour(detail.colour),
           tagId: detail.tagId || "",
+          locationId: detail.locationId || "",
           supplierIds: detail.supplierIds || [],
         },
       }));
@@ -779,6 +1080,7 @@ export default function EventEditPage() {
             sortOrder: detail.sortOrder,
             colour: normaliseHexColour(detail.colour),
             tagId: detail.tagId || "",
+            locationId: detail.locationId || "",
             supplierIds: detail.supplierIds || [],
           },
         ])
@@ -883,6 +1185,7 @@ export default function EventEditPage() {
         scheduleDayId: targetDayId,
         colour: normaliseHexColour(detail.colour),
         tagId: detail.tagId || "",
+        locationId: detail.locationId || "",
         supplierIds: detail.supplierIds || [],
       });
       await loadScheduleDetails(scheduleDays);
@@ -916,6 +1219,7 @@ export default function EventEditPage() {
         sortOrder: getNextSortOrder(dayId),
         colour: normaliseHexColour(detail.colour),
         tagId: detail.tagId || "",
+        locationId: detail.locationId || "",
         supplierIds: detail.supplierIds || [],
       });
       const details = await getScheduleDetails(dayId);
@@ -935,6 +1239,7 @@ export default function EventEditPage() {
                 typeof nextDetail.sortOrder === "number" ? nextDetail.sortOrder : detailIndex,
               colour: normaliseHexColour(nextDetail.colour),
               tagId: nextDetail.tagId || "",
+              locationId: nextDetail.locationId || "",
               supplierIds: nextDetail.supplierIds || [],
             },
           ])
@@ -959,6 +1264,7 @@ export default function EventEditPage() {
           description: "",
           colour: "",
           tagId: selectedTagFilterId || "",
+          locationId: "",
           supplierIds: [],
         },
       ],
@@ -997,6 +1303,7 @@ export default function EventEditPage() {
         description: draft.description,
         colour: normaliseHexColour(draft.colour),
         tagId: draft.tagId || "",
+        locationId: draft.locationId || "",
         supplierIds: draft.supplierIds || [],
       });
       removeDraftDetail(dayId, draftIndex);
@@ -1017,6 +1324,7 @@ export default function EventEditPage() {
               sortOrder: typeof detail.sortOrder === "number" ? detail.sortOrder : detailIndex,
               colour: normaliseHexColour(detail.colour),
               tagId: detail.tagId || "",
+              locationId: detail.locationId || "",
               supplierIds: detail.supplierIds || [],
             },
           ])
@@ -1073,6 +1381,103 @@ export default function EventEditPage() {
     }
   };
 
+  const renderLocationNode = (location) => (
+    <div className="location-tree-item" key={location.id}>
+      <div
+        className={[
+          "location-list-row",
+          locationDropTargetId === location.id ? "drop-target" : "",
+          movingLocationId === location.id ? "is-moving" : "",
+        ].filter(Boolean).join(" ")}
+        draggable={!isOffline && movingLocationId !== location.id}
+        onDragStart={(event) => {
+          draggedLocationIdRef.current = location.id;
+          event.dataTransfer.effectAllowed = "move";
+        }}
+        onDragOver={(event) => {
+          const draggedLocationId = draggedLocationIdRef.current;
+          if (location.parentLocationId) {
+            event.stopPropagation();
+            return;
+          }
+          if (
+            !draggedLocationId ||
+            draggedLocationId === location.id
+          ) {
+            return;
+          }
+          event.preventDefault();
+          event.stopPropagation();
+          event.dataTransfer.dropEffect = "move";
+          setLocationDropTargetId(location.id);
+        }}
+        onDragLeave={() => {
+          setLocationDropTargetId((current) => (current === location.id ? "" : current));
+        }}
+        onDrop={(event) => {
+          if (location.parentLocationId) {
+            event.stopPropagation();
+            draggedLocationIdRef.current = "";
+            setLocationDropTargetId("");
+            return;
+          }
+          event.preventDefault();
+          event.stopPropagation();
+          const draggedLocationId = draggedLocationIdRef.current;
+          draggedLocationIdRef.current = "";
+          setLocationDropTargetId("");
+          if (draggedLocationId) moveLocation(draggedLocationId, location.id);
+        }}
+        onDragEnd={() => {
+          draggedLocationIdRef.current = "";
+          setLocationDropTargetId("");
+        }}
+      >
+        <button
+          className="location-name-button"
+          type="button"
+          disabled={isOffline || Boolean(location.parentLocationId)}
+          onClick={() => startAddingSubLocation(location)}
+          title={
+            location.parentLocationId
+              ? undefined
+              : `Add sub-location under ${location.name || "location"}`
+          }
+        >
+          <span className="item-title">{location.name}</span>
+          <span className="item-meta">
+            {location.parentLocationId ? "Sub-location" : "Main location"}
+          </span>
+        </button>
+        <div className="location-list-actions">
+          <button
+            className="compact-button"
+            type="button"
+            disabled={isOffline}
+            onClick={() => startEditingLocation(location)}
+          >
+            Edit
+          </button>
+          <button
+            className="compact-button"
+            type="button"
+            disabled={deletingLocationId === location.id || isOffline}
+            onClick={() => removeLocation(location.id)}
+          >
+            {deletingLocationId === location.id ? "Deleting..." : "Delete"}
+          </button>
+        </div>
+      </div>
+      {location.children.length > 0 ? (
+        <div className="location-tree-children">
+          {location.children.map((childLocation) =>
+            renderLocationNode({ ...childLocation, children: [] })
+          )}
+        </div>
+      ) : null}
+    </div>
+  );
+
   if (loading) return <Loading label="Loading event editor..." />;
 
   return (
@@ -1099,6 +1504,9 @@ export default function EventEditPage() {
       ) : null}
       {tagsLoading && activeTab === "settings" ? (
         <p className="message">Loading tags...</p>
+      ) : null}
+      {locationsLoading && activeTab === "settings" ? (
+        <p className="message">Loading locations...</p>
       ) : null}
       {suppliersLoading && activeTab === "detail" ? (
         <p className="message">Loading suppliers...</p>
@@ -1606,28 +2014,54 @@ export default function EventEditPage() {
                                   ))}
                                 </select>
                               </div>
-                              <div className="supplier-select-wrap">
+                              <div className="location-select-wrap">
                                 <select
-                                  aria-label={`Supplier for ${detail.description || "schedule detail"}`}
-                                  multiple
-                                  size={Math.min(Math.max(suppliers.length, 2), 4)}
-                                  value={detail.supplierIds || []}
+                                  aria-label={`Location for ${detail.description || "schedule detail"}`}
+                                  value={getLocationById(detail.locationId) ? detail.locationId : ""}
                                   disabled={savingDetailId === detail.id || isOffline}
                                   onChange={(event) =>
-                                    assignDetailSuppliers(
-                                      day.id,
-                                      detail,
-                                      getSelectedSupplierIdsFromSelect(event.target)
-                                    )
+                                    assignDetailLocation(day.id, detail, event.target.value)
                                   }
                                 >
-                                  {suppliers.map((supplier) => (
-                                    <option key={supplier.id} value={supplier.id}>
-                                      {supplier.supplierName}
+                                  <option value="">No location</option>
+                                  {locationOptions.map((location) => (
+                                    <option key={location.id} value={location.id}>
+                                      {location.displayName}
                                     </option>
                                   ))}
                                 </select>
                               </div>
+                              <details className="supplier-dropdown">
+                                <summary
+                                  aria-label={`Supplier for ${detail.description || "schedule detail"}`}
+                                  className="supplier-dropdown-trigger"
+                                >
+                                  {getSupplierLabel(detail.supplierIds || [])}
+                                </summary>
+                                <div className="supplier-dropdown-menu">
+                                  {suppliers.length === 0 ? (
+                                    <span className="supplier-dropdown-empty">No suppliers</span>
+                                  ) : (
+                                    suppliers.map((supplier) => (
+                                      <label className="supplier-dropdown-option" key={supplier.id}>
+                                        <input
+                                          type="checkbox"
+                                          checked={(detail.supplierIds || []).includes(supplier.id)}
+                                          disabled={savingDetailId === detail.id || isOffline}
+                                          onChange={() =>
+                                            assignDetailSuppliers(
+                                              day.id,
+                                              detail,
+                                              toggleSupplierIds(detail.supplierIds || [], supplier.id)
+                                            )
+                                          }
+                                        />
+                                        <span>{supplier.supplierName}</span>
+                                      </label>
+                                    ))
+                                  )}
+                                </div>
+                              </details>
                               <div className="detail-row-actions">
                                 {!isEditingDetail ? (
                                   <button
@@ -1831,29 +2265,60 @@ export default function EventEditPage() {
                                 ))}
                               </select>
                             </div>
-                            <div className="supplier-select-wrap">
+                            <div className="location-select-wrap">
                               <select
-                                aria-label="New detail supplier"
-                                multiple
-                                size={Math.min(Math.max(suppliers.length, 2), 4)}
-                                value={draft.supplierIds || []}
+                                aria-label="New detail location"
+                                value={getLocationById(draft.locationId) ? draft.locationId : ""}
                                 disabled={isOffline}
                                 onChange={(event) =>
                                   updateDraftDetail(
                                     day.id,
                                     draftIndex,
-                                    "supplierIds",
-                                    getSelectedSupplierIdsFromSelect(event.target)
+                                    "locationId",
+                                    event.target.value
                                   )
                                 }
                               >
-                                {suppliers.map((supplier) => (
-                                  <option key={supplier.id} value={supplier.id}>
-                                    {supplier.supplierName}
+                                <option value="">No location</option>
+                                {locationOptions.map((location) => (
+                                  <option key={location.id} value={location.id}>
+                                    {location.displayName}
                                   </option>
                                 ))}
                               </select>
                             </div>
+                            <details className="supplier-dropdown">
+                              <summary
+                                aria-label="New detail supplier"
+                                className="supplier-dropdown-trigger"
+                              >
+                                {getSupplierLabel(draft.supplierIds || [])}
+                              </summary>
+                              <div className="supplier-dropdown-menu">
+                                {suppliers.length === 0 ? (
+                                  <span className="supplier-dropdown-empty">No suppliers</span>
+                                ) : (
+                                  suppliers.map((supplier) => (
+                                    <label className="supplier-dropdown-option" key={supplier.id}>
+                                      <input
+                                        type="checkbox"
+                                        checked={(draft.supplierIds || []).includes(supplier.id)}
+                                        disabled={isOffline}
+                                        onChange={() =>
+                                          updateDraftDetail(
+                                            day.id,
+                                            draftIndex,
+                                            "supplierIds",
+                                            toggleSupplierIds(draft.supplierIds || [], supplier.id)
+                                          )
+                                        }
+                                      />
+                                      <span>{supplier.supplierName}</span>
+                                    </label>
+                                  ))
+                                )}
+                              </div>
+                            </details>
                             <div className="draft-actions">
                               <button
                                 className="button secondary"
@@ -1898,6 +2363,13 @@ export default function EventEditPage() {
             onClick={() => setActiveSettingsTab("tags")}
           >
             Tags
+          </button>
+          <button
+            className={activeSettingsTab === "locations" ? "tab active" : "tab"}
+            type="button"
+            onClick={() => setActiveSettingsTab("locations")}
+          >
+            Locations
           </button>
         </nav>
 
@@ -1992,6 +2464,87 @@ export default function EventEditPage() {
                     </div>
                   </div>
                 ))}
+              </div>
+            )}
+          </div>
+        ) : null}
+
+        {activeSettingsTab === "locations" ? (
+          <div className="settings-section">
+            <form className="location-form" onSubmit={saveLocation}>
+              <div className="form-row">
+                <label htmlFor="locationName">
+                  {editingLocationId
+                    ? "Location name"
+                    : locationForm.parentLocationId
+                      ? "Sub-location name"
+                      : "Main location"}
+                </label>
+                <input
+                  id="locationName"
+                  value={locationForm.name}
+                  disabled={isOffline}
+                  onChange={(event) => updateLocationFormField("name", event.target.value)}
+                  placeholder={locationForm.parentLocationId ? "Backstage" : "Main Hall"}
+                  required
+                />
+                {locationForm.parentLocationId ? (
+                  <span className="item-meta">
+                    Under{" "}
+                    {locations.find((location) => location.id === locationForm.parentLocationId)
+                      ?.name || "selected location"}
+                  </span>
+                ) : null}
+              </div>
+              <div className="actions">
+                <button className="button" type="submit" disabled={savingLocation || isOffline}>
+                  {savingLocation
+                    ? "Saving..."
+                    : editingLocationId
+                      ? "Save location"
+                      : "Create location"}
+                </button>
+                {editingLocationId ? (
+                  <button
+                    className="button secondary"
+                    type="button"
+                    disabled={savingLocation || isOffline}
+                    onClick={resetLocationForm}
+                  >
+                    Cancel
+                  </button>
+                ) : null}
+              </div>
+            </form>
+
+            {locationsLoading ? (
+              <p className="item-meta">Loading locations...</p>
+            ) : locations.length === 0 ? (
+              <p className="item-meta">No locations yet.</p>
+            ) : (
+              <div
+                className={[
+                  "location-list",
+                  locationDropTargetId === "main" ? "drop-target" : "",
+                ].filter(Boolean).join(" ")}
+                onDragOver={(event) => {
+                  if (!draggedLocationIdRef.current) return;
+                  event.preventDefault();
+                  event.dataTransfer.dropEffect = "move";
+                  setLocationDropTargetId("main");
+                }}
+                onDragLeave={() => {
+                  setLocationDropTargetId((current) => (current === "main" ? "" : current));
+                }}
+                onDrop={(event) => {
+                  event.preventDefault();
+                  const draggedLocationId = draggedLocationIdRef.current;
+                  draggedLocationIdRef.current = "";
+                  setLocationDropTargetId("");
+                  if (draggedLocationId) moveLocation(draggedLocationId, "");
+                }}
+              >
+                {locationTree.map((location) => renderLocationNode(location))}
               </div>
             )}
           </div>

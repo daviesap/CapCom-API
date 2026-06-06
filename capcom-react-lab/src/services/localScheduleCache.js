@@ -6,6 +6,7 @@ const emptyCache = {
   daysByEventId: {},
   detailsByDayId: {},
   tagsByEventId: {},
+  locationsByEventId: {},
   updatedAtByScope: {},
 };
 
@@ -25,6 +26,7 @@ function readCache() {
       daysByEventId: parsedCache.daysByEventId || {},
       detailsByDayId: parsedCache.detailsByDayId || {},
       tagsByEventId: parsedCache.tagsByEventId || {},
+      locationsByEventId: parsedCache.locationsByEventId || {},
       updatedAtByScope: parsedCache.updatedAtByScope || {},
     };
   } catch (cacheError) {
@@ -106,6 +108,17 @@ export function getCachedTags(eventId) {
   return readCache().tagsByEventId[eventId] || [];
 }
 
+export function cacheLocations(eventId, locations) {
+  const cache = readCache();
+  cache.locationsByEventId[eventId] = locations;
+  touch(cache, `locations:${eventId}`);
+  writeCache(cache);
+}
+
+export function getCachedLocations(eventId) {
+  return readCache().locationsByEventId[eventId] || [];
+}
+
 export function getScheduleLastUpdated(eventId) {
   const cache = readCache();
   const timestamps = [
@@ -113,6 +126,7 @@ export function getScheduleLastUpdated(eventId) {
     cache.updatedAtByScope[`event:${eventId}`],
     cache.updatedAtByScope[`days:${eventId}`],
     cache.updatedAtByScope[`tags:${eventId}`],
+    cache.updatedAtByScope[`locations:${eventId}`],
   ].filter(Boolean);
 
   (cache.daysByEventId[eventId] || []).forEach((day) => {

@@ -150,6 +150,7 @@ export async function createScheduleDetail({
   sortOrder,
   colour,
   tagId,
+  locationId,
   supplierIds,
 }) {
   assertOnline();
@@ -172,6 +173,7 @@ export async function createScheduleDetail({
       sortOrder: nextSortOrder,
       colour: colour || "",
       tagId: tagId || "",
+      locationId: locationId || "",
       supplierIds: Array.isArray(supplierIds) ? supplierIds : [],
       createdAt: serverTimestamp(),
     });
@@ -185,7 +187,7 @@ export async function createScheduleDetail({
 
 export async function updateScheduleDetail(
   detailId,
-  { eventId, time, description, sortOrder, scheduleDayId, colour, tagId, supplierIds }
+  { eventId, time, description, sortOrder, scheduleDayId, colour, tagId, locationId, supplierIds }
 ) {
   assertOnline();
   const updates = {
@@ -212,6 +214,10 @@ export async function updateScheduleDetail(
 
   if (typeof tagId === "string") {
     updates.tagId = tagId;
+  }
+
+  if (typeof locationId === "string") {
+    updates.locationId = locationId;
   }
 
   if (Array.isArray(supplierIds)) {

@@ -634,7 +634,7 @@ textarea {
 .detail-row {
   display: grid;
   gap: 6px;
-  grid-template-columns: 76px minmax(0, 1fr) 128px 150px auto;
+  grid-template-columns: 76px minmax(0, 1fr) 128px 150px 150px auto;
   align-items: center;
   border: 1px solid transparent;
   border-radius: 3px;
@@ -650,7 +650,7 @@ textarea {
 }
 
 .detail-row .button {
-  grid-column: 5;
+  grid-column: 6;
   justify-self: start;
 }
 
@@ -742,11 +742,13 @@ textarea {
 .draft-actions {
   display: flex;
   gap: 8px;
-  grid-column: 5;
+  grid-column: 6;
 }
 
 .tag-select-wrap,
+.location-select-wrap,
 .supplier-select-wrap,
+.supplier-dropdown,
 .tag-chip {
   align-items: center;
   background: #ffffff;
@@ -758,12 +760,73 @@ textarea {
   padding: 3px 7px;
 }
 
+.supplier-dropdown {
+  display: block;
+  padding: 0;
+  position: relative;
+}
+
+.supplier-dropdown-trigger {
+  align-items: center;
+  cursor: pointer;
+  display: flex;
+  font-size: 13px;
+  font-weight: 400;
+  min-height: 26px;
+  overflow: hidden;
+  padding: 3px 8px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.supplier-dropdown-menu {
+  background: #ffffff;
+  border: 1px solid #d9e0e7;
+  border-radius: 8px;
+  box-shadow: 0 12px 28px rgba(23, 32, 42, 0.14);
+  display: grid;
+  gap: 2px;
+  left: 0;
+  max-height: 220px;
+  min-width: 220px;
+  overflow: auto;
+  padding: 6px;
+  position: absolute;
+  top: calc(100% + 4px);
+  z-index: 30;
+}
+
+.supplier-dropdown-option {
+  align-items: center;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  gap: 8px;
+  padding: 6px 8px;
+}
+
+.supplier-dropdown-option:hover {
+  background: #f4f6f8;
+}
+
+.supplier-dropdown-option input {
+  height: 14px;
+  width: 14px;
+}
+
+.supplier-dropdown-empty {
+  color: #6b7280;
+  font-size: 13px;
+  padding: 6px 8px;
+}
+
 .supplier-select-wrap {
   align-items: stretch;
   padding: 2px;
 }
 
 .tag-select-wrap select,
+.location-select-wrap select,
 .supplier-select-wrap select {
   appearance: none;
   background: transparent;
@@ -804,6 +867,7 @@ textarea {
 }
 
 .tag-form,
+.location-form,
 .supplier-form {
   border-bottom: 1px solid #e6ebf0;
   padding-bottom: 16px;
@@ -845,6 +909,75 @@ textarea {
 .supplier-list {
   display: grid;
   gap: 10px;
+}
+
+.location-list {
+  border: 1px dashed transparent;
+  border-radius: 8px;
+  display: grid;
+  gap: 8px;
+  min-height: 48px;
+  padding: 4px;
+}
+
+.location-list-row {
+  align-items: center;
+  border: 1px solid #e1e7ee;
+  border-radius: 6px;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  padding: 10px;
+}
+
+.location-list.drop-target,
+.location-list-row.drop-target {
+  background: #eef4ff;
+  border-color: #7ea6f7;
+}
+
+.location-list-row.is-moving {
+  opacity: 0.55;
+}
+
+.location-tree-item {
+  display: grid;
+  gap: 8px;
+}
+
+.location-tree-children {
+  border-left: 2px solid #d9e0e7;
+  display: grid;
+  gap: 8px;
+  margin-left: 18px;
+  padding-left: 12px;
+}
+
+.location-name-button {
+  background: transparent;
+  border: 0;
+  color: inherit;
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  padding: 0;
+  text-align: left;
+}
+
+.location-name-button:hover .item-title,
+.location-name-button:focus-visible .item-title {
+  color: #1f4fbf;
+}
+
+.location-name-button:focus-visible {
+  outline: 2px solid #7ea6f7;
+  outline-offset: 3px;
+}
+
+.location-list-actions {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
 }
 
 .supplier-list-row {
@@ -1002,6 +1135,8 @@ textarea {
   }
 
   .tag-select-wrap,
+  .location-select-wrap,
+  .supplier-dropdown,
   .supplier-select-wrap {
     grid-column: 2 / -1;
   }
@@ -1011,6 +1146,14 @@ textarea {
   }
 
   .tag-list-actions {
+    justify-content: flex-start;
+  }
+
+  .location-list-row {
+    grid-template-columns: 1fr;
+  }
+
+  .location-list-actions {
     justify-content: flex-start;
   }
 
@@ -1328,7 +1471,11 @@ textarea {
 
   .detail-row .button,
   .detail-row-actions,
-  .draft-actions {
+  .draft-actions,
+  .tag-select-wrap,
+  .location-select-wrap,
+  .supplier-dropdown,
+  .supplier-select-wrap {
     grid-column: 1;
   }
 
