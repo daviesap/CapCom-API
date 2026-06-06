@@ -20,5 +20,12 @@ export async function createStyleProfile(db, newId, newName, baseData = null) {
     name: newName,
     lastUsed: profileData.lastUsed || null,
   });
-  await batch.commit();
+  try {
+    await batch.commit();
+  } catch (error) {
+    console.error("Firestore write failed: create style profile", { profileId: newId, error });
+    throw error;
+  } finally {
+    // Saving state is owned by the calling component.
+  }
 }

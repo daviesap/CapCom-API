@@ -19,6 +19,10 @@ import {
 
 const tagsRef = collection(db, "tag");
 
+function logWriteError(action, error, context = {}) {
+  console.error(`Firestore write failed: ${action}`, { ...context, error });
+}
+
 function sortTags(tags) {
   return [...tags].sort((a, b) => String(a.name || "").localeCompare(String(b.name || "")));
 }
@@ -46,24 +50,45 @@ export async function getTags(eventId) {
 
 export async function createTag({ eventId, name, colour }) {
   assertOnline();
-  return addDoc(tagsRef, {
-    eventId,
-    name,
-    colour,
-    createdAt: serverTimestamp(),
-  });
+  try {
+    return await addDoc(tagsRef, {
+      eventId,
+      name,
+      colour,
+      createdAt: serverTimestamp(),
+    });
+  } catch (error) {
+    logWriteError("create tag", error, { eventId, name });
+    throw error;
+  } finally {
+    // Saving state is owned by the calling component.
+  }
 }
 
 export async function updateTag(tagId, { name, colour }) {
   assertOnline();
-  return updateDoc(doc(db, "tag", tagId), {
-    name,
-    colour,
-    updatedAt: serverTimestamp(),
-  });
+  try {
+    return await updateDoc(doc(db, "tag", tagId), {
+      name,
+      colour,
+      updatedAt: serverTimestamp(),
+    });
+  } catch (error) {
+    logWriteError("update tag", error, { tagId, name });
+    throw error;
+  } finally {
+    // Saving state is owned by the calling component.
+  }
 }
 
 export async function deleteTag(tagId) {
   assertOnline();
-  return deleteDoc(doc(db, "tag", tagId));
+  try {
+    return await deleteDoc(doc(db, "tag", tagId));
+  } catch (error) {
+    logWriteError("delete tag", error, { tagId });
+    throw error;
+  } finally {
+    // Saving state is owned by the calling component.
+  }
 }

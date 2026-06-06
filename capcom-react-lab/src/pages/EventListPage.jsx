@@ -113,19 +113,14 @@ export default function EventListPage() {
 
       <section className="list">
         {events.map((event) => (
-          <article className="list-item" key={event.id}>
+          <Link className="list-item event-card-link" key={event.id} to={`/events/${event.id}/edit`}>
             <div>
               <p className="item-title">{event.name}</p>
               <p className="item-meta">
                 {event.clientName} | {event.startDate} to {event.endDate}
               </p>
             </div>
-            <div className="actions inline-actions">
-              <Link className="button secondary" to={`/events/${event.id}`}>
-                Open
-              </Link>
-            </div>
-          </article>
+          </Link>
         ))}
       </section>
 

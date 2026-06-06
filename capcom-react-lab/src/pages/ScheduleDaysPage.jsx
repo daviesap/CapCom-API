@@ -9,6 +9,7 @@ import { getScheduleDays } from "../services/scheduleDayService.js";
 import {
   createScheduleDetail,
   getScheduleDetails,
+  getScheduleDetailsForEvent,
   updateScheduleDetail,
 } from "../services/scheduleDetailService.js";
 
@@ -24,10 +25,12 @@ export default function ScheduleDaysPage() {
   const [savingDetailId, setSavingDetailId] = useState("");
   const [savingDraftDayId, setSavingDraftDayId] = useState("");
   const [loading, setLoading] = useState(true);
+  const [detailsLoading, setDetailsLoading] = useState(false);
   const [error, setError] = useState("");
 
   const loadPage = async () => {
     setLoading(true);
+    setDetailsLoading(false);
     setError("");
     try {
       const [eventRecord, dayRecords] = await Promise.all([
@@ -37,37 +40,40 @@ export default function ScheduleDaysPage() {
       setEvent(eventRecord);
       setDays(dayRecords);
 
-      const detailsEntries = await Promise.all(
-        dayRecords.map(async (day) => {
-          const details = await getScheduleDetails(day.id);
-          return [day.id, details];
-        })
-      );
-      setDetailsByDayId(Object.fromEntries(detailsEntries));
-      setSavedDetailsById(
-        Object.fromEntries(
-          detailsEntries.flatMap(([, details]) =>
-            details.map((detail) => [
-              detail.id,
-              {
-                time: detail.time || "",
-                description: detail.description || "",
-              },
-            ])
-          )
-        )
+      setDetailsLoading(true);
+      setDetailsState(
+        await getScheduleDetailsForEvent(eventId, dayRecords.map((day) => day.id))
       );
     } catch (loadError) {
-      console.error(loadError);
+      console.error("Could not load schedule days.", loadError);
       setError("Could not load schedule days.");
     } finally {
       setLoading(false);
+      setDetailsLoading(false);
     }
   };
 
   useEffect(() => {
     loadPage();
   }, [eventId]);
+
+  const setDetailsState = (nextDetailsByDayId) => {
+    const detailsEntries = Object.entries(nextDetailsByDayId);
+    setDetailsByDayId(nextDetailsByDayId);
+    setSavedDetailsById(
+      Object.fromEntries(
+        detailsEntries.flatMap(([, details]) =>
+          details.map((detail) => [
+            detail.id,
+            {
+              time: detail.time || "",
+              description: detail.description || "",
+            },
+          ])
+        )
+      )
+    );
+  };
 
   const updateDetailField = (dayId, detailId, field, value) => {
     setDetailsByDayId((current) => ({
@@ -88,6 +94,7 @@ export default function ScheduleDaysPage() {
 
     try {
       await updateScheduleDetail(detail.id, {
+        eventId,
         time: detail.time || "",
         description: detail.description || "",
       });
@@ -147,6 +154,7 @@ export default function ScheduleDaysPage() {
 
     try {
       await createScheduleDetail({
+        eventId,
         scheduleDayId: dayId,
         time: draft.time,
         description: draft.description,
@@ -188,7 +196,7 @@ export default function ScheduleDaysPage() {
           <p className="page-subtitle">{event?.name || eventId}</p>
           <ScheduleCacheStatus eventId={eventId} />
         </div>
-        <Link className="button secondary" to={`/events/${eventId}`}>
+        <Link className="button secondary" to={`/events/${eventId}/edit`}>
           Back to Event
         </Link>
       </div>
@@ -197,6 +205,7 @@ export default function ScheduleDaysPage() {
       {isOffline ? (
         <p className="message offline-message">Offline mode: schedule editing is disabled.</p>
       ) : null}
+      {detailsLoading ? <p className="message">Loading schedule details...</p> : null}
       {days.length === 0 ? <EmptyState message="No schedule days yet." /> : null}
 
       <section className="list">

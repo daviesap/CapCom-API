@@ -1,10 +1,9 @@
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes, useParams } from "react-router-dom";
 import { useAuth } from "../auth/AuthProvider.jsx";
 import LoginPage from "../auth/LoginPage.jsx";
 import Layout from "../components/Layout.jsx";
 import Loading from "../components/Loading.jsx";
 import EventListPage from "../pages/EventListPage.jsx";
-import EventDetailsPage from "../pages/EventDetailsPage.jsx";
 import EventEditPage from "../pages/EventEditPage.jsx";
 import ScheduleDaysPage from "../pages/ScheduleDaysPage.jsx";
 import ScheduleDetailsPage from "../pages/ScheduleDetailsPage.jsx";
@@ -23,6 +22,11 @@ function ProtectedRoute() {
   return <Layout />;
 }
 
+function EventEditRedirect() {
+  const { eventId } = useParams();
+  return <Navigate to={`/events/${eventId}/edit`} replace />;
+}
+
 export default function AppRoutes() {
   return (
     <BrowserRouter>
@@ -30,7 +34,7 @@ export default function AppRoutes() {
         <Route path="/login" element={<LoginPage />} />
         <Route element={<ProtectedRoute />}>
           <Route path="/events" element={<EventListPage />} />
-          <Route path="/events/:eventId" element={<EventDetailsPage />} />
+          <Route path="/events/:eventId" element={<EventEditRedirect />} />
           <Route path="/events/:eventId/edit" element={<EventEditPage />} />
           <Route path="/events/:eventId/days" element={<ScheduleDaysPage />} />
           <Route

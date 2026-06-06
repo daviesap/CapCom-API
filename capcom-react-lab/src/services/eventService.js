@@ -21,6 +21,10 @@ import {
 
 const eventsRef = collection(db, "events");
 
+function logWriteError(action, error, context = {}) {
+  console.error(`Firestore write failed: ${action}`, { ...context, error });
+}
+
 export async function getEvents() {
   if (isBrowserOffline()) return getCachedEvents();
 
@@ -61,26 +65,40 @@ export async function getEvent(eventId) {
 
 export async function createEvent(eventData) {
   assertOnline();
-  return addDoc(eventsRef, {
-    name: eventData.name,
-    clientName: eventData.clientName,
-    startDate: eventData.startDate,
-    endDate: eventData.endDate,
-    scheduleStartDate: eventData.scheduleStartDate,
-    scheduleEndDate: eventData.scheduleEndDate,
-    createdAt: serverTimestamp(),
-  });
+  try {
+    return await addDoc(eventsRef, {
+      name: eventData.name,
+      clientName: eventData.clientName,
+      startDate: eventData.startDate,
+      endDate: eventData.endDate,
+      scheduleStartDate: eventData.scheduleStartDate,
+      scheduleEndDate: eventData.scheduleEndDate,
+      createdAt: serverTimestamp(),
+    });
+  } catch (error) {
+    logWriteError("create event", error, { name: eventData.name });
+    throw error;
+  } finally {
+    // Saving state is owned by the calling component.
+  }
 }
 
 export async function updateEvent(eventId, eventData) {
   assertOnline();
-  return updateDoc(doc(db, "events", eventId), {
-    name: eventData.name,
-    clientName: eventData.clientName,
-    startDate: eventData.startDate,
-    endDate: eventData.endDate,
-    scheduleStartDate: eventData.scheduleStartDate,
-    scheduleEndDate: eventData.scheduleEndDate,
-    updatedAt: serverTimestamp(),
-  });
+  try {
+    return await updateDoc(doc(db, "events", eventId), {
+      name: eventData.name,
+      clientName: eventData.clientName,
+      startDate: eventData.startDate,
+      endDate: eventData.endDate,
+      scheduleStartDate: eventData.scheduleStartDate,
+      scheduleEndDate: eventData.scheduleEndDate,
+      updatedAt: serverTimestamp(),
+    });
+  } catch (error) {
+    logWriteError("update event", error, { eventId });
+    throw error;
+  } finally {
+    // Saving state is owned by the calling component.
+  }
 }

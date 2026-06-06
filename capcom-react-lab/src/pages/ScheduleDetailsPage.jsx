@@ -55,6 +55,7 @@ export default function ScheduleDetailsPage() {
 
     try {
       await createScheduleDetail({
+        eventId,
         scheduleDayId,
         time: form.time,
         description: form.description,

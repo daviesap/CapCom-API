@@ -13,6 +13,7 @@ import {
   createScheduleDetail,
   deleteScheduleDetail,
   getScheduleDetails,
+  getScheduleDetailsForEvent,
   updateScheduleDetail,
   updateScheduleDetailOrder,
 } from "../services/scheduleDetailService.js";
@@ -121,6 +122,8 @@ export default function EventEditPage() {
   const [activeTab, setActiveTab] = useState("details");
   const [activeSettingsTab, setActiveSettingsTab] = useState("tags");
   const [loading, setLoading] = useState(true);
+  const [detailsLoading, setDetailsLoading] = useState(false);
+  const [tagsLoading, setTagsLoading] = useState(false);
   const [savingEvent, setSavingEvent] = useState(false);
   const [savingDayId, setSavingDayId] = useState("");
   const [savingDetailId, setSavingDetailId] = useState("");
@@ -134,15 +137,19 @@ export default function EventEditPage() {
   const draggedDetailIdRef = useRef("");
 
   useEffect(() => {
+    let cancelled = false;
+
     const loadPage = async () => {
       setLoading(true);
+      setDetailsLoading(false);
+      setTagsLoading(false);
       setError("");
       try {
-        const [event, days, eventTags] = await Promise.all([
+        const [event, days] = await Promise.all([
           getEvent(eventId),
           getScheduleDays(eventId),
-          getTags(eventId),
         ]);
+        if (cancelled) return;
         if (!event) {
           setError("Event not found.");
           return;
@@ -157,17 +164,35 @@ export default function EventEditPage() {
         };
         setForm(loadedEventForm);
         setSavedEventForm(loadedEventForm);
+        setScheduleDays(days);
+        setLoading(false);
+
+        setDetailsLoading(true);
+        setTagsLoading(true);
+        const [detailsByDay, eventTags] = await Promise.all([
+          getScheduleDetailsForEvent(eventId, days.map((day) => day.id)),
+          getTags(eventId),
+        ]);
+        if (cancelled) return;
         setTags(eventTags);
-        applyScheduleDays(days);
+        setDetailsState(detailsByDay);
       } catch (loadError) {
-        console.error(loadError);
+        console.error("Could not load event editor.", loadError);
+        if (cancelled) return;
         setError("Could not load event editor.");
       } finally {
-        setLoading(false);
+        if (!cancelled) {
+          setLoading(false);
+          setDetailsLoading(false);
+          setTagsLoading(false);
+        }
       }
     };
 
     loadPage();
+    return () => {
+      cancelled = true;
+    };
   }, [eventId]);
 
   useEffect(() => {
@@ -218,7 +243,15 @@ export default function EventEditPage() {
   };
 
   const loadTags = async () => {
-    setTags(await getTags(eventId));
+    setTagsLoading(true);
+    try {
+      setTags(await getTags(eventId));
+    } catch (loadError) {
+      console.error("Could not load tags.", loadError);
+      setError("Could not load tags.");
+    } finally {
+      setTagsLoading(false);
+    }
   };
 
   const applyScheduleDays = (days) => {
@@ -227,13 +260,22 @@ export default function EventEditPage() {
   };
 
   const loadScheduleDetails = async (days) => {
-    const detailsEntries = await Promise.all(
-      days.map(async (day) => {
-        const details = await getScheduleDetails(day.id);
-        return [day.id, details];
-      })
-    );
-    setDetailsByDayId(Object.fromEntries(detailsEntries));
+    setDetailsLoading(true);
+    try {
+      setDetailsState(
+        await getScheduleDetailsForEvent(eventId, days.map((day) => day.id))
+      );
+    } catch (loadError) {
+      console.error("Could not load schedule details.", loadError);
+      setError("Could not load schedule details.");
+    } finally {
+      setDetailsLoading(false);
+    }
+  };
+
+  const setDetailsState = (nextDetailsByDayId) => {
+    const detailsEntries = Object.entries(nextDetailsByDayId);
+    setDetailsByDayId(nextDetailsByDayId);
     setSavedDetailsById(
       Object.fromEntries(
         detailsEntries.flatMap(([, details]) =>
@@ -336,6 +378,7 @@ export default function EventEditPage() {
 
     try {
       await updateScheduleDetail(detail.id, {
+        eventId,
         time: detail.time || "",
         description: detail.description || "",
         sortOrder: detail.sortOrder,
@@ -499,6 +542,7 @@ export default function EventEditPage() {
 
     try {
       await updateScheduleDetail(detail.id, {
+        eventId,
         time: detail.time || "",
         description: detail.description || "",
         sortOrder: detail.sortOrder,
@@ -697,6 +741,7 @@ export default function EventEditPage() {
 
     try {
       await updateScheduleDetail(detail.id, {
+        eventId,
         time: detail.time || "",
         description: detail.description || "",
         sortOrder: getNextSortOrder(targetDayId),
@@ -728,6 +773,7 @@ export default function EventEditPage() {
 
     try {
       await createScheduleDetail({
+        eventId,
         scheduleDayId: dayId,
         time: detail.time || "",
         description: detail.description || "",
@@ -801,6 +847,7 @@ export default function EventEditPage() {
 
     try {
       await createScheduleDetail({
+        eventId,
         scheduleDayId: dayId,
         time: draft.time,
         description: draft.description,
@@ -881,7 +928,7 @@ export default function EventEditPage() {
           <ScheduleCacheStatus eventId={eventId} />
         </div>
         <div className="actions inline-actions">
-          <Link className="button secondary" to={`/events/${eventId}`}>
+          <Link className="button secondary" to="/events">
             Back
           </Link>
         </div>
@@ -892,6 +939,12 @@ export default function EventEditPage() {
         <p className="message offline-message">Offline mode: previously loaded schedules are read-only.</p>
       ) : null}
       {message ? <p className="message success-message">{message}</p> : null}
+      {detailsLoading && activeTab === "detail" ? (
+        <p className="message">Loading schedule details...</p>
+      ) : null}
+      {tagsLoading && activeTab === "settings" ? (
+        <p className="message">Loading tags...</p>
+      ) : null}
 
       <nav className="tabs" aria-label="Event edit sections">
         <button
@@ -1649,7 +1702,9 @@ export default function EventEditPage() {
               </div>
             </form>
 
-            {tags.length === 0 ? (
+            {tagsLoading ? (
+              <p className="item-meta">Loading tags...</p>
+            ) : tags.length === 0 ? (
               <p className="item-meta">No tags yet.</p>
             ) : (
               <div className="tag-list">

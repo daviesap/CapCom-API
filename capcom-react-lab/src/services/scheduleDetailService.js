@@ -19,6 +19,11 @@ import {
 } from "./localScheduleCache.js";
 
 const scheduleDetailsRef = collection(db, "scheduleDetails");
+const FIRESTORE_IN_QUERY_LIMIT = 30;
+
+function logWriteError(action, error, context = {}) {
+  console.error(`Firestore write failed: ${action}`, { ...context, error });
+}
 
 function getSortOrder(detail, fallbackIndex = 0) {
   return typeof detail.sortOrder === "number" ? detail.sortOrder : fallbackIndex;
@@ -60,7 +65,77 @@ export async function getScheduleDetails(scheduleDayId) {
   }
 }
 
+export async function getScheduleDetailsForEvent(eventId, scheduleDayIds = []) {
+  const dayIds = [...new Set(scheduleDayIds.filter(Boolean))];
+  if (dayIds.length === 0) return {};
+  if (isBrowserOffline()) {
+    return Object.fromEntries(
+      dayIds.map((scheduleDayId) => [scheduleDayId, getCachedScheduleDetails(scheduleDayId)])
+    );
+  }
+
+  try {
+    const eventScopedQuery = query(scheduleDetailsRef, where("eventId", "==", eventId));
+    const eventScopedSnapshot = await getDocs(eventScopedQuery);
+    const eventScopedDetails = eventScopedSnapshot.docs.map((detailDoc) => ({
+      id: detailDoc.id,
+      ...detailDoc.data(),
+    }));
+    const eventScopedDayIds = new Set(eventScopedDetails.map((detail) => detail.scheduleDayId));
+
+    if (eventScopedDetails.length > 0 && dayIds.every((dayId) => eventScopedDayIds.has(dayId))) {
+      const groupedDetails = groupDetailsByDay(dayIds, eventScopedDetails);
+      cacheDetailsByDay(groupedDetails);
+      return groupedDetails;
+    }
+
+    const legacyDetails = [];
+    for (let index = 0; index < dayIds.length; index += FIRESTORE_IN_QUERY_LIMIT) {
+      const dayIdChunk = dayIds.slice(index, index + FIRESTORE_IN_QUERY_LIMIT);
+      const detailsQuery = query(
+        scheduleDetailsRef,
+        where("scheduleDayId", "in", dayIdChunk)
+      );
+      const snapshot = await getDocs(detailsQuery);
+      legacyDetails.push(
+        ...snapshot.docs.map((detailDoc) => ({
+          id: detailDoc.id,
+          ...detailDoc.data(),
+        }))
+      );
+    }
+
+    const groupedDetails = groupDetailsByDay(dayIds, legacyDetails);
+    cacheDetailsByDay(groupedDetails);
+    return groupedDetails;
+  } catch (error) {
+    const cachedDetailsByDayId = Object.fromEntries(
+      dayIds.map((scheduleDayId) => [scheduleDayId, getCachedScheduleDetails(scheduleDayId)])
+    );
+    if (Object.values(cachedDetailsByDayId).some((details) => details.length > 0)) {
+      return cachedDetailsByDayId;
+    }
+    throw error;
+  }
+}
+
+function groupDetailsByDay(scheduleDayIds, details) {
+  return Object.fromEntries(
+    scheduleDayIds.map((scheduleDayId) => [
+      scheduleDayId,
+      sortScheduleDetails(details.filter((detail) => detail.scheduleDayId === scheduleDayId)),
+    ])
+  );
+}
+
+function cacheDetailsByDay(detailsByDayId) {
+  Object.entries(detailsByDayId).forEach(([scheduleDayId, details]) => {
+    cacheScheduleDetails(scheduleDayId, details);
+  });
+}
+
 export async function createScheduleDetail({
+  eventId,
   scheduleDayId,
   time,
   description,
@@ -79,20 +154,28 @@ export async function createScheduleDetail({
           -1
         ) + 1;
 
-  return addDoc(scheduleDetailsRef, {
-    scheduleDayId,
-    time,
-    description,
-    sortOrder: nextSortOrder,
-    colour: colour || "",
-    tagId: tagId || "",
-    createdAt: serverTimestamp(),
-  });
+  try {
+    return await addDoc(scheduleDetailsRef, {
+      eventId: eventId || "",
+      scheduleDayId,
+      time,
+      description,
+      sortOrder: nextSortOrder,
+      colour: colour || "",
+      tagId: tagId || "",
+      createdAt: serverTimestamp(),
+    });
+  } catch (error) {
+    logWriteError("create schedule detail", error, { eventId, scheduleDayId });
+    throw error;
+  } finally {
+    // Saving state is owned by the calling component.
+  }
 }
 
 export async function updateScheduleDetail(
   detailId,
-  { time, description, sortOrder, scheduleDayId, colour, tagId }
+  { eventId, time, description, sortOrder, scheduleDayId, colour, tagId }
 ) {
   assertOnline();
   const updates = {
@@ -109,6 +192,10 @@ export async function updateScheduleDetail(
     updates.scheduleDayId = scheduleDayId;
   }
 
+  if (eventId) {
+    updates.eventId = eventId;
+  }
+
   if (typeof colour === "string") {
     updates.colour = colour;
   }
@@ -117,12 +204,26 @@ export async function updateScheduleDetail(
     updates.tagId = tagId;
   }
 
-  return updateDoc(doc(db, "scheduleDetails", detailId), updates);
+  try {
+    return await updateDoc(doc(db, "scheduleDetails", detailId), updates);
+  } catch (error) {
+    logWriteError("update schedule detail", error, { detailId, eventId, scheduleDayId });
+    throw error;
+  } finally {
+    // Saving state is owned by the calling component.
+  }
 }
 
 export async function deleteScheduleDetail(detailId) {
   assertOnline();
-  return deleteDoc(doc(db, "scheduleDetails", detailId));
+  try {
+    return await deleteDoc(doc(db, "scheduleDetails", detailId));
+  } catch (error) {
+    logWriteError("delete schedule detail", error, { detailId });
+    throw error;
+  } finally {
+    // Saving state is owned by the calling component.
+  }
 }
 
 export async function updateScheduleDetailOrder(details) {
@@ -136,5 +237,14 @@ export async function updateScheduleDetailOrder(details) {
     });
   });
 
-  return batch.commit();
+  try {
+    return await batch.commit();
+  } catch (error) {
+    logWriteError("update schedule detail order", error, {
+      detailIds: details.map((detail) => detail.id),
+    });
+    throw error;
+  } finally {
+    // Saving state is owned by the calling component.
+  }
 }

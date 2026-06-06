@@ -19,6 +19,10 @@ import {
 const scheduleDaysRef = collection(db, "scheduleDays");
 const scheduleDetailsRef = collection(db, "scheduleDetails");
 
+function logWriteError(action, error, context = {}) {
+  console.error(`Firestore write failed: ${action}`, { ...context, error });
+}
+
 export async function getScheduleDays(eventId) {
   if (isBrowserOffline()) return getCachedScheduleDays(eventId);
 
@@ -54,17 +58,31 @@ export async function createScheduleDay({ eventId, date }) {
     endOfDayTarget: "",
     createdAt: serverTimestamp(),
   });
-  await batch.commit();
-  return dayRef;
+  try {
+    await batch.commit();
+    return dayRef;
+  } catch (error) {
+    logWriteError("create schedule day", error, { eventId, date });
+    throw error;
+  } finally {
+    // Saving state is owned by the calling component.
+  }
 }
 
 export async function updateScheduleDay(dayId, { summary, endOfDayTarget }) {
   assertOnline();
-  return updateDoc(doc(db, "scheduleDays", dayId), {
-    summary,
-    endOfDayTarget,
-    updatedAt: serverTimestamp(),
-  });
+  try {
+    return await updateDoc(doc(db, "scheduleDays", dayId), {
+      summary,
+      endOfDayTarget,
+      updatedAt: serverTimestamp(),
+    });
+  } catch (error) {
+    logWriteError("update schedule day", error, { dayId });
+    throw error;
+  } finally {
+    // Saving state is owned by the calling component.
+  }
 }
 
 function getDateRange(startDate, endDate) {
@@ -127,7 +145,14 @@ export async function syncScheduleDaysToRange(eventId, startDate, endDate) {
   }
 
   if (hasWrites) {
-    await batch.commit();
+    try {
+      await batch.commit();
+    } catch (error) {
+      logWriteError("sync schedule days to range", error, { eventId, startDate, endDate });
+      throw error;
+    } finally {
+      // Saving state is owned by the calling component.
+    }
   }
 
   return getScheduleDays(eventId);
