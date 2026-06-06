@@ -209,21 +209,58 @@ export default function EventEditPage() {
         setScheduleDays(days);
         setLoading(false);
 
-        setDetailsLoading(true);
-        setTagsLoading(true);
-        setLocationsLoading(true);
-        setSuppliersLoading(true);
-        const [detailsByDay, eventTags, eventLocations, clientSuppliers] = await Promise.all([
-          getScheduleDetailsForEvent(eventId, days.map((day) => day.id)),
-          getTags(eventId),
-          getLocations(eventId),
-          getSuppliers(loadedEventForm.clientId),
+        const loadOptionalEditorData = async ({
+          label,
+          setLoadingState,
+          loadData,
+          applyData,
+          errorMessage,
+        }) => {
+          setLoadingState(true);
+          try {
+            const data = await loadData();
+            if (cancelled) return;
+            applyData(data);
+          } catch (optionalLoadError) {
+            console.error(`Could not load ${label}.`, optionalLoadError);
+            if (!cancelled) {
+              setError((currentError) => currentError || errorMessage);
+            }
+          } finally {
+            if (!cancelled) setLoadingState(false);
+          }
+        };
+
+        await Promise.all([
+          loadOptionalEditorData({
+            label: "schedule details",
+            setLoadingState: setDetailsLoading,
+            loadData: () => getScheduleDetailsForEvent(eventId, days.map((day) => day.id)),
+            applyData: setDetailsState,
+            errorMessage: "Could not load schedule details. Event settings are still available.",
+          }),
+          loadOptionalEditorData({
+            label: "tags",
+            setLoadingState: setTagsLoading,
+            loadData: () => getTags(eventId),
+            applyData: setTags,
+            errorMessage: "Could not load tags. Other event data is still available.",
+          }),
+          loadOptionalEditorData({
+            label: "locations",
+            setLoadingState: setLocationsLoading,
+            loadData: () => getLocations(eventId),
+            applyData: setLocations,
+            errorMessage: "Could not load locations. Other event data is still available.",
+          }),
+          loadOptionalEditorData({
+            label: "suppliers",
+            setLoadingState: setSuppliersLoading,
+            loadData: () => getSuppliers(loadedEventForm.clientId),
+            applyData: setSuppliers,
+            errorMessage: "Could not load suppliers. Other event data is still available.",
+          }),
         ]);
-        if (cancelled) return;
-        setTags(eventTags);
-        setLocations(eventLocations);
-        setSuppliers(clientSuppliers);
-        setDetailsState(detailsByDay);
       } catch (loadError) {
         console.error("Could not load event editor.", loadError);
         if (cancelled) return;
