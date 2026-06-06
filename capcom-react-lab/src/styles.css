@@ -29,36 +29,99 @@ button:disabled {
 }
 
 .app-shell {
+  background: #f4f6f8;
   min-height: 100vh;
 }
 
-.topbar {
-  align-items: center;
+.app-main {
+  min-width: 0;
+  padding-bottom: 72px;
+}
+
+.desktop-sidebar {
+  display: none;
+}
+
+.mobile-bottom-nav {
   background: #ffffff;
-  border-bottom: 1px solid #d9e0e7;
-  display: flex;
-  gap: 16px;
-  justify-content: space-between;
-  padding: 14px 24px;
+  border-top: 1px solid #d9e0e7;
+  bottom: 0;
+  box-shadow: 0 -8px 24px rgba(23, 32, 42, 0.08);
+  display: block;
+  inset-inline: 0;
+  padding: 6px max(8px, env(safe-area-inset-right)) max(6px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
+  position: fixed;
+  z-index: 30;
 }
 
 .brand {
+  align-items: center;
+  color: #17202a;
+  display: inline-flex;
   font-size: 18px;
   font-weight: 700;
+  min-height: 44px;
+  text-decoration: none;
 }
 
-.user-bar {
+.app-nav {
+  display: grid;
+  gap: 6px;
+}
+
+.app-nav-mobile {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.nav-item {
   align-items: center;
+  border-radius: 8px;
+  color: #526477;
   display: flex;
-  gap: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  gap: 10px;
+  min-height: 44px;
+  padding: 10px 12px;
+  text-decoration: none;
+}
+
+.nav-item:hover,
+.nav-item:focus-visible {
+  background: #f4f6f8;
+  color: #17202a;
+  outline: none;
+}
+
+.nav-item.active {
+  background: #eef4ff;
+  color: #1f4fbf;
+}
+
+.app-nav-mobile .nav-item {
+  flex-direction: column;
+  font-size: 12px;
+  gap: 3px;
+  justify-content: center;
+  min-height: 56px;
+  padding: 6px;
+}
+
+.sidebar-footer {
+  border-top: 1px solid #e6ebf0;
+  margin-top: auto;
+  padding-top: 16px;
 }
 
 .connection-pill {
+  align-items: center;
   border: 1px solid #c9d3dc;
   border-radius: 999px;
+  display: inline-flex;
   font-size: 12px;
   font-weight: 700;
-  padding: 3px 8px;
+  min-height: 26px;
+  padding: 4px 9px;
 }
 
 .connection-pill.online {
@@ -75,8 +138,8 @@ button:disabled {
 
 .page {
   margin: 0 auto;
-  max-width: 960px;
-  padding: 28px 20px;
+  max-width: 1120px;
+  padding: 20px 14px;
 }
 
 .page-header {
@@ -821,6 +884,79 @@ textarea {
   color: #c0392b;
 }
 
+.placeholder-panel {
+  align-items: flex-start;
+  display: flex;
+  gap: 14px;
+}
+
+.placeholder-panel h2,
+.profile-summary h2 {
+  font-size: 20px;
+  line-height: 1.25;
+  margin: 0;
+}
+
+.profile-panel {
+  display: grid;
+  gap: 18px;
+}
+
+.profile-summary {
+  align-items: center;
+  display: flex;
+  gap: 14px;
+}
+
+.profile-avatar {
+  align-items: center;
+  background: #eef4ff;
+  border: 1px solid #cfe0ff;
+  border-radius: 999px;
+  color: #1f4fbf;
+  display: inline-flex;
+  flex: 0 0 auto;
+  height: 52px;
+  justify-content: center;
+  width: 52px;
+}
+
+.profile-details {
+  display: grid;
+  gap: 0;
+  margin: 0;
+}
+
+.profile-details div {
+  border-top: 1px solid #e6ebf0;
+  display: grid;
+  gap: 4px;
+  padding: 14px 0;
+}
+
+.profile-details dt {
+  color: #5d6d7e;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.profile-details dd {
+  margin: 0;
+}
+
+.profile-actions {
+  border-top: 1px solid #e6ebf0;
+  margin-top: 0;
+  padding-top: 16px;
+}
+
+.icon-text-button {
+  align-items: center;
+  display: inline-flex;
+  gap: 8px;
+  justify-content: center;
+}
+
 .login-page {
   align-items: center;
   display: flex;
@@ -838,6 +974,37 @@ textarea {
   width: 100%;
 }
 
+@media (min-width: 768px) {
+  .app-shell {
+    display: grid;
+    grid-template-columns: 240px minmax(0, 1fr);
+  }
+
+  .app-main {
+    padding-bottom: 0;
+  }
+
+  .desktop-sidebar {
+    background: #ffffff;
+    border-right: 1px solid #d9e0e7;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    height: 100vh;
+    padding: 20px 16px;
+    position: sticky;
+    top: 0;
+  }
+
+  .mobile-bottom-nav {
+    display: none;
+  }
+
+  .page {
+    padding: 28px 32px;
+  }
+}
+
 @media (max-width: 900px) {
   .page {
     max-width: 100%;
@@ -849,19 +1016,6 @@ textarea {
 }
 
 @media (max-width: 700px) {
-  .topbar {
-    align-items: flex-start;
-    flex-direction: column;
-    padding: 14px 16px;
-  }
-
-  .user-bar {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 8px;
-    width: 100%;
-  }
-
   .page {
     padding: 20px 12px;
   }

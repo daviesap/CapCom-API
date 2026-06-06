@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import Loading from "../components/Loading.jsx";
 import ScheduleCacheStatus from "../components/ScheduleCacheStatus.jsx";
 import useOnlineStatus from "../hooks/useOnlineStatus.js";
@@ -926,11 +926,6 @@ export default function EventEditPage() {
         <div>
           <h1 className="page-title">{form.name || eventId}</h1>
           <ScheduleCacheStatus eventId={eventId} />
-        </div>
-        <div className="actions inline-actions">
-          <Link className="button secondary" to="/events">
-            Back
-          </Link>
         </div>
       </div>
 

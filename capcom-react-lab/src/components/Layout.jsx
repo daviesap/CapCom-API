@@ -1,28 +1,27 @@
 import { Link, Outlet } from "react-router-dom";
-import { useAuth } from "../auth/AuthProvider.jsx";
-import useOnlineStatus from "../hooks/useOnlineStatus.js";
+import AppNav from "./AppNav.jsx";
+import ConnectionStatus from "./ConnectionStatus.jsx";
 
 export default function Layout() {
-  const { user, logout } = useAuth();
-  const isOnline = useOnlineStatus();
-
   return (
     <div className="app-shell">
-      <header className="topbar">
+      <aside className="desktop-sidebar" aria-label="Primary navigation">
         <Link className="brand" to="/events">
           CapCom v2
         </Link>
-        <div className="user-bar">
-          <span className={isOnline ? "connection-pill online" : "connection-pill offline"}>
-            {isOnline ? "Online" : "Offline"}
-          </span>
-          <span>{user?.email}</span>
-          <button className="button secondary" type="button" onClick={logout}>
-            Sign Out
-          </button>
+        <AppNav variant="desktop" />
+        <div className="sidebar-footer">
+          <ConnectionStatus />
         </div>
-      </header>
-      <Outlet />
+      </aside>
+
+      <main className="app-main">
+        <Outlet />
+      </main>
+
+      <nav className="mobile-bottom-nav" aria-label="Primary navigation">
+        <AppNav variant="mobile" />
+      </nav>
     </div>
   );
 }
