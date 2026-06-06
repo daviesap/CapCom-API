@@ -107,6 +107,10 @@ service cloud.firestore {
         && canManageEventData(eventData(eventId));
     }
 
+    function canEditEventContent(eventId) {
+      return canReadEvent(eventId);
+    }
+
     function scheduleDayPath(scheduleDayId) {
       return /databases/$(database)/documents/scheduleDays/$(scheduleDayId);
     }
@@ -125,6 +129,11 @@ service cloud.firestore {
         && canManageEvent(scheduleDay.eventId);
     }
 
+    function canEditScheduleDayData(scheduleDay) {
+      return scheduleDay.eventId is string
+        && canEditEventContent(scheduleDay.eventId);
+    }
+
     function canReadScheduleDetailData(scheduleDetail) {
       return (scheduleDetail.eventId is string && canReadEvent(scheduleDetail.eventId))
         || (
@@ -134,12 +143,12 @@ service cloud.firestore {
         );
     }
 
-    function canManageScheduleDetailData(scheduleDetail) {
-      return (scheduleDetail.eventId is string && canManageEvent(scheduleDetail.eventId))
+    function canEditScheduleDetailData(scheduleDetail) {
+      return (scheduleDetail.eventId is string && canEditEventContent(scheduleDetail.eventId))
         || (
           scheduleDetail.scheduleDayId is string
           && exists(scheduleDayPath(scheduleDetail.scheduleDayId))
-          && canManageScheduleDayData(scheduleDayData(scheduleDetail.scheduleDayId))
+          && canEditScheduleDayData(scheduleDayData(scheduleDetail.scheduleDayId))
         );
     }
 
@@ -228,10 +237,10 @@ service cloud.firestore {
 
     match /scheduleDetails/{scheduleDetailId} {
       allow get, list: if canReadScheduleDetailData(resource.data);
-      allow create: if canManageScheduleDetailData(request.resource.data);
-      allow update: if canManageScheduleDetailData(resource.data)
-        && canManageScheduleDetailData(request.resource.data);
-      allow delete: if canManageScheduleDetailData(resource.data);
+      allow create: if canEditScheduleDetailData(request.resource.data);
+      allow update: if canEditScheduleDetailData(resource.data)
+        && canEditScheduleDetailData(request.resource.data);
+      allow delete: if canEditScheduleDetailData(resource.data);
     }
 
     match /tag/{tagId} {
