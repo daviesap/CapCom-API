@@ -15,7 +15,10 @@ export default function AppNav({ variant }) {
   const visibleNavItems = navItems.filter((item) => !item.requiresAdmin || canAccessAdmin);
 
   return (
-    <div className={`app-nav app-nav-${variant}`}>
+    <div
+      className={`app-nav app-nav-${variant}`}
+      style={{ "--nav-item-count": visibleNavItems.length }}
+    >
       {visibleNavItems.map((item) => (
         <NavLink
           className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}
