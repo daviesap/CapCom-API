@@ -115,6 +115,7 @@ export async function createEvent(eventData, userProfile) {
       endDate: eventData.endDate,
       scheduleStartDate: eventData.scheduleStartDate,
       scheduleEndDate: eventData.scheduleEndDate,
+      imageUrl: eventData.imageUrl || "",
       createdAt: serverTimestamp(),
     });
   } catch (error) {
@@ -145,6 +146,7 @@ export async function updateEvent(eventId, eventData, userProfile) {
       endDate: eventData.endDate,
       scheduleStartDate: eventData.scheduleStartDate,
       scheduleEndDate: eventData.scheduleEndDate,
+      imageUrl: eventData.imageUrl || "",
       updatedAt: serverTimestamp(),
     });
   } catch (error) {

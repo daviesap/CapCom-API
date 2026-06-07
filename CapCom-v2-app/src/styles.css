@@ -210,28 +210,48 @@ button:disabled {
 
 .tabs {
   align-items: center;
-  background: #e9eef3;
-  border: 1px solid #d3dce6;
-  border-radius: 999px;
   display: inline-flex;
   gap: 4px;
   margin-bottom: 16px;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
   padding: 4px;
+  scrollbar-width: thin;
 }
 
 .tab {
+  align-items: center;
   background: transparent;
   border: 0;
   border-radius: 999px;
   color: #526477;
-  font-weight: 700;
+  display: inline-flex;
+  gap: 6px;
+  flex: 0 0 auto;
+  font-weight: 600;
+  justify-content: center;
   padding: 8px 14px;
+  position: relative;
+  white-space: nowrap;
+}
+
+.tab svg {
+  flex: 0 0 auto;
 }
 
 .tab.active {
-  background: #ffffff;
-  box-shadow: 0 1px 4px rgba(23, 32, 42, 0.12);
   color: #17202a;
+}
+
+.tab.active::after {
+  background: #17202a;
+  bottom: 3px;
+  content: "";
+  height: 2px;
+  left: 14px;
+  position: absolute;
+  right: 14px;
 }
 
 .tab:hover {
@@ -251,6 +271,23 @@ button:disabled {
   display: flex;
   gap: 16px;
   justify-content: space-between;
+}
+
+.event-edit-header-main {
+  align-items: flex-start;
+  display: flex;
+  gap: 14px;
+  min-width: 0;
+}
+
+.event-header-image {
+  aspect-ratio: 1;
+  border: 1px solid #d9e0e7;
+  border-radius: 8px;
+  flex: 0 0 auto;
+  height: 72px;
+  object-fit: cover;
+  width: 72px;
 }
 
 .event-edit-title {
@@ -335,6 +372,22 @@ button:disabled {
 
 .form-row.full {
   grid-column: 1 / -1;
+}
+
+.event-image-upload-preview {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.event-image-upload-preview img {
+  aspect-ratio: 1;
+  border: 1px solid #d9e0e7;
+  border-radius: 6px;
+  height: 56px;
+  object-fit: cover;
+  width: 56px;
 }
 
 .readonly-value {
@@ -1617,6 +1670,15 @@ textarea {
     display: grid;
   }
 
+  .event-edit-header-main {
+    align-items: center;
+  }
+
+  .event-header-image {
+    height: 56px;
+    width: 56px;
+  }
+
   .event-edit-title {
     font-size: 26px;
   }
@@ -1653,14 +1715,12 @@ textarea {
   }
 
   .tabs {
-    border-radius: 10px;
-    display: grid;
-    grid-template-columns: 1fr;
+    display: flex;
     width: 100%;
   }
 
   .tab {
-    width: 100%;
+    width: auto;
   }
 
   .overlay-backdrop {

@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { useAuth } from "../auth/AuthProvider.jsx";
 import Loading from "../components/Loading.jsx";
 import ScheduleCacheStatus from "../components/ScheduleCacheStatus.jsx";
+import { CapcomIcon } from "../icons/capcomIcons.jsx";
 import useOnlineStatus from "../hooks/useOnlineStatus.js";
 import { getClients } from "../services/clientService.js";
 import {
@@ -10,6 +11,10 @@ import {
   updateEvent,
   updateEventContactCompanyOrder,
 } from "../services/eventService.js";
+import {
+  uploadEventImage,
+  validateEventImageFile,
+} from "../services/eventImageService.js";
 import {
   getScheduleDays,
   syncScheduleDaysToRange,
@@ -64,8 +69,17 @@ const emptyEventForm = {
   endDate: "",
   scheduleStartDate: "",
   scheduleEndDate: "",
+  imageUrl: "",
   contactCompanyOrder: [],
 };
+
+const eventEditTabs = [
+  { id: "info", label: "Info", icon: "info" },
+  { id: "summary", label: "Summary", icon: "summary" },
+  { id: "detail", label: "Detail", icon: "detail" },
+  { id: "trucks", label: "Trucking", icon: "trucking" },
+  { id: "settings", label: "Settings", icon: "settings" },
+];
 
 const emptyTagForm = {
   name: "",
@@ -198,6 +212,8 @@ export default function EventEditPage() {
   const [form, setForm] = useState(emptyEventForm);
   const [savedEventForm, setSavedEventForm] = useState(emptyEventForm);
   const [isEditingEventDetails, setIsEditingEventDetails] = useState(false);
+  const [eventImageFile, setEventImageFile] = useState(null);
+  const [eventImagePreviewUrl, setEventImagePreviewUrl] = useState("");
   const [clients, setClients] = useState([]);
   const [scheduleDays, setScheduleDays] = useState([]);
   const [editingDayId, setEditingDayId] = useState("");
@@ -220,6 +236,7 @@ export default function EventEditPage() {
   const [locationForm, setLocationForm] = useState(emptyLocationForm);
   const [truckSizeForm, setTruckSizeForm] = useState(emptyTruckSizeForm);
   const [truckForm, setTruckForm] = useState(emptyTruckForm);
+  const [truckFormMode, setTruckFormMode] = useState("");
   const [companyContactForm, setCompanyContactForm] = useState(emptyCompanyContactForm);
   const [editingTagId, setEditingTagId] = useState("");
   const [editingTruckSizeId, setEditingTruckSizeId] = useState("");
@@ -317,6 +334,7 @@ export default function EventEditPage() {
           endDate: event.endDate || "",
           scheduleStartDate: event.scheduleStartDate || event.startDate || "",
           scheduleEndDate: event.scheduleEndDate || event.endDate || "",
+          imageUrl: event.imageUrl || "",
           contactCompanyOrder: Array.isArray(event.contactCompanyOrder)
             ? event.contactCompanyOrder
             : [],
@@ -448,6 +466,17 @@ export default function EventEditPage() {
       detailCellInputRef.current?.select?.();
     });
   }, [editingDetailCell]);
+
+  useEffect(() => {
+    if (!eventImageFile) {
+      setEventImagePreviewUrl("");
+      return undefined;
+    }
+
+    const nextPreviewUrl = URL.createObjectURL(eventImageFile);
+    setEventImagePreviewUrl(nextPreviewUrl);
+    return () => URL.revokeObjectURL(nextPreviewUrl);
+  }, [eventImageFile]);
 
   const scheduleDetails = useMemo(() => {
     return Object.values(detailsByDayId).flat();
@@ -709,8 +738,33 @@ export default function EventEditPage() {
     }));
   };
 
+  const handleEventImageChange = (event) => {
+    const file = event.target.files?.[0] || null;
+    if (!file) {
+      setEventImageFile(null);
+      return;
+    }
+
+    const validationMessage = validateEventImageFile(file);
+    if (validationMessage) {
+      setError(validationMessage);
+      event.target.value = "";
+      setEventImageFile(null);
+      return;
+    }
+
+    setError("");
+    setEventImageFile(file);
+  };
+
+  const removeEventImage = () => {
+    setEventImageFile(null);
+    updateField("imageUrl", "");
+  };
+
   const cancelEditingEventDetails = () => {
     setForm(savedEventForm);
+    setEventImageFile(null);
     setIsEditingEventDetails(false);
     setError("");
   };
@@ -1499,10 +1553,20 @@ export default function EventEditPage() {
   const resetTruckForm = () => {
     setEditingTruckId("");
     setTruckForm(emptyTruckForm);
+    setTruckFormMode("");
+  };
+
+  const startAddingTruck = () => {
+    setEditingTruckId("");
+    setTruckForm(emptyTruckForm);
+    setTruckFormMode("create");
+    setError("");
+    setMessage("");
   };
 
   const startEditingTruck = (truck) => {
     setEditingTruckId(truck.id);
+    setTruckFormMode("edit");
     setTruckForm({
       truckSizeId: truck.truckSizeId || "",
       companyId: truck.companyId || "",
@@ -2523,9 +2587,13 @@ export default function EventEditPage() {
       }
 
       const selectedClient = clients.find((client) => client.id === form.clientId);
+      const imageUrl = eventImageFile
+        ? await uploadEventImage(eventId, eventImageFile)
+        : form.imageUrl;
       const nextEventForm = {
         ...form,
         clientName: selectedClient?.clientName || form.clientName,
+        imageUrl,
       };
       await updateEvent(
         eventId,
@@ -2539,6 +2607,7 @@ export default function EventEditPage() {
       );
       setForm(nextEventForm);
       setSavedEventForm(nextEventForm);
+      setEventImageFile(null);
       setIsEditingEventDetails(false);
       applyScheduleDays(days);
       await loadCompanies(nextEventForm.clientId);
@@ -2650,16 +2719,27 @@ export default function EventEditPage() {
 
   if (loading) return <Loading label="Loading event editor..." />;
 
+  const eventHeaderImageUrl = eventImagePreviewUrl || form.imageUrl;
+
   return (
     <main className="page">
       <section className="event-edit-header">
         <div className="event-edit-header-summary">
-          <div>
-            <h1 className="event-edit-title">{form.name || eventId}</h1>
-            <p className="event-edit-date-range">
-              {formatEventDateRange(form.startDate, form.endDate) || "No event dates"}
-            </p>
-            <ScheduleCacheStatus eventId={eventId} />
+          <div className="event-edit-header-main">
+            {eventHeaderImageUrl ? (
+              <img
+                className="event-header-image"
+                src={eventHeaderImageUrl}
+                alt=""
+              />
+            ) : null}
+            <div>
+              <h1 className="event-edit-title">{form.name || eventId}</h1>
+              <p className="event-edit-date-range">
+                {formatEventDateRange(form.startDate, form.endDate) || "No event dates"}
+              </p>
+              <ScheduleCacheStatus eventId={eventId} />
+            </div>
           </div>
           {!isEditingEventDetails ? (
             <button
@@ -2760,6 +2840,31 @@ export default function EventEditPage() {
                   required
                 />
               </div>
+              <div className="form-row full">
+                <label htmlFor="editEventImage">Event image</label>
+                <input
+                  id="editEventImage"
+                  type="file"
+                  accept="image/*"
+                  disabled={savingEvent || isOffline}
+                  onChange={handleEventImageChange}
+                />
+                {eventHeaderImageUrl ? (
+                  <div className="event-image-upload-preview">
+                    <img src={eventHeaderImageUrl} alt="" />
+                    <button
+                      className="compact-button"
+                      type="button"
+                      disabled={savingEvent || isOffline}
+                      onClick={removeEventImage}
+                    >
+                      Remove image
+                    </button>
+                  </div>
+                ) : (
+                  <p className="item-meta">Upload a small image, up to 2 MB.</p>
+                )}
+              </div>
             </div>
             <div className="actions">
               <button className="button" type="submit" disabled={savingEvent || isOffline}>
@@ -2805,60 +2910,37 @@ export default function EventEditPage() {
       ) : null}
 
       <nav className="tabs" aria-label="Event edit sections">
-        <button
-          className={activeTab === "info" ? "tab active" : "tab"}
-          type="button"
-          onClick={() => setActiveTab("info")}
-        >
-          Info
-        </button>
-        <button
-          className={activeTab === "summary" ? "tab active" : "tab"}
-          type="button"
-          onClick={() => setActiveTab("summary")}
-        >
-          Summary Schedule
-        </button>
-        <button
-          className={activeTab === "detail" ? "tab active" : "tab"}
-          type="button"
-          onClick={() => setActiveTab("detail")}
-        >
-          Detail
-        </button>
-        <button
-          className={activeTab === "trucks" ? "tab active" : "tab"}
-          type="button"
-          onClick={() => setActiveTab("trucks")}
-        >
-          Trucking
-        </button>
-        <button
-          className={activeTab === "settings" ? "tab active" : "tab"}
-          type="button"
-          onClick={() => setActiveTab("settings")}
-        >
-          Settings
-        </button>
+        {eventEditTabs.map((tab) => (
+          <button
+            className={activeTab === tab.id ? "tab active" : "tab"}
+            type="button"
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+          >
+            <CapcomIcon name={tab.icon} size={18} weight="duotone" />
+            <span>{tab.label}</span>
+          </button>
+        ))}
       </nav>
 
       {activeTab === "info" ? (
       <section className="panel">
-        <h2>Info</h2>
         <nav className="tabs nested-tabs" aria-label="Info sections">
           <button
             className={activeInfoTab === "contacts" ? "tab active" : "tab"}
             type="button"
             onClick={() => setActiveInfoTab("contacts")}
           >
-            Contacts
+            <CapcomIcon name="contacts" size={18} weight="duotone" />
+            <span>Contacts</span>
           </button>
           <button
             className={activeInfoTab === "keyInfo" ? "tab active" : "tab"}
             type="button"
             onClick={() => setActiveInfoTab("keyInfo")}
           >
-            Key Info
+            <CapcomIcon name="keyInfo" size={18} weight="duotone" />
+            <span>Key Info</span>
           </button>
         </nav>
 
@@ -3175,9 +3257,8 @@ export default function EventEditPage() {
 
       {activeTab === "summary" ? (
       <section className="panel">
-        <h2>Summary Schedule</h2>
         {scheduleDays.length === 0 ? (
-          <p className="item-meta">No days added to the Summary Schedule yet.</p>
+          <p className="item-meta">No days added to the Summary yet.</p>
         ) : (
           <div className="table-wrap">
             <table className="schedule-days-table">
@@ -3930,98 +4011,111 @@ export default function EventEditPage() {
 
       {activeTab === "trucks" ? (
       <section className="panel">
-        <h2>Trucks</h2>
         <div className="settings-section">
-          <form className="truck-form" onSubmit={saveTruck}>
-            <div className="form-grid">
-              <div className="form-row">
-                <label htmlFor="truckSizeId">Size</label>
-                <select
-                  id="truckSizeId"
-                  value={truckForm.truckSizeId}
-                  disabled={isOffline || truckSizes.length === 0}
-                  onChange={(event) => updateTruckFormField("truckSizeId", event.target.value)}
-                  required
-                >
-                  <option value="">Choose a size</option>
-                  {truckSizes.map((truckSize) => (
-                    <option key={truckSize.id} value={truckSize.id}>
-                      {truckSize.size}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="form-row">
-                <label htmlFor="truckNumber">Truck number</label>
-                <input
-                  id="truckNumber"
-                  value={truckForm.truckNumber}
-                  disabled={isOffline}
-                  onChange={(event) => updateTruckFormField("truckNumber", event.target.value)}
-                  required
-                />
-              </div>
-              <div className="form-row">
-                <label htmlFor="truckCompanyId">Company</label>
-                <select
-                  id="truckCompanyId"
-                  value={truckForm.companyId}
-                  disabled={isOffline || companies.length === 0}
-                  onChange={(event) => updateTruckFormField("companyId", event.target.value)}
-                  required
-                >
-                  <option value="">Choose a company</option>
-                  {companies.map((company) => (
-                    <option key={company.id} value={company.id}>
-                      {company.companyName}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="form-row">
-                <label htmlFor="driverName">Driver name</label>
-                <input
-                  id="driverName"
-                  value={truckForm.driverName}
-                  disabled={isOffline}
-                  onChange={(event) => updateTruckFormField("driverName", event.target.value)}
-                />
-              </div>
-              <div className="form-row">
-                <label htmlFor="driverContactNumber">Driver contact number</label>
-                <input
-                  id="driverContactNumber"
-                  value={truckForm.driverContactNumber}
-                  disabled={isOffline}
-                  onChange={(event) => updateTruckFormField("driverContactNumber", event.target.value)}
-                />
-              </div>
-              <div className="form-row full">
-                <label htmlFor="truckContents">Truck contents</label>
-                <textarea
-                  id="truckContents"
-                  value={truckForm.contents}
-                  disabled={isOffline}
-                  onChange={(event) => updateTruckFormField("contents", event.target.value)}
-                  rows={3}
-                />
-              </div>
-            </div>
-            {truckSizes.length === 0 ? (
-              <p className="item-meta">Add truck sizes in Settings before creating trucks.</p>
-            ) : null}
-            {companies.length === 0 ? (
-              <p className="item-meta">Add companies for this client before creating trucks.</p>
-            ) : null}
-            <div className="actions">
+          {!truckFormMode ? (
+            <div className="panel-heading">
+              <div />
               <button
                 className="button"
-                type="submit"
-                disabled={savingTruck || isOffline || truckSizes.length === 0 || companies.length === 0}
+                type="button"
+                disabled={isOffline}
+                onClick={startAddingTruck}
               >
-                {savingTruck ? "Saving..." : editingTruckId ? "Save truck" : "Create truck"}
+                Add truck
               </button>
-              {editingTruckId ? (
+            </div>
+          ) : null}
+
+          {truckFormMode ? (
+            <form className="truck-form" onSubmit={saveTruck}>
+              <div className="form-grid">
+                <div className="form-row">
+                  <label htmlFor="truckSizeId">Size</label>
+                  <select
+                    id="truckSizeId"
+                    value={truckForm.truckSizeId}
+                    disabled={isOffline || truckSizes.length === 0}
+                    onChange={(event) => updateTruckFormField("truckSizeId", event.target.value)}
+                    required
+                  >
+                    <option value="">Choose a size</option>
+                    {truckSizes.map((truckSize) => (
+                      <option key={truckSize.id} value={truckSize.id}>
+                        {truckSize.size}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="form-row">
+                  <label htmlFor="truckNumber">Truck number</label>
+                  <input
+                    id="truckNumber"
+                    value={truckForm.truckNumber}
+                    disabled={isOffline}
+                    onChange={(event) => updateTruckFormField("truckNumber", event.target.value)}
+                    required
+                  />
+                </div>
+                <div className="form-row">
+                  <label htmlFor="truckCompanyId">Company</label>
+                  <select
+                    id="truckCompanyId"
+                    value={truckForm.companyId}
+                    disabled={isOffline || companies.length === 0}
+                    onChange={(event) => updateTruckFormField("companyId", event.target.value)}
+                    required
+                  >
+                    <option value="">Choose a company</option>
+                    {companies.map((company) => (
+                      <option key={company.id} value={company.id}>
+                        {company.companyName}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="form-row">
+                  <label htmlFor="driverName">Driver name</label>
+                  <input
+                    id="driverName"
+                    value={truckForm.driverName}
+                    disabled={isOffline}
+                    onChange={(event) => updateTruckFormField("driverName", event.target.value)}
+                  />
+                </div>
+                <div className="form-row">
+                  <label htmlFor="driverContactNumber">Driver contact number</label>
+                  <input
+                    id="driverContactNumber"
+                    value={truckForm.driverContactNumber}
+                    disabled={isOffline}
+                    onChange={(event) => updateTruckFormField("driverContactNumber", event.target.value)}
+                  />
+                </div>
+                <div className="form-row full">
+                  <label htmlFor="truckContents">Truck contents</label>
+                  <textarea
+                    id="truckContents"
+                    value={truckForm.contents}
+                    disabled={isOffline}
+                    onChange={(event) => updateTruckFormField("contents", event.target.value)}
+                    rows={3}
+                  />
+                </div>
+              </div>
+              {truckSizes.length === 0 ? (
+                <p className="item-meta">Add truck sizes in Settings before creating trucks.</p>
+              ) : null}
+              {companies.length === 0 ? (
+                <p className="item-meta">Add companies for this client before creating trucks.</p>
+              ) : null}
+              <div className="actions">
+                <button
+                  className="button"
+                  type="submit"
+                  disabled={savingTruck || isOffline || truckSizes.length === 0 || companies.length === 0}
+                >
+                  {savingTruck ? "Saving..." : editingTruckId ? "Save truck" : "Create truck"}
+                </button>
                 <button
                   className="button secondary"
                   type="button"
@@ -4030,9 +4124,9 @@ export default function EventEditPage() {
                 >
                   Cancel
                 </button>
-              ) : null}
-            </div>
-          </form>
+              </div>
+            </form>
+          ) : null}
 
           {trucksLoading ? (
             <p className="item-meta">Loading trucks...</p>
@@ -4597,7 +4691,6 @@ export default function EventEditPage() {
 
       {activeTab === "settings" ? (
       <section className="panel">
-        <h2>Settings</h2>
         <nav className="tabs nested-tabs" aria-label="Settings sections">
           <button
             className={activeSettingsTab === "tags" ? "tab active" : "tab"}

@@ -1,34 +1,48 @@
 import {
   AddressBook,
+  AddressBookTabs,
   Buildings,
   Calendar,
+  CalendarBlank,
+  CalendarDots,
   Factory,
+  FileText,
   ForkKnife,
   Gear,
   House,
+  Info,
   ListChecks,
   MapPin,
   ShieldCheck,
   SignOut,
+  Square,
   Truck,
   User,
   Users,
 } from "@phosphor-icons/react";
 
+const tabPlaceholderIcon = Square;
+
 export const capcomIcons = {
   admin: ShieldCheck,
   catering: ForkKnife,
   contact: AddressBook,
+  contacts: AddressBookTabs,
   dashboard: House,
+  detail: CalendarDots,
   event: Calendar,
+  info: Info,
+  keyInfo: FileText,
   location: Buildings,
   mapPin: MapPin,
   profile: User,
   settings: Gear,
   signOut: SignOut,
+  summary: CalendarBlank,
   company: Factory,
   taskList: ListChecks,
   truck: Truck,
+  trucking: Truck,
   users: Users,
 };
 
