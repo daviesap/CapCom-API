@@ -91,3 +91,41 @@ npm run dev
 ```
 
 Then open the local Vite URL.
+
+## NPM Commands
+
+Run these commands from `capcom-react-lab/` unless noted otherwise.
+
+### Development
+
+```sh
+npm run dev
+```
+
+Starts the Vite development server. Service worker app-shell caching is disabled in development, and existing `capcom-v2-app-shell-*` caches are cleared on page load.
+
+```sh
+npm run lint
+```
+
+Runs ESLint against the app.
+
+### Production
+
+```sh
+npm run build
+```
+
+Creates a production build in `dist/`. Production builds register the service worker and enable app-shell caching.
+
+```sh
+npm run preview
+```
+
+Serves the built app locally for a production-style preview.
+
+From the repo root, deploy the CapCom v2 hosting target with:
+
+```sh
+npm run deploy:capcomv2
+```
