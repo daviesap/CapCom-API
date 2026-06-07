@@ -235,6 +235,9 @@ export default function EventEditPage() {
   const [tagForm, setTagForm] = useState(emptyTagForm);
   const [locationForm, setLocationForm] = useState(emptyLocationForm);
   const [truckSizeForm, setTruckSizeForm] = useState(emptyTruckSizeForm);
+  const [tagFormMode, setTagFormMode] = useState("");
+  const [locationFormMode, setLocationFormMode] = useState("");
+  const [truckSizeFormMode, setTruckSizeFormMode] = useState("");
   const [truckForm, setTruckForm] = useState(emptyTruckForm);
   const [truckFormMode, setTruckFormMode] = useState("");
   const [companyContactForm, setCompanyContactForm] = useState(emptyCompanyContactForm);
@@ -592,6 +595,7 @@ export default function EventEditPage() {
   const showTagColumn = tags.length > 0;
   const showLocationColumn = locationOptions.length > 0;
   const showCompanyColumn = companies.length > 0;
+  const showTruckDestinationColumn = showLocationColumn || showCompanyColumn;
   const detailRowGridColumnParts = [
     "76px",
     "minmax(0, 1fr)",
@@ -609,12 +613,9 @@ export default function EventEditPage() {
   });
   const truckDetailRowGridColumnParts = [
     "150px",
-    "92px",
     "76px",
-    "minmax(0, 1fr)",
-    showTagColumn ? "128px" : "",
-    showLocationColumn ? "150px" : "",
-    showCompanyColumn ? "150px" : "",
+    "92px",
+    showTruckDestinationColumn ? "180px" : "",
     "auto",
   ].filter(Boolean);
   const truckDetailRowGridColumns = truckDetailRowGridColumnParts.join(" ");
@@ -1229,6 +1230,17 @@ export default function EventEditPage() {
     if (selectedCompanies.length === 1) return selectedCompanies[0].companyName;
     return `${selectedCompanies.length} companies`;
   };
+  const getTruckDestinationValue = ({ locationId = "", companyIds = [] } = {}) => {
+    if (locationId) return `location:${locationId}`;
+    if (companyIds[0]) return `company:${companyIds[0]}`;
+    return "";
+  };
+  const parseTruckDestinationValue = (value) => {
+    const [type, id] = String(value || "").split(":");
+    if (type === "location" && id) return { locationId: id, companyIds: [] };
+    if (type === "company" && id) return { locationId: "", companyIds: [id] };
+    return { locationId: "", companyIds: [] };
+  };
   const toggleCompanyIds = (companyIds = [], companyId) =>
     companyIds.includes(companyId)
       ? companyIds.filter((currentCompanyId) => currentCompanyId !== companyId)
@@ -1425,11 +1437,21 @@ export default function EventEditPage() {
   };
 
   const resetTagForm = () => {
+    setTagFormMode("");
     setEditingTagId("");
     setTagForm(emptyTagForm);
   };
 
+  const startAddingTag = () => {
+    setTagFormMode("add");
+    setEditingTagId("");
+    setTagForm(emptyTagForm);
+    setError("");
+    setMessage("");
+  };
+
   const startEditingTag = (tag) => {
+    setTagFormMode("edit");
     setEditingTagId(tag.id);
     setTagForm({
       name: tag.name || "",
@@ -1501,11 +1523,21 @@ export default function EventEditPage() {
   };
 
   const resetTruckSizeForm = () => {
+    setTruckSizeFormMode("");
     setEditingTruckSizeId("");
     setTruckSizeForm(emptyTruckSizeForm);
   };
 
+  const startAddingTruckSize = () => {
+    setTruckSizeFormMode("add");
+    setEditingTruckSizeId("");
+    setTruckSizeForm(emptyTruckSizeForm);
+    setError("");
+    setMessage("");
+  };
+
   const startEditingTruckSize = (truckSize) => {
+    setTruckSizeFormMode("edit");
     setEditingTruckSizeId(truckSize.id);
     setTruckSizeForm({
       size: truckSize.size || "",
@@ -1691,11 +1723,21 @@ export default function EventEditPage() {
   };
 
   const resetLocationForm = () => {
+    setLocationFormMode("");
     setEditingLocationId("");
     setLocationForm(emptyLocationForm);
   };
 
+  const startAddingLocation = () => {
+    setLocationFormMode("add");
+    setEditingLocationId("");
+    setLocationForm(emptyLocationForm);
+    setError("");
+    setMessage("");
+  };
+
   const startEditingLocation = (location) => {
+    setLocationFormMode("edit");
     setEditingLocationId(location.id);
     setLocationForm({
       name: location.name || "",
@@ -1707,6 +1749,7 @@ export default function EventEditPage() {
 
   const startAddingSubLocation = (location) => {
     if (isOffline || location.parentLocationId) return;
+    setLocationFormMode("add");
     setEditingLocationId("");
     setLocationForm({
       name: "",
@@ -2430,6 +2473,16 @@ export default function EventEditPage() {
     }));
   };
 
+  const updateDraftTruckDestination = (truckId, draftIndex, value) => {
+    const destination = parseTruckDestinationValue(value);
+    setDraftTruckDetailsByTruckId((current) => ({
+      ...current,
+      [truckId]: (current[truckId] || []).map((draft, index) =>
+        index === draftIndex ? { ...draft, ...destination } : draft
+      ),
+    }));
+  };
+
   const removeDraftTruckDetail = (truckId, draftIndex) => {
     setDraftTruckDetailsByTruckId((current) => ({
       ...current,
@@ -2444,6 +2497,10 @@ export default function EventEditPage() {
     }
     if (!draft.scheduleDayId) {
       setError("Date is required.");
+      return;
+    }
+    if (showTruckDestinationColumn && !getTruckDestinationValue(draft)) {
+      setError("Destination is required.");
       return;
     }
     setSavingDraftDayId(truck.id);
@@ -2585,6 +2642,55 @@ export default function EventEditPage() {
     } catch (actionError) {
       console.error(actionError);
       setError("Could not update truck action.");
+      await loadScheduleDetails(scheduleDays);
+    } finally {
+      setSavingDetailId("");
+    }
+  };
+
+  const assignTruckDetailDestination = async (dayId, detail, value) => {
+    if (isOffline) {
+      setError("Editing is disabled while offline.");
+      return;
+    }
+
+    const destination = parseTruckDestinationValue(value);
+    setSavingDetailId(detail.id);
+    setError("");
+    setDetailsByDayId((current) => ({
+      ...current,
+      [dayId]: (current[dayId] || []).map((nextDetail) =>
+        nextDetail.id === detail.id ? { ...nextDetail, ...destination } : nextDetail
+      ),
+    }));
+
+    try {
+      const truckTag = await ensureTruckTag();
+      await updateScheduleDetail(detail.id, {
+        eventId,
+        scheduleDayId: dayId,
+        truckId: detail.truckId || "",
+        truckNumber: detail.truckNumber || "",
+        action: detail.action || "",
+        time: detail.time || "",
+        description: detail.description || "",
+        sortOrder: detail.sortOrder,
+        colour: normaliseHexColour(detail.colour),
+        tagId: truckTag.id,
+        locationId: destination.locationId,
+        companyIds: destination.companyIds,
+      });
+      setSavedDetailsById((current) => ({
+        ...current,
+        [detail.id]: {
+          ...(current[detail.id] || {}),
+          locationId: destination.locationId,
+          companyIds: destination.companyIds,
+        },
+      }));
+    } catch (destinationError) {
+      console.error(destinationError);
+      setError("Could not update truck destination.");
       await loadScheduleDetails(scheduleDays);
     } finally {
       setSavingDetailId("");
@@ -4346,10 +4452,6 @@ export default function EventEditPage() {
                           {truckDetails.map((detail, detailIndex) => {
                             const dayId = detail.scheduleDayId || "";
                             const isEditingTime = isEditingDetailCell(detail.id, "time");
-                            const isEditingDescription = isEditingDetailCell(
-                              detail.id,
-                              "description"
-                            );
                             const canMoveUp = detailIndex > 0;
                             const canMoveDown = detailIndex < truckDetails.length - 1;
 
@@ -4360,7 +4462,7 @@ export default function EventEditPage() {
                                 style={getTruckDetailRowStyle(
                                   getRowTagStyle(getTagById(detail.tagId))
                                 )}
-                                draggable={!isEditingTime && !isEditingDescription && !isOffline}
+                                draggable={!isEditingTime && !isOffline}
                                 onDragStart={(event) => {
                                   draggedDetailIdRef.current = detail.id;
                                   event.dataTransfer.effectAllowed = "move";
@@ -4397,7 +4499,7 @@ export default function EventEditPage() {
                               >
                                 <div className="location-select-wrap">
                                   <select
-                                    aria-label={`Date for ${detail.description || "truck detail"}`}
+                                    aria-label="Date for truck detail"
                                     value={dayId}
                                     disabled={savingDetailId === detail.id || isOffline}
                                     onChange={(event) =>
@@ -4412,19 +4514,11 @@ export default function EventEditPage() {
                                     ))}
                                   </select>
                                 </div>
-                                <button
-                                  className="detail-cell"
-                                  type="button"
-                                  disabled={savingDetailId === detail.id || isOffline}
-                                  onClick={() => toggleTruckDetailAction(dayId, detail)}
-                                >
-                                  {detail.action || ""}
-                                </button>
                                 {isEditingTime ? (
                                   <input
                                     ref={detailCellInputRef}
                                     className="plain-input detail-time-input"
-                                    aria-label={`Time for ${detail.description || "truck detail"}`}
+                                    aria-label="Time for truck detail"
                                     type="time"
                                     value={detail.time || ""}
                                     disabled={isOffline}
@@ -4456,126 +4550,45 @@ export default function EventEditPage() {
                                     {detail.time || "tbc"}
                                   </button>
                                 )}
-                                {isEditingDescription ? (
-                                  <input
-                                    ref={detailCellInputRef}
-                                    className="plain-input"
-                                    aria-label={`Description for ${detail.time || "tbc"}`}
-                                    value={detail.description || ""}
-                                    disabled={isOffline}
-                                    onBlur={() => {
-                                      if (suppressDetailBlurRef.current) return;
-                                      saveDetailCell(dayId, detail);
-                                    }}
-                                    onChange={(event) =>
-                                      updateDetailField(
-                                        dayId,
-                                        detail.id,
-                                        "description",
-                                        event.target.value
-                                      )
-                                    }
-                                    onKeyDown={(event) =>
-                                      handleDetailCellKeyDown(
-                                        event,
-                                        dayId,
-                                        truckDetails,
-                                        detail,
-                                        detailIndex,
-                                        "description"
-                                      )
-                                    }
-                                  />
-                                ) : (
-                                  <button
-                                    className="detail-cell detail-description-cell"
-                                    type="button"
-                                    data-tooltip={detail.description || ""}
-                                    disabled={isOffline}
-                                    onClick={() =>
-                                      startEditingDetailCell(dayId, detail.id, "description")
-                                    }
-                                  >
-                                    {detail.description || ""}
-                                  </button>
-                                )}
-                                {showTagColumn ? (
-                                  <div
-                                    className="tag-select-wrap"
-                                    style={getTagStyle(getTagById(detail.tagId))}
-                                  >
-                                    <span
-                                      className="tag-dot"
-                                      style={{
-                                        backgroundColor:
-                                          normaliseHexColour(getTagById(detail.tagId)?.colour) ||
-                                          "transparent",
-                                      }}
-                                    />
-                                    <select
-                                      aria-label={`Tag for ${detail.description || "truck detail"}`}
-                                      value={getTagById(detail.tagId) ? detail.tagId : ""}
-                                      disabled={savingDetailId === detail.id || isOffline}
-                                      onChange={(event) =>
-                                        assignDetailTag(dayId, detail, event.target.value)
-                                      }
-                                    >
-                                      <option value="">No tag</option>
-                                      {tags.map((tag) => (
-                                        <option key={tag.id} value={tag.id}>
-                                          {tag.name}
-                                        </option>
-                                      ))}
-                                    </select>
-                                  </div>
-                                ) : null}
-                                {showLocationColumn ? (
+                                <button
+                                  className="detail-cell"
+                                  type="button"
+                                  disabled={savingDetailId === detail.id || isOffline}
+                                  onClick={() => toggleTruckDetailAction(dayId, detail)}
+                                >
+                                  {detail.action || ""}
+                                </button>
+                                {showTruckDestinationColumn ? (
                                   <div className="location-select-wrap">
                                     <select
-                                      aria-label={`Location for ${detail.description || "truck detail"}`}
-                                      value={getLocationById(detail.locationId) ? detail.locationId : ""}
+                                      aria-label="Destination for truck detail"
+                                      value={getTruckDestinationValue(detail)}
                                       disabled={savingDetailId === detail.id || isOffline}
                                       onChange={(event) =>
-                                        assignDetailLocation(dayId, detail, event.target.value)
+                                        assignTruckDetailDestination(dayId, detail, event.target.value)
                                       }
                                     >
-                                      <option value="">No location</option>
-                                      {locationOptions.map((location) => (
-                                        <option key={location.id} value={location.id}>
-                                          {location.displayName}
-                                        </option>
-                                      ))}
+                                      <option value="">No destination</option>
+                                      {companies.length > 0 ? (
+                                        <optgroup label="Companies">
+                                          {companies.map((company) => (
+                                            <option key={company.id} value={`company:${company.id}`}>
+                                              {company.companyName}
+                                            </option>
+                                          ))}
+                                        </optgroup>
+                                      ) : null}
+                                      {locationOptions.length > 0 ? (
+                                        <optgroup label="Locations">
+                                          {locationOptions.map((location) => (
+                                            <option key={location.id} value={`location:${location.id}`}>
+                                              {location.displayName}
+                                            </option>
+                                          ))}
+                                        </optgroup>
+                                      ) : null}
                                     </select>
                                   </div>
-                                ) : null}
-                                {showCompanyColumn ? (
-                                  <details className="company-dropdown">
-                                    <summary
-                                      aria-label={`Company for ${detail.description || "truck detail"}`}
-                                      className="company-dropdown-trigger"
-                                    >
-                                      {getCompanyLabel(detail.companyIds || [])}
-                                    </summary>
-                                    <div className="company-dropdown-menu">
-                                      {companies.map((company) => (
-                                        <label className="company-dropdown-option" key={company.id}>
-                                          <input
-                                            type="checkbox"
-                                            checked={(detail.companyIds || []).includes(company.id)}
-                                            disabled={savingDetailId === detail.id || isOffline}
-                                            onChange={() =>
-                                              assignDetailCompanies(
-                                                dayId,
-                                                detail,
-                                                toggleCompanyIds(detail.companyIds || [], company.id)
-                                              )
-                                            }
-                                          />
-                                          <span>{company.companyName}</span>
-                                        </label>
-                                      ))}
-                                    </div>
-                                  </details>
                                 ) : null}
                                 <div className="detail-row-actions">
                                   <div
@@ -4593,7 +4606,7 @@ export default function EventEditPage() {
                                         detail.notes ? "has-notes" : "",
                                       ].filter(Boolean).join(" ")}
                                       type="button"
-                                      aria-label={`Notes for ${detail.description || "truck detail"}`}
+                                      aria-label="Notes for truck detail"
                                       aria-expanded={openNotesDetailId === detail.id}
                                       disabled={isOffline}
                                       onClick={() => openNotesEditor(detail)}
@@ -4749,6 +4762,15 @@ export default function EventEditPage() {
                                   ))}
                                 </select>
                               </div>
+                              <input
+                                aria-label="New truck detail time"
+                                type="time"
+                                value={draft.time}
+                                disabled={isOffline}
+                                onChange={(event) =>
+                                  updateDraftTruckDetail(truck.id, draftIndex, "time", event.target.value)
+                                }
+                              />
                               <button
                                 className="detail-cell"
                                 type="button"
@@ -4764,92 +4786,37 @@ export default function EventEditPage() {
                               >
                                 {draft.action || ""}
                               </button>
-                              <input
-                                aria-label="New truck detail time"
-                                type="time"
-                                value={draft.time}
-                                disabled={isOffline}
-                                onChange={(event) =>
-                                  updateDraftTruckDetail(truck.id, draftIndex, "time", event.target.value)
-                                }
-                              />
-                              <input
-                                aria-label="New truck detail description"
-                                value={draft.description}
-                                disabled={isOffline}
-                                onChange={(event) =>
-                                  updateDraftTruckDetail(
-                                    truck.id,
-                                    draftIndex,
-                                    "description",
-                                    event.target.value
-                                  )
-                                }
-                                placeholder="Description"
-                                required
-                              />
-                              {showTagColumn ? (
-                                <div className="tag-select-wrap" style={getTagStyle({ colour: emptyTagForm.colour })}>
-                                  <span
-                                    className="tag-dot"
-                                    style={{ backgroundColor: normaliseHexColour(emptyTagForm.colour) }}
-                                  />
-                                  <span>Truck</span>
-                                </div>
-                              ) : null}
-                              {showLocationColumn ? (
+                              {showTruckDestinationColumn ? (
                                 <div className="location-select-wrap">
                                   <select
-                                    aria-label="New truck detail location"
-                                    value={getLocationById(draft.locationId) ? draft.locationId : ""}
+                                    aria-label="New truck detail destination"
+                                    value={getTruckDestinationValue(draft)}
                                     disabled={isOffline}
                                     onChange={(event) =>
-                                      updateDraftTruckDetail(
-                                        truck.id,
-                                        draftIndex,
-                                        "locationId",
-                                        event.target.value
-                                      )
+                                      updateDraftTruckDestination(truck.id, draftIndex, event.target.value)
                                     }
                                   >
-                                    <option value="">No location</option>
-                                    {locationOptions.map((location) => (
-                                      <option key={location.id} value={location.id}>
-                                        {location.displayName}
-                                      </option>
-                                    ))}
+                                    <option value="">No destination</option>
+                                    {companies.length > 0 ? (
+                                      <optgroup label="Companies">
+                                        {companies.map((company) => (
+                                          <option key={company.id} value={`company:${company.id}`}>
+                                            {company.companyName}
+                                          </option>
+                                        ))}
+                                      </optgroup>
+                                    ) : null}
+                                    {locationOptions.length > 0 ? (
+                                      <optgroup label="Locations">
+                                        {locationOptions.map((location) => (
+                                          <option key={location.id} value={`location:${location.id}`}>
+                                            {location.displayName}
+                                          </option>
+                                        ))}
+                                      </optgroup>
+                                    ) : null}
                                   </select>
                                 </div>
-                              ) : null}
-                              {showCompanyColumn ? (
-                                <details className="company-dropdown">
-                                  <summary
-                                    aria-label="New truck detail company"
-                                    className="company-dropdown-trigger"
-                                  >
-                                    {getCompanyLabel(draft.companyIds || [])}
-                                  </summary>
-                                  <div className="company-dropdown-menu">
-                                    {companies.map((company) => (
-                                      <label className="company-dropdown-option" key={company.id}>
-                                        <input
-                                          type="checkbox"
-                                          checked={(draft.companyIds || []).includes(company.id)}
-                                          disabled={isOffline}
-                                          onChange={() =>
-                                            updateDraftTruckDetail(
-                                              truck.id,
-                                              draftIndex,
-                                              "companyIds",
-                                              toggleCompanyIds(draft.companyIds || [], company.id)
-                                            )
-                                          }
-                                        />
-                                        <span>{company.companyName}</span>
-                                      </label>
-                                    ))}
-                                  </div>
-                                </details>
                               ) : null}
                               <div className="draft-actions">
                                 <button
@@ -4866,7 +4833,7 @@ export default function EventEditPage() {
                                   disabled={
                                     savingDraftDayId === truck.id ||
                                     !draft.scheduleDayId ||
-                                    !draft.description.trim() ||
+                                    (showTruckDestinationColumn && !getTruckDestinationValue(draft)) ||
                                     isOffline
                                   }
                                   onClick={() => saveDraftTruckDetail(truck, draftIndex, draft)}
@@ -4919,47 +4886,60 @@ export default function EventEditPage() {
 
         {activeSettingsTab === "tags" ? (
           <div className="settings-section">
-            <form className="tag-form" onSubmit={saveTag}>
-              <div className="form-grid">
-                <div className="form-row">
-                  <label htmlFor="tagName">Tag name</label>
-                  <input
-                    id="tagName"
-                    value={tagForm.name}
-                    disabled={isOffline}
-                    onChange={(event) => updateTagFormField("name", event.target.value)}
-                    placeholder="Confirmed"
-                    required
-                  />
-                </div>
-                <div className="form-row">
-                  <label htmlFor="tagColour">Colour</label>
-                  <div className="tag-colour-field">
+            {!tagFormMode ? (
+              <div className="settings-section-toolbar">
+                <button
+                  className="button"
+                  type="button"
+                  disabled={isOffline}
+                  onClick={startAddingTag}
+                >
+                  New tag
+                </button>
+              </div>
+            ) : null}
+
+            {tagFormMode ? (
+              <form className="tag-form" onSubmit={saveTag}>
+                <div className="form-grid">
+                  <div className="form-row">
+                    <label htmlFor="tagName">Tag name</label>
                     <input
-                      id="tagColourPicker"
-                      className="colour-picker"
-                      aria-label="Tag colour picker"
-                      type="color"
-                      value={normaliseHexColour(tagForm.colour) || emptyTagForm.colour}
+                      id="tagName"
+                      value={tagForm.name}
                       disabled={isOffline}
-                      onChange={(event) => updateTagFormField("colour", event.target.value)}
-                    />
-                    <input
-                      id="tagColour"
-                      value={tagForm.colour}
-                      disabled={isOffline}
-                      onChange={(event) => updateTagFormField("colour", event.target.value)}
-                      placeholder="#DCEEFF"
+                      onChange={(event) => updateTagFormField("name", event.target.value)}
+                      placeholder="Confirmed"
                       required
                     />
                   </div>
+                  <div className="form-row">
+                    <label htmlFor="tagColour">Colour</label>
+                    <div className="tag-colour-field">
+                      <input
+                        id="tagColourPicker"
+                        className="colour-picker"
+                        aria-label="Tag colour picker"
+                        type="color"
+                        value={normaliseHexColour(tagForm.colour) || emptyTagForm.colour}
+                        disabled={isOffline}
+                        onChange={(event) => updateTagFormField("colour", event.target.value)}
+                      />
+                      <input
+                        id="tagColour"
+                        value={tagForm.colour}
+                        disabled={isOffline}
+                        onChange={(event) => updateTagFormField("colour", event.target.value)}
+                        placeholder="#DCEEFF"
+                        required
+                      />
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div className="actions">
-                <button className="button" type="submit" disabled={savingTag || isOffline}>
-                  {savingTag ? "Saving..." : editingTagId ? "Save tag" : "Create tag"}
-                </button>
-                {editingTagId ? (
+                <div className="actions">
+                  <button className="button" type="submit" disabled={savingTag || isOffline}>
+                    {savingTag ? "Saving..." : editingTagId ? "Save tag" : "Create tag"}
+                  </button>
                   <button
                     className="button secondary"
                     type="button"
@@ -4968,9 +4948,9 @@ export default function EventEditPage() {
                   >
                     Cancel
                   </button>
-                ) : null}
-              </div>
-            </form>
+                </div>
+              </form>
+            ) : null}
 
             {tagsLoading ? (
               <p className="item-meta">Loading tags...</p>
@@ -5015,40 +4995,53 @@ export default function EventEditPage() {
 
         {activeSettingsTab === "locations" ? (
           <div className="settings-section">
-            <form className="location-form" onSubmit={saveLocation}>
-              <div className="form-row">
-                <label htmlFor="locationName">
-                  {editingLocationId
-                    ? "Location name"
-                    : locationForm.parentLocationId
-                      ? "Sub-location name"
-                      : "Main location"}
-                </label>
-                <input
-                  id="locationName"
-                  value={locationForm.name}
+            {!locationFormMode ? (
+              <div className="settings-section-toolbar">
+                <button
+                  className="button"
+                  type="button"
                   disabled={isOffline}
-                  onChange={(event) => updateLocationFormField("name", event.target.value)}
-                  placeholder={locationForm.parentLocationId ? "Backstage" : "Main Hall"}
-                  required
-                />
-                {locationForm.parentLocationId ? (
-                  <span className="item-meta">
-                    Under{" "}
-                    {locations.find((location) => location.id === locationForm.parentLocationId)
-                      ?.name || "selected location"}
-                  </span>
-                ) : null}
-              </div>
-              <div className="actions">
-                <button className="button" type="submit" disabled={savingLocation || isOffline}>
-                  {savingLocation
-                    ? "Saving..."
-                    : editingLocationId
-                      ? "Save location"
-                      : "Create location"}
+                  onClick={startAddingLocation}
+                >
+                  New location
                 </button>
-                {editingLocationId ? (
+              </div>
+            ) : null}
+
+            {locationFormMode ? (
+              <form className="location-form" onSubmit={saveLocation}>
+                <div className="form-row">
+                  <label htmlFor="locationName">
+                    {editingLocationId
+                      ? "Location name"
+                      : locationForm.parentLocationId
+                        ? "Sub-location name"
+                        : "Main location"}
+                  </label>
+                  <input
+                    id="locationName"
+                    value={locationForm.name}
+                    disabled={isOffline}
+                    onChange={(event) => updateLocationFormField("name", event.target.value)}
+                    placeholder={locationForm.parentLocationId ? "Backstage" : "Main Hall"}
+                    required
+                  />
+                  {locationForm.parentLocationId ? (
+                    <span className="item-meta">
+                      Under{" "}
+                      {locations.find((location) => location.id === locationForm.parentLocationId)
+                        ?.name || "selected location"}
+                    </span>
+                  ) : null}
+                </div>
+                <div className="actions">
+                  <button className="button" type="submit" disabled={savingLocation || isOffline}>
+                    {savingLocation
+                      ? "Saving..."
+                      : editingLocationId
+                        ? "Save location"
+                        : "Create location"}
+                  </button>
                   <button
                     className="button secondary"
                     type="button"
@@ -5057,9 +5050,9 @@ export default function EventEditPage() {
                   >
                     Cancel
                   </button>
-                ) : null}
-              </div>
-            </form>
+                </div>
+              </form>
+            ) : null}
 
             {locationsLoading ? (
               <p className="item-meta">Loading locations...</p>
@@ -5096,23 +5089,36 @@ export default function EventEditPage() {
 
         {activeSettingsTab === "truckSizes" ? (
           <div className="settings-section">
-            <form className="truck-size-form" onSubmit={saveTruckSize}>
-              <div className="form-row">
-                <label htmlFor="truckSize">Truck size</label>
-                <input
-                  id="truckSize"
-                  value={truckSizeForm.size}
+            {!truckSizeFormMode ? (
+              <div className="settings-section-toolbar">
+                <button
+                  className="button"
+                  type="button"
                   disabled={isOffline}
-                  onChange={(event) => updateTruckSizeFormField("size", event.target.value)}
-                  placeholder="18m"
-                  required
-                />
-              </div>
-              <div className="actions">
-                <button className="button" type="submit" disabled={savingTruckSize || isOffline}>
-                  {savingTruckSize ? "Saving..." : editingTruckSizeId ? "Save size" : "Create size"}
+                  onClick={startAddingTruckSize}
+                >
+                  New truck size
                 </button>
-                {editingTruckSizeId ? (
+              </div>
+            ) : null}
+
+            {truckSizeFormMode ? (
+              <form className="truck-size-form" onSubmit={saveTruckSize}>
+                <div className="form-row">
+                  <label htmlFor="truckSize">Truck size</label>
+                  <input
+                    id="truckSize"
+                    value={truckSizeForm.size}
+                    disabled={isOffline}
+                    onChange={(event) => updateTruckSizeFormField("size", event.target.value)}
+                    placeholder="18m"
+                    required
+                  />
+                </div>
+                <div className="actions">
+                  <button className="button" type="submit" disabled={savingTruckSize || isOffline}>
+                    {savingTruckSize ? "Saving..." : editingTruckSizeId ? "Save size" : "Create size"}
+                  </button>
                   <button
                     className="button secondary"
                     type="button"
@@ -5121,9 +5127,9 @@ export default function EventEditPage() {
                   >
                     Cancel
                   </button>
-                ) : null}
-              </div>
-            </form>
+                </div>
+              </form>
+            ) : null}
 
             {truckSizesLoading ? (
               <p className="item-meta">Loading truck sizes...</p>

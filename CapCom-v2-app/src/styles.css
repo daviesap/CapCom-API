@@ -1129,8 +1129,14 @@ textarea {
   gap: 16px;
 }
 
+.settings-section-toolbar {
+  display: flex;
+  justify-content: flex-end;
+}
+
 .tag-form,
-.location-form {
+.location-form,
+.truck-size-form {
   border-bottom: 1px solid #e6ebf0;
   padding-bottom: 16px;
 }
