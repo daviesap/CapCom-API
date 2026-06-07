@@ -53,7 +53,7 @@
     },
     {
   "site": "capcom-react-lab",
-  "public": "capcom-react-lab/dist",
+  "public": "CapCom-v2-app/dist",
   "ignore": [
     "firebase.json",
     "**/.*",

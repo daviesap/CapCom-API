@@ -1,8 +1,6 @@
-# CapCom React Lab
+# CapCom v2 App
 
-This is a separate learning project for understanding a small React, Vite, Firebase Authentication, and Firestore application.
-
-It does not use the existing CapCom frontend or Cloud Functions.
+This is the CapCom v2 React, Vite, Firebase Authentication, and Firestore application.
 
 ## Data Model
 
@@ -94,7 +92,7 @@ Then open the local Vite URL.
 
 ## NPM Commands
 
-Run these commands from `capcom-react-lab/` unless noted otherwise.
+Run these commands from `CapCom-v2-app/` unless noted otherwise.
 
 ### Development
 

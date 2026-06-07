@@ -31,7 +31,7 @@ export default function LoginPage() {
   return (
     <main className="login-page">
       <form className="login-card" onSubmit={handleSubmit}>
-        <h1 className="page-title">CapCom React Lab</h1>
+        <h1 className="page-title">CapCom v2</h1>
         <p className="page-subtitle">Sign in with Firebase Authentication.</p>
 
         <div className="form-row" style={{ marginTop: 20 }}>
