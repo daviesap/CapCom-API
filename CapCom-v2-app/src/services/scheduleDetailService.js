@@ -150,6 +150,7 @@ export async function createScheduleDetail({
   action,
   time,
   description,
+  notes,
   sortOrder,
   colour,
   tagId,
@@ -176,6 +177,7 @@ export async function createScheduleDetail({
       action: action || "",
       time,
       description,
+      notes: notes || "",
       sortOrder: nextSortOrder,
       colour: colour || "",
       tagId: tagId || "",
@@ -197,6 +199,7 @@ export async function updateScheduleDetail(
     eventId,
     time,
     description,
+    notes,
     sortOrder,
     scheduleDayId,
     truckId,
@@ -210,10 +213,20 @@ export async function updateScheduleDetail(
 ) {
   assertOnline();
   const updates = {
-    time,
-    description,
     updatedAt: serverTimestamp(),
   };
+
+  if (typeof time === "string") {
+    updates.time = time;
+  }
+
+  if (typeof description === "string") {
+    updates.description = description;
+  }
+
+  if (typeof notes === "string") {
+    updates.notes = notes;
+  }
 
   if (typeof sortOrder === "number") {
     updates.sortOrder = sortOrder;

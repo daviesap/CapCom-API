@@ -246,6 +246,8 @@ export default function EventEditPage() {
   const [editingCompanyContactCompanyId, setEditingCompanyContactCompanyId] = useState("");
   const [editingDetailCell, setEditingDetailCell] = useState(null);
   const [openActionMenuId, setOpenActionMenuId] = useState("");
+  const [openNotesDetailId, setOpenNotesDetailId] = useState("");
+  const [notesDraft, setNotesDraft] = useState("");
   const [selectedTagFilterId, setSelectedTagFilterId] = useState("");
   const [selectedLocationFilterIds, setSelectedLocationFilterIds] = useState([]);
   const [selectedSubLocationFilterIds, setSelectedSubLocationFilterIds] = useState([]);
@@ -477,6 +479,16 @@ export default function EventEditPage() {
     setEventImagePreviewUrl(nextPreviewUrl);
     return () => URL.revokeObjectURL(nextPreviewUrl);
   }, [eventImageFile]);
+
+  useEffect(() => {
+    if (!message) return undefined;
+
+    const toastTimer = window.setTimeout(() => {
+      setMessage("");
+    }, 3500);
+
+    return () => window.clearTimeout(toastTimer);
+  }, [message]);
 
   const scheduleDetails = useMemo(() => {
     return Object.values(detailsByDayId).flat();
@@ -864,6 +876,7 @@ export default function EventEditPage() {
             {
               time: detail.time || "",
               description: detail.description || "",
+              notes: detail.notes || "",
               sortOrder: typeof detail.sortOrder === "number" ? detail.sortOrder : detailIndex,
               colour: normaliseHexColour(detail.colour),
               tagId: detail.tagId || "",
@@ -940,6 +953,19 @@ export default function EventEditPage() {
         detail.id === detailId ? { ...detail, [field]: value } : detail
       ),
     }));
+  };
+
+  const updateDetailAcrossDays = (detailId, fields) => {
+    setDetailsByDayId((current) =>
+      Object.fromEntries(
+        Object.entries(current).map(([dayId, details]) => [
+          dayId,
+          details.map((detail) =>
+            detail.id === detailId ? { ...detail, ...fields } : detail
+          ),
+        ])
+      )
+    );
   };
 
   const toggleCompanyFilter = (companyId) => {
@@ -1852,6 +1878,55 @@ export default function EventEditPage() {
     setOpenActionMenuId("");
   };
 
+  const openNotesEditor = (detail) => {
+    if (isOffline) return;
+    setOpenActionMenuId("");
+    setOpenNotesDetailId((current) => {
+      if (current === detail.id) return "";
+      setNotesDraft(detail.notes || "");
+      return detail.id;
+    });
+    setMessage("");
+    setError("");
+  };
+
+  const closeNotesEditor = () => {
+    setOpenNotesDetailId("");
+    setNotesDraft("");
+  };
+
+  const saveDetailNotes = async (detail) => {
+    if (isOffline) {
+      setError("Editing is disabled while offline.");
+      return;
+    }
+
+    setSavingDetailId(detail.id);
+    setError("");
+
+    try {
+      await updateScheduleDetail(detail.id, {
+        notes: notesDraft,
+      });
+      updateDetailAcrossDays(detail.id, { notes: notesDraft });
+      setSavedDetailsById((current) => ({
+        ...current,
+        [detail.id]: {
+          ...(current[detail.id] || {}),
+          notes: notesDraft,
+        },
+      }));
+      closeNotesEditor();
+      setMessage("Notes saved.");
+    } catch (notesError) {
+      console.error(notesError);
+      setError("Could not save notes.");
+      await loadScheduleDetails(scheduleDays);
+    } finally {
+      setSavingDetailId("");
+    }
+  };
+
   const isEditingDetailCell = (detailId, field) =>
     editingDetailCell?.detailId === detailId && editingDetailCell?.field === field;
 
@@ -2170,6 +2245,7 @@ export default function EventEditPage() {
         truckNumber: detail.truckNumber || "",
         time: detail.time || "",
         description: detail.description || "",
+        notes: detail.notes || "",
         sortOrder: getNextSortOrder(dayId),
         colour: normaliseHexColour(detail.colour),
         tagId,
@@ -2255,6 +2331,7 @@ export default function EventEditPage() {
         scheduleDayId: dayId,
         time: draft.time,
         description: draft.description,
+        notes: "",
         colour: normaliseHexColour(draft.colour),
         tagId: draft.tagId || "",
         locationId: draft.locationId || "",
@@ -2382,6 +2459,7 @@ export default function EventEditPage() {
         action: draft.action || "",
         time: draft.time,
         description: draft.description,
+        notes: "",
         sortOrder: getNextTruckDetailSortOrder(truck.id),
         colour: normaliseHexColour(truckTag.colour),
         tagId: truckTag.id,
@@ -2550,6 +2628,7 @@ export default function EventEditPage() {
         action: detail.action || "",
         time: detail.time || "",
         description: detail.description || "",
+        notes: detail.notes || "",
         sortOrder: getNextTruckDetailSortOrder(truck.id),
         colour: normaliseHexColour(truckTag.colour),
         tagId: truckTag.id,
@@ -2723,6 +2802,11 @@ export default function EventEditPage() {
 
   return (
     <main className="page">
+      {message ? (
+        <div className="toast" role="status" aria-live="polite">
+          {message}
+        </div>
+      ) : null}
       <section className="event-edit-header">
         <div className="event-edit-header-summary">
           <div className="event-edit-header-main">
@@ -2887,7 +2971,6 @@ export default function EventEditPage() {
       {isOffline ? (
         <p className="message offline-message">Offline mode: previously loaded schedules are read-only.</p>
       ) : null}
-      {message ? <p className="message success-message">{message}</p> : null}
       {isSuperAdmin && !form.clientId ? (
         <p className="message warning-message">
           This event does not have a clientId yet. Choose a client and save the event to finish the assignment.
@@ -3666,8 +3749,9 @@ export default function EventEditPage() {
                                 />
                               ) : (
                                 <button
-                                  className="detail-cell"
+                                  className="detail-cell detail-description-cell"
                                   type="button"
+                                  data-tooltip={detail.description || ""}
                                   disabled={isOffline}
                                   onClick={() =>
                                     startEditingDetailCell(day.id, detail.id, "description")
@@ -3755,6 +3839,63 @@ export default function EventEditPage() {
                                 </details>
                               ) : null}
                               <div className="detail-row-actions">
+                                <div
+                                  className="notes-popover"
+                                  onBlur={(event) => {
+                                    if (!event.currentTarget.contains(event.relatedTarget)) {
+                                      closeNotesEditor();
+                                    }
+                                  }}
+                                >
+                                  <button
+                                    className={[
+                                      "notes-button",
+                                      openNotesDetailId === detail.id ? "active" : "",
+                                      detail.notes ? "has-notes" : "",
+                                    ].filter(Boolean).join(" ")}
+                                    type="button"
+                                    aria-label={`Notes for ${detail.description || "schedule detail"}`}
+                                    aria-expanded={openNotesDetailId === detail.id}
+                                    disabled={isOffline}
+                                    onClick={() => openNotesEditor(detail)}
+                                  >
+                                    <CapcomIcon
+                                      name="notes"
+                                      size={18}
+                                      weight={detail.notes?.trim() ? "fill" : "regular"}
+                                    />
+                                  </button>
+                                  {openNotesDetailId === detail.id ? (
+                                    <div className="notes-popover-panel">
+                                      <label htmlFor={`notes-${detail.id}`}>Notes</label>
+                                      <textarea
+                                        id={`notes-${detail.id}`}
+                                        value={notesDraft}
+                                        disabled={savingDetailId === detail.id || isOffline}
+                                        onChange={(event) => setNotesDraft(event.target.value)}
+                                        rows={5}
+                                      />
+                                      <div className="notes-popover-actions">
+                                        <button
+                                          className="compact-button primary"
+                                          type="button"
+                                          disabled={savingDetailId === detail.id || isOffline}
+                                          onClick={() => saveDetailNotes(detail)}
+                                        >
+                                          {savingDetailId === detail.id ? "Saving..." : "Save"}
+                                        </button>
+                                        <button
+                                          className="compact-button"
+                                          type="button"
+                                          disabled={savingDetailId === detail.id}
+                                          onClick={closeNotesEditor}
+                                        >
+                                          Cancel
+                                        </button>
+                                      </div>
+                                    </div>
+                                  ) : null}
+                                </div>
                                 <div
                                   className="action-menu"
                                   onBlur={(event) => {
@@ -4347,8 +4488,9 @@ export default function EventEditPage() {
                                   />
                                 ) : (
                                   <button
-                                    className="detail-cell"
+                                    className="detail-cell detail-description-cell"
                                     type="button"
+                                    data-tooltip={detail.description || ""}
                                     disabled={isOffline}
                                     onClick={() =>
                                       startEditingDetailCell(dayId, detail.id, "description")
@@ -4436,6 +4578,63 @@ export default function EventEditPage() {
                                   </details>
                                 ) : null}
                                 <div className="detail-row-actions">
+                                  <div
+                                    className="notes-popover"
+                                    onBlur={(event) => {
+                                      if (!event.currentTarget.contains(event.relatedTarget)) {
+                                        closeNotesEditor();
+                                      }
+                                    }}
+                                  >
+                                    <button
+                                      className={[
+                                        "notes-button",
+                                        openNotesDetailId === detail.id ? "active" : "",
+                                        detail.notes ? "has-notes" : "",
+                                      ].filter(Boolean).join(" ")}
+                                      type="button"
+                                      aria-label={`Notes for ${detail.description || "truck detail"}`}
+                                      aria-expanded={openNotesDetailId === detail.id}
+                                      disabled={isOffline}
+                                      onClick={() => openNotesEditor(detail)}
+                                    >
+                                      <CapcomIcon
+                                        name="notes"
+                                        size={18}
+                                        weight={detail.notes?.trim() ? "fill" : "regular"}
+                                      />
+                                    </button>
+                                    {openNotesDetailId === detail.id ? (
+                                      <div className="notes-popover-panel">
+                                        <label htmlFor={`notes-${detail.id}`}>Notes</label>
+                                        <textarea
+                                          id={`notes-${detail.id}`}
+                                          value={notesDraft}
+                                          disabled={savingDetailId === detail.id || isOffline}
+                                          onChange={(event) => setNotesDraft(event.target.value)}
+                                          rows={5}
+                                        />
+                                        <div className="notes-popover-actions">
+                                          <button
+                                            className="compact-button primary"
+                                            type="button"
+                                            disabled={savingDetailId === detail.id || isOffline}
+                                            onClick={() => saveDetailNotes(detail)}
+                                          >
+                                            {savingDetailId === detail.id ? "Saving..." : "Save"}
+                                          </button>
+                                          <button
+                                            className="compact-button"
+                                            type="button"
+                                            disabled={savingDetailId === detail.id}
+                                            onClick={closeNotesEditor}
+                                          >
+                                            Cancel
+                                          </button>
+                                        </div>
+                                      </div>
+                                    ) : null}
+                                  </div>
                                   <div
                                     className="action-menu"
                                     onBlur={(event) => {
@@ -4697,21 +4896,24 @@ export default function EventEditPage() {
             type="button"
             onClick={() => setActiveSettingsTab("tags")}
           >
-            Tags
+            <CapcomIcon name="tag" size={18} weight="duotone" />
+            <span>Tags</span>
           </button>
           <button
             className={activeSettingsTab === "locations" ? "tab active" : "tab"}
             type="button"
             onClick={() => setActiveSettingsTab("locations")}
           >
-            Locations
+            <CapcomIcon name="location" size={18} weight="duotone" />
+            <span>Locations</span>
           </button>
           <button
             className={activeSettingsTab === "truckSizes" ? "tab active" : "tab"}
             type="button"
             onClick={() => setActiveSettingsTab("truckSizes")}
           >
-            Truck Sizes
+            <CapcomIcon name="truckSize" size={18} weight="duotone" />
+            <span>Truck Sizes</span>
           </button>
         </nav>
 

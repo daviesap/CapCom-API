@@ -192,7 +192,15 @@ export default function EventListPage() {
       <section className="list">
         {events.map((event) => (
           <Link className="list-item event-card-link" key={event.id} to={`/events/${event.id}/edit`}>
-            <div>
+            <div className="event-card-main">
+              {event.imageUrl ? (
+                <img
+                  className="event-card-image"
+                  src={event.imageUrl}
+                  alt=""
+                />
+              ) : null}
+              <div>
               <p className="item-title">{event.name}</p>
               <p className="item-meta">
                 {event.clientName} | {event.startDate} to {event.endDate}
@@ -201,6 +209,7 @@ export default function EventListPage() {
               {isSuperAdmin && !event.clientId ? (
                 <p className="inline-warning">Missing client assignment</p>
               ) : null}
+              </div>
             </div>
           </Link>
         ))}

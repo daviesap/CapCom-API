@@ -9,7 +9,7 @@ const navItems = [
   { to: "/profile", label: "Profile", icon: "profile" },
 ];
 
-export default function AppNav({ variant }) {
+export default function AppNav({ variant, collapsed = false }) {
   const { isSuperAdmin, isClientAdmin } = useAuth();
   const canAccessAdmin = isSuperAdmin || isClientAdmin;
   const visibleNavItems = navItems.filter((item) => !item.requiresAdmin || canAccessAdmin);
@@ -24,6 +24,7 @@ export default function AppNav({ variant }) {
           className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}
           key={item.to}
           to={item.to}
+          title={collapsed ? item.label : undefined}
         >
           <CapcomIcon name={item.icon} size={22} weight="duotone" />
           <span>{item.label}</span>
