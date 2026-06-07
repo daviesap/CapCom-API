@@ -2831,7 +2831,7 @@ export default function EventEditPage() {
           type="button"
           onClick={() => setActiveTab("trucks")}
         >
-          Trucks
+          Trucking
         </button>
         <button
           className={activeTab === "settings" ? "tab active" : "tab"}
