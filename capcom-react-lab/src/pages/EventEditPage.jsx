@@ -90,6 +90,8 @@ const emptyTruckForm = {
   contents: "",
 };
 
+const truckDetailActions = ["", "Load", "Collect"];
+
 const emptyCompanyContactForm = {
   name: "",
   email: "",
@@ -206,6 +208,7 @@ export default function EventEditPage() {
   const [editingDayMode, setEditingDayMode] = useState("");
   const [detailsByDayId, setDetailsByDayId] = useState({});
   const [draftDetailsByDayId, setDraftDetailsByDayId] = useState({});
+  const [draftTruckDetailsByTruckId, setDraftTruckDetailsByTruckId] = useState({});
   const [savedDetailsById, setSavedDetailsById] = useState({});
   const [tags, setTags] = useState([]);
   const [locations, setLocations] = useState([]);
@@ -446,14 +449,25 @@ export default function EventEditPage() {
     });
   }, [editingDetailCell]);
 
+  const scheduleDetails = useMemo(() => {
+    return Object.values(detailsByDayId).flat();
+  }, [detailsByDayId]);
+
+  const truckScheduleDetails = useMemo(() => {
+    return scheduleDetails.filter((detail) => detail.truckId);
+  }, [scheduleDetails]);
+
+  const scheduleDayById = useMemo(() => {
+    return new Map(scheduleDays.map((day) => [day.id, day]));
+  }, [scheduleDays]);
+
   const usedTagIds = useMemo(() => {
     return new Set(
-      Object.values(detailsByDayId)
-        .flat()
+      scheduleDetails
         .map((detail) => detail.tagId)
         .filter(Boolean)
     );
-  }, [detailsByDayId]);
+  }, [scheduleDetails]);
 
   const usedTags = useMemo(() => {
     return tags.filter((tag) => usedTagIds.has(tag.id));
@@ -495,12 +509,11 @@ export default function EventEditPage() {
 
   const usedLocationIds = useMemo(() => {
     return new Set(
-      Object.values(detailsByDayId)
-        .flat()
+      scheduleDetails
         .map((detail) => detail.locationId)
         .filter(Boolean)
     );
-  }, [detailsByDayId]);
+  }, [scheduleDetails]);
 
   const usedLocationFilterIds = useMemo(() => {
     const filterIds = new Set();
@@ -526,12 +539,11 @@ export default function EventEditPage() {
 
   const usedCompanyIds = useMemo(() => {
     return new Set(
-      Object.values(detailsByDayId)
-        .flat()
+      scheduleDetails
         .flatMap((detail) => detail.companyIds || [])
         .filter(Boolean)
     );
-  }, [detailsByDayId]);
+  }, [scheduleDetails]);
 
   const usedCompanies = useMemo(() => {
     return companies.filter((company) => usedCompanyIds.has(company.id));
@@ -554,9 +566,25 @@ export default function EventEditPage() {
     "--detail-row-columns": detailRowGridColumns,
     "--detail-actions-column": detailActionGridColumn,
   });
+  const truckDetailRowGridColumnParts = [
+    "150px",
+    "92px",
+    "76px",
+    "minmax(0, 1fr)",
+    showTagColumn ? "128px" : "",
+    showLocationColumn ? "150px" : "",
+    showCompanyColumn ? "150px" : "",
+    "auto",
+  ].filter(Boolean);
+  const truckDetailRowGridColumns = truckDetailRowGridColumnParts.join(" ");
+  const truckDetailActionGridColumn = truckDetailRowGridColumnParts.length;
+  const getTruckDetailRowStyle = (rowStyle) => ({
+    ...rowStyle,
+    "--detail-row-columns": truckDetailRowGridColumns,
+    "--detail-actions-column": truckDetailActionGridColumn,
+  });
 
   const contactCompanies = useMemo(() => {
-    const scheduleDetails = Object.values(detailsByDayId).flat();
     const detailCountByCompanyId = scheduleDetails.reduce((counts, detail) => {
       (detail.companyIds || []).forEach((companyId) => {
         if (!companyId) return;
@@ -590,7 +618,7 @@ export default function EventEditPage() {
           String(companyB.companyName || "")
         );
       });
-  }, [detailsByDayId, form.contactCompanyOrder, usedCompanies]);
+  }, [form.contactCompanyOrder, scheduleDetails, usedCompanies]);
 
   const contactCompanyIds = useMemo(
     () => contactCompanies.map((company) => company.id),
@@ -1147,6 +1175,30 @@ export default function EventEditPage() {
     return "No schedule details yet.";
   };
 
+  const ensureTruckTag = async () => {
+    const existingTruckTag = tags.find(
+      (tag) => String(tag.name || "").trim().toLowerCase() === "truck"
+    );
+    if (existingTruckTag) return existingTruckTag;
+
+    const truckTag = {
+      eventId,
+      name: "Truck",
+      colour: emptyTagForm.colour,
+    };
+    const truckTagRef = await createTag(truckTag);
+    const createdTruckTag = {
+      id: truckTagRef.id,
+      ...truckTag,
+    };
+    setTags((current) =>
+      [...current, createdTruckTag].sort((tagA, tagB) =>
+        String(tagA.name || "").localeCompare(String(tagB.name || ""))
+      )
+    );
+    return createdTruckTag;
+  };
+
   const assignDetailTag = async (dayId, detail, tagId) => {
     if (isOffline) {
       setError("Editing is disabled while offline.");
@@ -1154,21 +1206,22 @@ export default function EventEditPage() {
     }
     setSavingDetailId(detail.id);
     setError("");
-    setDetailsByDayId((current) => ({
-      ...current,
-      [dayId]: (current[dayId] || []).map((nextDetail) =>
-        nextDetail.id === detail.id ? { ...nextDetail, tagId } : nextDetail
-      ),
-    }));
 
     try {
+      const nextTagId = detail.truckId ? (await ensureTruckTag()).id : tagId;
+      setDetailsByDayId((current) => ({
+        ...current,
+        [dayId]: (current[dayId] || []).map((nextDetail) =>
+          nextDetail.id === detail.id ? { ...nextDetail, tagId: nextTagId } : nextDetail
+        ),
+      }));
       await updateScheduleDetail(detail.id, {
         eventId,
         time: detail.time || "",
         description: detail.description || "",
         sortOrder: detail.sortOrder,
         colour: normaliseHexColour(detail.colour),
-        tagId,
+        tagId: nextTagId,
         locationId: detail.locationId || "",
         companyIds: detail.companyIds || [],
       });
@@ -1179,7 +1232,7 @@ export default function EventEditPage() {
           description: detail.description || "",
           sortOrder: detail.sortOrder,
           colour: normaliseHexColour(detail.colour),
-          tagId,
+          tagId: nextTagId,
           locationId: detail.locationId || "",
           companyIds: detail.companyIds || [],
         },
@@ -1208,13 +1261,14 @@ export default function EventEditPage() {
     }));
 
     try {
+      const tagId = detail.truckId ? (await ensureTruckTag()).id : detail.tagId || "";
       await updateScheduleDetail(detail.id, {
         eventId,
         time: detail.time || "",
         description: detail.description || "",
         sortOrder: detail.sortOrder,
         colour: normaliseHexColour(detail.colour),
-        tagId: detail.tagId || "",
+        tagId,
         locationId,
         companyIds: detail.companyIds || [],
       });
@@ -1225,7 +1279,7 @@ export default function EventEditPage() {
           description: detail.description || "",
           sortOrder: detail.sortOrder,
           colour: normaliseHexColour(detail.colour),
-          tagId: detail.tagId || "",
+          tagId,
           locationId,
           companyIds: detail.companyIds || [],
         },
@@ -1254,13 +1308,14 @@ export default function EventEditPage() {
     }));
 
     try {
+      const tagId = detail.truckId ? (await ensureTruckTag()).id : detail.tagId || "";
       await updateScheduleDetail(detail.id, {
         eventId,
         time: detail.time || "",
         description: detail.description || "",
         sortOrder: detail.sortOrder,
         colour: normaliseHexColour(detail.colour),
-        tagId: detail.tagId || "",
+        tagId,
         locationId: detail.locationId || "",
         companyIds,
       });
@@ -1271,7 +1326,7 @@ export default function EventEditPage() {
           description: detail.description || "",
           sortOrder: detail.sortOrder,
           colour: normaliseHexColour(detail.colour),
-          tagId: detail.tagId || "",
+          tagId,
           locationId: detail.locationId || "",
           companyIds,
         },
@@ -1777,13 +1832,14 @@ export default function EventEditPage() {
     setError("");
 
     try {
+      const tagId = detail.truckId ? (await ensureTruckTag()).id : detail.tagId || "";
       await updateScheduleDetail(detail.id, {
         eventId,
         time: detail.time || "",
         description: detail.description || "",
         sortOrder: detail.sortOrder,
         colour: normaliseHexColour(detail.colour),
-        tagId: detail.tagId || "",
+        tagId,
         locationId: detail.locationId || "",
         companyIds: detail.companyIds || [],
       });
@@ -1794,7 +1850,7 @@ export default function EventEditPage() {
           description: detail.description || "",
           sortOrder: detail.sortOrder,
           colour: normaliseHexColour(detail.colour),
-          tagId: detail.tagId || "",
+          tagId,
           locationId: detail.locationId || "",
           companyIds: detail.companyIds || [],
         },
@@ -1816,14 +1872,22 @@ export default function EventEditPage() {
         return { dayId, detailId: dayDetails[detailIndex].id, field: "time" };
       }
       const previousDetail = dayDetails[detailIndex - 1];
-      return previousDetail ? { dayId, detailId: previousDetail.id, field: "description" } : null;
+      return previousDetail
+        ? {
+            dayId: previousDetail.scheduleDayId || dayId,
+            detailId: previousDetail.id,
+            field: "description",
+          }
+        : null;
     }
 
     if (field === "time") {
       return { dayId, detailId: dayDetails[detailIndex].id, field: "description" };
     }
     const nextDetail = dayDetails[detailIndex + 1];
-    return nextDetail ? { dayId, detailId: nextDetail.id, field: "time" } : null;
+    return nextDetail
+      ? { dayId: nextDetail.scheduleDayId || dayId, detailId: nextDetail.id, field: "time" }
+      : null;
   };
 
   const handleDetailCellKeyDown = (event, dayId, dayDetails, detail, detailIndex, field) => {
@@ -2034,14 +2098,17 @@ export default function EventEditPage() {
     closeActionMenu();
 
     try {
+      const tagId = detail.truckId ? (await ensureTruckTag()).id : detail.tagId || "";
       await createScheduleDetail({
         eventId,
         scheduleDayId: dayId,
+        truckId: detail.truckId || "",
+        truckNumber: detail.truckNumber || "",
         time: detail.time || "",
         description: detail.description || "",
         sortOrder: getNextSortOrder(dayId),
         colour: normaliseHexColour(detail.colour),
-        tagId: detail.tagId || "",
+        tagId,
         locationId: detail.locationId || "",
         companyIds: detail.companyIds || [],
       });
@@ -2158,6 +2225,279 @@ export default function EventEditPage() {
       setError("Could not add schedule detail.");
     } finally {
       setSavingDraftDayId("");
+    }
+  };
+
+  const getTruckDetails = (truck) => {
+    return truckScheduleDetails
+      .filter((detail) => detail.truckId === truck.id)
+      .sort((detailA, detailB) => {
+        const orderA = typeof detailA.sortOrder === "number" ? detailA.sortOrder : 0;
+        const orderB = typeof detailB.sortOrder === "number" ? detailB.sortOrder : 0;
+        const orderComparison = orderA - orderB;
+        if (orderComparison !== 0) return orderComparison;
+
+        const dateComparison = String(scheduleDayById.get(detailA.scheduleDayId)?.date || "")
+          .localeCompare(String(scheduleDayById.get(detailB.scheduleDayId)?.date || ""));
+        if (dateComparison !== 0) return dateComparison;
+
+        return String(detailA.time || "").localeCompare(String(detailB.time || ""));
+      });
+  };
+
+  const getNextTruckDetailSortOrder = (truckId) => {
+    return (
+      truckScheduleDetails
+        .filter((detail) => detail.truckId === truckId)
+        .reduce(
+          (maxSortOrder, detail, detailIndex) =>
+            Math.max(
+              maxSortOrder,
+              typeof detail.sortOrder === "number" ? detail.sortOrder : detailIndex
+            ),
+          -1
+        ) + 1
+    );
+  };
+
+  const addDraftTruckDetail = (truckId) => {
+    if (isOffline) return;
+    setDraftTruckDetailsByTruckId((current) => ({
+      ...current,
+      [truckId]: [
+        ...(current[truckId] || []),
+        {
+          scheduleDayId: scheduleDays[0]?.id || "",
+          action: "",
+          time: "",
+          description: "",
+          colour: "",
+          tagId: "",
+          locationId: "",
+          companyIds: [],
+        },
+      ],
+    }));
+  };
+
+  const updateDraftTruckDetail = (truckId, draftIndex, field, value) => {
+    setDraftTruckDetailsByTruckId((current) => ({
+      ...current,
+      [truckId]: (current[truckId] || []).map((draft, index) =>
+        index === draftIndex ? { ...draft, [field]: value } : draft
+      ),
+    }));
+  };
+
+  const removeDraftTruckDetail = (truckId, draftIndex) => {
+    setDraftTruckDetailsByTruckId((current) => ({
+      ...current,
+      [truckId]: (current[truckId] || []).filter((_, index) => index !== draftIndex),
+    }));
+  };
+
+  const saveDraftTruckDetail = async (truck, draftIndex, draft) => {
+    if (isOffline) {
+      setError("Editing is disabled while offline.");
+      return;
+    }
+    if (!draft.scheduleDayId) {
+      setError("Date is required.");
+      return;
+    }
+    setSavingDraftDayId(truck.id);
+    setError("");
+
+    try {
+      const truckTag = await ensureTruckTag();
+      await createScheduleDetail({
+        eventId,
+        scheduleDayId: draft.scheduleDayId,
+        truckId: truck.id,
+        truckNumber: truck.truckNumber || "",
+        action: draft.action || "",
+        time: draft.time,
+        description: draft.description,
+        sortOrder: getNextTruckDetailSortOrder(truck.id),
+        colour: normaliseHexColour(truckTag.colour),
+        tagId: truckTag.id,
+        locationId: draft.locationId || "",
+        companyIds: draft.companyIds || [],
+      });
+      removeDraftTruckDetail(truck.id, draftIndex);
+      await loadScheduleDetails(scheduleDays);
+    } catch (saveError) {
+      console.error(saveError);
+      setError("Could not add truck detail.");
+    } finally {
+      setSavingDraftDayId("");
+    }
+  };
+
+  const assignTruckDetailDate = async (sourceDayId, detail, targetDayId) => {
+    if (isOffline) {
+      setError("Editing is disabled while offline.");
+      return;
+    }
+    if (!targetDayId || targetDayId === sourceDayId) return;
+
+    setSavingDetailId(detail.id);
+    setError("");
+
+    try {
+      const truckTag = await ensureTruckTag();
+      await updateScheduleDetail(detail.id, {
+        eventId,
+        scheduleDayId: targetDayId,
+        truckId: detail.truckId || "",
+        truckNumber: detail.truckNumber || "",
+        action: detail.action || "",
+        time: detail.time || "",
+        description: detail.description || "",
+        sortOrder: detail.sortOrder,
+        colour: normaliseHexColour(detail.colour),
+        tagId: truckTag.id,
+        locationId: detail.locationId || "",
+        companyIds: detail.companyIds || [],
+      });
+      await loadScheduleDetails(scheduleDays);
+    } catch (dateError) {
+      console.error(dateError);
+      setError("Could not update truck detail date.");
+      await loadScheduleDetails(scheduleDays);
+    } finally {
+      setSavingDetailId("");
+    }
+  };
+
+  const persistTruckDetailOrder = async (truckId, nextDetails) => {
+    if (isOffline) {
+      setError("Editing is disabled while offline.");
+      return;
+    }
+    const orderedDetails = nextDetails.map((detail, detailIndex) => ({
+      ...detail,
+      sortOrder: detailIndex,
+    }));
+
+    setDetailsByDayId((current) => {
+      const orderedById = new Map(orderedDetails.map((detail) => [detail.id, detail]));
+      return Object.fromEntries(
+        Object.entries(current).map(([dayId, details]) => [
+          dayId,
+          details.map((detail) => orderedById.get(detail.id) || detail),
+        ])
+      );
+    });
+    setReorderingDayId(truckId);
+    setError("");
+
+    try {
+      await updateScheduleDetailOrder(orderedDetails);
+    } catch (reorderError) {
+      console.error(reorderError);
+      setError("Could not reorder truck details.");
+      await loadScheduleDetails(scheduleDays);
+    } finally {
+      setReorderingDayId("");
+    }
+  };
+
+  const getNextTruckDetailAction = (currentAction) => {
+    const currentActionIndex = truckDetailActions.indexOf(currentAction || "");
+    return truckDetailActions[(currentActionIndex + 1) % truckDetailActions.length];
+  };
+
+  const toggleTruckDetailAction = async (dayId, detail) => {
+    if (isOffline) {
+      setError("Editing is disabled while offline.");
+      return;
+    }
+
+    const nextAction = getNextTruckDetailAction(detail.action);
+    setSavingDetailId(detail.id);
+    setError("");
+    setDetailsByDayId((current) => ({
+      ...current,
+      [dayId]: (current[dayId] || []).map((nextDetail) =>
+        nextDetail.id === detail.id ? { ...nextDetail, action: nextAction } : nextDetail
+      ),
+    }));
+
+    try {
+      const truckTag = await ensureTruckTag();
+      await updateScheduleDetail(detail.id, {
+        eventId,
+        scheduleDayId: dayId,
+        truckId: detail.truckId || "",
+        truckNumber: detail.truckNumber || "",
+        action: nextAction,
+        time: detail.time || "",
+        description: detail.description || "",
+        sortOrder: detail.sortOrder,
+        colour: normaliseHexColour(detail.colour),
+        tagId: truckTag.id,
+        locationId: detail.locationId || "",
+        companyIds: detail.companyIds || [],
+      });
+    } catch (actionError) {
+      console.error(actionError);
+      setError("Could not update truck action.");
+      await loadScheduleDetails(scheduleDays);
+    } finally {
+      setSavingDetailId("");
+    }
+  };
+
+  const moveTruckDetail = async (truckId, truckDetails, detailId, direction) => {
+    if (reorderingDayId) return;
+
+    const detailIndex = truckDetails.findIndex((detail) => detail.id === detailId);
+    const targetIndex = detailIndex + direction;
+    if (detailIndex < 0 || targetIndex < 0 || targetIndex >= truckDetails.length) return;
+
+    const nextDetails = [...truckDetails];
+    [nextDetails[detailIndex], nextDetails[targetIndex]] = [
+      nextDetails[targetIndex],
+      nextDetails[detailIndex],
+    ];
+    closeActionMenu();
+    await persistTruckDetailOrder(truckId, nextDetails);
+  };
+
+  const duplicateTruckDetail = async (truck, detail) => {
+    if (isOffline) {
+      setError("Editing is disabled while offline.");
+      return;
+    }
+    if (savingDetailId === detail.id) return;
+
+    setSavingDetailId(detail.id);
+    setError("");
+    closeActionMenu();
+
+    try {
+      const truckTag = await ensureTruckTag();
+      await createScheduleDetail({
+        eventId,
+        scheduleDayId: detail.scheduleDayId,
+        truckId: truck.id,
+        truckNumber: truck.truckNumber || "",
+        action: detail.action || "",
+        time: detail.time || "",
+        description: detail.description || "",
+        sortOrder: getNextTruckDetailSortOrder(truck.id),
+        colour: normaliseHexColour(truckTag.colour),
+        tagId: truckTag.id,
+        locationId: detail.locationId || "",
+        companyIds: detail.companyIds || [],
+      });
+      await loadScheduleDetails(scheduleDays);
+    } catch (duplicateError) {
+      console.error(duplicateError);
+      setError("Could not duplicate truck detail.");
+    } finally {
+      setSavingDetailId("");
     }
   };
 
@@ -3271,7 +3611,7 @@ export default function EventEditPage() {
                                   <select
                                     aria-label={`Tag for ${detail.description || "schedule detail"}`}
                                     value={getTagById(detail.tagId) ? detail.tagId : ""}
-                                    disabled={savingDetailId === detail.id || isOffline}
+                                    disabled={savingDetailId === detail.id || isOffline || Boolean(detail.truckId)}
                                     onChange={(event) =>
                                       assignDetailTag(day.id, detail, event.target.value)
                                     }
@@ -3418,7 +3758,7 @@ export default function EventEditPage() {
                                     <button
                                       className="action-menu-item"
                                       type="button"
-                                      disabled={savingDetailId === detail.id || isOffline}
+                                      disabled={savingDetailId === detail.id || isOffline || Boolean(detail.truckId)}
                                       onClick={() => {
                                         duplicateDetail(day.id, detail);
                                         endRowAction();
@@ -3699,42 +4039,557 @@ export default function EventEditPage() {
           ) : trucks.length === 0 ? (
             <p className="item-meta">No trucks yet.</p>
           ) : (
-            <div className="tag-list">
-              {trucks.map((truck) => (
-                <div className="tag-list-row" key={truck.id}>
-                  <span>
-                    {truck.truckNumber}
-                    {truck.truckSizeId || truck.size
-                      ? ` · ${truckSizeById.get(truck.truckSizeId)?.size || truck.size || "Unknown size"}`
-                      : ""}
-                    {truck.companyId || truck.companyName
-                      ? ` · ${companyById.get(truck.companyId)?.companyName || truck.companyName || "Unknown company"}`
-                      : ""}
-                    {truck.driverName ? ` · ${truck.driverName}` : ""}
-                    {truck.driverContactNumber ? ` · ${truck.driverContactNumber}` : ""}
-                    {truck.contents ? ` · ${truck.contents}` : ""}
-                  </span>
-                  <div className="tag-list-actions">
-                    <button
-                      className="compact-button"
-                      type="button"
-                      disabled={isOffline}
-                      onClick={() => startEditingTruck(truck)}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className="compact-button"
-                      type="button"
-                      disabled={deletingTruckId === truck.id || isOffline}
-                      onClick={() => removeTruck(truck.id)}
-                    >
-                      {deletingTruckId === truck.id ? "Deleting..." : "Delete"}
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <section className="list">
+              {trucks.map((truck) => {
+                const truckDetails = getTruckDetails(truck);
+                const draftTruckDetails = draftTruckDetailsByTruckId[truck.id] || [];
+
+                return (
+                  <article className="list-item" key={truck.id}>
+                    <div className="day-card-content">
+                      <div className="day-heading">
+                        <div>
+                          <p className="item-title day-title-line">
+                            <span>{truck.truckNumber || "Truck"}</span>
+                            {truck.truckSizeId || truck.size ? (
+                              <span className="item-meta day-title-summary">
+                                {truckSizeById.get(truck.truckSizeId)?.size ||
+                                  truck.size ||
+                                  "Unknown size"}
+                              </span>
+                            ) : null}
+                            {truck.companyId || truck.companyName ? (
+                              <span className="item-meta day-title-summary">
+                                {companyById.get(truck.companyId)?.companyName ||
+                                  truck.companyName ||
+                                  "Unknown company"}
+                              </span>
+                            ) : null}
+                          </p>
+                          {truck.driverName || truck.driverContactNumber || truck.contents ? (
+                            <p className="item-meta">
+                              {[truck.driverName, truck.driverContactNumber, truck.contents]
+                                .filter(Boolean)
+                                .join(" · ")}
+                            </p>
+                          ) : null}
+                        </div>
+                      </div>
+                      <div className="day-card-actions">
+                        <button
+                          className="small-button"
+                          type="button"
+                          disabled={isOffline || scheduleDays.length === 0}
+                          onClick={() => addDraftTruckDetail(truck.id)}
+                        >
+                          Add row
+                        </button>
+                        <button
+                          className="compact-button"
+                          type="button"
+                          disabled={isOffline}
+                          onClick={() => startEditingTruck(truck)}
+                        >
+                          Edit truck
+                        </button>
+                        <button
+                          className="compact-button"
+                          type="button"
+                          disabled={deletingTruckId === truck.id || isOffline}
+                          onClick={() => removeTruck(truck.id)}
+                        >
+                          {deletingTruckId === truck.id ? "Deleting..." : "Delete truck"}
+                        </button>
+                      </div>
+
+                      {scheduleDays.length === 0 ? (
+                        <p className="item-meta">Add schedule days before adding truck rows.</p>
+                      ) : truckDetails.length === 0 && draftTruckDetails.length === 0 ? (
+                        <p className="item-meta">No truck rows yet.</p>
+                      ) : (
+                        <div className="detail-list">
+                          {truckDetails.map((detail, detailIndex) => {
+                            const dayId = detail.scheduleDayId || "";
+                            const isEditingTime = isEditingDetailCell(detail.id, "time");
+                            const isEditingDescription = isEditingDetailCell(
+                              detail.id,
+                              "description"
+                            );
+                            const canMoveUp = detailIndex > 0;
+                            const canMoveDown = detailIndex < truckDetails.length - 1;
+
+                            return (
+                              <div
+                                className="detail-row draggable-row"
+                                key={detail.id}
+                                style={getTruckDetailRowStyle(
+                                  getRowTagStyle(getTagById(detail.tagId))
+                                )}
+                                draggable={!isEditingTime && !isEditingDescription && !isOffline}
+                                onDragStart={(event) => {
+                                  draggedDetailIdRef.current = detail.id;
+                                  event.dataTransfer.effectAllowed = "move";
+                                }}
+                                onDragOver={(event) => {
+                                  const draggedDetail = truckDetails.find(
+                                    (nextDetail) => nextDetail.id === draggedDetailIdRef.current
+                                  );
+                                  if (draggedDetail && draggedDetail.id !== detail.id) {
+                                    event.preventDefault();
+                                    event.dataTransfer.dropEffect = "move";
+                                  }
+                                }}
+                                onDrop={(event) => {
+                                  event.preventDefault();
+                                  const draggedDetailId = draggedDetailIdRef.current;
+                                  draggedDetailIdRef.current = "";
+                                  if (!draggedDetailId || draggedDetailId === detail.id) return;
+                                  const fromIndex = truckDetails.findIndex(
+                                    (nextDetail) => nextDetail.id === draggedDetailId
+                                  );
+                                  const toIndex = truckDetails.findIndex(
+                                    (nextDetail) => nextDetail.id === detail.id
+                                  );
+                                  if (fromIndex < 0 || toIndex < 0) return;
+                                  const nextDetails = [...truckDetails];
+                                  const [movedDetail] = nextDetails.splice(fromIndex, 1);
+                                  nextDetails.splice(toIndex, 0, movedDetail);
+                                  persistTruckDetailOrder(truck.id, nextDetails);
+                                }}
+                                onDragEnd={() => {
+                                  draggedDetailIdRef.current = "";
+                                }}
+                              >
+                                <div className="location-select-wrap">
+                                  <select
+                                    aria-label={`Date for ${detail.description || "truck detail"}`}
+                                    value={dayId}
+                                    disabled={savingDetailId === detail.id || isOffline}
+                                    onChange={(event) =>
+                                      assignTruckDetailDate(dayId, detail, event.target.value)
+                                    }
+                                  >
+                                    <option value="">Choose date</option>
+                                    {scheduleDays.map((day) => (
+                                      <option key={day.id} value={day.id}>
+                                        {formatDetailDate(day.date)}
+                                      </option>
+                                    ))}
+                                  </select>
+                                </div>
+                                <button
+                                  className="detail-cell"
+                                  type="button"
+                                  disabled={savingDetailId === detail.id || isOffline}
+                                  onClick={() => toggleTruckDetailAction(dayId, detail)}
+                                >
+                                  {detail.action || ""}
+                                </button>
+                                {isEditingTime ? (
+                                  <input
+                                    ref={detailCellInputRef}
+                                    className="plain-input detail-time-input"
+                                    aria-label={`Time for ${detail.description || "truck detail"}`}
+                                    type="time"
+                                    value={detail.time || ""}
+                                    disabled={isOffline}
+                                    onBlur={() => {
+                                      if (suppressDetailBlurRef.current) return;
+                                      saveDetailCell(dayId, detail);
+                                    }}
+                                    onChange={(event) =>
+                                      updateDetailField(dayId, detail.id, "time", event.target.value)
+                                    }
+                                    onKeyDown={(event) =>
+                                      handleDetailCellKeyDown(
+                                        event,
+                                        dayId,
+                                        truckDetails,
+                                        detail,
+                                        detailIndex,
+                                        "time"
+                                      )
+                                    }
+                                  />
+                                ) : (
+                                  <button
+                                    className="detail-cell detail-time-display"
+                                    type="button"
+                                    disabled={isOffline}
+                                    onClick={() => startEditingDetailCell(dayId, detail.id, "time")}
+                                  >
+                                    {detail.time || "tbc"}
+                                  </button>
+                                )}
+                                {isEditingDescription ? (
+                                  <input
+                                    ref={detailCellInputRef}
+                                    className="plain-input"
+                                    aria-label={`Description for ${detail.time || "tbc"}`}
+                                    value={detail.description || ""}
+                                    disabled={isOffline}
+                                    onBlur={() => {
+                                      if (suppressDetailBlurRef.current) return;
+                                      saveDetailCell(dayId, detail);
+                                    }}
+                                    onChange={(event) =>
+                                      updateDetailField(
+                                        dayId,
+                                        detail.id,
+                                        "description",
+                                        event.target.value
+                                      )
+                                    }
+                                    onKeyDown={(event) =>
+                                      handleDetailCellKeyDown(
+                                        event,
+                                        dayId,
+                                        truckDetails,
+                                        detail,
+                                        detailIndex,
+                                        "description"
+                                      )
+                                    }
+                                  />
+                                ) : (
+                                  <button
+                                    className="detail-cell"
+                                    type="button"
+                                    disabled={isOffline}
+                                    onClick={() =>
+                                      startEditingDetailCell(dayId, detail.id, "description")
+                                    }
+                                  >
+                                    {detail.description || ""}
+                                  </button>
+                                )}
+                                {showTagColumn ? (
+                                  <div
+                                    className="tag-select-wrap"
+                                    style={getTagStyle(getTagById(detail.tagId))}
+                                  >
+                                    <span
+                                      className="tag-dot"
+                                      style={{
+                                        backgroundColor:
+                                          normaliseHexColour(getTagById(detail.tagId)?.colour) ||
+                                          "transparent",
+                                      }}
+                                    />
+                                    <select
+                                      aria-label={`Tag for ${detail.description || "truck detail"}`}
+                                      value={getTagById(detail.tagId) ? detail.tagId : ""}
+                                      disabled={savingDetailId === detail.id || isOffline}
+                                      onChange={(event) =>
+                                        assignDetailTag(dayId, detail, event.target.value)
+                                      }
+                                    >
+                                      <option value="">No tag</option>
+                                      {tags.map((tag) => (
+                                        <option key={tag.id} value={tag.id}>
+                                          {tag.name}
+                                        </option>
+                                      ))}
+                                    </select>
+                                  </div>
+                                ) : null}
+                                {showLocationColumn ? (
+                                  <div className="location-select-wrap">
+                                    <select
+                                      aria-label={`Location for ${detail.description || "truck detail"}`}
+                                      value={getLocationById(detail.locationId) ? detail.locationId : ""}
+                                      disabled={savingDetailId === detail.id || isOffline}
+                                      onChange={(event) =>
+                                        assignDetailLocation(dayId, detail, event.target.value)
+                                      }
+                                    >
+                                      <option value="">No location</option>
+                                      {locationOptions.map((location) => (
+                                        <option key={location.id} value={location.id}>
+                                          {location.displayName}
+                                        </option>
+                                      ))}
+                                    </select>
+                                  </div>
+                                ) : null}
+                                {showCompanyColumn ? (
+                                  <details className="company-dropdown">
+                                    <summary
+                                      aria-label={`Company for ${detail.description || "truck detail"}`}
+                                      className="company-dropdown-trigger"
+                                    >
+                                      {getCompanyLabel(detail.companyIds || [])}
+                                    </summary>
+                                    <div className="company-dropdown-menu">
+                                      {companies.map((company) => (
+                                        <label className="company-dropdown-option" key={company.id}>
+                                          <input
+                                            type="checkbox"
+                                            checked={(detail.companyIds || []).includes(company.id)}
+                                            disabled={savingDetailId === detail.id || isOffline}
+                                            onChange={() =>
+                                              assignDetailCompanies(
+                                                dayId,
+                                                detail,
+                                                toggleCompanyIds(detail.companyIds || [], company.id)
+                                              )
+                                            }
+                                          />
+                                          <span>{company.companyName}</span>
+                                        </label>
+                                      ))}
+                                    </div>
+                                  </details>
+                                ) : null}
+                                <div className="detail-row-actions">
+                                  <div
+                                    className="action-menu"
+                                    onBlur={(event) => {
+                                      if (!event.currentTarget.contains(event.relatedTarget)) {
+                                        setOpenActionMenuId("");
+                                      }
+                                    }}
+                                  >
+                                    <button
+                                      className={
+                                        openActionMenuId === detail.id
+                                          ? "action-menu-trigger active"
+                                          : "action-menu-trigger"
+                                      }
+                                      type="button"
+                                      aria-label="Row actions"
+                                      aria-expanded={openActionMenuId === detail.id}
+                                      disabled={isOffline}
+                                      onMouseDown={beginRowAction}
+                                      onClick={() => {
+                                        setOpenActionMenuId((current) =>
+                                          current === detail.id ? "" : detail.id
+                                        );
+                                        endRowAction();
+                                      }}
+                                    >
+                                      <span aria-hidden="true">...</span>
+                                    </button>
+                                    {openActionMenuId === detail.id ? (
+                                      <div
+                                        className="action-menu-list"
+                                        onMouseDown={beginRowAction}
+                                      >
+                                        <button
+                                          className="action-menu-item"
+                                          type="button"
+                                          disabled={!canMoveUp || reorderingDayId === truck.id || isOffline}
+                                          onClick={() => {
+                                            moveTruckDetail(truck.id, truckDetails, detail.id, -1);
+                                            endRowAction();
+                                          }}
+                                        >
+                                          Move up
+                                        </button>
+                                        <button
+                                          className="action-menu-item"
+                                          type="button"
+                                          disabled={!canMoveDown || reorderingDayId === truck.id || isOffline}
+                                          onClick={() => {
+                                            moveTruckDetail(truck.id, truckDetails, detail.id, 1);
+                                            endRowAction();
+                                          }}
+                                        >
+                                          Move down
+                                        </button>
+                                        <button
+                                          className="action-menu-item"
+                                          type="button"
+                                          disabled={savingDetailId === detail.id || isOffline}
+                                          onClick={() => {
+                                            duplicateTruckDetail(truck, detail);
+                                            endRowAction();
+                                          }}
+                                        >
+                                          Duplicate
+                                        </button>
+                                        <button
+                                          className="action-menu-item danger"
+                                          type="button"
+                                          disabled={savingDetailId === detail.id || isOffline}
+                                          onClick={() => {
+                                            closeActionMenu();
+                                            deleteDetail(dayId, detail.id);
+                                            endRowAction();
+                                          }}
+                                        >
+                                          Delete
+                                        </button>
+                                      </div>
+                                    ) : null}
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          })}
+                          {draftTruckDetails.map((draft, draftIndex) => (
+                            <div
+                              className="detail-row draft-row"
+                              key={`truck-draft-${draftIndex}`}
+                              style={getTruckDetailRowStyle()}
+                            >
+                              <div className="location-select-wrap">
+                                <select
+                                  aria-label="New truck detail date"
+                                  value={draft.scheduleDayId}
+                                  disabled={isOffline}
+                                  onChange={(event) =>
+                                    updateDraftTruckDetail(
+                                      truck.id,
+                                      draftIndex,
+                                      "scheduleDayId",
+                                      event.target.value
+                                    )
+                                  }
+                                  required
+                                >
+                                  <option value="">Choose date</option>
+                                  {scheduleDays.map((day) => (
+                                    <option key={day.id} value={day.id}>
+                                      {formatDetailDate(day.date)}
+                                    </option>
+                                  ))}
+                                </select>
+                              </div>
+                              <button
+                                className="detail-cell"
+                                type="button"
+                                disabled={isOffline}
+                                onClick={() =>
+                                  updateDraftTruckDetail(
+                                    truck.id,
+                                    draftIndex,
+                                    "action",
+                                    getNextTruckDetailAction(draft.action)
+                                  )
+                                }
+                              >
+                                {draft.action || ""}
+                              </button>
+                              <input
+                                aria-label="New truck detail time"
+                                type="time"
+                                value={draft.time}
+                                disabled={isOffline}
+                                onChange={(event) =>
+                                  updateDraftTruckDetail(truck.id, draftIndex, "time", event.target.value)
+                                }
+                              />
+                              <input
+                                aria-label="New truck detail description"
+                                value={draft.description}
+                                disabled={isOffline}
+                                onChange={(event) =>
+                                  updateDraftTruckDetail(
+                                    truck.id,
+                                    draftIndex,
+                                    "description",
+                                    event.target.value
+                                  )
+                                }
+                                placeholder="Description"
+                                required
+                              />
+                              {showTagColumn ? (
+                                <div className="tag-select-wrap" style={getTagStyle({ colour: emptyTagForm.colour })}>
+                                  <span
+                                    className="tag-dot"
+                                    style={{ backgroundColor: normaliseHexColour(emptyTagForm.colour) }}
+                                  />
+                                  <span>Truck</span>
+                                </div>
+                              ) : null}
+                              {showLocationColumn ? (
+                                <div className="location-select-wrap">
+                                  <select
+                                    aria-label="New truck detail location"
+                                    value={getLocationById(draft.locationId) ? draft.locationId : ""}
+                                    disabled={isOffline}
+                                    onChange={(event) =>
+                                      updateDraftTruckDetail(
+                                        truck.id,
+                                        draftIndex,
+                                        "locationId",
+                                        event.target.value
+                                      )
+                                    }
+                                  >
+                                    <option value="">No location</option>
+                                    {locationOptions.map((location) => (
+                                      <option key={location.id} value={location.id}>
+                                        {location.displayName}
+                                      </option>
+                                    ))}
+                                  </select>
+                                </div>
+                              ) : null}
+                              {showCompanyColumn ? (
+                                <details className="company-dropdown">
+                                  <summary
+                                    aria-label="New truck detail company"
+                                    className="company-dropdown-trigger"
+                                  >
+                                    {getCompanyLabel(draft.companyIds || [])}
+                                  </summary>
+                                  <div className="company-dropdown-menu">
+                                    {companies.map((company) => (
+                                      <label className="company-dropdown-option" key={company.id}>
+                                        <input
+                                          type="checkbox"
+                                          checked={(draft.companyIds || []).includes(company.id)}
+                                          disabled={isOffline}
+                                          onChange={() =>
+                                            updateDraftTruckDetail(
+                                              truck.id,
+                                              draftIndex,
+                                              "companyIds",
+                                              toggleCompanyIds(draft.companyIds || [], company.id)
+                                            )
+                                          }
+                                        />
+                                        <span>{company.companyName}</span>
+                                      </label>
+                                    ))}
+                                  </div>
+                                </details>
+                              ) : null}
+                              <div className="draft-actions">
+                                <button
+                                  className="button secondary"
+                                  type="button"
+                                  disabled={isOffline}
+                                  onClick={() => removeDraftTruckDetail(truck.id, draftIndex)}
+                                >
+                                  Cancel
+                                </button>
+                                <button
+                                  className="button"
+                                  type="button"
+                                  disabled={
+                                    savingDraftDayId === truck.id ||
+                                    !draft.scheduleDayId ||
+                                    !draft.description.trim() ||
+                                    isOffline
+                                  }
+                                  onClick={() => saveDraftTruckDetail(truck, draftIndex, draft)}
+                                >
+                                  {savingDraftDayId === truck.id ? "Saving..." : "Save"}
+                                </button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </article>
+                );
+              })}
+            </section>
           )}
         </div>
       </section>

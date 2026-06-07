@@ -145,6 +145,9 @@ function cacheDetailsByDay(detailsByDayId) {
 export async function createScheduleDetail({
   eventId,
   scheduleDayId,
+  truckId,
+  truckNumber,
+  action,
   time,
   description,
   sortOrder,
@@ -168,6 +171,9 @@ export async function createScheduleDetail({
     return await addDoc(scheduleDetailsRef, {
       eventId: eventId || "",
       scheduleDayId,
+      truckId: truckId || "",
+      truckNumber: truckNumber || "",
+      action: action || "",
       time,
       description,
       sortOrder: nextSortOrder,
@@ -187,7 +193,20 @@ export async function createScheduleDetail({
 
 export async function updateScheduleDetail(
   detailId,
-  { eventId, time, description, sortOrder, scheduleDayId, colour, tagId, locationId, companyIds }
+  {
+    eventId,
+    time,
+    description,
+    sortOrder,
+    scheduleDayId,
+    truckId,
+    truckNumber,
+    action,
+    colour,
+    tagId,
+    locationId,
+    companyIds,
+  }
 ) {
   assertOnline();
   const updates = {
@@ -206,6 +225,18 @@ export async function updateScheduleDetail(
 
   if (eventId) {
     updates.eventId = eventId;
+  }
+
+  if (typeof truckId === "string") {
+    updates.truckId = truckId;
+  }
+
+  if (typeof truckNumber === "string") {
+    updates.truckNumber = truckNumber;
+  }
+
+  if (typeof action === "string") {
+    updates.action = action;
   }
 
   if (typeof colour === "string") {
