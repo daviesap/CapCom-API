@@ -7,6 +7,7 @@ const emptyCache = {
   detailsByDayId: {},
   tagsByEventId: {},
   locationsByEventId: {},
+  trucksByEventId: {},
   updatedAtByScope: {},
 };
 
@@ -27,6 +28,7 @@ function readCache() {
       detailsByDayId: parsedCache.detailsByDayId || {},
       tagsByEventId: parsedCache.tagsByEventId || {},
       locationsByEventId: parsedCache.locationsByEventId || {},
+      trucksByEventId: parsedCache.trucksByEventId || {},
       updatedAtByScope: parsedCache.updatedAtByScope || {},
     };
   } catch (cacheError) {
@@ -119,6 +121,17 @@ export function getCachedLocations(eventId) {
   return readCache().locationsByEventId[eventId] || [];
 }
 
+export function cacheTrucks(eventId, trucks) {
+  const cache = readCache();
+  cache.trucksByEventId[eventId] = trucks;
+  touch(cache, `trucks:${eventId}`);
+  writeCache(cache);
+}
+
+export function getCachedTrucks(eventId) {
+  return readCache().trucksByEventId[eventId] || [];
+}
+
 export function getScheduleLastUpdated(eventId) {
   const cache = readCache();
   const timestamps = [
@@ -127,6 +140,7 @@ export function getScheduleLastUpdated(eventId) {
     cache.updatedAtByScope[`days:${eventId}`],
     cache.updatedAtByScope[`tags:${eventId}`],
     cache.updatedAtByScope[`locations:${eventId}`],
+    cache.updatedAtByScope[`trucks:${eventId}`],
   ].filter(Boolean);
 
   (cache.daysByEventId[eventId] || []).forEach((day) => {

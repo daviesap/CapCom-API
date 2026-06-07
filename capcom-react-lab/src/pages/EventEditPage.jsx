@@ -36,6 +36,18 @@ import {
   updateLocation,
 } from "../services/locationService.js";
 import {
+  createTruckSize,
+  deleteTruckSize,
+  getTruckSizes,
+  updateTruckSize,
+} from "../services/truckSizeService.js";
+import {
+  createTruck,
+  deleteTruck,
+  getTrucks,
+  updateTruck,
+} from "../services/truckService.js";
+import {
   createCompanyContact,
   deleteCompanyContact,
   getCompanyContacts,
@@ -63,6 +75,19 @@ const emptyTagForm = {
 const emptyLocationForm = {
   name: "",
   parentLocationId: "",
+};
+
+const emptyTruckSizeForm = {
+  size: "",
+};
+
+const emptyTruckForm = {
+  truckSizeId: "",
+  companyId: "",
+  truckNumber: "",
+  driverName: "",
+  driverContactNumber: "",
+  contents: "",
 };
 
 const emptyCompanyContactForm = {
@@ -184,12 +209,18 @@ export default function EventEditPage() {
   const [savedDetailsById, setSavedDetailsById] = useState({});
   const [tags, setTags] = useState([]);
   const [locations, setLocations] = useState([]);
+  const [truckSizes, setTruckSizes] = useState([]);
+  const [trucks, setTrucks] = useState([]);
   const [companies, setCompanies] = useState([]);
   const [companyContactsByCompanyId, setCompanyContactsByCompanyId] = useState({});
   const [tagForm, setTagForm] = useState(emptyTagForm);
   const [locationForm, setLocationForm] = useState(emptyLocationForm);
+  const [truckSizeForm, setTruckSizeForm] = useState(emptyTruckSizeForm);
+  const [truckForm, setTruckForm] = useState(emptyTruckForm);
   const [companyContactForm, setCompanyContactForm] = useState(emptyCompanyContactForm);
   const [editingTagId, setEditingTagId] = useState("");
+  const [editingTruckSizeId, setEditingTruckSizeId] = useState("");
+  const [editingTruckId, setEditingTruckId] = useState("");
   const [editingLocationId, setEditingLocationId] = useState("");
   const [editingCompanyContactId, setEditingCompanyContactId] = useState("");
   const [editingCompanyContactCompanyId, setEditingCompanyContactCompanyId] = useState("");
@@ -207,11 +238,17 @@ export default function EventEditPage() {
   const [detailsLoading, setDetailsLoading] = useState(false);
   const [tagsLoading, setTagsLoading] = useState(false);
   const [locationsLoading, setLocationsLoading] = useState(false);
+  const [truckSizesLoading, setTruckSizesLoading] = useState(false);
+  const [trucksLoading, setTrucksLoading] = useState(false);
   const [companiesLoading, setCompaniesLoading] = useState(false);
   const [companyContactsLoading, setCompanyContactsLoading] = useState(false);
   const [savingEvent, setSavingEvent] = useState(false);
   const [savingDayId, setSavingDayId] = useState("");
   const [savingDetailId, setSavingDetailId] = useState("");
+  const [savingTruckSize, setSavingTruckSize] = useState(false);
+  const [deletingTruckSizeId, setDeletingTruckSizeId] = useState("");
+  const [savingTruck, setSavingTruck] = useState(false);
+  const [deletingTruckId, setDeletingTruckId] = useState("");
   const [savingDraftDayId, setSavingDraftDayId] = useState("");
   const [savingTag, setSavingTag] = useState(false);
   const [deletingTagId, setDeletingTagId] = useState("");
@@ -250,6 +287,8 @@ export default function EventEditPage() {
       setDetailsLoading(false);
       setTagsLoading(false);
       setLocationsLoading(false);
+      setTruckSizesLoading(false);
+      setTrucksLoading(false);
       setCompaniesLoading(false);
       setError("");
       try {
@@ -329,6 +368,20 @@ export default function EventEditPage() {
             errorMessage: "Could not load locations. Other event data is still available.",
           }),
           loadOptionalEditorData({
+            label: "truck sizes",
+            setLoadingState: setTruckSizesLoading,
+            loadData: () => getTruckSizes(eventId),
+            applyData: setTruckSizes,
+            errorMessage: "Could not load truck sizes. Other event data is still available.",
+          }),
+          loadOptionalEditorData({
+            label: "trucks",
+            setLoadingState: setTrucksLoading,
+            loadData: () => getTrucks(eventId),
+            applyData: setTrucks,
+            errorMessage: "Could not load trucks. Other event data is still available.",
+          }),
+          loadOptionalEditorData({
             label: "companies",
             setLoadingState: setCompaniesLoading,
             loadData: () => getCompanies(loadedEventForm.clientId),
@@ -346,6 +399,8 @@ export default function EventEditPage() {
           setDetailsLoading(false);
           setTagsLoading(false);
           setLocationsLoading(false);
+          setTruckSizesLoading(false);
+          setTrucksLoading(false);
           setCompaniesLoading(false);
         }
       }
@@ -429,6 +484,14 @@ export default function EventEditPage() {
   const locationById = useMemo(() => {
     return new Map(locations.map((location) => [location.id, location]));
   }, [locations]);
+
+  const truckSizeById = useMemo(() => {
+    return new Map(truckSizes.map((truckSize) => [truckSize.id, truckSize]));
+  }, [truckSizes]);
+
+  const companyById = useMemo(() => {
+    return new Map(companies.map((company) => [company.id, company]));
+  }, [companies]);
 
   const usedLocationIds = useMemo(() => {
     return new Set(
@@ -650,6 +713,30 @@ export default function EventEditPage() {
       setError("Could not load locations.");
     } finally {
       setLocationsLoading(false);
+    }
+  };
+
+  const loadTruckSizes = async () => {
+    setTruckSizesLoading(true);
+    try {
+      setTruckSizes(await getTruckSizes(eventId));
+    } catch (loadError) {
+      console.error("Could not load truck sizes.", loadError);
+      setError("Could not load truck sizes.");
+    } finally {
+      setTruckSizesLoading(false);
+    }
+  };
+
+  const loadTrucks = async () => {
+    setTrucksLoading(true);
+    try {
+      setTrucks(await getTrucks(eventId));
+    } catch (loadError) {
+      console.error("Could not load trucks.", loadError);
+      setError("Could not load trucks.");
+    } finally {
+      setTrucksLoading(false);
     }
   };
 
@@ -1271,6 +1358,186 @@ export default function EventEditPage() {
       setError("Could not delete tag.");
     } finally {
       setDeletingTagId("");
+    }
+  };
+
+  const updateTruckSizeFormField = (field, value) => {
+    setTruckSizeForm((current) => ({ ...current, [field]: value }));
+  };
+
+  const resetTruckSizeForm = () => {
+    setEditingTruckSizeId("");
+    setTruckSizeForm(emptyTruckSizeForm);
+  };
+
+  const startEditingTruckSize = (truckSize) => {
+    setEditingTruckSizeId(truckSize.id);
+    setTruckSizeForm({
+      size: truckSize.size || "",
+    });
+    setError("");
+    setMessage("");
+  };
+
+  const saveTruckSize = async (submitEvent) => {
+    submitEvent.preventDefault();
+    if (isOffline) {
+      setError("Editing is disabled while offline.");
+      return;
+    }
+
+    setSavingTruckSize(true);
+    setError("");
+    setMessage("");
+
+    try {
+      const size = truckSizeForm.size.trim();
+      if (!size) {
+        setError("Truck size is required.");
+        return;
+      }
+
+      if (editingTruckSizeId) {
+        await updateTruckSize(editingTruckSizeId, { size });
+        setMessage("Truck size saved.");
+      } else {
+        await createTruckSize({ eventId, size });
+        setMessage("Truck size created.");
+      }
+
+      resetTruckSizeForm();
+      await loadTruckSizes();
+    } catch (truckSizeError) {
+      console.error(truckSizeError);
+      setError("Could not save truck size.");
+    } finally {
+      setSavingTruckSize(false);
+    }
+  };
+
+  const removeTruckSize = async (truckSizeId) => {
+    if (isOffline) {
+      setError("Editing is disabled while offline.");
+      return;
+    }
+    setDeletingTruckSizeId(truckSizeId);
+    setError("");
+    setMessage("");
+
+    try {
+      await deleteTruckSize(truckSizeId);
+      if (editingTruckSizeId === truckSizeId) resetTruckSizeForm();
+      await loadTruckSizes();
+      setMessage("Truck size deleted.");
+    } catch (truckSizeError) {
+      console.error(truckSizeError);
+      setError("Could not delete truck size.");
+    } finally {
+      setDeletingTruckSizeId("");
+    }
+  };
+
+  const updateTruckFormField = (field, value) => {
+    setTruckForm((current) => ({ ...current, [field]: value }));
+  };
+
+  const resetTruckForm = () => {
+    setEditingTruckId("");
+    setTruckForm(emptyTruckForm);
+  };
+
+  const startEditingTruck = (truck) => {
+    setEditingTruckId(truck.id);
+    setTruckForm({
+      truckSizeId: truck.truckSizeId || "",
+      companyId: truck.companyId || "",
+      truckNumber: truck.truckNumber || "",
+      driverName: truck.driverName || "",
+      driverContactNumber: truck.driverContactNumber || "",
+      contents: truck.contents || "",
+    });
+    setError("");
+    setMessage("");
+  };
+
+  const buildTruckPayload = () => {
+    const selectedTruckSize = truckSizes.find((truckSize) => truckSize.id === truckForm.truckSizeId);
+    if (!selectedTruckSize) return null;
+    const selectedCompany = companies.find((company) => company.id === truckForm.companyId);
+    if (!selectedCompany) return null;
+
+    return {
+      eventId,
+      truckSizeId: selectedTruckSize.id,
+      size: selectedTruckSize.size || "",
+      companyId: selectedCompany.id,
+      companyName: selectedCompany.companyName || "",
+      truckNumber: truckForm.truckNumber.trim(),
+      driverName: truckForm.driverName.trim(),
+      driverContactNumber: truckForm.driverContactNumber.trim(),
+      contents: truckForm.contents.trim(),
+    };
+  };
+
+  const saveTruck = async (submitEvent) => {
+    submitEvent.preventDefault();
+    if (isOffline) {
+      setError("Editing is disabled while offline.");
+      return;
+    }
+
+    setSavingTruck(true);
+    setError("");
+    setMessage("");
+
+    try {
+      const truckPayload = buildTruckPayload();
+      if (!truckPayload) {
+        setError("Truck size and company are required.");
+        return;
+      }
+      if (!truckPayload.truckNumber) {
+        setError("Truck number is required.");
+        return;
+      }
+
+      if (editingTruckId) {
+        await updateTruck(editingTruckId, truckPayload);
+        setMessage("Truck saved.");
+      } else {
+        await createTruck(truckPayload);
+        setMessage("Truck created.");
+      }
+
+      resetTruckForm();
+      await loadTrucks();
+    } catch (truckError) {
+      console.error(truckError);
+      setError("Could not save truck.");
+    } finally {
+      setSavingTruck(false);
+    }
+  };
+
+  const removeTruck = async (truckId) => {
+    if (isOffline) {
+      setError("Editing is disabled while offline.");
+      return;
+    }
+    setDeletingTruckId(truckId);
+    setError("");
+    setMessage("");
+
+    try {
+      await deleteTruck(truckId);
+      if (editingTruckId === truckId) resetTruckForm();
+      await loadTrucks();
+      setMessage("Truck deleted.");
+    } catch (truckError) {
+      console.error(truckError);
+      setError("Could not delete truck.");
+    } finally {
+      setDeletingTruckId("");
     }
   };
 
@@ -2190,7 +2457,10 @@ export default function EventEditPage() {
       {locationsLoading && activeTab === "settings" ? (
         <p className="message">Loading locations...</p>
       ) : null}
-      {companiesLoading && (activeTab === "info" || activeTab === "detail") ? (
+      {trucksLoading && activeTab === "trucks" ? (
+        <p className="message">Loading trucks...</p>
+      ) : null}
+      {companiesLoading && (activeTab === "info" || activeTab === "detail" || activeTab === "trucks") ? (
         <p className="message">Loading companies...</p>
       ) : null}
 
@@ -2215,6 +2485,13 @@ export default function EventEditPage() {
           onClick={() => setActiveTab("detail")}
         >
           Detail
+        </button>
+        <button
+          className={activeTab === "trucks" ? "tab active" : "tab"}
+          type="button"
+          onClick={() => setActiveTab("trucks")}
+        >
+          Trucks
         </button>
         <button
           className={activeTab === "settings" ? "tab active" : "tab"}
@@ -3311,6 +3588,158 @@ export default function EventEditPage() {
       </section>
       ) : null}
 
+      {activeTab === "trucks" ? (
+      <section className="panel">
+        <h2>Trucks</h2>
+        <div className="settings-section">
+          <form className="truck-form" onSubmit={saveTruck}>
+            <div className="form-grid">
+              <div className="form-row">
+                <label htmlFor="truckSizeId">Size</label>
+                <select
+                  id="truckSizeId"
+                  value={truckForm.truckSizeId}
+                  disabled={isOffline || truckSizes.length === 0}
+                  onChange={(event) => updateTruckFormField("truckSizeId", event.target.value)}
+                  required
+                >
+                  <option value="">Choose a size</option>
+                  {truckSizes.map((truckSize) => (
+                    <option key={truckSize.id} value={truckSize.id}>
+                      {truckSize.size}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="form-row">
+                <label htmlFor="truckNumber">Truck number</label>
+                <input
+                  id="truckNumber"
+                  value={truckForm.truckNumber}
+                  disabled={isOffline}
+                  onChange={(event) => updateTruckFormField("truckNumber", event.target.value)}
+                  required
+                />
+              </div>
+              <div className="form-row">
+                <label htmlFor="truckCompanyId">Company</label>
+                <select
+                  id="truckCompanyId"
+                  value={truckForm.companyId}
+                  disabled={isOffline || companies.length === 0}
+                  onChange={(event) => updateTruckFormField("companyId", event.target.value)}
+                  required
+                >
+                  <option value="">Choose a company</option>
+                  {companies.map((company) => (
+                    <option key={company.id} value={company.id}>
+                      {company.companyName}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="form-row">
+                <label htmlFor="driverName">Driver name</label>
+                <input
+                  id="driverName"
+                  value={truckForm.driverName}
+                  disabled={isOffline}
+                  onChange={(event) => updateTruckFormField("driverName", event.target.value)}
+                />
+              </div>
+              <div className="form-row">
+                <label htmlFor="driverContactNumber">Driver contact number</label>
+                <input
+                  id="driverContactNumber"
+                  value={truckForm.driverContactNumber}
+                  disabled={isOffline}
+                  onChange={(event) => updateTruckFormField("driverContactNumber", event.target.value)}
+                />
+              </div>
+              <div className="form-row full">
+                <label htmlFor="truckContents">Truck contents</label>
+                <textarea
+                  id="truckContents"
+                  value={truckForm.contents}
+                  disabled={isOffline}
+                  onChange={(event) => updateTruckFormField("contents", event.target.value)}
+                  rows={3}
+                />
+              </div>
+            </div>
+            {truckSizes.length === 0 ? (
+              <p className="item-meta">Add truck sizes in Settings before creating trucks.</p>
+            ) : null}
+            {companies.length === 0 ? (
+              <p className="item-meta">Add companies for this client before creating trucks.</p>
+            ) : null}
+            <div className="actions">
+              <button
+                className="button"
+                type="submit"
+                disabled={savingTruck || isOffline || truckSizes.length === 0 || companies.length === 0}
+              >
+                {savingTruck ? "Saving..." : editingTruckId ? "Save truck" : "Create truck"}
+              </button>
+              {editingTruckId ? (
+                <button
+                  className="button secondary"
+                  type="button"
+                  disabled={savingTruck || isOffline}
+                  onClick={resetTruckForm}
+                >
+                  Cancel
+                </button>
+              ) : null}
+            </div>
+          </form>
+
+          {trucksLoading ? (
+            <p className="item-meta">Loading trucks...</p>
+          ) : trucks.length === 0 ? (
+            <p className="item-meta">No trucks yet.</p>
+          ) : (
+            <div className="tag-list">
+              {trucks.map((truck) => (
+                <div className="tag-list-row" key={truck.id}>
+                  <span>
+                    {truck.truckNumber}
+                    {truck.truckSizeId || truck.size
+                      ? ` · ${truckSizeById.get(truck.truckSizeId)?.size || truck.size || "Unknown size"}`
+                      : ""}
+                    {truck.companyId || truck.companyName
+                      ? ` · ${companyById.get(truck.companyId)?.companyName || truck.companyName || "Unknown company"}`
+                      : ""}
+                    {truck.driverName ? ` · ${truck.driverName}` : ""}
+                    {truck.driverContactNumber ? ` · ${truck.driverContactNumber}` : ""}
+                    {truck.contents ? ` · ${truck.contents}` : ""}
+                  </span>
+                  <div className="tag-list-actions">
+                    <button
+                      className="compact-button"
+                      type="button"
+                      disabled={isOffline}
+                      onClick={() => startEditingTruck(truck)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="compact-button"
+                      type="button"
+                      disabled={deletingTruckId === truck.id || isOffline}
+                      onClick={() => removeTruck(truck.id)}
+                    >
+                      {deletingTruckId === truck.id ? "Deleting..." : "Delete"}
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+      ) : null}
+
       {activeTab === "settings" ? (
       <section className="panel">
         <h2>Settings</h2>
@@ -3328,6 +3757,13 @@ export default function EventEditPage() {
             onClick={() => setActiveSettingsTab("locations")}
           >
             Locations
+          </button>
+          <button
+            className={activeSettingsTab === "truckSizes" ? "tab active" : "tab"}
+            type="button"
+            onClick={() => setActiveSettingsTab("truckSizes")}
+          >
+            Truck Sizes
           </button>
         </nav>
 
@@ -3503,6 +3939,71 @@ export default function EventEditPage() {
                 }}
               >
                 {locationTree.map((location) => renderLocationNode(location))}
+              </div>
+            )}
+          </div>
+        ) : null}
+
+        {activeSettingsTab === "truckSizes" ? (
+          <div className="settings-section">
+            <form className="truck-size-form" onSubmit={saveTruckSize}>
+              <div className="form-row">
+                <label htmlFor="truckSize">Truck size</label>
+                <input
+                  id="truckSize"
+                  value={truckSizeForm.size}
+                  disabled={isOffline}
+                  onChange={(event) => updateTruckSizeFormField("size", event.target.value)}
+                  placeholder="18m"
+                  required
+                />
+              </div>
+              <div className="actions">
+                <button className="button" type="submit" disabled={savingTruckSize || isOffline}>
+                  {savingTruckSize ? "Saving..." : editingTruckSizeId ? "Save size" : "Create size"}
+                </button>
+                {editingTruckSizeId ? (
+                  <button
+                    className="button secondary"
+                    type="button"
+                    disabled={savingTruckSize || isOffline}
+                    onClick={resetTruckSizeForm}
+                  >
+                    Cancel
+                  </button>
+                ) : null}
+              </div>
+            </form>
+
+            {truckSizesLoading ? (
+              <p className="item-meta">Loading truck sizes...</p>
+            ) : truckSizes.length === 0 ? (
+              <p className="item-meta">No truck sizes yet.</p>
+            ) : (
+              <div className="tag-list">
+                {truckSizes.map((truckSize) => (
+                  <div className="tag-list-row" key={truckSize.id}>
+                    <span>{truckSize.size}</span>
+                    <div className="tag-list-actions">
+                      <button
+                        className="compact-button"
+                        type="button"
+                        disabled={isOffline}
+                        onClick={() => startEditingTruckSize(truckSize)}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="compact-button"
+                        type="button"
+                        disabled={deletingTruckSizeId === truckSize.id || isOffline}
+                        onClick={() => removeTruckSize(truckSize.id)}
+                      >
+                        {deletingTruckSizeId === truckSize.id ? "Deleting..." : "Delete"}
+                      </button>
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
           </div>
