@@ -37,28 +37,9 @@ function DetailDayRowCount({ totalCount, visibleCount }) {
   );
 }
 
-function getDetailCompletenessWarnings({
-  dayRows,
-  draftRows,
-  showTagColumn,
-  showLocationColumn,
-  showCompanyColumn,
-  getTagById,
-  getLocationById,
-}) {
-  const allRows = [...dayRows, ...draftRows];
-  return allRows.filter((detail) => {
-    if (showTagColumn && !getTagById(detail.tagId)) return true;
-    if (showLocationColumn && !getLocationById(detail.locationId)) return true;
-    if (showCompanyColumn && (detail.companyIds || []).length === 0) return true;
-    return false;
-  }).length;
-}
-
 export default function DetailDayCard({
   day,
   dayDetails,
-  allDayDetails,
   allDayDetailCount,
   draftDetails,
   detailDisplay,
@@ -71,23 +52,7 @@ export default function DetailDayCard({
   draftActions,
 }) {
   const { formatDetailDate } = detailDisplay;
-  const {
-    showTagColumn,
-    getTagById,
-    showLocationColumn,
-    getLocationById,
-    showCompanyColumn,
-  } = detailDisplay;
   const { isOffline, addDraftDetail, startEditingDay } = dayActions;
-  const incompleteDayDetailCount = getDetailCompletenessWarnings({
-    dayRows: allDayDetails,
-    draftRows: draftDetails,
-    showTagColumn,
-    showLocationColumn,
-    showCompanyColumn,
-    getTagById,
-    getLocationById,
-  });
   const hiddenDetailCount = allDayDetailCount - dayDetails.length;
   const totalDayRowCount = allDayDetailCount + draftDetails.length;
   const visibleDayRowCount = dayDetails.length + draftDetails.length;
@@ -107,11 +72,6 @@ export default function DetailDayCard({
                 totalCount={totalDayRowCount}
                 visibleCount={visibleDayRowCount}
               />
-              {incompleteDayDetailCount > 0 ? (
-                <span className="day-row-count warning">
-                  {incompleteDayDetailCount} incomplete
-                </span>
-              ) : null}
             </p>
           </div>
           <div className="day-card-actions">
