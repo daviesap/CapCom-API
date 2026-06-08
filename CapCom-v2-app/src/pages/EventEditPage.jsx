@@ -12,6 +12,7 @@ import SettingsPanel from "../components/event-edit/SettingsPanel.jsx";
 import SummaryPanel from "../components/event-edit/SummaryPanel.jsx";
 import TruckingPanel from "../components/event-edit/TruckingPanel.jsx";
 import Loading from "../components/Loading.jsx";
+import { CapcomIcon } from "../icons/capcomIcons.jsx";
 import useOnlineStatus from "../hooks/useOnlineStatus.js";
 import { isEventAdmin } from "../auth/roles.js";
 import { getClients } from "../services/clientService.js";
@@ -88,6 +89,8 @@ const emptyEventForm = {
   scheduleEndDate: "",
   imageUrl: "",
   contactCompanyOrder: [],
+  updatedAt: null,
+  apiResponse: null,
 };
 
 const eventEditTabs = [
@@ -271,6 +274,47 @@ function formatEventDateRange(startDateString, endDateString) {
   }
 
   return `${formatDateOrdinal(startDate)} ${startMonth} ${startYear} to ${formatDateOrdinal(endDate)} ${endMonth} ${endYear}`;
+}
+
+function toDateValue(value) {
+  if (!value) return null;
+  if (value instanceof Date) return value;
+  if (typeof value.toDate === "function") return value.toDate();
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
+function formatRelativeDate(value) {
+  const date = toDateValue(value);
+  if (!date) return "";
+
+  const diffSeconds = Math.round((date.getTime() - Date.now()) / 1000);
+  const absSeconds = Math.abs(diffSeconds);
+  const units = [
+    { name: "year", seconds: 60 * 60 * 24 * 365 },
+    { name: "month", seconds: 60 * 60 * 24 * 30 },
+    { name: "week", seconds: 60 * 60 * 24 * 7 },
+    { name: "day", seconds: 60 * 60 * 24 },
+    { name: "hour", seconds: 60 * 60 },
+    { name: "minute", seconds: 60 },
+  ];
+  const unit = units.find((candidate) => absSeconds >= candidate.seconds);
+
+  if (!unit) return "just now";
+  const valueForUnit = Math.round(diffSeconds / unit.seconds);
+  return new Intl.RelativeTimeFormat("en-GB", { numeric: "auto" }).format(valueForUnit, unit.name);
+}
+
+function normaliseApiResponse(value) {
+  if (!value) return null;
+  if (typeof value === "object") return value;
+  if (typeof value !== "string") return null;
+
+  try {
+    return JSON.parse(value);
+  } catch {
+    return null;
+  }
 }
 
 function normaliseHexColour(colour) {
@@ -458,6 +502,8 @@ export default function EventEditPage() {
           contactCompanyOrder: Array.isArray(event.contactCompanyOrder)
             ? event.contactCompanyOrder
             : [],
+          updatedAt: event.updatedAt || null,
+          apiResponse: normaliseApiResponse(event["API Response"]),
         };
         setForm(loadedEventForm);
         setSavedEventForm(loadedEventForm);
@@ -619,6 +665,10 @@ export default function EventEditPage() {
   const scheduleDetails = useMemo(() => {
     return Object.values(detailsByDayId).flat();
   }, [detailsByDayId]);
+
+  const shareLastUpdatedText = useMemo(() => formatRelativeDate(form.updatedAt), [form.updatedAt]);
+  const shareProtectedHomeUrl = form.apiResponse?.protectedHomeUrl || "";
+  const shareHtmlUrl = form.apiResponse?.["html URL"] || form.apiResponse?.htmlUrl || "";
 
   const truckScheduleDetails = useMemo(() => {
     return scheduleDetails.filter((detail) => detail.truckId);
@@ -3633,41 +3683,67 @@ export default function EventEditPage() {
       {activeTab === "share" ? (
       <section className="panel">
         <div className="panel-heading">
-          <h2>Filtered views</h2>
-          <p className="item-meta">Save filter combinations for quick reuse.</p>
+          <p className="item-meta">
+            Last updated {shareLastUpdatedText || "not yet"}
+          </p>
+          <div className="settings-section-toolbar">
+            {canUpdateShareOutput ? (
+              <button
+                className="button secondary icon-text-button"
+                type="button"
+                disabled={
+                  isOffline ||
+                  updatingShareOutput ||
+                  filteredViewsLoading ||
+                  detailsLoading ||
+                  tagsLoading ||
+                  locationsLoading ||
+                  trucksLoading ||
+                  companiesLoading
+                }
+                onClick={updateShareOutput}
+              >
+                <CapcomIcon name="refresh" size={18} weight="bold" />
+                {updatingShareOutput ? "Updating..." : "Update"}
+              </button>
+            ) : null}
+            {shareProtectedHomeUrl ? (
+              <a
+                className="button secondary icon-text-button"
+                href={shareProtectedHomeUrl}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <CapcomIcon name="bookOpen" size={18} weight="bold" />
+                Open protected home
+              </a>
+            ) : null}
+            {shareHtmlUrl ? (
+              <a
+                className="button secondary icon-text-button"
+                href={shareHtmlUrl}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <CapcomIcon name="bookOpen" size={18} weight="bold" />
+                Open HTML
+              </a>
+            ) : null}
+          </div>
         </div>
 
-        <div className="settings-section-toolbar">
-          {canUpdateShareOutput ? (
+        {canManageFilteredViews && !filteredViewFormMode ? (
+          <div className="settings-section-toolbar">
             <button
-              className="button"
-              type="button"
-              disabled={
-                isOffline ||
-                updatingShareOutput ||
-                filteredViewsLoading ||
-                detailsLoading ||
-                tagsLoading ||
-                locationsLoading ||
-                trucksLoading ||
-                companiesLoading
-              }
-              onClick={updateShareOutput}
-            >
-              {updatingShareOutput ? "Updating..." : "Update"}
-            </button>
-          ) : null}
-          {canManageFilteredViews && !filteredViewFormMode ? (
-            <button
-              className="button"
+              className="button secondary"
               type="button"
               disabled={isOffline}
               onClick={startAddingFilteredView}
             >
               New filtered view
             </button>
-          ) : null}
-        </div>
+          </div>
+        ) : null}
 
         {filteredViewFormMode ? (
           <form className="tag-form" onSubmit={saveFilteredView}>
@@ -3859,49 +3935,10 @@ export default function EventEditPage() {
           <p className="item-meta">No filtered views yet.</p>
         ) : (
           <div className="tag-list">
-            {filteredViews.map((view) => {
-              const tagSummary = describeFilteredViewIds(
-                view.filterTagIds || view.tagIds,
-                (tagId) => tagById.get(tagId)?.name,
-                "All tags"
-              );
-              const locationSummary = describeFilteredViewIds(
-                view.filterLocationIds || view.locationIds,
-                (locationId) => locationById.get(locationId)?.name,
-                "All locations"
-              );
-              const subLocationSummary = describeFilteredViewIds(
-                view.filterSubLocationIds || view.subLocationIds,
-                (locationId) => locationById.get(locationId)?.displayName || locationById.get(locationId)?.name,
-                "All sub locations"
-              );
-              const companySummary = describeFilteredViewIds(
-                view.filterSupplierIds || view.companyIds,
-                (companyId) => companyById.get(companyId)?.companyName,
-                "All companies"
-              );
-              const flagSummary = [
-                `Show filter box: ${view.filterBox === false ? "No" : "Yes"}`,
-                `Show key info: ${view.showKeyInfo === false ? "No" : "Yes"}`,
-                `Show locations: ${view.showLocations ? "Yes" : "No"}`,
-              ].join(" • ");
-              const filterSummary = [
-                view.groupPresetId || "No preset",
-                view.filterGroup || "No filter group",
-                view.group || "No group",
-              ].join(" • ");
-
-              return (
+            {filteredViews.map((view) => (
                 <article className="tag-list-row" key={view.id}>
                   <div>
                     <h3>{view.name || "Unnamed filtered view"}</h3>
-                    <p className="item-meta">Sort order: {view.sortOrder || "n/a"}</p>
-                    <p className="item-meta">Settings: {flagSummary}</p>
-                    <p className="item-meta">Preset / Group: {filterSummary}</p>
-                    <p className="item-meta">Tags: {tagSummary}</p>
-                    <p className="item-meta">Locations: {locationSummary}</p>
-                    <p className="item-meta">Sub locations: {subLocationSummary}</p>
-                    <p className="item-meta">Companies: {companySummary}</p>
                   </div>
                   {canManageFilteredViews ? (
                     <div className="tag-list-actions">
@@ -3924,8 +3961,7 @@ export default function EventEditPage() {
                     </div>
                   ) : null}
                 </article>
-              );
-            })}
+              ))}
           </div>
         )}
       </section>

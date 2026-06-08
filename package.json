@@ -9,7 +9,7 @@
     "deploy:all": "cd frontend && npm run build && cd .. && firebase deploy --only hosting,functions,firestore:rules,storage --project flair-pdf-generator",
     "preversion": "echo \"❌ Don't run 'npm version' in the repo root. Use 'npm run version:functions -- <patch|minor|major>'\" && exit 1",
     "version:functions": "npm --prefix functions version",
-    "emulate:functions": "GLIDE_LOGS_APP='rIeUzfTQpgK4ComVOanX' GLIDE_LOGS_TABLE='native-table-EXf6OrHFQHS6x7kVCQ10' LOCAL_API_KEY='Sausages2025!!' firebase emulators:start --only functions",
+    "emulate:functions": "GLIDE_LOGS_APP='rIeUzfTQpgK4ComVOanX' GLIDE_LOGS_TABLE='native-table-EXf6OrHFQHS6x7kVCQ10' LOCAL_API_KEY='Sausages2025!!' firebase emulators:start --project flair-pdf-generator --only functions",
     "cf:login": "wrangler login",
     "cf:deploy": "wrangler deploy --config infra/cloudflare/wrangler.toml",
     "cf:preview": "wrangler dev --config infra/cloudflare/wrangler.toml"
