@@ -293,7 +293,7 @@ service cloud.firestore {
       allow delete: if canEditScheduleDetailData(resource.data);
     }
 
-    match /tag/{tagId} {
+    match /tags/{tagId} {
       allow get, list: if resource.data.eventId is string
         && canReadEvent(resource.data.eventId);
       allow create: if request.resource.data.eventId is string

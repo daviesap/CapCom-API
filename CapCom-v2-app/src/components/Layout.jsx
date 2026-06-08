@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, Outlet } from "react-router-dom";
 import AppNav from "./AppNav.jsx";
 import ConnectionStatus from "./ConnectionStatus.jsx";
+import Footer from "./Footer.jsx";
 import { CapcomIcon } from "../icons/capcomIcons.jsx";
 
 export default function Layout() {
@@ -12,8 +13,8 @@ export default function Layout() {
       <aside className="desktop-sidebar" aria-label="Primary navigation">
         <div className="sidebar-header">
           <Link className="brand" to="/events" title={isSidebarCollapsed ? "CapCom v2" : undefined}>
+            <img src="/flair-logo.png" alt="Flair" className="brand-logo" />
             <span className="brand-short" aria-hidden={!isSidebarCollapsed}>CC</span>
-            <span className="brand-full">CapCom v2</span>
           </Link>
           <button
             className="sidebar-collapse-button"
@@ -37,6 +38,7 @@ export default function Layout() {
 
       <main className="app-main">
         <Outlet />
+        <Footer />
       </main>
 
       <nav className="mobile-bottom-nav" aria-label="Primary navigation">

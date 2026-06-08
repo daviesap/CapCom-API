@@ -2,8 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "../auth/AuthProvider.jsx";
 import Loading from "../components/Loading.jsx";
 import Modal from "../components/Modal.jsx";
-import { CapcomIcon } from "../icons/capcomIcons.jsx";
-import useLoadingToast from "../hooks/useLoadingToast.js";
 import useOnlineStatus from "../hooks/useOnlineStatus.js";
 import { getClient, getClients } from "../services/clientService.js";
 import {
@@ -44,9 +42,6 @@ export default function CompaniesPage() {
     () => clients.find((client) => client.id === selectedClientId),
     [clients, selectedClientId]
   );
-
-  useLoadingToast(clientsLoading, "Loading clients...");
-  useLoadingToast(companiesLoading, "Loading companies...");
 
   useEffect(() => {
     if (profileLoading) return;
@@ -222,7 +217,6 @@ export default function CompaniesPage() {
       <div className="page-header">
         <div>
           <h1 className="page-title">Companies</h1>
-          <p className="page-subtitle">Client-wide company records.</p>
         </div>
       </div>
 
@@ -236,9 +230,6 @@ export default function CompaniesPage() {
         <div className="panel-heading">
           <div>
             <h2>{selectedClient?.clientName || "Companies"}</h2>
-            <p className="page-subtitle">
-              {canManageCompanies ? "Maintain companies for this client." : "View companies for your client."}
-            </p>
           </div>
           <div className="company-toolbar">
             {isSuperAdmin ? (
@@ -266,7 +257,6 @@ export default function CompaniesPage() {
                 disabled={isOffline || !selectedClientId}
                 onClick={startAddingCompany}
               >
-                <CapcomIcon name="add" size={18} weight="bold" />
                 Add company
               </button>
             ) : null}
@@ -297,7 +287,6 @@ export default function CompaniesPage() {
                       disabled={isOffline}
                       onClick={() => startEditingCompany(company)}
                     >
-                      <CapcomIcon name="edit" size={16} />
                       Edit
                     </button>
                     <button
@@ -306,7 +295,6 @@ export default function CompaniesPage() {
                       disabled={deletingCompanyId === company.id || isOffline}
                       onClick={() => removeCompany(company.id)}
                     >
-                      <CapcomIcon name="delete" size={16} />
                       {deletingCompanyId === company.id ? "Deleting..." : "Delete"}
                     </button>
                   </div>

@@ -1,6 +1,6 @@
 export function filterDetailRows(details, filters) {
   const {
-    selectedTagFilterId,
+    selectedTagFilterIds,
     locationById,
     selectedLocationFilterIds,
     selectedSubLocationFilterIds,
@@ -8,7 +8,7 @@ export function filterDetailRows(details, filters) {
   } = filters;
 
   return details.filter((detail) => {
-    const matchesTag = !selectedTagFilterId || detail.tagId === selectedTagFilterId;
+    const matchesTag = selectedTagFilterIds.length === 0 || selectedTagFilterIds.includes(detail.tagId);
     const detailLocation = detail.locationId
       ? locationById.get(detail.locationId)
       : null;

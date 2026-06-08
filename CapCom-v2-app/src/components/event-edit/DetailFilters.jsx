@@ -1,5 +1,3 @@
-import { CapcomIcon } from "../../icons/capcomIcons.jsx";
-
 export default function DetailFilters({
   usedTags,
   usedLocationFilters,
@@ -10,17 +8,17 @@ export default function DetailFilters({
   detailCountBySubLocationId,
   detailCountByCompanyId,
   hasActiveScheduleFilters,
-  selectedTagFilterId,
+  selectedTagFilterIds,
   selectedLocationFilterIds,
   selectedSubLocationFilterIds,
   selectedCompanyFilterIds,
-  getTagStyle,
   normaliseHexColour,
   clearScheduleFilters,
-  setSelectedTagFilterId,
+  setSelectedTagFilterIds,
   setSelectedLocationFilterIds,
   setSelectedSubLocationFilterIds,
   setSelectedCompanyFilterIds,
+  toggleTagFilter,
   toggleLocationFilter,
   toggleSubLocationFilter,
   toggleCompanyFilter,
@@ -34,13 +32,6 @@ export default function DetailFilters({
     return null;
   }
 
-  const selectedTag = usedTags.find((tag) => tag.id === selectedTagFilterId);
-
-  const renderSingleFilterSummary = () => {
-    if (!selectedTag) return "All tags";
-    return `Tag: ${selectedTag.name}`;
-  };
-
   const renderMultiFilterSummary = (selectedIds, prefix, allLabel) => {
     if (selectedIds.length === 0) return `${prefix}: ${allLabel}`;
     const selectedCount = selectedIds.length;
@@ -53,17 +44,17 @@ export default function DetailFilters({
         <div className="filter-menu-group" aria-label="Filter schedule rows by tag">
           <details className="filter-menu-item company-dropdown">
             <summary className="filter-menu-trigger">
-              <CapcomIcon name="filter" size={16} weight="bold" />
-              {renderSingleFilterSummary()}
+              {selectedTagFilterIds.length === 0
+                ? "Tags"
+                : `Tags: ${selectedTagFilterIds.length}`}
             </summary>
             <div className="filter-menu-panel">
               <label className="filter-menu-option" htmlFor="detail-filter-tag-all">
                 <input
                   id="detail-filter-tag-all"
-                  type="radio"
-                  name="detail-filter-tag"
-                  checked={!selectedTagFilterId}
-                  onChange={() => setSelectedTagFilterId("")}
+                  type="checkbox"
+                  checked={selectedTagFilterIds.length === 0}
+                  onChange={() => setSelectedTagFilterIds([])}
                 />
                 <span>All tags</span>
               </label>
@@ -75,11 +66,9 @@ export default function DetailFilters({
                 >
                   <input
                     id={`detail-filter-tag-${tag.id}`}
-                    type="radio"
-                    name="detail-filter-tag"
-                    checked={selectedTagFilterId === tag.id}
-                    onChange={() => setSelectedTagFilterId(tag.id)}
-                    style={selectedTagFilterId === tag.id ? getTagStyle(tag) : undefined}
+                    type="checkbox"
+                    checked={selectedTagFilterIds.includes(tag.id)}
+                    onChange={() => toggleTagFilter(tag.id)}
                   />
                   <span className="tag-dot" style={{ backgroundColor: normaliseHexColour(tag.colour) }} />
                   <span>{tag.name}</span>
@@ -94,8 +83,7 @@ export default function DetailFilters({
         <div className="filter-menu-group" aria-label="Filter schedule rows by location">
           <details className="filter-menu-item company-dropdown">
             <summary className="filter-menu-trigger">
-              <CapcomIcon name="filter" size={16} weight="bold" />
-              {renderMultiFilterSummary(selectedLocationFilterIds, "Locations", "All locations")}
+              {renderMultiFilterSummary(selectedLocationFilterIds, "Locations", "Locations")}
             </summary>
             <div className="filter-menu-panel">
               <label className="filter-menu-option" htmlFor="detail-filter-location-all">
@@ -133,8 +121,7 @@ export default function DetailFilters({
         <div className="filter-menu-group" aria-label="Filter schedule rows by sub location">
           <details className="filter-menu-item company-dropdown">
             <summary className="filter-menu-trigger">
-              <CapcomIcon name="filter" size={16} weight="bold" />
-              {renderMultiFilterSummary(selectedSubLocationFilterIds, "Sub locations", "All sub locations")}
+              {renderMultiFilterSummary(selectedSubLocationFilterIds, "Sub locations", "Sub locations")}
             </summary>
             <div className="filter-menu-panel">
               <label className="filter-menu-option" htmlFor="detail-filter-sub-location-all">
@@ -172,8 +159,7 @@ export default function DetailFilters({
         <div className="filter-menu-group" aria-label="Filter schedule rows by company">
           <details className="filter-menu-item company-dropdown">
             <summary className="filter-menu-trigger">
-              <CapcomIcon name="filter" size={16} weight="bold" />
-              {renderMultiFilterSummary(selectedCompanyFilterIds, "Companies", "All companies")}
+              {renderMultiFilterSummary(selectedCompanyFilterIds, "Companies", "Companies")}
             </summary>
             <div className="filter-menu-panel">
               <label className="filter-menu-option" htmlFor="detail-filter-company-all">

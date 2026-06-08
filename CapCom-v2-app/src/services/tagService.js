@@ -17,7 +17,7 @@ import {
   isBrowserOffline,
 } from "./localScheduleCache.js";
 
-const tagsRef = collection(db, "tag");
+const tagsRef = collection(db, "tags");
 
 function logWriteError(action, error, context = {}) {
   console.error(`Firestore write failed: ${action}`, { ...context, error });
@@ -68,7 +68,7 @@ export async function createTag({ eventId, name, colour }) {
 export async function updateTag(tagId, { name, colour }) {
   assertOnline();
   try {
-    return await updateDoc(doc(db, "tag", tagId), {
+    return await updateDoc(doc(db, "tags", tagId), {
       name,
       colour,
       updatedAt: serverTimestamp(),
@@ -84,7 +84,7 @@ export async function updateTag(tagId, { name, colour }) {
 export async function deleteTag(tagId) {
   assertOnline();
   try {
-    return await deleteDoc(doc(db, "tag", tagId));
+    return await deleteDoc(doc(db, "tags", tagId));
   } catch (error) {
     logWriteError("delete tag", error, { tagId });
     throw error;

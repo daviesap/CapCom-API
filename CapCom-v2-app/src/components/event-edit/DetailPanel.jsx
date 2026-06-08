@@ -4,7 +4,7 @@ import { filterDetailRows } from "./detailFilters.js";
 export default function DetailPanel({
   scheduleDays,
   detailsByDayId,
-  selectedTagFilterId,
+  selectedTagFilterIds,
   locationById,
   selectedLocationFilterIds,
   selectedSubLocationFilterIds,
@@ -65,7 +65,7 @@ export default function DetailPanel({
   saveDraftDetail,
 }) {
   const detailFilters = {
-    selectedTagFilterId,
+    selectedTagFilterIds,
     locationById,
     selectedLocationFilterIds,
     selectedSubLocationFilterIds,
@@ -141,7 +141,7 @@ export default function DetailPanel({
     saveDraftDetail,
   };
   const hasActiveDetailFilters =
-    Boolean(selectedTagFilterId) ||
+    selectedTagFilterIds.length > 0 ||
     selectedLocationFilterIds.length > 0 ||
     selectedSubLocationFilterIds.length > 0 ||
     selectedCompanyFilterIds.length > 0;

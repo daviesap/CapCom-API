@@ -504,7 +504,7 @@ export default function AdminPage() {
                       id="primaryColour"
                       value={clientForm.primaryColour}
                       disabled={clientSaving}
-                      placeholder="#1F6FEB"
+                      placeholder="#BE1717"
                       onChange={(event) => updateClientField("primaryColour", event.target.value)}
                     />
                   </div>
@@ -514,7 +514,7 @@ export default function AdminPage() {
                       id="secondaryColour"
                       value={clientForm.secondaryColour}
                       disabled={clientSaving}
-                      placeholder="#EEF4FF"
+                      placeholder="#FFF4DF"
                       onChange={(event) => updateClientField("secondaryColour", event.target.value)}
                     />
                   </div>

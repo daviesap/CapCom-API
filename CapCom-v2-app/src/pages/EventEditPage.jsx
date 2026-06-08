@@ -107,7 +107,7 @@ const eventEditTabs = [
 
 const emptyTagForm = {
   name: "",
-  colour: "#DCEEFF",
+  colour: "#F39200",
 };
 
 const emptyLocationForm = {
@@ -326,6 +326,22 @@ function normaliseHexColour(colour) {
   return /^#[0-9a-fA-F]{6}$/.test(withHash) ? withHash.toUpperCase() : "";
 }
 
+function getDetailSortOrder(detail) {
+  return typeof detail?.sortOrder === "number" ? detail.sortOrder : 0;
+}
+
+function sortDetailsForDisplay(details = []) {
+  return [...details].sort((a, b) => {
+    const timeComparison = String(a.time || "").localeCompare(String(b.time || ""));
+    if (timeComparison !== 0) return timeComparison;
+
+    const orderComparison = getDetailSortOrder(a) - getDetailSortOrder(b);
+    if (orderComparison !== 0) return orderComparison;
+
+    return String(a.id || "").localeCompare(String(b.id || ""));
+  });
+}
+
 function hexToRgba(colour, alpha) {
   const normalisedColour = normaliseHexColour(colour);
   if (!normalisedColour) return "";
@@ -401,7 +417,7 @@ export default function EventEditPage() {
   const [openActionMenuId, setOpenActionMenuId] = useState("");
   const [openNotesDetailId, setOpenNotesDetailId] = useState("");
   const [notesDraft, setNotesDraft] = useState("");
-  const [selectedTagFilterId, setSelectedTagFilterId] = useState("");
+  const [selectedTagFilterIds, setSelectedTagFilterIds] = useState([]);
   const [selectedLocationFilterIds, setSelectedLocationFilterIds] = useState([]);
   const [selectedSubLocationFilterIds, setSelectedSubLocationFilterIds] = useState([]);
   const [selectedCompanyFilterIds, setSelectedCompanyFilterIds] = useState([]);
@@ -986,10 +1002,12 @@ export default function EventEditPage() {
   }, [contactCompanyIds]);
 
   useEffect(() => {
-    if (selectedTagFilterId && !usedTagIds.has(selectedTagFilterId)) {
-      setSelectedTagFilterId("");
+    if (selectedTagFilterIds.some((tagId) => !usedTagIds.has(tagId))) {
+      setSelectedTagFilterIds((current) =>
+        current.filter((tagId) => usedTagIds.has(tagId))
+      );
     }
-  }, [selectedTagFilterId, usedTagIds]);
+  }, [selectedTagFilterIds, usedTagIds]);
 
   useEffect(() => {
     setSelectedLocationFilterIds((current) =>
@@ -1257,6 +1275,14 @@ export default function EventEditPage() {
       current.includes(companyId)
         ? current.filter((currentCompanyId) => currentCompanyId !== companyId)
         : [...current, companyId]
+    );
+  };
+
+  const toggleTagFilter = (tagId) => {
+    setSelectedTagFilterIds((current) =>
+      current.includes(tagId)
+        ? current.filter((currentTagId) => currentTagId !== tagId)
+        : [...current, tagId]
     );
   };
 
@@ -1783,14 +1809,14 @@ export default function EventEditPage() {
       ? companyIds.filter((currentCompanyId) => currentCompanyId !== companyId)
       : [...companyIds, companyId];
   const activeScheduleFilterCount = [
-    selectedTagFilterId,
+    selectedTagFilterIds.length > 0,
     selectedLocationFilterIds.length > 0,
     selectedSubLocationFilterIds.length > 0,
     selectedCompanyFilterIds.length > 0,
   ].filter(Boolean).length;
   const hasActiveScheduleFilters = activeScheduleFilterCount > 0;
   const clearScheduleFilters = () => {
-    setSelectedTagFilterId("");
+    setSelectedTagFilterIds([]);
     setSelectedLocationFilterIds([]);
     setSelectedSubLocationFilterIds([]);
     setSelectedCompanyFilterIds([]);
@@ -2553,6 +2579,25 @@ export default function EventEditPage() {
         locationId: detail.locationId || "",
         companyIds: detail.companyIds || [],
       });
+      setDetailsByDayId((current) => ({
+        ...current,
+        [dayId]: sortDetailsForDisplay(
+          (current[dayId] || []).map((nextDetail) =>
+            nextDetail.id === detail.id
+              ? {
+                  ...nextDetail,
+                  time: detail.time || "",
+                  description: detail.description || "",
+                  sortOrder: detail.sortOrder,
+                  colour: normaliseHexColour(detail.colour),
+                  tagId,
+                  locationId: detail.locationId || "",
+                  companyIds: detail.companyIds || [],
+                }
+              : nextDetail
+          )
+        ),
+      }));
       setSavedDetailsById((current) => ({
         ...current,
         [detail.id]: {
@@ -2855,12 +2900,59 @@ export default function EventEditPage() {
     }
   };
 
+  const buildDraftDetailDefaultsFromFilters = () => {
+    const validTagFilterIds = selectedTagFilterIds.filter((tagId) => getTagById(tagId));
+    const tagId = validTagFilterIds.length > 0
+      ? validTagFilterIds[0]
+      : "";
+
+    const filteredCompanyIds = selectedCompanyFilterIds.filter(
+      (companyId) => companyById.has(companyId)
+    );
+    const defaultCompanyIds =
+      showCompanyColumn
+        ? (filteredCompanyIds.length > 0
+          ? filteredCompanyIds
+          : (showCompanyColumn && companies.length === 1 ? [companies[0].id] : []))
+        : [];
+
+    let locationId = "";
+    if (showLocationColumn) {
+      const validSubLocationId = selectedSubLocationFilterIds.find((locationId) =>
+        locationById.has(locationId) && locationOptions.some((location) => location.id === locationId)
+      );
+      if (validSubLocationId) {
+        locationId = validSubLocationId;
+      } else if (selectedLocationFilterIds.length > 0) {
+        const selectedLocation = locationById.get(selectedLocationFilterIds[0]);
+        if (selectedLocation) {
+          const topLocationId = selectedLocation.parentLocationId || selectedLocation.id;
+          const defaultSubLocation = locationOptions.find(
+            (location) =>
+              location.parentLocationId === topLocationId || location.id === topLocationId
+          );
+          if (defaultSubLocation) {
+            locationId = defaultSubLocation.id;
+          }
+        }
+      }
+    }
+
+    if (!locationId && showLocationColumn && locationOptions.length === 1) {
+      locationId = locationOptions[0].id;
+    }
+
+    return {
+      tagId,
+      locationId,
+      companyIds: defaultCompanyIds,
+    };
+  };
+
   const addDraftDetail = (dayId) => {
     if (isOffline) return;
-    const defaultLocationId =
-      showLocationColumn && locationOptions.length === 1 ? locationOptions[0].id : "";
-    const defaultCompanyIds =
-      showCompanyColumn && companies.length === 1 ? [companies[0].id] : [];
+    const defaults = buildDraftDetailDefaultsFromFilters();
+
     setDraftDetailsByDayId((current) => ({
       ...current,
       [dayId]: [
@@ -2869,9 +2961,9 @@ export default function EventEditPage() {
           time: "",
           description: "",
           colour: "",
-          tagId: "",
-          locationId: defaultLocationId,
-          companyIds: defaultCompanyIds,
+          tagId: defaults.tagId,
+          locationId: defaults.locationId,
+          companyIds: defaults.companyIds,
         },
       ],
     }));
@@ -3469,14 +3561,14 @@ export default function EventEditPage() {
           detailCountBySubLocationId={detailCountBySubLocationId}
           detailCountByCompanyId={detailCountByCompanyId}
           hasActiveScheduleFilters={hasActiveScheduleFilters}
-          selectedTagFilterId={selectedTagFilterId}
+          selectedTagFilterIds={selectedTagFilterIds}
           selectedLocationFilterIds={selectedLocationFilterIds}
           selectedSubLocationFilterIds={selectedSubLocationFilterIds}
           selectedCompanyFilterIds={selectedCompanyFilterIds}
-          getTagStyle={getTagStyle}
           normaliseHexColour={normaliseHexColour}
           clearScheduleFilters={clearScheduleFilters}
-          setSelectedTagFilterId={setSelectedTagFilterId}
+          setSelectedTagFilterIds={setSelectedTagFilterIds}
+          toggleTagFilter={toggleTagFilter}
           setSelectedLocationFilterIds={setSelectedLocationFilterIds}
           setSelectedSubLocationFilterIds={setSelectedSubLocationFilterIds}
           setSelectedCompanyFilterIds={setSelectedCompanyFilterIds}
@@ -3487,7 +3579,7 @@ export default function EventEditPage() {
         <DetailPanel
           scheduleDays={scheduleDays}
           detailsByDayId={detailsByDayId}
-          selectedTagFilterId={selectedTagFilterId}
+          selectedTagFilterIds={selectedTagFilterIds}
           locationById={locationById}
           selectedLocationFilterIds={selectedLocationFilterIds}
           selectedSubLocationFilterIds={selectedSubLocationFilterIds}

@@ -6,7 +6,13 @@ export function ToastProvider({ children }) {
   const [toasts, setToasts] = useState([]);
 
   const dismissToast = useCallback((toastId) => {
-    setToasts((current) => current.filter((toast) => toast.id !== toastId));
+    setToasts((current) => current.map((toast) =>
+      toast.id === toastId ? { ...toast, exiting: true } : toast
+    ));
+
+    window.setTimeout(() => {
+      setToasts((current) => current.filter((toast) => toast.id !== toastId));
+    }, 300);
   }, []);
 
   const showToast = useCallback((message, options = {}) => {
@@ -17,6 +23,7 @@ export function ToastProvider({ children }) {
       id: toastId,
       message,
       variant: options.variant || "info",
+      exiting: false,
     };
 
     setToasts((current) => [
@@ -43,7 +50,11 @@ export function ToastProvider({ children }) {
       {children}
       <div className="toast-region" aria-live="polite" aria-relevant="additions text">
         {toasts.map((toast) => (
-          <div className={`toast toast-${toast.variant}`} role="status" key={toast.id}>
+          <div 
+            className={`toast toast-${toast.variant}${toast.exiting ? " exiting" : ""}`} 
+            role="status" 
+            key={toast.id}
+          >
             {toast.message}
           </div>
         ))}
