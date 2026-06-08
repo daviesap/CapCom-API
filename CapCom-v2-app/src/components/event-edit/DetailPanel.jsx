@@ -1,4 +1,5 @@
 import DetailDayCard from "./DetailDayCard.jsx";
+import { filterDetailRows } from "./detailFilters.js";
 
 export default function DetailPanel({
   scheduleDays,
@@ -64,6 +65,13 @@ export default function DetailPanel({
   savingDraftDayId,
   saveDraftDetail,
 }) {
+  const detailFilters = {
+    selectedTagFilterId,
+    locationById,
+    selectedLocationFilterIds,
+    selectedSubLocationFilterIds,
+    selectedCompanyFilterIds,
+  };
   const detailDisplay = {
     formatDetailDate,
     getNoRowsMessage,
@@ -143,26 +151,7 @@ export default function DetailPanel({
         <section className="list">
           {scheduleDays.map((day) => {
             const allDayDetails = detailsByDayId[day.id] || [];
-            const dayDetails = allDayDetails.filter((detail) => {
-              const matchesTag = !selectedTagFilterId || detail.tagId === selectedTagFilterId;
-              const detailLocation = detail.locationId
-                ? locationById.get(detail.locationId)
-                : null;
-              const detailTopLocationId =
-                detailLocation?.parentLocationId || detailLocation?.id || "";
-              const matchesLocation =
-                selectedLocationFilterIds.length === 0 ||
-                selectedLocationFilterIds.includes(detailTopLocationId);
-              const matchesSubLocation =
-                selectedSubLocationFilterIds.length === 0 ||
-                selectedSubLocationFilterIds.includes(detail.locationId);
-              const matchesCompany =
-                selectedCompanyFilterIds.length === 0 ||
-                selectedCompanyFilterIds.some((companyId) =>
-                  (detail.companyIds || []).includes(companyId)
-                );
-              return matchesTag && matchesLocation && matchesSubLocation && matchesCompany;
-            });
+            const dayDetails = filterDetailRows(allDayDetails, detailFilters);
             const draftDetails = draftDetailsByDayId[day.id] || [];
 
             return (
