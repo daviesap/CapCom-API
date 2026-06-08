@@ -156,14 +156,14 @@ function getEventArchiveValue(eventRecord) {
   return parseArchiveValue(eventRecord?.Archive ?? eventRecord?.archive);
 }
 
-function deriveShareArchiveRow(previousApiResponse) {
-  if (!previousApiResponse || typeof previousApiResponse !== "object") return null;
-  const diff = previousApiResponse.diff;
+function deriveShareArchiveRow(apiResponse) {
+  if (!apiResponse || typeof apiResponse !== "object") return null;
+  const diff = apiResponse.diff;
   if (!diff || typeof diff !== "object") return null;
 
   const changeCount = Number(diff.changeCount);
   const text = String(diff.text ?? "").trim();
-  const timestamp = previousApiResponse.timestamp ?? "";
+  const timestamp = apiResponse.timestamp ?? "";
   const createdAt = typeof timestamp === "string" && timestamp.trim()
     ? timestamp.trim()
     : null;
@@ -344,11 +344,6 @@ export async function generateHomeForEventCallable({
   }
 
   const previousApiResponse = parseJsonResponseValue(generationData.eventRecord["API Response"]);
-  const previousShareArchiveId = await writeShareArchive({
-    db,
-    eventId,
-    previousApiResponse,
-  });
 
   const payload = buildGenerateHomePayload({
     apiKey,
@@ -375,6 +370,7 @@ export async function generateHomeForEventCallable({
   });
 
   const eventRef = db.collection("events").doc(eventId);
+  let shareArchiveId = null;
   let apiCode = 0;
   let apiResponse = null;
 
@@ -394,16 +390,15 @@ export async function generateHomeForEventCallable({
     if (!debugPath && debugStatus.enabled) debugStatus.reason = "failed_to_write_payload";
     if (!responseDebugPath && debugStatus.enabled) debugStatus.reason = "failed_to_write_response";
 
-    const eventUpdate = {
+  const eventUpdate = {
       "API Code": apiCode,
       "API Response": apiResponse,
-      ...(previousShareArchiveId ? { lastShareArchiveId: previousShareArchiveId } : {}),
       updatedAt: FieldValue.serverTimestamp(),
     };
 
     if (!response.ok) {
       await eventRef.update(eventUpdate);
-      const message = typeof apiResponse === "object" && apiResponse?.message
+    const message = typeof apiResponse === "object" && apiResponse?.message
         ? apiResponse.message
         : "Generate home failed.";
       throw new HttpsError("aborted", message, { apiCode, apiResponse });
@@ -413,11 +408,21 @@ export async function generateHomeForEventCallable({
       ...eventUpdate,
       archive: payload.data,
     });
+    shareArchiveId = await writeShareArchive({
+      db,
+      eventId,
+      previousApiResponse: apiResponse,
+    });
+    if (shareArchiveId) {
+      await eventRef.update({
+        lastShareArchiveId: shareArchiveId,
+      });
+    }
 
     return {
       success: true,
       apiCode,
-      previousShareArchiveId,
+      shareArchiveId,
       debug: debugStatus,
       debugPayloadPath: debugPath,
       debugResponsePath: responseDebugPath,
@@ -435,7 +440,6 @@ export async function generateHomeForEventCallable({
       await eventRef.update({
         "API Code": apiCode,
         "API Response": apiResponse,
-        ...(previousShareArchiveId ? { lastShareArchiveId: previousShareArchiveId } : {}),
         updatedAt: FieldValue.serverTimestamp(),
       });
     }
