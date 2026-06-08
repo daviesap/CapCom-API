@@ -158,11 +158,13 @@ export default function DetailPanel({
     };
   });
   const totalDetailCount = dayRows.reduce(
-    (total, { allDayDetails }) => total + allDayDetails.length,
+    (total, { allDayDetails, draftDetails }) =>
+      total + allDayDetails.length + draftDetails.length,
     0
   );
   const visibleDetailCount = dayRows.reduce(
-    (total, { dayDetails }) => total + dayDetails.length,
+    (total, { dayDetails, draftDetails }) =>
+      total + dayDetails.length + draftDetails.length,
     0
   );
 
