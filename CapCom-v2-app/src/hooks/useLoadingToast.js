@@ -50,7 +50,7 @@ export default function useLoadingToast(
 
     const delay = Math.max(0, Number(showAfterMs) || 0);
     if (delay === 0) {
-      showLoadingToast(resolvedId);
+      showLoadingToast();
       return () => {
         if (toastIdRef.current) {
           dismissToast(toastIdRef.current);
@@ -66,6 +66,10 @@ export default function useLoadingToast(
 
     return () => {
       clearPendingToast();
+      if (toastIdRef.current) {
+        dismissToast(toastIdRef.current);
+        toastIdRef.current = "";
+      }
     };
 
   }, [dismissToast, id, isLoading, label, persist, showAfterMs, showToast, variant]);
