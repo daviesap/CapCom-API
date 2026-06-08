@@ -75,6 +75,7 @@ import {
   updateFilteredView,
 } from "../services/filteredViewService.js";
 import { getCompanies } from "../services/companyService.js";
+import { generateHomeForEvent } from "../services/functionService.js";
 
 const emptyEventForm = {
   name: "",
@@ -392,6 +393,7 @@ export default function EventEditPage() {
   const [filteredViewForm, setFilteredViewForm] = useState(emptyFilteredViewForm);
   const [savingFilteredView, setSavingFilteredView] = useState(false);
   const [deletingFilteredViewId, setDeletingFilteredViewId] = useState("");
+  const [updatingShareOutput, setUpdatingShareOutput] = useState(false);
   const [reorderingDayId, setReorderingDayId] = useState("");
   const [movingLocationId, setMovingLocationId] = useState("");
   const [locationDropTargetId, setLocationDropTargetId] = useState("");
@@ -407,6 +409,7 @@ export default function EventEditPage() {
   const draggedCompanyContactIdRef = useRef("");
   const canManageCompanyContacts = isSuperAdmin || isClientAdmin;
   const canManageFilteredViews = isSuperAdmin || isClientAdmin || isEventAdmin(userProfile);
+  const canUpdateShareOutput = isSuperAdmin || isClientAdmin;
   const canUseDebugJson = Boolean(userProfile?.debugMode);
   const canManageContactCompanyOrder = canManageCompanyContacts;
   const editableClients = clients.filter((client) => (
@@ -1462,69 +1465,6 @@ export default function EventEditPage() {
     );
   };
 
-  const copyText = async (text) => {
-    if (typeof text !== "string") {
-      throw new Error("Nothing to copy.");
-    }
-
-    try {
-      const copyUsingFallbackCommand = () => {
-        if (typeof document === "undefined" || !document.body) {
-          throw new Error("Clipboard is not available.");
-        }
-
-        const fallback = document.createElement("textarea");
-        fallback.value = text;
-        fallback.setAttribute("readonly", "");
-        fallback.style.position = "fixed";
-        fallback.style.left = "-9999px";
-        fallback.style.top = "0";
-        fallback.style.opacity = "0";
-        document.body.appendChild(fallback);
-        fallback.focus();
-        fallback.select();
-
-        let copySuccessful = false;
-        try {
-          copySuccessful = document.execCommand("copy");
-        } finally {
-          if (fallback.parentNode) {
-            document.body.removeChild(fallback);
-          }
-        }
-
-        if (!copySuccessful) {
-          throw new Error("Clipboard command was rejected.");
-        }
-      };
-
-      if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
-        try {
-          await navigator.clipboard.writeText(text);
-          return;
-        } catch (clipboardError) {
-          console.warn("Clipboard API write failed. Falling back to document copy.", clipboardError);
-        }
-      }
-
-      copyUsingFallbackCommand();
-    } catch (copyError) {
-      const sourceError =
-        copyError instanceof Error
-          ? copyError.message
-          : "Clipboard is unavailable.";
-      throw new Error(sourceError);
-    }
-  };
-
-  const copyTextFallbackPrompt = (text) => {
-    if (typeof window !== "undefined" && typeof window.prompt === "function") {
-      window.prompt("Copy failed. Please copy the JSON below:", text);
-      return true;
-    }
-    return false;
-  };
-
   const buildFilteredViewApiPayload = (sourceView) => {
     const nextName = String(sourceView?.name || "").trim();
     return {
@@ -1550,46 +1490,58 @@ export default function EventEditPage() {
     };
   };
 
-  const copyAllFilteredViewsPayload = async () => {
-    const payload = filteredViews.map((view) => buildFilteredViewApiPayload(view));
-    const copyTextValue = JSON.stringify(payload, null, 2);
-    try {
-      await copyText(copyTextValue);
-      setMessage(`Copied ${payload.length} filtered view${payload.length === 1 ? "" : "s"} as JSON.`);
-      setError("");
-    } catch (copyError) {
-      console.error(copyError);
-      const copyErrorMessage =
-        copyError instanceof Error ? copyError.message : "Clipboard is unavailable.";
-      if (!copyTextFallbackPrompt(copyTextValue)) {
-        setError(`Could not copy filtered views JSON: ${copyErrorMessage}`);
-        return;
-      }
-      setMessage("Clipboard was blocked. JSON copied text opened for manual copy.");
-      setError("");
+  const updateShareOutput = async () => {
+    if (isOffline) {
+      setError("Updating is disabled while offline.");
+      return;
     }
-  };
+    if (!canUpdateShareOutput) {
+      setError("Your role cannot update the share output.");
+      return;
+    }
 
-  const copyDetailPayload = async () => {
-    const payload = {
-      data: {
-        scheduleDetail: detailExportRows,
-      },
-    };
+    setUpdatingShareOutput(true);
+    setMessage("");
+    setError("");
+
     try {
-      await copyText(JSON.stringify(payload, null, 2));
-      setMessage(`Copied ${payload.data.scheduleDetail.length} schedule detail row${payload.data.scheduleDetail.length === 1 ? "" : "s"} as JSON.`);
-      setError("");
-    } catch (copyError) {
-      console.error(copyError);
-      const copyErrorMessage =
-        copyError instanceof Error ? copyError.message : "Clipboard is unavailable.";
-      const copyTextValue = JSON.stringify(payload, null, 2);
-      if (!copyTextFallbackPrompt(copyTextValue)) {
-        setError(`Could not copy schedule detail JSON: ${copyErrorMessage}`);
+      const result = await generateHomeForEvent(eventId, { debugPayload: canUseDebugJson });
+      await getEvent(eventId, userProfile);
+      const payloadPath = result?.debugPayloadPath;
+      const responsePath = result?.debugResponsePath;
+      const debugStatus = result?.debug?.reason || "";
+      if (payloadPath) {
+        setMessage(
+          `${result?.message || "Share output updated."} (payload: ${payloadPath}${
+            responsePath ? `, response: ${responsePath}` : ""
+          }${debugStatus ? `, debug: ${debugStatus}` : ""})`
+        );
+      } else {
+        const debugMessage = result?.debug?.enabled ? " (debug enabled)" : " (debug disabled for this user)";
+        const debugError = result?.debug?.reason && result.debug.reason !== "ok"
+          ? ` (${result.debug.reason})`
+          : "";
+        setMessage(`${result?.message || "Share output updated."}${debugMessage}${debugError}`);
+      }
+    } catch (updateError) {
+      console.error(updateError);
+      const debugPayloadPath = updateError?.customData?.debugPayloadPath;
+      const debugStatus = updateError?.customData?.debug?.reason;
+      if (debugPayloadPath || debugStatus) {
+        setError(
+          `${updateError?.customData?.message || updateError?.message || "Could not update share output."}`
+          + `${debugPayloadPath ? ` | payload: ${debugPayloadPath}` : ""}`
+          + `${debugStatus ? ` | debug: ${debugStatus}` : ""}`
+        );
         return;
       }
-      setMessage("Clipboard was blocked. JSON copied text opened for manual copy.");
+      const messageText =
+        updateError?.customData?.message ||
+        updateError?.message ||
+        "Could not update share output.";
+      setError(messageText);
+    } finally {
+      setUpdatingShareOutput(false);
     }
   };
 
@@ -3519,18 +3471,6 @@ export default function EventEditPage() {
 
       {activeTab === "detail" ? (
       <section className="panel">
-        <div className="settings-section-toolbar">
-          {canUseDebugJson ? (
-            <button
-              className="button secondary"
-              type="button"
-              disabled={isOffline || detailsLoading}
-              onClick={copyDetailPayload}
-            >
-              Copy detail JSON
-            </button>
-          ) : null}
-        </div>
         <DetailFilters
           usedTags={usedTags}
           usedLocationFilters={usedLocationFilters}
@@ -3698,14 +3638,23 @@ export default function EventEditPage() {
         </div>
 
         <div className="settings-section-toolbar">
-          {canUseDebugJson ? (
+          {canUpdateShareOutput ? (
             <button
-              className="button secondary"
+              className="button"
               type="button"
-              disabled={isOffline || filteredViewsLoading}
-              onClick={copyAllFilteredViewsPayload}
+              disabled={
+                isOffline ||
+                updatingShareOutput ||
+                filteredViewsLoading ||
+                detailsLoading ||
+                tagsLoading ||
+                locationsLoading ||
+                trucksLoading ||
+                companiesLoading
+              }
+              onClick={updateShareOutput}
             >
-              Copy all filtered views JSON
+              {updatingShareOutput ? "Updating..." : "Update"}
             </button>
           ) : null}
           {canManageFilteredViews && !filteredViewFormMode ? (

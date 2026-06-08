@@ -33,6 +33,7 @@ import { getAuth } from "firebase-admin/auth";
 // ===== Imports — Local modules =====
 import { sanitiseUrl } from "./utils/sanitiseUrl.mjs";
 import { generateHomeHandler } from "./generateSchedules/generateHomeHandler.mjs";
+import { generateHomeForEventCallable } from "./generateSchedules/generateHomeForEventCallable.mjs";
 
 // ===== Secrets =====
 // Declare the secret names as they exist in Secret Manager
@@ -203,6 +204,23 @@ export const createAuthUserProfile = onCall({
     console.error("Failed to create auth user profile.", error);
     throw new HttpsError("internal", "Could not create user.");
   }
+});
+
+export const generateHomeForEvent = onCall({
+  region: "europe-west2",
+  secrets: [API_KEY],
+  timeoutSeconds: 540,
+  memory: "1GiB",
+}, async (request) => {
+  const apiKey = runningEmulated
+    ? (process.env.LOCAL_API_KEY || "dev-key")
+    : API_KEY.value();
+
+  return generateHomeForEventCallable({
+    request,
+    db,
+    apiKey,
+  });
 });
 
 // ===== Helpers — URLs & logging =====

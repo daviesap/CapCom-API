@@ -4,7 +4,7 @@
   "scripts": {
     "deploy:frontend": "cd frontend && npm run build && cd .. && firebase deploy --only hosting --project flair-pdf-generator",
     "deploy:functions": "firebase deploy --only functions --project flair-pdf-generator",
-    "deploy:capcomv2": "cd /Users/apndavies/Coding/CapCom-v2/CapCom-v2-app && npm run build && cd .. && firebase deploy --only hosting:capcom-react-lab --project flair-pdf-generator",
+    "deploy:capcomv2": "cd CapCom-v2-app && npm run build && cd .. && firebase deploy --only hosting:capcom-react-lab --project flair-pdf-generator",
     "deploy:rules": "firebase deploy --only firestore:rules,storage --project flair-pdf-generator",
     "deploy:all": "cd frontend && npm run build && cd .. && firebase deploy --only hosting,functions,firestore:rules,storage --project flair-pdf-generator",
     "preversion": "echo \"❌ Don't run 'npm version' in the repo root. Use 'npm run version:functions -- <patch|minor|major>'\" && exit 1",
