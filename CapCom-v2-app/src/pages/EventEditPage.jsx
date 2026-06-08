@@ -2363,8 +2363,9 @@ export default function EventEditPage() {
 
   const addDraftDetail = (dayId) => {
     if (isOffline) return;
+    const selectedTagExists = selectedTagFilterId && getTagById(selectedTagFilterId);
     const defaultTagId =
-      showTagColumn && selectedTagFilterId ? selectedTagFilterId :
+      showTagColumn && selectedTagExists ? selectedTagFilterId :
       showTagColumn && tags.length === 1 ? tags[0].id :
       "";
     const defaultLocationId =
