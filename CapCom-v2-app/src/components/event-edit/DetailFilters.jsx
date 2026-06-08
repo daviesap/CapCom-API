@@ -46,26 +46,15 @@ export default function DetailFilters({
   };
 
   return (
-    <div className="filter-groups" aria-label="Filter schedule rows">
-      {hasActiveScheduleFilters ? (
-        <div className="tag-filter-bar" aria-label="Clear schedule row filters">
-          <button
-            className="tag-filter-button"
-            type="button"
-            onClick={clearScheduleFilters}
-          >
-            Clear filters
-          </button>
-        </div>
-      ) : null}
+    <div className="filter-menu-bar" aria-label="Filter schedule rows">
       {usedTags.length > 0 ? (
-        <div className="tag-filter-bar" aria-label="Filter schedule rows by tag">
-          <details className="company-dropdown">
-            <summary className="company-dropdown-trigger">
+        <div className="filter-menu-group" aria-label="Filter schedule rows by tag">
+          <details className="filter-menu-item company-dropdown">
+            <summary className="filter-menu-trigger">
               {renderSingleFilterSummary()}
             </summary>
-            <div className="company-dropdown-menu">
-              <label className="company-dropdown-option" htmlFor="detail-filter-tag-all">
+            <div className="filter-menu-panel">
+              <label className="filter-menu-option" htmlFor="detail-filter-tag-all">
                 <input
                   id="detail-filter-tag-all"
                   type="radio"
@@ -77,7 +66,7 @@ export default function DetailFilters({
               </label>
               {usedTags.map((tag) => (
                 <label
-                  className="company-dropdown-option"
+                  className="filter-menu-option"
                   htmlFor={`detail-filter-tag-${tag.id}`}
                   key={tag.id}
                 >
@@ -99,13 +88,13 @@ export default function DetailFilters({
         </div>
       ) : null}
       {usedLocationFilters.length > 0 ? (
-        <div className="tag-filter-bar" aria-label="Filter schedule rows by location">
-          <details className="company-dropdown">
-            <summary className="company-dropdown-trigger">
+        <div className="filter-menu-group" aria-label="Filter schedule rows by location">
+          <details className="filter-menu-item company-dropdown">
+            <summary className="filter-menu-trigger">
               {renderMultiFilterSummary(selectedLocationFilterIds, "Locations", "All locations")}
             </summary>
-            <div className="company-dropdown-menu">
-              <label className="company-dropdown-option" htmlFor="detail-filter-location-all">
+            <div className="filter-menu-panel">
+              <label className="filter-menu-option" htmlFor="detail-filter-location-all">
                 <input
                   id="detail-filter-location-all"
                   type="checkbox"
@@ -116,7 +105,7 @@ export default function DetailFilters({
               </label>
               {usedLocationFilters.map((location) => (
                 <label
-                  className="company-dropdown-option"
+                  className="filter-menu-option"
                   htmlFor={`detail-filter-location-${location.id}`}
                   key={location.id}
                 >
@@ -137,13 +126,13 @@ export default function DetailFilters({
         </div>
       ) : null}
       {usedSubLocationFilters.length > 0 ? (
-        <div className="tag-filter-bar" aria-label="Filter schedule rows by sub location">
-          <details className="company-dropdown">
-            <summary className="company-dropdown-trigger">
+        <div className="filter-menu-group" aria-label="Filter schedule rows by sub location">
+          <details className="filter-menu-item company-dropdown">
+            <summary className="filter-menu-trigger">
               {renderMultiFilterSummary(selectedSubLocationFilterIds, "Sub locations", "All sub locations")}
             </summary>
-            <div className="company-dropdown-menu">
-              <label className="company-dropdown-option" htmlFor="detail-filter-sub-location-all">
+            <div className="filter-menu-panel">
+              <label className="filter-menu-option" htmlFor="detail-filter-sub-location-all">
                 <input
                   id="detail-filter-sub-location-all"
                   type="checkbox"
@@ -154,7 +143,7 @@ export default function DetailFilters({
               </label>
               {usedSubLocationFilters.map((location) => (
                 <label
-                  className="company-dropdown-option"
+                  className="filter-menu-option"
                   htmlFor={`detail-filter-sub-location-${location.id}`}
                   key={location.id}
                 >
@@ -175,13 +164,13 @@ export default function DetailFilters({
         </div>
       ) : null}
       {usedCompanies.length > 0 ? (
-        <div className="tag-filter-bar" aria-label="Filter schedule rows by company">
-          <details className="company-dropdown">
-            <summary className="company-dropdown-trigger">
+        <div className="filter-menu-group" aria-label="Filter schedule rows by company">
+          <details className="filter-menu-item company-dropdown">
+            <summary className="filter-menu-trigger">
               {renderMultiFilterSummary(selectedCompanyFilterIds, "Companies", "All companies")}
             </summary>
-            <div className="company-dropdown-menu">
-              <label className="company-dropdown-option" htmlFor="detail-filter-company-all">
+            <div className="filter-menu-panel">
+              <label className="filter-menu-option" htmlFor="detail-filter-company-all">
                 <input
                   id="detail-filter-company-all"
                   type="checkbox"
@@ -192,7 +181,7 @@ export default function DetailFilters({
               </label>
               {usedCompanies.map((company) => (
                 <label
-                  className="company-dropdown-option"
+                  className="filter-menu-option"
                   htmlFor={`detail-filter-company-${company.id}`}
                   key={company.id}
                 >
@@ -212,6 +201,17 @@ export default function DetailFilters({
           </details>
         </div>
       ) : null}
+      <button
+        className={[
+          "filter-menu-clear",
+          hasActiveScheduleFilters ? "" : "is-hidden",
+        ].filter(Boolean).join(" ")}
+        type="button"
+        disabled={!hasActiveScheduleFilters}
+        onClick={clearScheduleFilters}
+      >
+        Clear
+      </button>
     </div>
   );
 }

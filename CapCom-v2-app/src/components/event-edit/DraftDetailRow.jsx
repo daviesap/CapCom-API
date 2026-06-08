@@ -51,14 +51,8 @@ export default function DraftDetailRow({
       saveDraftDetail(dayId, draftIndex, draft);
     }
   };
-  const hasTag = Boolean(getTagById(draft.tagId));
-  const hasLocation = Boolean(getLocationById(draft.locationId));
-  const hasCompany = (draft.companyIds || []).length > 0;
   const canSaveDraft =
     Boolean(draft.description.trim()) &&
-    (!showTagColumn || hasTag) &&
-    (!showLocationColumn || hasLocation) &&
-    (!showCompanyColumn || hasCompany) &&
     savingDraftDayId !== dayId &&
     !isOffline;
 
@@ -92,11 +86,7 @@ export default function DraftDetailRow({
       />
       {showTagColumn ? (
         <div
-          className={[
-            "tag-select-wrap",
-            "detail-select-field",
-            hasTag ? "" : "detail-select-field-missing",
-          ].filter(Boolean).join(" ")}
+          className="tag-select-wrap detail-select-field"
           style={getTagStyle(getTagById(draft.tagId))}
         >
           <span
@@ -122,13 +112,7 @@ export default function DraftDetailRow({
         </div>
       ) : null}
       {showLocationColumn ? (
-        <div
-          className={[
-            "location-select-wrap",
-            "detail-select-field",
-            hasLocation ? "" : "detail-select-field-missing",
-          ].filter(Boolean).join(" ")}
-        >
+        <div className="location-select-wrap detail-select-field">
           <select
             aria-label="New detail location"
             value={getLocationById(draft.locationId) ? draft.locationId : ""}
@@ -147,19 +131,10 @@ export default function DraftDetailRow({
         </div>
       ) : null}
       {showCompanyColumn ? (
-        <details
-          className={[
-            "company-dropdown",
-            "detail-select-field",
-            hasCompany ? "" : "detail-select-field-missing",
-          ].filter(Boolean).join(" ")}
-        >
+        <details className="company-dropdown detail-select-field">
           <summary
             aria-label="New detail company"
-            className={[
-              "company-dropdown-trigger",
-              hasCompany ? "" : "detail-select-field-empty",
-            ].filter(Boolean).join(" ")}
+            className="company-dropdown-trigger"
           >
             {getCompanyLabel(draft.companyIds || [])}
           </summary>

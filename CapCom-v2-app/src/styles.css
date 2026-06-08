@@ -864,20 +864,43 @@ textarea {
   padding: 10px 12px;
 }
 
-.filter-groups {
-  display: grid;
-  gap: 10px;
-  margin-bottom: 14px;
-}
-
-.tag-filter-bar {
+.filter-menu-bar {
   align-items: center;
   border-bottom: 1px solid #e6ebf0;
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  margin: -2px 0 0;
+  gap: 0;
+  margin-bottom: 14px;
   padding-bottom: 12px;
+}
+
+.filter-menu-group {
+  align-items: center;
+  display: flex;
+  margin: 0;
+}
+
+.filter-menu-clear {
+  align-items: center;
+  background: #ffffff;
+  border: 0;
+  border-radius: 6px;
+  color: var(--color-text);
+  display: inline-flex;
+  font-size: 14px;
+  font-weight: 700;
+  height: 42px;
+  margin-left: auto;
+  padding: 0 16px;
+}
+
+.filter-menu-clear:hover {
+  background: #f5f7fa;
+}
+
+.filter-menu-clear.is-hidden {
+  pointer-events: none;
+  visibility: hidden;
 }
 
 .tag-filter-button {
@@ -1290,6 +1313,96 @@ textarea {
   color: #6b7280;
   font-size: 13px;
   padding: 6px 8px;
+}
+
+.filter-menu-item.company-dropdown {
+  background: #ffffff;
+  border: 0;
+  border-radius: 6px;
+  box-shadow: none;
+  color: var(--color-text);
+  display: block;
+  height: 42px;
+  min-width: 0;
+  padding: 0;
+  position: relative;
+}
+
+.filter-menu-item.company-dropdown[open] {
+  background: #f5f7fa;
+}
+
+.filter-menu-trigger {
+  align-items: center;
+  cursor: pointer;
+  display: flex;
+  font-size: 14px;
+  font-weight: 700;
+  gap: 12px;
+  height: 42px;
+  line-height: 1;
+  max-width: 260px;
+  min-width: 108px;
+  overflow: hidden;
+  padding: 0 16px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.filter-menu-trigger::-webkit-details-marker {
+  display: none;
+}
+
+.filter-menu-trigger::after {
+  border-bottom: 2px solid currentColor;
+  border-right: 2px solid currentColor;
+  content: "";
+  flex: 0 0 auto;
+  height: 7px;
+  margin-left: auto;
+  transform: rotate(45deg) translateY(-2px);
+  width: 7px;
+}
+
+.filter-menu-item[open] .filter-menu-trigger::after {
+  transform: rotate(225deg) translateY(-1px);
+}
+
+.filter-menu-panel {
+  background: #ffffff;
+  border: 0;
+  border-radius: 0 0 6px 6px;
+  box-shadow: 0 12px 28px rgba(23, 32, 42, 0.14);
+  color: var(--color-text);
+  display: grid;
+  left: 0;
+  min-width: 220px;
+  overflow: hidden;
+  padding: 8px 0;
+  position: absolute;
+  top: 100%;
+  z-index: 40;
+}
+
+.filter-menu-option {
+  align-items: center;
+  cursor: pointer;
+  display: flex;
+  font-size: 16px;
+  gap: 10px;
+  min-height: 42px;
+  padding: 8px 20px;
+  white-space: nowrap;
+}
+
+.filter-menu-option:hover {
+  background: #f4f6f8;
+}
+
+.filter-menu-option input {
+  height: 14px;
+  margin: 0;
+  width: 14px;
 }
 
 .company-select-wrap {

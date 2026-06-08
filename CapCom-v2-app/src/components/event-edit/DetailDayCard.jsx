@@ -17,26 +17,6 @@ function DetailFilterNotice({ hiddenDetailCount, isEmpty }) {
   return null;
 }
 
-function DetailDayRowCount({ totalCount, visibleCount }) {
-  if (totalCount === 0) {
-    return <span className="day-row-count empty">No rows</span>;
-  }
-
-  if (visibleCount !== totalCount) {
-    return (
-      <span className="day-row-count filtered">
-        {visibleCount}/{totalCount} rows
-      </span>
-    );
-  }
-
-  return (
-    <span className="day-row-count">
-      {totalCount} row{totalCount === 1 ? "" : "s"}
-    </span>
-  );
-}
-
 export default function DetailDayCard({
   day,
   dayDetails,
@@ -54,8 +34,6 @@ export default function DetailDayCard({
   const { formatDetailDate } = detailDisplay;
   const { isOffline, addDraftDetail, startEditingDay } = dayActions;
   const hiddenDetailCount = allDayDetailCount - dayDetails.length;
-  const totalDayRowCount = allDayDetailCount + draftDetails.length;
-  const visibleDayRowCount = dayDetails.length + draftDetails.length;
   const hasRowsOrDrafts = dayDetails.length > 0 || draftDetails.length > 0;
 
   return (
@@ -68,10 +46,6 @@ export default function DetailDayCard({
               {day.summary ? (
                 <span className="item-meta day-title-summary">{day.summary}</span>
               ) : null}
-              <DetailDayRowCount
-                totalCount={totalDayRowCount}
-                visibleCount={visibleDayRowCount}
-              />
             </p>
           </div>
           <div className="day-card-actions">

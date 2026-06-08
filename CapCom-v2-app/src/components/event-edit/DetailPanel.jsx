@@ -185,7 +185,6 @@ export default function DetailPanel({
               key={day.id}
               day={day}
               dayDetails={dayDetails}
-              allDayDetails={allDayDetails}
               allDayDetailCount={allDayDetails.length}
               draftDetails={draftDetails}
               detailDisplay={detailDisplay}

@@ -76,9 +76,6 @@ export default function DetailRow({
   const canMoveDown = canMoveDetail(dayDetails, detailIndex, 1);
   const previousDay = getAdjacentDay(day.id, -1);
   const nextDay = getAdjacentDay(day.id, 1);
-  const hasTag = Boolean(getTagById(detail.tagId));
-  const hasLocation = Boolean(getLocationById(detail.locationId));
-  const hasCompany = (detail.companyIds || []).length > 0;
 
   return (
     <div
@@ -139,11 +136,7 @@ export default function DetailRow({
         />
       ) : (
         <button
-          className={[
-            "detail-cell",
-            "detail-time-display",
-            detail.time ? "" : "missing-time",
-          ].filter(Boolean).join(" ")}
+          className="detail-cell detail-time-display"
           type="button"
           disabled={isOffline}
           onClick={() => startEditingDetailCell(day.id, detail.id, "time")}
@@ -190,11 +183,7 @@ export default function DetailRow({
       )}
       {showTagColumn ? (
         <div
-          className={[
-            "tag-select-wrap",
-            "detail-select-field",
-            hasTag ? "" : "detail-select-field-missing",
-          ].filter(Boolean).join(" ")}
+          className="tag-select-wrap detail-select-field"
           style={getTagStyle(getTagById(detail.tagId))}
         >
           <span
@@ -220,13 +209,7 @@ export default function DetailRow({
         </div>
       ) : null}
       {showLocationColumn ? (
-        <div
-          className={[
-            "location-select-wrap",
-            "detail-select-field",
-            hasLocation ? "" : "detail-select-field-missing",
-          ].filter(Boolean).join(" ")}
-        >
+        <div className="location-select-wrap detail-select-field">
           <select
             aria-label={`Location for ${detail.description || "schedule detail"}`}
             value={getLocationById(detail.locationId) ? detail.locationId : ""}
@@ -243,19 +226,10 @@ export default function DetailRow({
         </div>
       ) : null}
       {showCompanyColumn ? (
-        <details
-          className={[
-            "company-dropdown",
-            "detail-select-field",
-            hasCompany ? "" : "detail-select-field-missing",
-          ].filter(Boolean).join(" ")}
-        >
+        <details className="company-dropdown detail-select-field">
           <summary
             aria-label={`Company for ${detail.description || "schedule detail"}`}
-            className={[
-              "company-dropdown-trigger",
-              hasCompany ? "" : "detail-select-field-empty",
-            ].filter(Boolean).join(" ")}
+            className="company-dropdown-trigger"
           >
             {getCompanyLabel(detail.companyIds || [])}
           </summary>
