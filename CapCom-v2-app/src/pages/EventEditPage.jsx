@@ -2433,7 +2433,7 @@ export default function EventEditPage() {
         eventId,
         scheduleDayId: dayId,
         time: draft.time,
-        description: draft.description,
+        description: draft.description.trim(),
         notes: "",
         colour: normaliseHexColour(draft.colour),
         tagId: draft.tagId || "",
