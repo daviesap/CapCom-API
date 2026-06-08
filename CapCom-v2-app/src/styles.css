@@ -1005,6 +1005,14 @@ textarea {
   color: #17202a;
 }
 
+.detail-time-display.missing-time {
+  background: #fff7ed;
+  border-color: #fed7aa;
+  color: #9a3412;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
 .detail-description-cell:hover::after,
 .detail-description-cell:focus-visible::after {
   background: #17202a;

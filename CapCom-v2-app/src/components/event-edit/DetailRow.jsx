@@ -136,7 +136,11 @@ export default function DetailRow({
         />
       ) : (
         <button
-          className="detail-cell detail-time-display"
+          className={[
+            "detail-cell",
+            "detail-time-display",
+            detail.time ? "" : "missing-time",
+          ].filter(Boolean).join(" ")}
           type="button"
           disabled={isOffline}
           onClick={() => startEditingDetailCell(day.id, detail.id, "time")}
