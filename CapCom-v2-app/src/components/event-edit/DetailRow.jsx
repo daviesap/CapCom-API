@@ -1,4 +1,21 @@
+import { useRef } from "react";
 import DetailRowActions from "./DetailRowActions.jsx";
+
+function createDetailDragPreview(rowElement) {
+  if (!rowElement || !document.body) return null;
+
+  const rowRect = rowElement.getBoundingClientRect();
+  const preview = rowElement.cloneNode(true);
+  preview.classList.add("detail-drag-preview");
+  preview.style.width = `${rowRect.width}px`;
+
+  preview
+    .querySelectorAll(".notes-popover-panel, .action-menu-list, .company-dropdown-menu")
+    .forEach((element) => element.remove());
+
+  document.body.appendChild(preview);
+  return preview;
+}
 
 export default function DetailRow({
   day,
@@ -38,12 +55,9 @@ export default function DetailRow({
     startEditingDetailCell,
   } = rowEditing;
   const {
-    canMoveDetail,
     getAdjacentDay,
     draggedDetailIdRef,
     reorderDetail,
-    reorderingDayId,
-    moveDetail,
     moveDetailToDay,
   } = rowOrdering;
   const {
@@ -72,10 +86,13 @@ export default function DetailRow({
   } = rowActions;
   const isEditingTime = isEditingDetailCell(detail.id, "time");
   const isEditingDescription = isEditingDetailCell(detail.id, "description");
-  const canMoveUp = canMoveDetail(dayDetails, detailIndex, -1);
-  const canMoveDown = canMoveDetail(dayDetails, detailIndex, 1);
   const previousDay = getAdjacentDay(day.id, -1);
   const nextDay = getAdjacentDay(day.id, 1);
+  const dragPreviewRef = useRef(null);
+  const clearDragPreview = () => {
+    dragPreviewRef.current?.remove();
+    dragPreviewRef.current = null;
+  };
 
   return (
     <div
@@ -85,6 +102,19 @@ export default function DetailRow({
       onDragStart={(event) => {
         draggedDetailIdRef.current = detail.id;
         event.dataTransfer.effectAllowed = "move";
+        clearDragPreview();
+        const dragPreview = createDetailDragPreview(event.currentTarget);
+        if (dragPreview) {
+          const rowRect = event.currentTarget.getBoundingClientRect();
+          dragPreviewRef.current = dragPreview;
+          if (event.dataTransfer.setDragImage) {
+            event.dataTransfer.setDragImage(
+              dragPreview,
+              Math.max(0, Math.min(event.clientX - rowRect.left, dragPreview.offsetWidth)),
+              Math.max(0, Math.min(event.clientY - rowRect.top, dragPreview.offsetHeight))
+            );
+          }
+        }
       }}
       onDragOver={(event) => {
         const draggedDetail = dayDetails.find(
@@ -103,9 +133,11 @@ export default function DetailRow({
         event.preventDefault();
         reorderDetail(day.id, draggedDetailIdRef.current, detail.id);
         draggedDetailIdRef.current = "";
+        clearDragPreview();
       }}
       onDragEnd={() => {
         draggedDetailIdRef.current = "";
+        clearDragPreview();
       }}
     >
       {isEditingTime ? (
@@ -269,12 +301,8 @@ export default function DetailRow({
         setOpenActionMenuId={setOpenActionMenuId}
         beginRowAction={beginRowAction}
         endRowAction={endRowAction}
-        canMoveUp={canMoveUp}
-        canMoveDown={canMoveDown}
-        reorderingDayId={reorderingDayId}
         previousDay={previousDay}
         nextDay={nextDay}
-        moveDetail={moveDetail}
         moveDetailToDay={moveDetailToDay}
         duplicateDetail={duplicateDetail}
         closeActionMenu={closeActionMenu}

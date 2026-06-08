@@ -59,6 +59,7 @@ body {
   background: var(--color-bg);
   color: var(--color-text);
   font-family: var(--font-body);
+  font-size: 14px;
 }
 
 a {
@@ -978,6 +979,17 @@ textarea {
   cursor: grabbing;
 }
 
+.detail-drag-preview {
+  box-sizing: border-box;
+  left: 0;
+  max-width: calc(100vw - 24px);
+  opacity: 0.94;
+  pointer-events: none;
+  position: fixed;
+  top: -1000px;
+  z-index: -1;
+}
+
 .detail-row .button {
   grid-column: var(--detail-actions-column, 6);
   justify-self: start;
@@ -1171,14 +1183,22 @@ textarea {
 }
 
 .action-menu-item {
+  align-items: center;
   background: transparent;
   border: 0;
   border-radius: 8px;
   color: #17202a;
-  font-weight: 600;
+  display: flex;
+  gap: 9px;
+  font-weight: 200;
   padding: 9px 12px;
   text-align: left;
   white-space: nowrap;
+}
+
+.action-menu-item svg {
+  color: currentColor;
+  flex: 0 0 auto;
 }
 
 .action-menu-item:hover:not(:disabled),

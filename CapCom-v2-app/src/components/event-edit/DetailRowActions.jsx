@@ -15,17 +15,27 @@ export default function DetailRowActions({
   setOpenActionMenuId,
   beginRowAction,
   endRowAction,
-  canMoveUp,
-  canMoveDown,
-  reorderingDayId,
   previousDay,
   nextDay,
-  moveDetail,
   moveDetailToDay,
   duplicateDetail,
   closeActionMenu,
   deleteDetail,
 }) {
+  const canMoveToPreviousDay =
+    Boolean(previousDay) && savingDetailId !== detail.id && !isOffline;
+  const canMoveToNextDay =
+    Boolean(nextDay) && savingDetailId !== detail.id && !isOffline;
+  const canDuplicate =
+    savingDetailId !== detail.id && !isOffline && !detail.truckId;
+  const canDelete = savingDetailId !== detail.id && !isOffline;
+  const hasAvailableActions = [
+    canMoveToPreviousDay,
+    canMoveToNextDay,
+    canDuplicate,
+    canDelete,
+  ].some(Boolean);
+
   return (
     <div className="detail-row-actions">
       <div
@@ -102,7 +112,7 @@ export default function DetailRowActions({
           type="button"
           aria-label="Row actions"
           aria-expanded={openActionMenuId === detail.id}
-          disabled={isOffline}
+          disabled={!hasAvailableActions}
           onMouseDown={beginRowAction}
           onClick={() => {
             setOpenActionMenuId((current) => (current === detail.id ? "" : detail.id));
@@ -116,77 +126,59 @@ export default function DetailRowActions({
             className="action-menu-list"
             onMouseDown={beginRowAction}
           >
-            <button
-              className="action-menu-item"
-              type="button"
-              disabled={!canMoveUp || reorderingDayId === day.id || isOffline}
-              onClick={() => {
-                moveDetail(day.id, detail.id, -1);
-                endRowAction();
-              }}
-            >
-              Move up
-            </button>
-            <button
-              className="action-menu-item"
-              type="button"
-              disabled={!canMoveDown || reorderingDayId === day.id || isOffline}
-              onClick={() => {
-                moveDetail(day.id, detail.id, 1);
-                endRowAction();
-              }}
-            >
-              Move down
-            </button>
-            {previousDay ? (
+            {canMoveToPreviousDay ? (
               <button
                 className="action-menu-item"
                 type="button"
-                disabled={savingDetailId === detail.id || isOffline}
                 onClick={() => {
                   moveDetailToDay(day.id, previousDay.id, detail);
                   endRowAction();
                 }}
               >
-                Move to previous day
+                <CapcomIcon name="moveToPreviousDay" size={16} />
+                <span>Move to previous day</span>
               </button>
             ) : null}
-            {nextDay ? (
+            {canMoveToNextDay ? (
               <button
                 className="action-menu-item"
                 type="button"
-                disabled={savingDetailId === detail.id || isOffline}
                 onClick={() => {
                   moveDetailToDay(day.id, nextDay.id, detail);
                   endRowAction();
                 }}
               >
-                Move to next day
+                <CapcomIcon name="moveToNextDay" size={16} />
+                <span>Move to next day</span>
               </button>
             ) : null}
-            <button
-              className="action-menu-item"
-              type="button"
-              disabled={savingDetailId === detail.id || isOffline || Boolean(detail.truckId)}
-              onClick={() => {
-                duplicateDetail(day.id, detail);
-                endRowAction();
-              }}
-            >
-              Duplicate
-            </button>
-            <button
-              className="action-menu-item danger"
-              type="button"
-              disabled={savingDetailId === detail.id || isOffline}
-              onClick={() => {
-                closeActionMenu();
-                deleteDetail(day.id, detail.id);
-                endRowAction();
-              }}
-            >
-              Delete
-            </button>
+            {canDuplicate ? (
+              <button
+                className="action-menu-item"
+                type="button"
+                onClick={() => {
+                  duplicateDetail(day.id, detail);
+                  endRowAction();
+                }}
+              >
+                <CapcomIcon name="duplicate" size={16} />
+                <span>Duplicate</span>
+              </button>
+            ) : null}
+            {canDelete ? (
+              <button
+                className="action-menu-item danger"
+                type="button"
+                onClick={() => {
+                  closeActionMenu();
+                  deleteDetail(day.id, detail.id);
+                  endRowAction();
+                }}
+              >
+                <CapcomIcon name="delete" size={16} />
+                <span>Delete</span>
+              </button>
+            ) : null}
           </div>
         ) : null}
       </div>
