@@ -89,6 +89,8 @@ export default function DetailDayCard({
     getLocationById,
   });
   const hiddenDetailCount = allDayDetailCount - dayDetails.length;
+  const totalDayRowCount = allDayDetailCount + draftDetails.length;
+  const visibleDayRowCount = dayDetails.length + draftDetails.length;
   const hasRowsOrDrafts = dayDetails.length > 0 || draftDetails.length > 0;
 
   return (
@@ -102,8 +104,8 @@ export default function DetailDayCard({
                 <span className="item-meta day-title-summary">{day.summary}</span>
               ) : null}
               <DetailDayRowCount
-                totalCount={allDayDetailCount}
-                visibleCount={dayDetails.length}
+                totalCount={totalDayRowCount}
+                visibleCount={visibleDayRowCount}
               />
               {incompleteDayDetailCount > 0 ? (
                 <span className="day-row-count warning">
