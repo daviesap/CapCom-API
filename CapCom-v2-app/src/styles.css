@@ -809,6 +809,17 @@ textarea {
   padding-top: 8px;
 }
 
+.filter-empty-message {
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 8px;
+  color: #9a3412;
+  font-size: 14px;
+  font-weight: 700;
+  margin: 10px 0 0;
+  padding: 10px 12px;
+}
+
 .filter-groups {
   display: grid;
   gap: 10px;

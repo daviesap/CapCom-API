@@ -4,6 +4,7 @@ import DraftDetailRow from "./DraftDetailRow.jsx";
 export default function DetailDayCard({
   day,
   dayDetails,
+  allDayDetailCount,
   draftDetails,
   detailDisplay,
   dayActions,
@@ -16,6 +17,11 @@ export default function DetailDayCard({
 }) {
   const { formatDetailDate, getNoRowsMessage } = detailDisplay;
   const { isOffline, addDraftDetail, startEditingDay } = dayActions;
+  const hiddenDetailCount = allDayDetailCount - dayDetails.length;
+  const emptyMessage =
+    hiddenDetailCount > 0
+      ? `${hiddenDetailCount} row${hiddenDetailCount === 1 ? "" : "s"} hidden by filters.`
+      : getNoRowsMessage();
 
   return (
     <article className="list-item">
@@ -50,38 +56,45 @@ export default function DetailDayCard({
         </div>
 
         {dayDetails.length === 0 && draftDetails.length === 0 ? (
-          <p className="item-meta">{getNoRowsMessage()}</p>
+          <p className={hiddenDetailCount > 0 ? "filter-empty-message" : "item-meta"}>
+            {emptyMessage}
+          </p>
         ) : (
-          <div className="detail-list">
-            {dayDetails.map((detail, detailIndex) => (
-              <DetailRow
-                key={detail.id}
-                day={day}
-                detail={detail}
-                detailIndex={detailIndex}
-                dayDetails={dayDetails}
-                isOffline={isOffline}
-                detailDisplay={detailDisplay}
-                rowEditing={rowEditing}
-                rowOrdering={rowOrdering}
-                rowAssignments={rowAssignments}
-                rowNotes={rowNotes}
-                rowActions={rowActions}
-              />
-            ))}
-            {draftDetails.map((draft, draftIndex) => (
-              <DraftDetailRow
-                key={`draft-${draftIndex}`}
-                dayId={day.id}
-                draft={draft}
-                draftIndex={draftIndex}
-                isOffline={isOffline}
-                detailDisplay={detailDisplay}
-                rowAssignments={rowAssignments}
-                draftActions={draftActions}
-              />
-            ))}
-          </div>
+          <>
+            <div className="detail-list">
+              {dayDetails.map((detail, detailIndex) => (
+                <DetailRow
+                  key={detail.id}
+                  day={day}
+                  detail={detail}
+                  detailIndex={detailIndex}
+                  dayDetails={dayDetails}
+                  isOffline={isOffline}
+                  detailDisplay={detailDisplay}
+                  rowEditing={rowEditing}
+                  rowOrdering={rowOrdering}
+                  rowAssignments={rowAssignments}
+                  rowNotes={rowNotes}
+                  rowActions={rowActions}
+                />
+              ))}
+              {draftDetails.map((draft, draftIndex) => (
+                <DraftDetailRow
+                  key={`draft-${draftIndex}`}
+                  dayId={day.id}
+                  draft={draft}
+                  draftIndex={draftIndex}
+                  isOffline={isOffline}
+                  detailDisplay={detailDisplay}
+                  rowAssignments={rowAssignments}
+                  draftActions={draftActions}
+                />
+              ))}
+            </div>
+            {hiddenDetailCount > 0 ? (
+              <p className="filter-empty-message">{emptyMessage}</p>
+            ) : null}
+          </>
         )}
         {day.endOfDayTarget ? (
           <p className="end-target">End of day target: {day.endOfDayTarget}</p>
