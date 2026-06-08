@@ -148,6 +148,7 @@ export default function InfoPanel({
                             disabled={isOffline || savingCompanyContact}
                             onClick={() => startAddingCompanyContact(company.id)}
                           >
+                            <CapcomIcon name="add" size={16} weight="bold" />
                             Add contact
                           </button>
                         ) : null}
@@ -237,17 +238,13 @@ export default function InfoPanel({
                                   </div>
                                   {canManageCompanyContacts ? (
                                     <div className="company-list-actions">
-                                      <span className="contact-drag-handle" aria-hidden="true">
-                                        {reorderingCompanyContactId === company.id
-                                          ? "Saving"
-                                          : "Drag"}
-                                      </span>
                                       <button
                                         className="compact-button"
                                         type="button"
                                         disabled={isOffline || savingCompanyContact}
                                         onClick={() => startEditingCompanyContact(company.id, contact)}
                                       >
+                                        <CapcomIcon name="edit" size={16} />
                                         Edit
                                       </button>
                                       <button
@@ -260,6 +257,7 @@ export default function InfoPanel({
                                         }
                                         onClick={() => removeCompanyContact(contact.id)}
                                       >
+                                        <CapcomIcon name="delete" size={16} />
                                         {deletingCompanyContactId === contact.id
                                           ? "Deleting..."
                                           : "Delete"}
@@ -356,11 +354,6 @@ export default function InfoPanel({
                         </div>
                       ) : null}
                     </div>
-                    {canManageContactCompanyOrder ? (
-                      <span className="drag-handle" aria-hidden="true">
-                        {savingContactCompanyOrder ? "Saving" : "Drag"}
-                      </span>
-                    ) : null}
                   </div>
                 );
               })}

@@ -127,6 +127,7 @@ export default function SettingsPanel({
             disabled={isOffline}
             onClick={() => startEditingLocation(location)}
           >
+            <CapcomIcon name="edit" size={16} />
             Edit
           </button>
           <button
@@ -135,6 +136,7 @@ export default function SettingsPanel({
             disabled={deletingLocationId === location.id || isOffline}
             onClick={() => removeLocation(location.id)}
           >
+            <CapcomIcon name="delete" size={16} />
             {deletingLocationId === location.id ? "Deleting..." : "Delete"}
           </button>
         </div>
@@ -188,6 +190,7 @@ export default function SettingsPanel({
                 disabled={isOffline}
                 onClick={startAddingTag}
               >
+                <CapcomIcon name="add" size={18} weight="bold" />
                 New tag
               </button>
             </div>
@@ -276,6 +279,7 @@ export default function SettingsPanel({
                       disabled={isOffline}
                       onClick={() => startEditingTag(tag)}
                     >
+                      <CapcomIcon name="edit" size={16} />
                       Edit
                     </button>
                     <button
@@ -284,6 +288,7 @@ export default function SettingsPanel({
                       disabled={deletingTagId === tag.id || isOffline}
                       onClick={() => removeTag(tag.id)}
                     >
+                      <CapcomIcon name="delete" size={16} />
                       {deletingTagId === tag.id ? "Deleting..." : "Delete"}
                     </button>
                   </div>
@@ -304,6 +309,7 @@ export default function SettingsPanel({
                 disabled={isOffline}
                 onClick={startAddingLocation}
               >
+                <CapcomIcon name="add" size={18} weight="bold" />
                 New location
               </button>
             </div>
@@ -419,6 +425,7 @@ export default function SettingsPanel({
                 disabled={isOffline}
                 onClick={startAddingTruckSize}
               >
+                <CapcomIcon name="add" size={18} weight="bold" />
                 New truck size
               </button>
             </div>
@@ -476,6 +483,7 @@ export default function SettingsPanel({
                       disabled={isOffline}
                       onClick={() => startEditingTruckSize(truckSize)}
                     >
+                      <CapcomIcon name="edit" size={16} />
                       Edit
                     </button>
                     <button
@@ -484,6 +492,7 @@ export default function SettingsPanel({
                       disabled={deletingTruckSizeId === truckSize.id || isOffline}
                       onClick={() => removeTruckSize(truckSize.id)}
                     >
+                      <CapcomIcon name="delete" size={16} />
                       {deletingTruckSizeId === truckSize.id ? "Deleting..." : "Delete"}
                     </button>
                   </div>

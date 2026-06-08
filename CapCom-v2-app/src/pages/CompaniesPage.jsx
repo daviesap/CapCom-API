@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "../auth/AuthProvider.jsx";
 import Loading from "../components/Loading.jsx";
 import Modal from "../components/Modal.jsx";
+import { CapcomIcon } from "../icons/capcomIcons.jsx";
 import useOnlineStatus from "../hooks/useOnlineStatus.js";
 import { getClient, getClients } from "../services/clientService.js";
 import {
@@ -261,6 +262,7 @@ export default function CompaniesPage() {
                 disabled={isOffline || !selectedClientId}
                 onClick={startAddingCompany}
               >
+                <CapcomIcon name="add" size={18} weight="bold" />
                 Add company
               </button>
             ) : null}
@@ -291,6 +293,7 @@ export default function CompaniesPage() {
                       disabled={isOffline}
                       onClick={() => startEditingCompany(company)}
                     >
+                      <CapcomIcon name="edit" size={16} />
                       Edit
                     </button>
                     <button
@@ -299,6 +302,7 @@ export default function CompaniesPage() {
                       disabled={deletingCompanyId === company.id || isOffline}
                       onClick={() => removeCompany(company.id)}
                     >
+                      <CapcomIcon name="delete" size={16} />
                       {deletingCompanyId === company.id ? "Deleting..." : "Delete"}
                     </button>
                   </div>

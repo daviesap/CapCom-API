@@ -4,6 +4,7 @@ import { useAuth } from "../auth/AuthProvider.jsx";
 import EmptyState from "../components/EmptyState.jsx";
 import Loading from "../components/Loading.jsx";
 import ScheduleCacheStatus from "../components/ScheduleCacheStatus.jsx";
+import { CapcomIcon } from "../icons/capcomIcons.jsx";
 import useOnlineStatus from "../hooks/useOnlineStatus.js";
 import { getEvent } from "../services/eventService.js";
 import { getScheduleDays } from "../services/scheduleDayService.js";
@@ -227,11 +228,12 @@ export default function ScheduleDaysPage() {
                 <div className="day-heading">
                   <p className="item-title">{day.date}</p>
                   <button
-                    className="small-button"
+                    className="compact-button primary-soft icon-text-button"
                     type="button"
                     disabled={isOffline}
                     onClick={() => addDraftDetail(day.id)}
                   >
+                    <CapcomIcon name="add" size={16} weight="bold" />
                     Add row
                   </button>
                 </div>

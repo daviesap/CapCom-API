@@ -1,3 +1,5 @@
+import { CapcomIcon } from "../../icons/capcomIcons.jsx";
+
 export default function EventEditorStatusMessages({
   error,
   isOffline,
@@ -18,6 +20,7 @@ export default function EventEditorStatusMessages({
       ) : null}
       {isSuperAdmin && !clientId ? (
         <p className="message warning-message">
+          <CapcomIcon name="warning" size={18} weight="bold" />
           This event does not have a clientId yet. Choose a client and save the event to finish the assignment.
         </p>
       ) : null}

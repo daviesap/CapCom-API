@@ -444,6 +444,7 @@ export default function AdminPage() {
                   disabled={clientSaving}
                   onClick={openNewClientForm}
                 >
+                  <CapcomIcon name="add" size={18} weight="bold" />
                   Create New Client
                 </button>
               ) : null}
@@ -566,6 +567,7 @@ export default function AdminPage() {
                       disabled={clientSaving}
                       onClick={() => startEditingClient(client)}
                     >
+                      <CapcomIcon name="edit" size={16} />
                       Edit
                     </button>
                     <button
@@ -601,6 +603,7 @@ export default function AdminPage() {
                   disabled={userSaving}
                   onClick={openNewUserForm}
                 >
+                  <CapcomIcon name="add" size={18} weight="bold" />
                   Add New User
                 </button>
               ) : null}

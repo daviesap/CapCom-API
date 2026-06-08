@@ -1,6 +1,6 @@
 /* global self, caches, fetch, URL */
 
-const CACHE_VERSION = "capcom-v2-app-shell-v2";
+const CACHE_VERSION = "capcom-v2-app-shell-v3";
 const APP_SHELL_URLS = [
   "/",
   "/events",

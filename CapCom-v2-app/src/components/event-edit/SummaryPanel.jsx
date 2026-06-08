@@ -1,4 +1,5 @@
 import Modal from "../Modal.jsx";
+import { CapcomIcon } from "../../icons/capcomIcons.jsx";
 
 export default function SummaryPanel({
   scheduleDays,
@@ -55,6 +56,7 @@ export default function SummaryPanel({
                             disabled={isOffline}
                             onClick={() => onStartEditingDay(day, "inline")}
                           >
+                            <CapcomIcon name="edit" size={16} />
                             Edit
                           </button>
                         </div>

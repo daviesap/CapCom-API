@@ -100,6 +100,7 @@ export default function TruckingPanel({
               disabled={isOffline}
               onClick={startAddingTruck}
             >
+              <CapcomIcon name="add" size={18} weight="bold" />
               Add truck
             </button>
           </div>
@@ -279,27 +280,30 @@ export default function TruckingPanel({
                     </div>
                     <div className="day-card-actions">
                       <button
-                        className="small-button"
+                        className="compact-button primary-soft icon-text-button"
                         type="button"
                         disabled={isOffline || scheduleDays.length === 0}
                         onClick={() => addDraftTruckDetail(truck.id)}
                       >
+                        <CapcomIcon name="add" size={16} weight="bold" />
                         Add row
                       </button>
                       <button
-                        className="compact-button"
+                        className="compact-button icon-text-button"
                         type="button"
                         disabled={isOffline}
                         onClick={() => startEditingTruck(truck)}
                       >
+                        <CapcomIcon name="edit" size={16} />
                         Edit truck
                       </button>
                       <button
-                        className="compact-button"
+                        className="compact-button icon-text-button"
                         type="button"
                         disabled={deletingTruckId === truck.id || isOffline}
                         onClick={() => removeTruck(truck.id)}
                       >
+                        <CapcomIcon name="delete" size={16} />
                         {deletingTruckId === truck.id ? "Deleting..." : "Delete truck"}
                       </button>
                     </div>
@@ -554,7 +558,7 @@ export default function TruckingPanel({
                                       endRowAction();
                                     }}
                                   >
-                                    <span aria-hidden="true">...</span>
+                                    <CapcomIcon name="overflow" size={20} weight="bold" />
                                   </button>
                                   {openActionMenuId === detail.id ? (
                                     <div
@@ -570,6 +574,7 @@ export default function TruckingPanel({
                                           endRowAction();
                                         }}
                                       >
+                                        <CapcomIcon name="moveToPreviousDay" size={16} />
                                         Move up
                                       </button>
                                       <button
@@ -581,6 +586,7 @@ export default function TruckingPanel({
                                           endRowAction();
                                         }}
                                       >
+                                        <CapcomIcon name="moveToNextDay" size={16} />
                                         Move down
                                       </button>
                                       <button
@@ -592,6 +598,7 @@ export default function TruckingPanel({
                                           endRowAction();
                                         }}
                                       >
+                                        <CapcomIcon name="duplicate" size={16} />
                                         Duplicate
                                       </button>
                                       <button
@@ -604,6 +611,7 @@ export default function TruckingPanel({
                                           endRowAction();
                                         }}
                                       >
+                                        <CapcomIcon name="delete" size={16} />
                                         Delete
                                       </button>
                                     </div>

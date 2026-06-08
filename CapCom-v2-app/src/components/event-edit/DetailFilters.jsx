@@ -1,3 +1,5 @@
+import { CapcomIcon } from "../../icons/capcomIcons.jsx";
+
 export default function DetailFilters({
   usedTags,
   usedLocationFilters,
@@ -51,6 +53,7 @@ export default function DetailFilters({
         <div className="filter-menu-group" aria-label="Filter schedule rows by tag">
           <details className="filter-menu-item company-dropdown">
             <summary className="filter-menu-trigger">
+              <CapcomIcon name="filter" size={16} weight="bold" />
               {renderSingleFilterSummary()}
             </summary>
             <div className="filter-menu-panel">
@@ -91,6 +94,7 @@ export default function DetailFilters({
         <div className="filter-menu-group" aria-label="Filter schedule rows by location">
           <details className="filter-menu-item company-dropdown">
             <summary className="filter-menu-trigger">
+              <CapcomIcon name="filter" size={16} weight="bold" />
               {renderMultiFilterSummary(selectedLocationFilterIds, "Locations", "All locations")}
             </summary>
             <div className="filter-menu-panel">
@@ -129,6 +133,7 @@ export default function DetailFilters({
         <div className="filter-menu-group" aria-label="Filter schedule rows by sub location">
           <details className="filter-menu-item company-dropdown">
             <summary className="filter-menu-trigger">
+              <CapcomIcon name="filter" size={16} weight="bold" />
               {renderMultiFilterSummary(selectedSubLocationFilterIds, "Sub locations", "All sub locations")}
             </summary>
             <div className="filter-menu-panel">
@@ -167,6 +172,7 @@ export default function DetailFilters({
         <div className="filter-menu-group" aria-label="Filter schedule rows by company">
           <details className="filter-menu-item company-dropdown">
             <summary className="filter-menu-trigger">
+              <CapcomIcon name="filter" size={16} weight="bold" />
               {renderMultiFilterSummary(selectedCompanyFilterIds, "Companies", "All companies")}
             </summary>
             <div className="filter-menu-panel">

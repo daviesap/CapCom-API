@@ -237,23 +237,6 @@ function formatDateOrdinal(date) {
   return `${day}${suffix}`;
 }
 
-function formatLongFriendlyDate(dateString) {
-  if (!dateString) return "";
-  return new Intl.DateTimeFormat("en-GB", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  }).format(new Date(`${dateString}T00:00:00`));
-}
-
-function toApiDetailTime(value) {
-  const nextTime = String(value || "").trim();
-  if (!nextTime) return " - ";
-  if (nextTime.includes("-")) return nextTime;
-  return `${nextTime} - `;
-}
-
 function formatEventDateRange(startDateString, endDateString) {
   if (!startDateString && !endDateString) return "";
   if (!startDateString) return formatFriendlyDate(endDateString);
@@ -776,10 +759,6 @@ export default function EventEditPage() {
     return new Map(truckSizes.map((truckSize) => [truckSize.id, truckSize]));
   }, [truckSizes]);
 
-  const tagById = useMemo(() => {
-    return new Map(tags.map((tag) => [tag.id, tag]));
-  }, [tags]);
-
   const companyById = useMemo(() => {
     return new Map(companies.map((company) => [company.id, company]));
   }, [companies]);
@@ -874,74 +853,6 @@ export default function EventEditPage() {
         return companyAOrder - companyBOrder;
       });
   }, [companies, form.contactCompanyOrder, usedCompanyIds]);
-
-  const describeFilteredViewIds = (ids, getLabel, fallbackLabel) => {
-    const names = (ids || [])
-      .map((id) => getLabel(id))
-      .filter(Boolean);
-    return names.length > 0 ? names.join(", ") : fallbackLabel;
-  };
-
-  const detailExportRows = useMemo(() => {
-    if (scheduleDays.length === 0) return [];
-
-    return scheduleDays.flatMap((day) => {
-      const dayDetails = detailsByDayId[day.id] || [];
-      if (!Array.isArray(dayDetails) || dayDetails.length === 0) return [];
-
-      return dayDetails.map((detail) => {
-        const detailCompanyIds = Array.isArray(detail.companyIds)
-          ? detail.companyIds.filter(Boolean)
-          : typeof detail.supplierId === "string"
-            ? detail.supplierId.split(",").map((supplierId) => supplierId.trim()).filter(Boolean)
-            : [];
-        const deduplicatedCompanyIds = Array.from(new Set(detailCompanyIds));
-        const detailDate = day?.date || "";
-        const detailTagIds = Array.isArray(detail.tagIds) && detail.tagIds.length > 0
-          ? detail.tagIds
-          : detail.tagId
-            ? [detail.tagId]
-            : [];
-        const deduplicatedTagIds = Array.from(
-          new Set(detailTagIds.filter(Boolean).map((tagId) => String(tagId).trim()))
-        );
-        const detailTagNames = deduplicatedTagIds
-          .map((tagId) => tagById.get(tagId)?.name)
-          .filter(Boolean);
-        const detailLocationId = detail.locationId
-          ? detail.locationId
-          : Array.isArray(detail.locationIds)
-            ? detail.locationIds[0]
-            : typeof detail.locationIds === "string"
-              ? detail.locationIds.split(",").map((entry) => entry.trim()).find(Boolean) || ""
-              : "";
-        const detailLocation = detailLocationId ? locationById.get(detailLocationId) : null;
-        const detailTime = toApiDetailTime(detail.time);
-        const locationFriendly = detailLocation
-          ? detailLocation.displayName || detailLocation.name || ""
-          : "";
-
-        return {
-          entryId: detail.id || "",
-          date: detailDate,
-          dateFriendly: formatLongFriendlyDate(detailDate),
-          time: detailTime,
-          description: detail.description || "",
-          tags: detailTagNames,
-          tagIds: deduplicatedTagIds,
-          supplier: deduplicatedCompanyIds
-            .map((companyId) => companyById.get(companyId)?.companyName)
-            .filter(Boolean),
-          ...(deduplicatedCompanyIds.length > 0
-            ? { supplierId: deduplicatedCompanyIds.join(",") }
-            : {}),
-          ...(detailLocationId ? { locationIds: detailLocationId, locations: locationFriendly } : {}),
-          ...(detail.truckId ? { truckId: detail.truckId } : {}),
-          sortField: `${detailDate.replace(/-/g, "")}/${detailTime}/${detail.description || ""}`,
-        };
-      });
-    });
-  }, [scheduleDays, detailsByDayId, tagById, locationById, companyById]);
 
   const usedCompanies = useMemo(() => {
     return companies.filter((company) => usedCompanyIds.has(company.id));
@@ -3744,6 +3655,7 @@ export default function EventEditPage() {
               >
                 <CapcomIcon name="bookOpen" size={18} weight="bold" />
                 Open protected home
+                <CapcomIcon name="externalLink" size={16} weight="bold" />
               </a>
             ) : null}
             {shareHtmlUrl ? (
@@ -3755,6 +3667,7 @@ export default function EventEditPage() {
               >
                 <CapcomIcon name="bookOpen" size={18} weight="bold" />
                 Open HTML
+                <CapcomIcon name="externalLink" size={16} weight="bold" />
               </a>
             ) : null}
           </div>
@@ -3768,6 +3681,7 @@ export default function EventEditPage() {
               disabled={isOffline}
               onClick={startAddingFilteredView}
             >
+              <CapcomIcon name="add" size={18} weight="bold" />
               New filtered view
             </button>
           </div>
@@ -3976,6 +3890,7 @@ export default function EventEditPage() {
                         disabled={isOffline}
                         onClick={() => startEditingFilteredView(view)}
                       >
+                        <CapcomIcon name="edit" size={16} />
                         Edit
                       </button>
                       <button
@@ -3984,6 +3899,7 @@ export default function EventEditPage() {
                         disabled={deletingFilteredViewId === view.id || isOffline}
                         onClick={() => removeFilteredView(view.id)}
                       >
+                        <CapcomIcon name="delete" size={16} />
                         {deletingFilteredViewId === view.id ? "Deleting..." : "Delete"}
                       </button>
                     </div>

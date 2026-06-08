@@ -7,12 +7,16 @@ export default function Modal({
   title,
   subtitle,
   labelledBy,
-  closeLabel = "Close dialog",
   onClose,
   children,
 }) {
   const sectionRef = useRef(null);
+  const onCloseRef = useRef(onClose);
   const titleId = labelledBy || "modalTitle";
+
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
 
   useEffect(() => {
     const modalElement = sectionRef.current;
@@ -33,7 +37,7 @@ export default function Modal({
     const handleKeyDown = (event) => {
       if (event.key === "Escape") {
         event.preventDefault();
-        onClose();
+        onCloseRef.current();
         return;
       }
 
@@ -66,7 +70,7 @@ export default function Modal({
         previousActiveElement.focus();
       }
     };
-  }, [onClose]);
+  }, []);
 
   return (
     <div className="overlay-backdrop" role="presentation" onMouseDown={onClose}>
@@ -84,14 +88,6 @@ export default function Modal({
             <h2 id={titleId}>{title}</h2>
             {subtitle ? <p className="page-subtitle">{subtitle}</p> : null}
           </div>
-          <button
-            className="icon-button"
-            type="button"
-            aria-label={closeLabel}
-            onClick={onClose}
-          >
-            x
-          </button>
         </div>
         {children}
       </section>

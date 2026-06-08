@@ -1,5 +1,6 @@
 import DetailRow from "./DetailRow.jsx";
 import DraftDetailRow from "./DraftDetailRow.jsx";
+import { CapcomIcon } from "../../icons/capcomIcons.jsx";
 
 function DetailFilterNotice({ hiddenDetailCount, isEmpty }) {
   if (hiddenDetailCount > 0) {
@@ -50,19 +51,21 @@ export default function DetailDayCard({
           </div>
           <div className="day-card-actions">
             <button
-              className="small-button"
+              className="compact-button primary-soft icon-text-button"
               type="button"
               disabled={isOffline}
               onClick={() => addDraftDetail(day.id)}
             >
+              <CapcomIcon name="add" size={16} weight="bold" />
               Add row
             </button>
             <button
-              className="compact-button"
+              className="compact-button icon-text-button"
               type="button"
               disabled={isOffline}
               onClick={() => startEditingDay(day, "overlay")}
             >
+              <CapcomIcon name="edit" size={16} />
               Edit day
             </button>
           </div>

@@ -120,7 +120,7 @@ export default function DetailRowActions({
             endRowAction();
           }}
         >
-          <span aria-hidden="true">...</span>
+          <CapcomIcon name="overflow" size={20} weight="bold" />
         </button>
         {openActionMenuId === detail.id ? (
           <div

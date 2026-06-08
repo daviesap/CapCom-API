@@ -5,6 +5,7 @@ import { canCreateEvents } from "../auth/roles.js";
 import EmptyState from "../components/EmptyState.jsx";
 import Loading from "../components/Loading.jsx";
 import Modal from "../components/Modal.jsx";
+import { CapcomIcon } from "../icons/capcomIcons.jsx";
 import useOnlineStatus from "../hooks/useOnlineStatus.js";
 import { getClient, getClients } from "../services/clientService.js";
 import { createEvent, getEvents } from "../services/eventService.js";
@@ -176,6 +177,7 @@ export default function EventListPage() {
             setShowCreateOverlay(true);
           }}
         >
+          <CapcomIcon name="add" size={18} weight="bold" />
           Create Event
         </button>
       </div>
