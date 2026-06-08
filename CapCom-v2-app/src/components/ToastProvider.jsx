@@ -39,17 +39,15 @@ export function ToastProvider({ children }) {
         !toast.exiting && toast.message === message && toast.variant === variant
       );
 
-      if (duplicateActiveToast) {
-        return current;
-      }
+    if (duplicateActiveToast) {
+      return current;
+    }
 
-      return [
-        nextToast,
-        ...current.filter((toast) => toast.id !== toastId),
-      ];
-    });
+    return [
+      nextToast,
       ...current.filter((toast) => toast.id !== toastId),
-    ].slice(0, 4));
+    ].slice(0, 4);
+  });
 
     if (!options.persist) {
       window.setTimeout(() => {

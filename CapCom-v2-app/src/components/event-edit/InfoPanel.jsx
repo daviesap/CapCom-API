@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Modal from "../Modal.jsx";
 import { CapcomIcon } from "../../icons/capcomIcons.jsx";
 
@@ -21,7 +22,6 @@ export default function InfoPanel({
   reorderingCompanyContactId,
   draggedCompanyContactIdRef,
   savingCompanyContact,
-  deletingCompanyContactId,
   companyContactForm,
   editingCompanyContactId,
   reorderContactCompany,
@@ -31,7 +31,6 @@ export default function InfoPanel({
   toggleContactCompanyOpen,
   startAddingCompanyContact,
   startEditingCompanyContact,
-  removeCompanyContact,
   updateCompanyContactFormField,
   saveCompanyContact,
   eventContactForm,
@@ -44,6 +43,20 @@ export default function InfoPanel({
   savingEventContact,
   resetCompanyContactForm,
 }) {
+  const [openHiddenContactSections, setOpenHiddenContactSections] = useState({});
+
+  const isHiddenSectionOpen = (companyId) => Boolean(openHiddenContactSections[companyId]);
+
+  const setHiddenSectionOpen = (companyId, open) => {
+    setOpenHiddenContactSections((current) => {
+      if (Boolean(current[companyId]) === open) return current;
+      return {
+        ...current,
+        [companyId]: open,
+      };
+    });
+  };
+
   return (
     <section className="panel">
       <nav className="tabs nested-tabs" aria-label="Info sections">
@@ -182,134 +195,257 @@ export default function InfoPanel({
                           ) : companyContacts.length === 0 ? (
                             <p className="item-meta">No contacts yet.</p>
                           ) : (
-                                <div className="company-contact-list">
-                                  {companyContacts.map((contact) => (
+                            <>
+                              <div className="company-contact-list">
+                                {visibleContacts.length === 0 ? (
+                                  <p className="item-meta">No visible contacts.</p>
+                                ) : (
+                                  visibleContacts.map((contact) => (
                                     <div
                                       className={[
                                         "company-contact-row",
-                                        contact.isHidden ? "is-hidden" : "",
                                         canManageCompanyContacts && !isOffline
                                           ? "draggable-contact-row"
                                           : "",
                                         companyContactDropTargetId === contact.id
                                           ? "drop-target"
                                           : "",
-                                  ].filter(Boolean).join(" ")}
-                                  key={contact.id}
-                                  draggable={
-                                    canManageCompanyContacts &&
-                                    !isOffline &&
-                                    reorderingCompanyContactId !== company.id
-                                  }
-                                  onDragStart={(event) => {
-                                    if (!canManageCompanyContacts || isOffline) return;
-                                    event.stopPropagation();
-                                    draggedCompanyContactIdRef.current = contact.id;
-                                    event.dataTransfer.effectAllowed = "move";
-                                  }}
-                                  onDragOver={(event) => {
-                                    if (
-                                      !canManageCompanyContacts ||
-                                      isOffline ||
-                                      reorderingCompanyContactId ||
-                                      !draggedCompanyContactIdRef.current ||
-                                      draggedCompanyContactIdRef.current === contact.id
-                                    ) {
-                                      return;
-                                    }
-                                    event.preventDefault();
-                                    event.stopPropagation();
-                                    event.dataTransfer.dropEffect = "move";
-                                    setCompanyContactDropTargetId(contact.id);
-                                  }}
-                                  onDragLeave={() => {
-                                    setCompanyContactDropTargetId((current) =>
-                                      current === contact.id ? "" : current
-                                    );
-                                  }}
-                                  onDrop={(event) => {
-                                    event.preventDefault();
-                                    event.stopPropagation();
-                                    const draggedContactId = draggedCompanyContactIdRef.current;
-                                    draggedCompanyContactIdRef.current = "";
-                                    reorderCompanyContact(company.id, draggedContactId, contact.id);
-                                  }}
-                                  onDragEnd={(event) => {
-                                    event.stopPropagation();
-                                    draggedCompanyContactIdRef.current = "";
-                                    setCompanyContactDropTargetId("");
+                                      ].filter(Boolean).join(" ")}
+                                      key={contact.id}
+                                      draggable={
+                                        canManageCompanyContacts &&
+                                        !isOffline &&
+                                        reorderingCompanyContactId !== company.id
+                                      }
+                                      onDragStart={(event) => {
+                                        if (!canManageCompanyContacts || isOffline) return;
+                                        event.stopPropagation();
+                                        draggedCompanyContactIdRef.current = contact.id;
+                                        event.dataTransfer.effectAllowed = "move";
+                                      }}
+                                      onDragOver={(event) => {
+                                        if (
+                                          !canManageCompanyContacts ||
+                                          isOffline ||
+                                          reorderingCompanyContactId ||
+                                          !draggedCompanyContactIdRef.current ||
+                                          draggedCompanyContactIdRef.current === contact.id
+                                        ) {
+                                          return;
+                                        }
+                                        event.preventDefault();
+                                        event.stopPropagation();
+                                        event.dataTransfer.dropEffect = "move";
+                                        setCompanyContactDropTargetId(contact.id);
+                                      }}
+                                      onDragLeave={() => {
+                                        setCompanyContactDropTargetId((current) =>
+                                          current === contact.id ? "" : current
+                                        );
+                                      }}
+                                      onDrop={(event) => {
+                                        event.preventDefault();
+                                        event.stopPropagation();
+                                        const draggedContactId = draggedCompanyContactIdRef.current;
+                                        draggedCompanyContactIdRef.current = "";
+                                        reorderCompanyContact(company.id, draggedContactId, contact.id);
+                                      }}
+                                      onDragEnd={(event) => {
+                                        event.stopPropagation();
+                                        draggedCompanyContactIdRef.current = "";
+                                        setCompanyContactDropTargetId("");
+                                      }}
+                                    >
+                                      <div>
+                                        <p className="item-title">{contact.name}</p>
+                                        {contact.role ? (
+                                          <p className="item-meta">{contact.role}</p>
+                                        ) : null}
+                                        <div className="company-contact-methods">
+                                          {contact.email ? (
+                                            <a href={`mailto:${contact.email}`}>{contact.email}</a>
+                                          ) : null}
+                                          {contact.phone ? (
+                                            <a href={`tel:${contact.phone}`}>{contact.phone}</a>
+                                          ) : null}
+                                        </div>
+                                      </div>
+                                      {canManageCompanyContacts ? (
+                                        <div className="company-list-actions">
+                                          <button
+                                            className="compact-button"
+                                            type="button"
+                                            disabled={savingEventContact || isOffline}
+                                            onClick={() => startEditingEventContactRole(company.id, contact)}
+                                          >
+                                            <CapcomIcon name="edit" size={16} />
+                                            Event role
+                                          </button>
+                                          <button
+                                            className="compact-button"
+                                            type="button"
+                                            disabled={savingEventContact || isOffline}
+                                            onClick={() => toggleEventContactHidden(contact.id)}
+                                          >
+                                            Hide
+                                          </button>
+                                          <button
+                                            className="compact-button"
+                                            type="button"
+                                            disabled={
+                                              !contact.companyContactId ||
+                                              isOffline ||
+                                              savingCompanyContact
+                                            }
+                                            onClick={() => startEditingCompanyContact(company.id, contact)}
+                                          >
+                                            <CapcomIcon name="edit" size={16} />
+                                            Edit
+                                          </button>
+                                        </div>
+                                      ) : null}
+                                    </div>
+                                  ))
+                                )}
+                              </div>
+                              {hiddenContacts.length > 0 ? (
+                                <details
+                                  className="hidden-contacts-accordion"
+                                  open={isHiddenSectionOpen(company.id)}
+                                  onToggle={(event) => {
+                                    setHiddenSectionOpen(company.id, event.currentTarget.open);
                                   }}
                                 >
-                                  <div>
-                                    <p className="item-title">{contact.name}</p>
-                                    {contact.isHidden ? (
-                                      <p className="item-meta company-contact-hidden-label">Hidden on event</p>
-                                    ) : null}
-                                    {contact.role ? (
-                                      <p className="item-meta">{contact.role}</p>
-                                    ) : null}
-                                    <div className="company-contact-methods">
-                                      {contact.email ? (
-                                        <a href={`mailto:${contact.email}`}>{contact.email}</a>
-                                      ) : null}
-                                      {contact.phone ? (
-                                        <a href={`tel:${contact.phone}`}>{contact.phone}</a>
-                                      ) : null}
-                                    </div>
+                                  <summary className="hidden-contacts-summary">
+                                    <span className="hidden-contacts-summary-left">
+                                      <span className="hidden-contacts-summary-icon" aria-hidden="true">
+                                        <CapcomIcon
+                                          name={isHiddenSectionOpen(company.id)
+                                            ? "caretDoubleDown"
+                                            : "caretDoubleRight"}
+                                          size={14}
+                                        />
+                                      </span>
+                                      <span className="hidden-contacts-title">
+                                        <span className="hidden-contacts-summary-label">Hidden</span>
+                                        <span className="item-meta">
+                                          {hiddenContacts.length} contact{hiddenContacts.length === 1 ? "" : "s"}
+                                        </span>
+                                      </span>
+                                    </span>
+                                  </summary>
+                                  <div className="company-contact-list hidden-contact-list">
+                                    {hiddenContacts.map((contact) => (
+                                      <div
+                                        className={[
+                                          "company-contact-row",
+                                          "is-hidden",
+                                          canManageCompanyContacts && !isOffline
+                                            ? "draggable-contact-row"
+                                            : "",
+                                          companyContactDropTargetId === contact.id
+                                            ? "drop-target"
+                                            : "",
+                                        ].filter(Boolean).join(" ")}
+                                        key={contact.id}
+                                        draggable={
+                                          canManageCompanyContacts &&
+                                          !isOffline &&
+                                          reorderingCompanyContactId !== company.id
+                                        }
+                                        onDragStart={(event) => {
+                                          if (!canManageCompanyContacts || isOffline) return;
+                                          event.stopPropagation();
+                                          draggedCompanyContactIdRef.current = contact.id;
+                                          event.dataTransfer.effectAllowed = "move";
+                                        }}
+                                        onDragOver={(event) => {
+                                          if (
+                                            !canManageCompanyContacts ||
+                                            isOffline ||
+                                            reorderingCompanyContactId ||
+                                            !draggedCompanyContactIdRef.current ||
+                                            draggedCompanyContactIdRef.current === contact.id
+                                          ) {
+                                            return;
+                                          }
+                                          event.preventDefault();
+                                          event.stopPropagation();
+                                          event.dataTransfer.dropEffect = "move";
+                                          setCompanyContactDropTargetId(contact.id);
+                                        }}
+                                        onDragLeave={() => {
+                                          setCompanyContactDropTargetId((current) =>
+                                            current === contact.id ? "" : current
+                                          );
+                                        }}
+                                        onDrop={(event) => {
+                                          event.preventDefault();
+                                          event.stopPropagation();
+                                          const draggedContactId = draggedCompanyContactIdRef.current;
+                                          draggedCompanyContactIdRef.current = "";
+                                          reorderCompanyContact(company.id, draggedContactId, contact.id);
+                                        }}
+                                        onDragEnd={(event) => {
+                                          event.stopPropagation();
+                                          draggedCompanyContactIdRef.current = "";
+                                          setCompanyContactDropTargetId("");
+                                        }}
+                                      >
+                                        <div>
+                                          <p className="item-title">{contact.name}</p>
+                                          {contact.role ? (
+                                            <p className="item-meta">{contact.role}</p>
+                                          ) : null}
+                                          <div className="company-contact-methods">
+                                            {contact.email ? (
+                                              <a href={`mailto:${contact.email}`}>{contact.email}</a>
+                                            ) : null}
+                                            {contact.phone ? (
+                                              <a href={`tel:${contact.phone}`}>{contact.phone}</a>
+                                            ) : null}
+                                          </div>
+                                        </div>
+                                        {canManageCompanyContacts ? (
+                                          <div className="company-list-actions">
+                                            <button
+                                              className="compact-button"
+                                              type="button"
+                                              disabled={savingEventContact || isOffline}
+                                              onClick={() => startEditingEventContactRole(company.id, contact)}
+                                            >
+                                              <CapcomIcon name="edit" size={16} />
+                                              Event role
+                                            </button>
+                                            <button
+                                              className="compact-button"
+                                              type="button"
+                                              disabled={savingEventContact || isOffline}
+                                              onClick={() => toggleEventContactHidden(contact.id)}
+                                            >
+                                              Unhide
+                                            </button>
+                                            <button
+                                              className="compact-button"
+                                              type="button"
+                                              disabled={
+                                                !contact.companyContactId ||
+                                                isOffline ||
+                                                savingCompanyContact
+                                              }
+                                              onClick={() => startEditingCompanyContact(company.id, contact)}
+                                            >
+                                              <CapcomIcon name="edit" size={16} />
+                                              Edit
+                                            </button>
+                                          </div>
+                                        ) : null}
+                                      </div>
+                                    ))}
                                   </div>
-                                  {canManageCompanyContacts ? (
-                                    <div className="company-list-actions">
-                                      <button
-                                        className="compact-button"
-                                        type="button"
-                                        disabled={savingEventContact || isOffline}
-                                        onClick={() => startEditingEventContactRole(company.id, contact)}
-                                      >
-                                        <CapcomIcon name="edit" size={16} />
-                                        Event role
-                                      </button>
-                                      <button
-                                        className="compact-button"
-                                        type="button"
-                                        disabled={savingEventContact || isOffline}
-                                        onClick={() => toggleEventContactHidden(contact.id)}
-                                      >
-                                        {contact.isHidden ? "Unhide" : "Hide"}
-                                      </button>
-                                      <button
-                                        className="compact-button"
-                                        type="button"
-                                        disabled={
-                                          !contact.companyContactId ||
-                                          isOffline ||
-                                          savingCompanyContact
-                                        }
-                                        onClick={() => startEditingCompanyContact(company.id, contact)}
-                                      >
-                                        <CapcomIcon name="edit" size={16} />
-                                        Edit
-                                      </button>
-                                      <button
-                                        className="compact-button"
-                                        type="button"
-                                        disabled={
-                                          !contact.companyContactId ||
-                                          deletingCompanyContactId === contact.companyContactId ||
-                                          isOffline ||
-                                          savingCompanyContact
-                                        }
-                                        onClick={() => removeCompanyContact(contact.companyContactId || contact.id)}
-                                        >
-                                          <CapcomIcon name="delete" size={16} />
-                                          {deletingCompanyContactId === contact.companyContactId
-                                            ? "Deleting..."
-                                            : "Delete"}
-                                        </button>
-                                    </div>
-                                  ) : null}
-                                </div>
-                              ))}
-                            </div>
+                                </details>
+                              ) : null}
+                            </>
                           )}
 
                           {canManageCompanyContacts && isEditingThisCompanyContact ? (

@@ -66,7 +66,6 @@ import {
 } from "../services/truckService.js";
 import {
   createCompanyContact,
-  deleteCompanyContact,
   getCompanyContacts,
   updateCompanyContact,
 } from "../services/companyContactService.js";
@@ -466,7 +465,6 @@ export default function EventEditPage() {
   const [savingLocation, setSavingLocation] = useState(false);
   const [deletingLocationId, setDeletingLocationId] = useState("");
   const [savingCompanyContact, setSavingCompanyContact] = useState(false);
-  const [deletingCompanyContactId, setDeletingCompanyContactId] = useState("");
   const [savingEventContact, setSavingEventContact] = useState(false);
   const [reorderingCompanyContactId, setReorderingCompanyContactId] = useState("");
   const [savingContactCompanyOrder, setSavingContactCompanyOrder] = useState(false);
@@ -1529,6 +1527,29 @@ export default function EventEditPage() {
     setEventContactRoleForm(emptyEventContactRoleForm);
   };
 
+  const setEventContactHiddenState = (contactId, isHidden) => {
+    let updated = false;
+
+    setEventContactsByCompanyId((current) => {
+      const nextByCompany = Object.fromEntries(
+        Object.entries(current).map(([companyId, contacts]) => {
+          const nextContacts = contacts.map((contact) => {
+            if (contact.id !== contactId) return contact;
+            return { ...contact, isHidden };
+          });
+          if (!updated && nextContacts !== contacts) {
+            updated = true;
+          }
+          return [companyId, nextContacts];
+        })
+      );
+
+      return updated ? nextByCompany : current;
+    });
+
+    return updated;
+  };
+
   const startAddingCompanyContact = (companyId) => {
     if (!canManageCompanyContacts || isOffline) return;
     setEditingCompanyContactId("");
@@ -1602,18 +1623,46 @@ export default function EventEditPage() {
         eventContactSeedErrorCompanyIdsRef.current.delete(
           editingCompanyContactCompanyId
         );
-        await createCompanyContact({
+        const createdContact = await createCompanyContact({
           companyId: editingCompanyContactCompanyId,
           name,
           email,
           phone,
           role,
         });
+        const companyContactId = createdContact?.id;
+        if (companyContactId) {
+          const nextSortOrder = (
+            eventContactsByCompanyId[editingCompanyContactCompanyId] || []
+          ).reduce(
+            (currentMax, eventContact, eventContactIndex) => Math.max(
+              currentMax,
+              getSortOrder(eventContact, eventContactIndex)
+            ),
+            -1
+          ) + 1;
+
+          await addEventContactsFromCompanyContacts({
+            eventId,
+            companyId: editingCompanyContactCompanyId,
+            companyContacts: [
+              {
+                id: companyContactId,
+                name,
+                email,
+                phone,
+                role,
+              },
+            ],
+            startSortOrder: nextSortOrder,
+          });
+        }
         setMessage("Company contact created.");
       }
 
       resetCompanyContactForm();
       await reloadCompanyContacts();
+      await reloadEventContacts();
     } catch (contactError) {
       console.error(contactError);
       setError("Could not save company contact.");
@@ -1663,44 +1712,25 @@ export default function EventEditPage() {
     setMessage("");
     setError("");
 
+    const nextIsHidden = !targetContact.isHidden;
+    const didUpdate = setEventContactHiddenState(contactId, nextIsHidden);
+    if (!didUpdate) return;
+
     try {
       await updateEventContact(contactId, {
-        isHidden: !targetContact.isHidden,
+        isHidden: nextIsHidden,
       });
-      await reloadEventContacts();
-      setMessage(
-        targetContact.isHidden ? "Event contact unhidden." : "Event contact hidden."
+      setMessage(nextIsHidden ? "Event contact hidden." : "Event contact unhidden.");
+    } catch (contactError) {
+      console.error(contactError);
+      setEventContactHiddenState(contactId, targetContact.isHidden);
+      const errorCode = contactError?.code || "";
+      const isPermissionError = errorCode === "permission-denied";
+      setError(
+        isPermissionError
+          ? "You do not have permission to update this event contact."
+          : "Could not update event contact visibility."
       );
-    } catch (contactError) {
-      console.error(contactError);
-      setError("Could not update event contact visibility.");
-    }
-  };
-
-  const removeCompanyContact = async (contactId) => {
-    if (isOffline) {
-      setError("Editing is disabled while offline.");
-      return;
-    }
-    if (!canManageCompanyContacts) {
-      setError("Your role cannot manage company contacts.");
-      return;
-    }
-
-    setDeletingCompanyContactId(contactId);
-    setMessage("");
-    setError("");
-
-    try {
-      await deleteCompanyContact(contactId);
-      if (editingCompanyContactId === contactId) resetCompanyContactForm();
-      await reloadCompanyContacts();
-      setMessage("Company contact deleted.");
-    } catch (contactError) {
-      console.error(contactError);
-      setError("Could not delete company contact.");
-    } finally {
-      setDeletingCompanyContactId("");
     }
   };
 
@@ -3781,7 +3811,6 @@ export default function EventEditPage() {
         reorderingCompanyContactId={reorderingCompanyContactId}
         draggedCompanyContactIdRef={draggedCompanyContactIdRef}
         savingCompanyContact={savingCompanyContact}
-        deletingCompanyContactId={deletingCompanyContactId}
         companyContactForm={companyContactForm}
         eventContactForm={eventContactRoleForm}
         editingCompanyContactId={editingCompanyContactId}
@@ -3793,7 +3822,6 @@ export default function EventEditPage() {
         startAddingCompanyContact={startAddingCompanyContact}
         startEditingCompanyContact={startEditingCompanyContact}
         startEditingEventContactRole={startEditingEventContactRole}
-        removeCompanyContact={removeCompanyContact}
         updateCompanyContactFormField={updateCompanyContactFormField}
         updateEventContactRoleFormField={updateEventContactRoleFormField}
         saveCompanyContact={saveCompanyContact}
