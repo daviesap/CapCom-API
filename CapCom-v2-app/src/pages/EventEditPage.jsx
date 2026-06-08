@@ -4,6 +4,8 @@ import { useAuth } from "../auth/AuthProvider.jsx";
 import EventEditorHeader from "../components/event-edit/EventEditorHeader.jsx";
 import EventEditorStatusMessages from "../components/event-edit/EventEditorStatusMessages.jsx";
 import EventEditorTabs from "../components/event-edit/EventEditorTabs.jsx";
+import InfoPanel from "../components/event-edit/InfoPanel.jsx";
+import SettingsPanel from "../components/event-edit/SettingsPanel.jsx";
 import SummaryPanel from "../components/event-edit/SummaryPanel.jsx";
 import Loading from "../components/Loading.jsx";
 import { CapcomIcon } from "../icons/capcomIcons.jsx";
@@ -2808,103 +2810,6 @@ export default function EventEditPage() {
     }
   };
 
-  const renderLocationNode = (location) => (
-    <div className="location-tree-item" key={location.id}>
-      <div
-        className={[
-          "location-list-row",
-          locationDropTargetId === location.id ? "drop-target" : "",
-          movingLocationId === location.id ? "is-moving" : "",
-        ].filter(Boolean).join(" ")}
-        draggable={!isOffline && movingLocationId !== location.id}
-        onDragStart={(event) => {
-          draggedLocationIdRef.current = location.id;
-          event.dataTransfer.effectAllowed = "move";
-        }}
-        onDragOver={(event) => {
-          const draggedLocationId = draggedLocationIdRef.current;
-          if (location.parentLocationId) {
-            event.stopPropagation();
-            return;
-          }
-          if (
-            !draggedLocationId ||
-            draggedLocationId === location.id
-          ) {
-            return;
-          }
-          event.preventDefault();
-          event.stopPropagation();
-          event.dataTransfer.dropEffect = "move";
-          setLocationDropTargetId(location.id);
-        }}
-        onDragLeave={() => {
-          setLocationDropTargetId((current) => (current === location.id ? "" : current));
-        }}
-        onDrop={(event) => {
-          if (location.parentLocationId) {
-            event.stopPropagation();
-            draggedLocationIdRef.current = "";
-            setLocationDropTargetId("");
-            return;
-          }
-          event.preventDefault();
-          event.stopPropagation();
-          const draggedLocationId = draggedLocationIdRef.current;
-          draggedLocationIdRef.current = "";
-          setLocationDropTargetId("");
-          if (draggedLocationId) moveLocation(draggedLocationId, location.id);
-        }}
-        onDragEnd={() => {
-          draggedLocationIdRef.current = "";
-          setLocationDropTargetId("");
-        }}
-      >
-        <button
-          className="location-name-button"
-          type="button"
-          disabled={isOffline || Boolean(location.parentLocationId)}
-          onClick={() => startAddingSubLocation(location)}
-          title={
-            location.parentLocationId
-              ? undefined
-              : `Add sub-location under ${location.name || "location"}`
-          }
-        >
-          <span className="item-title">{location.name}</span>
-          <span className="item-meta">
-            {location.parentLocationId ? "Sub-location" : "Main location"}
-          </span>
-        </button>
-        <div className="location-list-actions">
-          <button
-            className="compact-button"
-            type="button"
-            disabled={isOffline}
-            onClick={() => startEditingLocation(location)}
-          >
-            Edit
-          </button>
-          <button
-            className="compact-button"
-            type="button"
-            disabled={deletingLocationId === location.id || isOffline}
-            onClick={() => removeLocation(location.id)}
-          >
-            {deletingLocationId === location.id ? "Deleting..." : "Delete"}
-          </button>
-        </div>
-      </div>
-      {location.children.length > 0 ? (
-        <div className="location-tree-children">
-          {location.children.map((childLocation) =>
-            renderLocationNode({ ...childLocation, children: [] })
-          )}
-        </div>
-      ) : null}
-    </div>
-  );
-
   if (loading) return <Loading label="Loading event editor..." />;
 
   const eventHeaderImageUrl = eventImagePreviewUrl || form.imageUrl;
@@ -2960,335 +2865,41 @@ export default function EventEditPage() {
       />
 
       {activeTab === "info" ? (
-      <section className="panel">
-        <nav className="tabs nested-tabs" aria-label="Info sections">
-          <button
-            className={activeInfoTab === "contacts" ? "tab active" : "tab"}
-            type="button"
-            onClick={() => setActiveInfoTab("contacts")}
-          >
-            <CapcomIcon name="contacts" size={18} weight="duotone" />
-            <span>Contacts</span>
-          </button>
-          <button
-            className={activeInfoTab === "keyInfo" ? "tab active" : "tab"}
-            type="button"
-            onClick={() => setActiveInfoTab("keyInfo")}
-          >
-            <CapcomIcon name="keyInfo" size={18} weight="duotone" />
-            <span>Key Info</span>
-          </button>
-        </nav>
-
-        {activeInfoTab === "contacts" ? (
-          <div className="settings-section">
-            {detailsLoading || companiesLoading ? (
-              <p className="item-meta">Loading contacts...</p>
-            ) : contactCompanies.length === 0 ? (
-              <p className="item-meta">No companies are tagged in this event schedule yet.</p>
-            ) : (
-              <div className="company-list">
-                {contactCompanies.map((company) => {
-                  const companyContacts = companyContactsByCompanyId[company.id] || [];
-                  const isEditingThisCompanyContact =
-                    editingCompanyContactCompanyId === company.id;
-                  const isCompanyOpen = openContactCompanyIds.includes(company.id);
-
-                  return (
-                    <div
-                      className={[
-                        "company-list-row",
-                        canManageContactCompanyOrder && !isOffline ? "draggable-company-row" : "",
-                        contactCompanyDropTargetId === company.id ? "drop-target" : "",
-                      ].filter(Boolean).join(" ")}
-                      key={company.id}
-                      draggable={canManageContactCompanyOrder && !isOffline && !savingContactCompanyOrder}
-                      onDragStart={(event) => {
-                        if (event.target.closest(".company-contact-row")) return;
-                        if (!canManageContactCompanyOrder || isOffline) return;
-                        draggedContactCompanyIdRef.current = company.id;
-                        event.dataTransfer.effectAllowed = "move";
-                      }}
-                      onDragOver={(event) => {
-                        if (
-                          !canManageContactCompanyOrder ||
-                          isOffline ||
-                          savingContactCompanyOrder ||
-                          !draggedContactCompanyIdRef.current ||
-                          draggedContactCompanyIdRef.current === company.id
-                        ) {
-                          return;
-                        }
-                        event.preventDefault();
-                        event.dataTransfer.dropEffect = "move";
-                        setContactCompanyDropTargetId(company.id);
-                      }}
-                      onDragLeave={() => {
-                        setContactCompanyDropTargetId((current) =>
-                          current === company.id ? "" : current
-                        );
-                      }}
-                      onDrop={(event) => {
-                        event.preventDefault();
-                        const draggedCompanyId = draggedContactCompanyIdRef.current;
-                        draggedContactCompanyIdRef.current = "";
-                        reorderContactCompany(draggedCompanyId, company.id);
-                      }}
-                      onDragEnd={() => {
-                        draggedContactCompanyIdRef.current = "";
-                        setContactCompanyDropTargetId("");
-                      }}
-                    >
-                      <div>
-                        <div className="company-accordion-heading">
-                          <button
-                            className="company-accordion-trigger"
-                            type="button"
-                            aria-expanded={isCompanyOpen}
-                            onClick={() => toggleContactCompanyOpen(company.id)}
-                          >
-                            <span className="accordion-indicator" aria-hidden="true">
-                              {isCompanyOpen ? "v" : ">"}
-                            </span>
-                            <span>
-                              <span className="company-accordion-title">
-                                {company.companyName || "Unnamed company"}
-                              </span>
-                              <span className="item-meta company-accordion-meta">
-                                {companyContacts.length} contact
-                                {companyContacts.length === 1 ? "" : "s"}
-                              </span>
-                            </span>
-                          </button>
-                          {canManageCompanyContacts ? (
-                            <button
-                              className="compact-button"
-                              type="button"
-                              disabled={isOffline || savingCompanyContact}
-                              onClick={() => startAddingCompanyContact(company.id)}
-                            >
-                              Add contact
-                            </button>
-                          ) : null}
-                        </div>
-
-                        {isCompanyOpen ? (
-                          <div className="company-accordion-body">
-                            {company.address ? (
-                              <p className="item-meta company-address">{company.address}</p>
-                            ) : null}
-
-                            {companyContactsLoading ? (
-                              <p className="item-meta">Loading contacts...</p>
-                            ) : companyContacts.length === 0 ? (
-                              <p className="item-meta">No contacts yet.</p>
-                            ) : (
-                              <div className="company-contact-list">
-                                {companyContacts.map((contact) => (
-                                  <div
-                                    className={[
-                                      "company-contact-row",
-                                      canManageCompanyContacts && !isOffline
-                                        ? "draggable-contact-row"
-                                        : "",
-                                      companyContactDropTargetId === contact.id
-                                        ? "drop-target"
-                                        : "",
-                                    ].filter(Boolean).join(" ")}
-                                    key={contact.id}
-                                    draggable={
-                                      canManageCompanyContacts &&
-                                      !isOffline &&
-                                      reorderingCompanyContactId !== company.id
-                                    }
-                                    onDragStart={(event) => {
-                                      if (!canManageCompanyContacts || isOffline) return;
-                                      event.stopPropagation();
-                                      draggedCompanyContactIdRef.current = contact.id;
-                                      event.dataTransfer.effectAllowed = "move";
-                                    }}
-                                    onDragOver={(event) => {
-                                      if (
-                                        !canManageCompanyContacts ||
-                                        isOffline ||
-                                        reorderingCompanyContactId ||
-                                        !draggedCompanyContactIdRef.current ||
-                                        draggedCompanyContactIdRef.current === contact.id
-                                      ) {
-                                        return;
-                                      }
-                                      event.preventDefault();
-                                      event.stopPropagation();
-                                      event.dataTransfer.dropEffect = "move";
-                                      setCompanyContactDropTargetId(contact.id);
-                                    }}
-                                    onDragLeave={() => {
-                                      setCompanyContactDropTargetId((current) =>
-                                        current === contact.id ? "" : current
-                                      );
-                                    }}
-                                    onDrop={(event) => {
-                                      event.preventDefault();
-                                      event.stopPropagation();
-                                      const draggedContactId = draggedCompanyContactIdRef.current;
-                                      draggedCompanyContactIdRef.current = "";
-                                      reorderCompanyContact(company.id, draggedContactId, contact.id);
-                                    }}
-                                    onDragEnd={(event) => {
-                                      event.stopPropagation();
-                                      draggedCompanyContactIdRef.current = "";
-                                      setCompanyContactDropTargetId("");
-                                    }}
-                                  >
-                                    <div>
-                                      <p className="item-title">{contact.name}</p>
-                                      {contact.role ? (
-                                        <p className="item-meta">{contact.role}</p>
-                                      ) : null}
-                                      <div className="company-contact-methods">
-                                        {contact.email ? (
-                                          <a href={`mailto:${contact.email}`}>{contact.email}</a>
-                                        ) : null}
-                                        {contact.phone ? (
-                                          <a href={`tel:${contact.phone}`}>{contact.phone}</a>
-                                        ) : null}
-                                      </div>
-                                    </div>
-                                    {canManageCompanyContacts ? (
-                                      <div className="company-list-actions">
-                                        <span className="contact-drag-handle" aria-hidden="true">
-                                          {reorderingCompanyContactId === company.id
-                                            ? "Saving"
-                                            : "Drag"}
-                                        </span>
-                                        <button
-                                          className="compact-button"
-                                          type="button"
-                                          disabled={isOffline || savingCompanyContact}
-                                          onClick={() => startEditingCompanyContact(company.id, contact)}
-                                        >
-                                          Edit
-                                        </button>
-                                        <button
-                                          className="compact-button"
-                                          type="button"
-                                          disabled={
-                                            deletingCompanyContactId === contact.id ||
-                                            isOffline ||
-                                            savingCompanyContact
-                                          }
-                                          onClick={() => removeCompanyContact(contact.id)}
-                                        >
-                                          {deletingCompanyContactId === contact.id
-                                            ? "Deleting..."
-                                            : "Delete"}
-                                        </button>
-                                      </div>
-                                    ) : null}
-                                  </div>
-                                ))}
-                              </div>
-                            )}
-
-                            {canManageCompanyContacts && isEditingThisCompanyContact ? (
-                              <form className="company-contact-form" onSubmit={saveCompanyContact}>
-                                <div className="form-grid">
-                                  <div className="form-row">
-                                    <label htmlFor={`companyContactName-${company.id}`}>Name</label>
-                                    <input
-                                      id={`companyContactName-${company.id}`}
-                                      value={companyContactForm.name}
-                                      disabled={savingCompanyContact || isOffline}
-                                      onChange={(event) =>
-                                        updateCompanyContactFormField("name", event.target.value)
-                                      }
-                                      required
-                                    />
-                                  </div>
-                                  <div className="form-row">
-                                    <label htmlFor={`companyContactRole-${company.id}`}>Role</label>
-                                    <input
-                                      id={`companyContactRole-${company.id}`}
-                                      value={companyContactForm.role}
-                                      disabled={savingCompanyContact || isOffline}
-                                      onChange={(event) =>
-                                        updateCompanyContactFormField("role", event.target.value)
-                                      }
-                                    />
-                                  </div>
-                                  <div className="form-row">
-                                    <label htmlFor={`companyContactEmail-${company.id}`}>Email</label>
-                                    <input
-                                      id={`companyContactEmail-${company.id}`}
-                                      type="email"
-                                      value={companyContactForm.email}
-                                      disabled={savingCompanyContact || isOffline}
-                                      onChange={(event) =>
-                                        updateCompanyContactFormField("email", event.target.value)
-                                      }
-                                    />
-                                  </div>
-                                  <div className="form-row">
-                                    <label htmlFor={`companyContactPhone-${company.id}`}>Phone</label>
-                                    <input
-                                      id={`companyContactPhone-${company.id}`}
-                                      type="tel"
-                                      value={companyContactForm.phone}
-                                      disabled={savingCompanyContact || isOffline}
-                                      onChange={(event) =>
-                                        updateCompanyContactFormField("phone", event.target.value)
-                                      }
-                                    />
-                                  </div>
-                                </div>
-                                <div className="actions">
-                                  <button
-                                    className="button"
-                                    type="submit"
-                                    disabled={savingCompanyContact || isOffline}
-                                  >
-                                    {savingCompanyContact
-                                      ? "Saving..."
-                                      : editingCompanyContactId
-                                        ? "Save contact"
-                                        : "Create contact"}
-                                  </button>
-                                  <button
-                                    className="button secondary"
-                                    type="button"
-                                    disabled={savingCompanyContact || isOffline}
-                                    onClick={resetCompanyContactForm}
-                                  >
-                                    Cancel
-                                  </button>
-                                </div>
-                              </form>
-                            ) : null}
-                          </div>
-                        ) : null}
-                      </div>
-                      {canManageContactCompanyOrder ? (
-                        <span className="drag-handle" aria-hidden="true">
-                          {savingContactCompanyOrder ? "Saving" : "Drag"}
-                        </span>
-                      ) : null}
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        ) : null}
-
-        {activeInfoTab === "keyInfo" ? (
-          <div className="placeholder-panel">
-            <div>
-              <h2>Key Info</h2>
-              <p className="item-meta">Placeholder content.</p>
-            </div>
-          </div>
-        ) : null}
-      </section>
+      <InfoPanel
+        activeInfoTab={activeInfoTab}
+        setActiveInfoTab={setActiveInfoTab}
+        detailsLoading={detailsLoading}
+        companiesLoading={companiesLoading}
+        contactCompanies={contactCompanies}
+        companyContactsByCompanyId={companyContactsByCompanyId}
+        editingCompanyContactCompanyId={editingCompanyContactCompanyId}
+        openContactCompanyIds={openContactCompanyIds}
+        canManageContactCompanyOrder={canManageContactCompanyOrder}
+        canManageCompanyContacts={canManageCompanyContacts}
+        isOffline={isOffline}
+        savingContactCompanyOrder={savingContactCompanyOrder}
+        contactCompanyDropTargetId={contactCompanyDropTargetId}
+        draggedContactCompanyIdRef={draggedContactCompanyIdRef}
+        companyContactsLoading={companyContactsLoading}
+        companyContactDropTargetId={companyContactDropTargetId}
+        reorderingCompanyContactId={reorderingCompanyContactId}
+        draggedCompanyContactIdRef={draggedCompanyContactIdRef}
+        savingCompanyContact={savingCompanyContact}
+        deletingCompanyContactId={deletingCompanyContactId}
+        companyContactForm={companyContactForm}
+        editingCompanyContactId={editingCompanyContactId}
+        reorderContactCompany={reorderContactCompany}
+        reorderCompanyContact={reorderCompanyContact}
+        setContactCompanyDropTargetId={setContactCompanyDropTargetId}
+        setCompanyContactDropTargetId={setCompanyContactDropTargetId}
+        toggleContactCompanyOpen={toggleContactCompanyOpen}
+        startAddingCompanyContact={startAddingCompanyContact}
+        startEditingCompanyContact={startEditingCompanyContact}
+        removeCompanyContact={removeCompanyContact}
+        updateCompanyContactFormField={updateCompanyContactFormField}
+        saveCompanyContact={saveCompanyContact}
+        resetCompanyContactForm={resetCompanyContactForm}
+      />
       ) : null}
 
       {activeTab === "summary" ? (
@@ -4622,315 +4233,60 @@ export default function EventEditPage() {
       ) : null}
 
       {activeTab === "settings" ? (
-      <section className="panel">
-        <nav className="tabs nested-tabs" aria-label="Settings sections">
-          <button
-            className={activeSettingsTab === "tags" ? "tab active" : "tab"}
-            type="button"
-            onClick={() => setActiveSettingsTab("tags")}
-          >
-            <CapcomIcon name="tag" size={18} weight="duotone" />
-            <span>Tags</span>
-          </button>
-          <button
-            className={activeSettingsTab === "locations" ? "tab active" : "tab"}
-            type="button"
-            onClick={() => setActiveSettingsTab("locations")}
-          >
-            <CapcomIcon name="location" size={18} weight="duotone" />
-            <span>Locations</span>
-          </button>
-          <button
-            className={activeSettingsTab === "truckSizes" ? "tab active" : "tab"}
-            type="button"
-            onClick={() => setActiveSettingsTab("truckSizes")}
-          >
-            <CapcomIcon name="truckSize" size={18} weight="duotone" />
-            <span>Truck Sizes</span>
-          </button>
-        </nav>
-
-        {activeSettingsTab === "tags" ? (
-          <div className="settings-section">
-            {!tagFormMode ? (
-              <div className="settings-section-toolbar">
-                <button
-                  className="button"
-                  type="button"
-                  disabled={isOffline}
-                  onClick={startAddingTag}
-                >
-                  New tag
-                </button>
-              </div>
-            ) : null}
-
-            {tagFormMode ? (
-              <form className="tag-form" onSubmit={saveTag}>
-                <div className="form-grid">
-                  <div className="form-row">
-                    <label htmlFor="tagName">Tag name</label>
-                    <input
-                      id="tagName"
-                      value={tagForm.name}
-                      disabled={isOffline}
-                      onChange={(event) => updateTagFormField("name", event.target.value)}
-                      placeholder="Confirmed"
-                      required
-                    />
-                  </div>
-                  <div className="form-row">
-                    <label htmlFor="tagColour">Colour</label>
-                    <div className="tag-colour-field">
-                      <input
-                        id="tagColourPicker"
-                        className="colour-picker"
-                        aria-label="Tag colour picker"
-                        type="color"
-                        value={normaliseHexColour(tagForm.colour) || emptyTagForm.colour}
-                        disabled={isOffline}
-                        onChange={(event) => updateTagFormField("colour", event.target.value)}
-                      />
-                      <input
-                        id="tagColour"
-                        value={tagForm.colour}
-                        disabled={isOffline}
-                        onChange={(event) => updateTagFormField("colour", event.target.value)}
-                        placeholder="#DCEEFF"
-                        required
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div className="actions">
-                  <button className="button" type="submit" disabled={savingTag || isOffline}>
-                    {savingTag ? "Saving..." : editingTagId ? "Save tag" : "Create tag"}
-                  </button>
-                  <button
-                    className="button secondary"
-                    type="button"
-                    disabled={savingTag || isOffline}
-                    onClick={resetTagForm}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </form>
-            ) : null}
-
-            {tagsLoading ? (
-              <p className="item-meta">Loading tags...</p>
-            ) : tags.length === 0 ? (
-              <p className="item-meta">No tags yet.</p>
-            ) : (
-              <div className="tag-list">
-                {tags.map((tag) => (
-                  <div className="tag-list-row" key={tag.id}>
-                    <span className="tag-chip" style={getTagStyle(tag)}>
-                      <span
-                        className="tag-dot"
-                        style={{ backgroundColor: normaliseHexColour(tag.colour) }}
-                      />
-                      {tag.name}
-                    </span>
-                    <span className="item-meta">{normaliseHexColour(tag.colour)}</span>
-                    <div className="tag-list-actions">
-                      <button
-                        className="compact-button"
-                        type="button"
-                        disabled={isOffline}
-                        onClick={() => startEditingTag(tag)}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        className="compact-button"
-                        type="button"
-                        disabled={deletingTagId === tag.id || isOffline}
-                        onClick={() => removeTag(tag.id)}
-                      >
-                        {deletingTagId === tag.id ? "Deleting..." : "Delete"}
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        ) : null}
-
-        {activeSettingsTab === "locations" ? (
-          <div className="settings-section">
-            {!locationFormMode ? (
-              <div className="settings-section-toolbar">
-                <button
-                  className="button"
-                  type="button"
-                  disabled={isOffline}
-                  onClick={startAddingLocation}
-                >
-                  New location
-                </button>
-              </div>
-            ) : null}
-
-            {locationFormMode ? (
-              <form className="location-form" onSubmit={saveLocation}>
-                <div className="form-row">
-                  <label htmlFor="locationName">
-                    {editingLocationId
-                      ? "Location name"
-                      : locationForm.parentLocationId
-                        ? "Sub-location name"
-                        : "Main location"}
-                  </label>
-                  <input
-                    id="locationName"
-                    value={locationForm.name}
-                    disabled={isOffline}
-                    onChange={(event) => updateLocationFormField("name", event.target.value)}
-                    placeholder={locationForm.parentLocationId ? "Backstage" : "Main Hall"}
-                    required
-                  />
-                  {locationForm.parentLocationId ? (
-                    <span className="item-meta">
-                      Under{" "}
-                      {locations.find((location) => location.id === locationForm.parentLocationId)
-                        ?.name || "selected location"}
-                    </span>
-                  ) : null}
-                </div>
-                <div className="actions">
-                  <button className="button" type="submit" disabled={savingLocation || isOffline}>
-                    {savingLocation
-                      ? "Saving..."
-                      : editingLocationId
-                        ? "Save location"
-                        : "Create location"}
-                  </button>
-                  <button
-                    className="button secondary"
-                    type="button"
-                    disabled={savingLocation || isOffline}
-                    onClick={resetLocationForm}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </form>
-            ) : null}
-
-            {locationsLoading ? (
-              <p className="item-meta">Loading locations...</p>
-            ) : locations.length === 0 ? (
-              <p className="item-meta">No locations yet.</p>
-            ) : (
-              <div
-                className={[
-                  "location-list",
-                  locationDropTargetId === "main" ? "drop-target" : "",
-                ].filter(Boolean).join(" ")}
-                onDragOver={(event) => {
-                  if (!draggedLocationIdRef.current) return;
-                  event.preventDefault();
-                  event.dataTransfer.dropEffect = "move";
-                  setLocationDropTargetId("main");
-                }}
-                onDragLeave={() => {
-                  setLocationDropTargetId((current) => (current === "main" ? "" : current));
-                }}
-                onDrop={(event) => {
-                  event.preventDefault();
-                  const draggedLocationId = draggedLocationIdRef.current;
-                  draggedLocationIdRef.current = "";
-                  setLocationDropTargetId("");
-                  if (draggedLocationId) moveLocation(draggedLocationId, "");
-                }}
-              >
-                {locationTree.map((location) => renderLocationNode(location))}
-              </div>
-            )}
-          </div>
-        ) : null}
-
-        {activeSettingsTab === "truckSizes" ? (
-          <div className="settings-section">
-            {!truckSizeFormMode ? (
-              <div className="settings-section-toolbar">
-                <button
-                  className="button"
-                  type="button"
-                  disabled={isOffline}
-                  onClick={startAddingTruckSize}
-                >
-                  New truck size
-                </button>
-              </div>
-            ) : null}
-
-            {truckSizeFormMode ? (
-              <form className="truck-size-form" onSubmit={saveTruckSize}>
-                <div className="form-row">
-                  <label htmlFor="truckSize">Truck size</label>
-                  <input
-                    id="truckSize"
-                    value={truckSizeForm.size}
-                    disabled={isOffline}
-                    onChange={(event) => updateTruckSizeFormField("size", event.target.value)}
-                    placeholder="18m"
-                    required
-                  />
-                </div>
-                <div className="actions">
-                  <button className="button" type="submit" disabled={savingTruckSize || isOffline}>
-                    {savingTruckSize ? "Saving..." : editingTruckSizeId ? "Save size" : "Create size"}
-                  </button>
-                  <button
-                    className="button secondary"
-                    type="button"
-                    disabled={savingTruckSize || isOffline}
-                    onClick={resetTruckSizeForm}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </form>
-            ) : null}
-
-            {truckSizesLoading ? (
-              <p className="item-meta">Loading truck sizes...</p>
-            ) : truckSizes.length === 0 ? (
-              <p className="item-meta">No truck sizes yet.</p>
-            ) : (
-              <div className="tag-list">
-                {truckSizes.map((truckSize) => (
-                  <div className="tag-list-row" key={truckSize.id}>
-                    <span>{truckSize.size}</span>
-                    <div className="tag-list-actions">
-                      <button
-                        className="compact-button"
-                        type="button"
-                        disabled={isOffline}
-                        onClick={() => startEditingTruckSize(truckSize)}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        className="compact-button"
-                        type="button"
-                        disabled={deletingTruckSizeId === truckSize.id || isOffline}
-                        onClick={() => removeTruckSize(truckSize.id)}
-                      >
-                        {deletingTruckSizeId === truckSize.id ? "Deleting..." : "Delete"}
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        ) : null}
-      </section>
+      <SettingsPanel
+        activeSettingsTab={activeSettingsTab}
+        setActiveSettingsTab={setActiveSettingsTab}
+        isOffline={isOffline}
+        tagFormMode={tagFormMode}
+        tagForm={tagForm}
+        tags={tags}
+        tagsLoading={tagsLoading}
+        editingTagId={editingTagId}
+        savingTag={savingTag}
+        deletingTagId={deletingTagId}
+        defaultTagColour={emptyTagForm.colour}
+        locations={locations}
+        locationTree={locationTree}
+        locationFormMode={locationFormMode}
+        locationForm={locationForm}
+        locationsLoading={locationsLoading}
+        editingLocationId={editingLocationId}
+        savingLocation={savingLocation}
+        deletingLocationId={deletingLocationId}
+        movingLocationId={movingLocationId}
+        locationDropTargetId={locationDropTargetId}
+        truckSizes={truckSizes}
+        truckSizesLoading={truckSizesLoading}
+        truckSizeFormMode={truckSizeFormMode}
+        truckSizeForm={truckSizeForm}
+        editingTruckSizeId={editingTruckSizeId}
+        savingTruckSize={savingTruckSize}
+        deletingTruckSizeId={deletingTruckSizeId}
+        draggedLocationIdRef={draggedLocationIdRef}
+        normaliseHexColour={normaliseHexColour}
+        getTagStyle={getTagStyle}
+        startAddingTag={startAddingTag}
+        startEditingTag={startEditingTag}
+        updateTagFormField={updateTagFormField}
+        saveTag={saveTag}
+        resetTagForm={resetTagForm}
+        removeTag={removeTag}
+        startAddingLocation={startAddingLocation}
+        startAddingSubLocation={startAddingSubLocation}
+        startEditingLocation={startEditingLocation}
+        updateLocationFormField={updateLocationFormField}
+        saveLocation={saveLocation}
+        resetLocationForm={resetLocationForm}
+        removeLocation={removeLocation}
+        moveLocation={moveLocation}
+        setLocationDropTargetId={setLocationDropTargetId}
+        startAddingTruckSize={startAddingTruckSize}
+        startEditingTruckSize={startEditingTruckSize}
+        updateTruckSizeFormField={updateTruckSizeFormField}
+        saveTruckSize={saveTruckSize}
+        resetTruckSizeForm={resetTruckSizeForm}
+        removeTruckSize={removeTruckSize}
+      />
       ) : null}
 
       {editingDayMode === "overlay" ? (
