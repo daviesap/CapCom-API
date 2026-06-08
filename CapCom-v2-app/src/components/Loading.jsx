@@ -5,11 +5,13 @@ export default function Loading({
   withToast = false,
   id,
   showAfterMs = 0,
+  minVisibleMs = 0,
   persist = true,
 }) {
   useLoadingToast(withToast, label, {
     id,
     persist,
+    minVisibleMs,
     showAfterMs,
     variant: "loading",
   });

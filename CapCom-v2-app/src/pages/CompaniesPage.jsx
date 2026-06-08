@@ -222,6 +222,7 @@ export default function CompaniesPage() {
         withToast
         id="companies-page-initial-load"
         showAfterMs={250}
+        minVisibleMs={1500}
       />
     );
   }

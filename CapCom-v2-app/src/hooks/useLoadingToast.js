@@ -12,9 +12,12 @@ export default function useLoadingToast(
     id,
     persist = true,
     showAfterMs = 0,
+    minVisibleMs = 0,
   } = options;
   const toastIdRef = useRef("");
   const pendingToastRef = useRef(null);
+  const dismissToastTimeoutRef = useRef(null);
+  const shownAtRef = useRef(0);
 
   useEffect(() => {
     const resolvedId = id || `loading-${label}`;
@@ -25,10 +28,37 @@ export default function useLoadingToast(
       }
     };
 
+    const clearDismissToast = () => {
+      if (dismissToastTimeoutRef.current) {
+        window.clearTimeout(dismissToastTimeoutRef.current);
+        dismissToastTimeoutRef.current = null;
+      }
+    };
+
+    const scheduleDismiss = () => {
+      clearDismissToast();
+      const minVisible = Math.max(0, Number(minVisibleMs) || 0);
+      if (minVisible === 0) {
+        dismissToast(toastIdRef.current);
+        toastIdRef.current = "";
+        return;
+      }
+
+      const elapsed = Date.now() - shownAtRef.current;
+      const remaining = Math.max(0, minVisible - elapsed);
+      dismissToastTimeoutRef.current = window.setTimeout(() => {
+        dismissToast(toastIdRef.current);
+        toastIdRef.current = "";
+        dismissToastTimeoutRef.current = null;
+      }, remaining);
+    };
+
     const showLoadingToast = () => {
       if (toastIdRef.current && toastIdRef.current !== resolvedId) {
         dismissToast(toastIdRef.current);
       }
+      shownAtRef.current = Date.now();
+      clearDismissToast();
 
       toastIdRef.current = showToast(label, {
         id: resolvedId,
@@ -39,9 +69,9 @@ export default function useLoadingToast(
 
     if (!isLoading) {
       clearPendingToast();
+      clearDismissToast();
       if (toastIdRef.current) {
-        dismissToast(toastIdRef.current);
-        toastIdRef.current = "";
+        scheduleDismiss();
       }
       return undefined;
     }
@@ -52,9 +82,10 @@ export default function useLoadingToast(
     if (delay === 0) {
       showLoadingToast();
       return () => {
+        clearPendingToast();
+        clearDismissToast();
         if (toastIdRef.current) {
-          dismissToast(toastIdRef.current);
-          toastIdRef.current = "";
+          scheduleDismiss();
         }
       };
     }
@@ -66,11 +97,11 @@ export default function useLoadingToast(
 
     return () => {
       clearPendingToast();
+      clearDismissToast();
       if (toastIdRef.current) {
-        dismissToast(toastIdRef.current);
-        toastIdRef.current = "";
+        scheduleDismiss();
       }
     };
 
-  }, [dismissToast, id, isLoading, label, persist, showAfterMs, showToast, variant]);
+  }, [dismissToast, id, isLoading, label, minVisibleMs, persist, showAfterMs, showToast, variant]);
 }

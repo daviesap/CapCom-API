@@ -195,6 +195,7 @@ export default function EventListPage() {
           withToast
           id="events-page-loading"
           showAfterMs={250}
+          minVisibleMs={1500}
         />
       ) : null}
       {!loading && events.length === 0 ? <EmptyState message="No events yet." /> : null}
