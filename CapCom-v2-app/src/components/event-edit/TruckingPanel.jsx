@@ -263,6 +263,9 @@ export default function TruckingPanel({
                           const isEditingTime = isEditingDetailCell(detail.id, "time");
                           const canMoveUp = detailIndex > 0;
                           const canMoveDown = detailIndex < truckDetails.length - 1;
+                          const hasDate = Boolean(dayId);
+                          const hasTime = Boolean(detail.time);
+                          const hasDestination = Boolean(getTruckDestinationValue(detail));
 
                           return (
                             <div
@@ -302,11 +305,17 @@ export default function TruckingPanel({
                                 nextDetails.splice(toIndex, 0, movedDetail);
                                 persistTruckDetailOrder(truck.id, nextDetails);
                               }}
-                              onDragEnd={() => {
-                                draggedDetailIdRef.current = "";
-                              }}
-                            >
-                              <div className="location-select-wrap">
+                            onDragEnd={() => {
+                              draggedDetailIdRef.current = "";
+                            }}
+                          >
+                              <div
+                                className={[
+                                  "location-select-wrap",
+                                  "detail-select-field",
+                                  hasDate ? "" : "detail-select-field-missing",
+                                ].filter(Boolean).join(" ")}
+                              >
                                 <select
                                   aria-label="Date for truck detail"
                                   value={dayId}
@@ -351,7 +360,11 @@ export default function TruckingPanel({
                                 />
                               ) : (
                                 <button
-                                  className="detail-cell detail-time-display"
+                                  className={[
+                                    "detail-cell",
+                                    "detail-time-display",
+                                    hasTime ? "" : "missing-time",
+                                  ].filter(Boolean).join(" ")}
                                   type="button"
                                   disabled={isOffline}
                                   onClick={() => startEditingDetailCell(dayId, detail.id, "time")}
@@ -368,7 +381,13 @@ export default function TruckingPanel({
                                 {detail.action || ""}
                               </button>
                               {showTruckDestinationColumn ? (
-                                <div className="location-select-wrap">
+                                <div
+                                  className={[
+                                    "location-select-wrap",
+                                    "detail-select-field",
+                                    hasDestination ? "" : "detail-select-field-missing",
+                                  ].filter(Boolean).join(" ")}
+                                >
                                   <select
                                     aria-label="Destination for truck detail"
                                     value={getTruckDestinationValue(detail)}
@@ -548,7 +567,13 @@ export default function TruckingPanel({
                             key={`truck-draft-${draftIndex}`}
                             style={getTruckDetailRowStyle()}
                           >
-                            <div className="location-select-wrap">
+                            <div
+                              className={[
+                                "location-select-wrap",
+                                "detail-select-field",
+                                draft.scheduleDayId ? "" : "detail-select-field-missing",
+                              ].filter(Boolean).join(" ")}
+                            >
                               <select
                                 aria-label="New truck detail date"
                                 value={draft.scheduleDayId}
@@ -572,6 +597,7 @@ export default function TruckingPanel({
                               </select>
                             </div>
                             <input
+                              className="plain-input"
                               aria-label="New truck detail time"
                               type="time"
                               value={draft.time}
@@ -596,7 +622,13 @@ export default function TruckingPanel({
                               {draft.action || ""}
                             </button>
                             {showTruckDestinationColumn ? (
-                              <div className="location-select-wrap">
+                              <div
+                                className={[
+                                  "location-select-wrap",
+                                  "detail-select-field",
+                                  getTruckDestinationValue(draft) ? "" : "detail-select-field-missing",
+                                ].filter(Boolean).join(" ")}
+                              >
                                 <select
                                   aria-label="New truck detail destination"
                                   value={getTruckDestinationValue(draft)}
