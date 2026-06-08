@@ -338,6 +338,271 @@ function DetailRowActions({
   );
 }
 
+function DetailRow({
+  day,
+  detail,
+  detailIndex,
+  dayDetails,
+  isOffline,
+  isEditingDetailCell,
+  canMoveDetail,
+  getAdjacentDay,
+  getDetailRowStyle,
+  getRowTagStyle,
+  getTagById,
+  draggedDetailIdRef,
+  reorderDetail,
+  detailCellInputRef,
+  suppressDetailBlurRef,
+  saveDetailCell,
+  updateDetailField,
+  handleDetailCellKeyDown,
+  startEditingDetailCell,
+  showTagColumn,
+  getTagStyle,
+  normaliseHexColour,
+  savingDetailId,
+  assignDetailTag,
+  tags,
+  showLocationColumn,
+  getLocationById,
+  assignDetailLocation,
+  locationOptions,
+  showCompanyColumn,
+  getCompanyLabel,
+  companies,
+  assignDetailCompanies,
+  toggleCompanyIds,
+  openNotesDetailId,
+  closeNotesEditor,
+  openNotesEditor,
+  notesDraft,
+  setNotesDraft,
+  saveDetailNotes,
+  openActionMenuId,
+  setOpenActionMenuId,
+  beginRowAction,
+  endRowAction,
+  reorderingDayId,
+  moveDetail,
+  moveDetailToDay,
+  duplicateDetail,
+  closeActionMenu,
+  deleteDetail,
+}) {
+  const isEditingTime = isEditingDetailCell(detail.id, "time");
+  const isEditingDescription = isEditingDetailCell(detail.id, "description");
+  const canMoveUp = canMoveDetail(dayDetails, detailIndex, -1);
+  const canMoveDown = canMoveDetail(dayDetails, detailIndex, 1);
+  const previousDay = getAdjacentDay(day.id, -1);
+  const nextDay = getAdjacentDay(day.id, 1);
+
+  return (
+    <div
+      className="detail-row draggable-row"
+      style={getDetailRowStyle(getRowTagStyle(getTagById(detail.tagId)))}
+      draggable={!isEditingTime && !isEditingDescription && !isOffline}
+      onDragStart={(event) => {
+        draggedDetailIdRef.current = detail.id;
+        event.dataTransfer.effectAllowed = "move";
+      }}
+      onDragOver={(event) => {
+        const draggedDetail = dayDetails.find(
+          (nextDetail) => nextDetail.id === draggedDetailIdRef.current
+        );
+        if (
+          draggedDetail &&
+          draggedDetail.id !== detail.id &&
+          (draggedDetail.time || "") === (detail.time || "")
+        ) {
+          event.preventDefault();
+          event.dataTransfer.dropEffect = "move";
+        }
+      }}
+      onDrop={(event) => {
+        event.preventDefault();
+        reorderDetail(day.id, draggedDetailIdRef.current, detail.id);
+        draggedDetailIdRef.current = "";
+      }}
+      onDragEnd={() => {
+        draggedDetailIdRef.current = "";
+      }}
+    >
+      {isEditingTime ? (
+        <input
+          ref={detailCellInputRef}
+          className="plain-input detail-time-input"
+          aria-label={`Time for ${detail.description || "schedule detail"}`}
+          type="time"
+          value={detail.time || ""}
+          disabled={isOffline}
+          onBlur={() => {
+            if (suppressDetailBlurRef.current) return;
+            saveDetailCell(day.id, detail);
+          }}
+          onChange={(event) =>
+            updateDetailField(day.id, detail.id, "time", event.target.value)
+          }
+          onKeyDown={(event) =>
+            handleDetailCellKeyDown(
+              event,
+              day.id,
+              dayDetails,
+              detail,
+              detailIndex,
+              "time"
+            )
+          }
+        />
+      ) : (
+        <button
+          className="detail-cell detail-time-display"
+          type="button"
+          disabled={isOffline}
+          onClick={() => startEditingDetailCell(day.id, detail.id, "time")}
+        >
+          {detail.time || "tbc"}
+        </button>
+      )}
+      {isEditingDescription ? (
+        <input
+          ref={detailCellInputRef}
+          className="plain-input"
+          aria-label={`Description for ${detail.time || "tbc"}`}
+          value={detail.description || ""}
+          disabled={isOffline}
+          onBlur={() => {
+            if (suppressDetailBlurRef.current) return;
+            saveDetailCell(day.id, detail);
+          }}
+          onChange={(event) =>
+            updateDetailField(day.id, detail.id, "description", event.target.value)
+          }
+          onKeyDown={(event) =>
+            handleDetailCellKeyDown(
+              event,
+              day.id,
+              dayDetails,
+              detail,
+              detailIndex,
+              "description"
+            )
+          }
+        />
+      ) : (
+        <button
+          className="detail-cell detail-description-cell"
+          type="button"
+          data-tooltip={detail.description || ""}
+          disabled={isOffline}
+          onClick={() => startEditingDetailCell(day.id, detail.id, "description")}
+        >
+          {detail.description || ""}
+        </button>
+      )}
+      {showTagColumn ? (
+        <div
+          className="tag-select-wrap"
+          style={getTagStyle(getTagById(detail.tagId))}
+        >
+          <span
+            className="tag-dot"
+            style={{
+              backgroundColor:
+                normaliseHexColour(getTagById(detail.tagId)?.colour) || "transparent",
+            }}
+          />
+          <select
+            aria-label={`Tag for ${detail.description || "schedule detail"}`}
+            value={getTagById(detail.tagId) ? detail.tagId : ""}
+            disabled={savingDetailId === detail.id || isOffline || Boolean(detail.truckId)}
+            onChange={(event) => assignDetailTag(day.id, detail, event.target.value)}
+          >
+            <option value="">No tag</option>
+            {tags.map((tag) => (
+              <option key={tag.id} value={tag.id}>
+                {tag.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      ) : null}
+      {showLocationColumn ? (
+        <div className="location-select-wrap">
+          <select
+            aria-label={`Location for ${detail.description || "schedule detail"}`}
+            value={getLocationById(detail.locationId) ? detail.locationId : ""}
+            disabled={savingDetailId === detail.id || isOffline}
+            onChange={(event) => assignDetailLocation(day.id, detail, event.target.value)}
+          >
+            <option value="">No location</option>
+            {locationOptions.map((location) => (
+              <option key={location.id} value={location.id}>
+                {location.displayName}
+              </option>
+            ))}
+          </select>
+        </div>
+      ) : null}
+      {showCompanyColumn ? (
+        <details className="company-dropdown">
+          <summary
+            aria-label={`Company for ${detail.description || "schedule detail"}`}
+            className="company-dropdown-trigger"
+          >
+            {getCompanyLabel(detail.companyIds || [])}
+          </summary>
+          <div className="company-dropdown-menu">
+            {companies.map((company) => (
+              <label className="company-dropdown-option" key={company.id}>
+                <input
+                  type="checkbox"
+                  checked={(detail.companyIds || []).includes(company.id)}
+                  disabled={savingDetailId === detail.id || isOffline}
+                  onChange={() =>
+                    assignDetailCompanies(
+                      day.id,
+                      detail,
+                      toggleCompanyIds(detail.companyIds || [], company.id)
+                    )
+                  }
+                />
+                <span>{company.companyName}</span>
+              </label>
+            ))}
+          </div>
+        </details>
+      ) : null}
+      <DetailRowActions
+        day={day}
+        detail={detail}
+        isOffline={isOffline}
+        savingDetailId={savingDetailId}
+        openNotesDetailId={openNotesDetailId}
+        closeNotesEditor={closeNotesEditor}
+        openNotesEditor={openNotesEditor}
+        notesDraft={notesDraft}
+        setNotesDraft={setNotesDraft}
+        saveDetailNotes={saveDetailNotes}
+        openActionMenuId={openActionMenuId}
+        setOpenActionMenuId={setOpenActionMenuId}
+        beginRowAction={beginRowAction}
+        endRowAction={endRowAction}
+        canMoveUp={canMoveUp}
+        canMoveDown={canMoveDown}
+        reorderingDayId={reorderingDayId}
+        previousDay={previousDay}
+        nextDay={nextDay}
+        moveDetail={moveDetail}
+        moveDetailToDay={moveDetailToDay}
+        duplicateDetail={duplicateDetail}
+        closeActionMenu={closeActionMenu}
+        deleteDetail={deleteDetail}
+      />
+    </div>
+  );
+}
+
 export default function DetailPanel({
   scheduleDays,
   detailsByDayId,
@@ -468,235 +733,61 @@ export default function DetailPanel({
                     <p className="item-meta">{getNoRowsMessage()}</p>
                   ) : (
                     <div className="detail-list">
-                      {dayDetails.map((detail, detailIndex) => {
-                        const isEditingTime = isEditingDetailCell(detail.id, "time");
-                        const isEditingDescription = isEditingDetailCell(
-                          detail.id,
-                          "description"
-                        );
-                        const canMoveUp = canMoveDetail(dayDetails, detailIndex, -1);
-                        const canMoveDown = canMoveDetail(dayDetails, detailIndex, 1);
-                        const previousDay = getAdjacentDay(day.id, -1);
-                        const nextDay = getAdjacentDay(day.id, 1);
-
-                        return (
-                          <div
-                            className="detail-row draggable-row"
-                            key={detail.id}
-                            style={getDetailRowStyle(getRowTagStyle(getTagById(detail.tagId)))}
-                            draggable={!isEditingTime && !isEditingDescription && !isOffline}
-                            onDragStart={(event) => {
-                              draggedDetailIdRef.current = detail.id;
-                              event.dataTransfer.effectAllowed = "move";
-                            }}
-                            onDragOver={(event) => {
-                              const draggedDetail = dayDetails.find(
-                                (nextDetail) => nextDetail.id === draggedDetailIdRef.current
-                              );
-                              if (
-                                draggedDetail &&
-                                draggedDetail.id !== detail.id &&
-                                (draggedDetail.time || "") === (detail.time || "")
-                              ) {
-                                event.preventDefault();
-                                event.dataTransfer.dropEffect = "move";
-                              }
-                            }}
-                            onDrop={(event) => {
-                              event.preventDefault();
-                              reorderDetail(day.id, draggedDetailIdRef.current, detail.id);
-                              draggedDetailIdRef.current = "";
-                            }}
-                            onDragEnd={() => {
-                              draggedDetailIdRef.current = "";
-                            }}
-                          >
-                            {isEditingTime ? (
-                              <input
-                                ref={detailCellInputRef}
-                                className="plain-input detail-time-input"
-                                aria-label={`Time for ${detail.description || "schedule detail"}`}
-                                type="time"
-                                value={detail.time || ""}
-                                disabled={isOffline}
-                                onBlur={() => {
-                                  if (suppressDetailBlurRef.current) return;
-                                  saveDetailCell(day.id, detail);
-                                }}
-                                onChange={(event) =>
-                                  updateDetailField(day.id, detail.id, "time", event.target.value)
-                                }
-                                onKeyDown={(event) =>
-                                  handleDetailCellKeyDown(
-                                    event,
-                                    day.id,
-                                    dayDetails,
-                                    detail,
-                                    detailIndex,
-                                    "time"
-                                  )
-                                }
-                              />
-                            ) : (
-                              <button
-                                className="detail-cell detail-time-display"
-                                type="button"
-                                disabled={isOffline}
-                                onClick={() => startEditingDetailCell(day.id, detail.id, "time")}
-                              >
-                                {detail.time || "tbc"}
-                              </button>
-                            )}
-                            {isEditingDescription ? (
-                              <input
-                                ref={detailCellInputRef}
-                                className="plain-input"
-                                aria-label={`Description for ${detail.time || "tbc"}`}
-                                value={detail.description || ""}
-                                disabled={isOffline}
-                                onBlur={() => {
-                                  if (suppressDetailBlurRef.current) return;
-                                  saveDetailCell(day.id, detail);
-                                }}
-                                onChange={(event) =>
-                                  updateDetailField(
-                                    day.id,
-                                    detail.id,
-                                    "description",
-                                    event.target.value
-                                  )
-                                }
-                                onKeyDown={(event) =>
-                                  handleDetailCellKeyDown(
-                                    event,
-                                    day.id,
-                                    dayDetails,
-                                    detail,
-                                    detailIndex,
-                                    "description"
-                                  )
-                                }
-                              />
-                            ) : (
-                              <button
-                                className="detail-cell detail-description-cell"
-                                type="button"
-                                data-tooltip={detail.description || ""}
-                                disabled={isOffline}
-                                onClick={() =>
-                                  startEditingDetailCell(day.id, detail.id, "description")
-                                }
-                              >
-                                {detail.description || ""}
-                              </button>
-                            )}
-                            {showTagColumn ? (
-                              <div
-                                className="tag-select-wrap"
-                                style={getTagStyle(getTagById(detail.tagId))}
-                              >
-                                <span
-                                  className="tag-dot"
-                                  style={{
-                                    backgroundColor:
-                                      normaliseHexColour(getTagById(detail.tagId)?.colour) ||
-                                      "transparent",
-                                  }}
-                                />
-                                <select
-                                  aria-label={`Tag for ${detail.description || "schedule detail"}`}
-                                  value={getTagById(detail.tagId) ? detail.tagId : ""}
-                                  disabled={savingDetailId === detail.id || isOffline || Boolean(detail.truckId)}
-                                  onChange={(event) =>
-                                    assignDetailTag(day.id, detail, event.target.value)
-                                  }
-                                >
-                                  <option value="">No tag</option>
-                                  {tags.map((tag) => (
-                                    <option key={tag.id} value={tag.id}>
-                                      {tag.name}
-                                    </option>
-                                  ))}
-                                </select>
-                              </div>
-                            ) : null}
-                            {showLocationColumn ? (
-                              <div className="location-select-wrap">
-                                <select
-                                  aria-label={`Location for ${detail.description || "schedule detail"}`}
-                                  value={getLocationById(detail.locationId) ? detail.locationId : ""}
-                                  disabled={savingDetailId === detail.id || isOffline}
-                                  onChange={(event) =>
-                                    assignDetailLocation(day.id, detail, event.target.value)
-                                  }
-                                >
-                                  <option value="">No location</option>
-                                  {locationOptions.map((location) => (
-                                    <option key={location.id} value={location.id}>
-                                      {location.displayName}
-                                    </option>
-                                  ))}
-                                </select>
-                              </div>
-                            ) : null}
-                            {showCompanyColumn ? (
-                              <details className="company-dropdown">
-                                <summary
-                                  aria-label={`Company for ${detail.description || "schedule detail"}`}
-                                  className="company-dropdown-trigger"
-                                >
-                                  {getCompanyLabel(detail.companyIds || [])}
-                                </summary>
-                                <div className="company-dropdown-menu">
-                                  {companies.map((company) => (
-                                    <label className="company-dropdown-option" key={company.id}>
-                                      <input
-                                        type="checkbox"
-                                        checked={(detail.companyIds || []).includes(company.id)}
-                                        disabled={savingDetailId === detail.id || isOffline}
-                                        onChange={() =>
-                                          assignDetailCompanies(
-                                            day.id,
-                                            detail,
-                                            toggleCompanyIds(detail.companyIds || [], company.id)
-                                          )
-                                        }
-                                      />
-                                      <span>{company.companyName}</span>
-                                    </label>
-                                  ))}
-                                </div>
-                              </details>
-                            ) : null}
-                            <DetailRowActions
-                              day={day}
-                              detail={detail}
-                              isOffline={isOffline}
-                              savingDetailId={savingDetailId}
-                              openNotesDetailId={openNotesDetailId}
-                              closeNotesEditor={closeNotesEditor}
-                              openNotesEditor={openNotesEditor}
-                              notesDraft={notesDraft}
-                              setNotesDraft={setNotesDraft}
-                              saveDetailNotes={saveDetailNotes}
-                              openActionMenuId={openActionMenuId}
-                              setOpenActionMenuId={setOpenActionMenuId}
-                              beginRowAction={beginRowAction}
-                              endRowAction={endRowAction}
-                              canMoveUp={canMoveUp}
-                              canMoveDown={canMoveDown}
-                              reorderingDayId={reorderingDayId}
-                              previousDay={previousDay}
-                              nextDay={nextDay}
-                              moveDetail={moveDetail}
-                              moveDetailToDay={moveDetailToDay}
-                              duplicateDetail={duplicateDetail}
-                              closeActionMenu={closeActionMenu}
-                              deleteDetail={deleteDetail}
-                            />
-                          </div>
-                        );
-                      })}
+                      {dayDetails.map((detail, detailIndex) => (
+                        <DetailRow
+                          key={detail.id}
+                          day={day}
+                          detail={detail}
+                          detailIndex={detailIndex}
+                          dayDetails={dayDetails}
+                          isOffline={isOffline}
+                          isEditingDetailCell={isEditingDetailCell}
+                          canMoveDetail={canMoveDetail}
+                          getAdjacentDay={getAdjacentDay}
+                          getDetailRowStyle={getDetailRowStyle}
+                          getRowTagStyle={getRowTagStyle}
+                          getTagById={getTagById}
+                          draggedDetailIdRef={draggedDetailIdRef}
+                          reorderDetail={reorderDetail}
+                          detailCellInputRef={detailCellInputRef}
+                          suppressDetailBlurRef={suppressDetailBlurRef}
+                          saveDetailCell={saveDetailCell}
+                          updateDetailField={updateDetailField}
+                          handleDetailCellKeyDown={handleDetailCellKeyDown}
+                          startEditingDetailCell={startEditingDetailCell}
+                          showTagColumn={showTagColumn}
+                          getTagStyle={getTagStyle}
+                          normaliseHexColour={normaliseHexColour}
+                          savingDetailId={savingDetailId}
+                          assignDetailTag={assignDetailTag}
+                          tags={tags}
+                          showLocationColumn={showLocationColumn}
+                          getLocationById={getLocationById}
+                          assignDetailLocation={assignDetailLocation}
+                          locationOptions={locationOptions}
+                          showCompanyColumn={showCompanyColumn}
+                          getCompanyLabel={getCompanyLabel}
+                          companies={companies}
+                          assignDetailCompanies={assignDetailCompanies}
+                          toggleCompanyIds={toggleCompanyIds}
+                          openNotesDetailId={openNotesDetailId}
+                          closeNotesEditor={closeNotesEditor}
+                          openNotesEditor={openNotesEditor}
+                          notesDraft={notesDraft}
+                          setNotesDraft={setNotesDraft}
+                          saveDetailNotes={saveDetailNotes}
+                          openActionMenuId={openActionMenuId}
+                          setOpenActionMenuId={setOpenActionMenuId}
+                          beginRowAction={beginRowAction}
+                          endRowAction={endRowAction}
+                          reorderingDayId={reorderingDayId}
+                          moveDetail={moveDetail}
+                          moveDetailToDay={moveDetailToDay}
+                          duplicateDetail={duplicateDetail}
+                          closeActionMenu={closeActionMenu}
+                          deleteDetail={deleteDetail}
+                        />
+                      ))}
                       {draftDetails.map((draft, draftIndex) => (
                         <DraftDetailRow
                           key={`draft-${draftIndex}`}
