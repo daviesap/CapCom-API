@@ -101,3 +101,23 @@ export async function updateUserProfile(uid, userData, currentUserProfile) {
     updatedAt: serverTimestamp(),
   });
 }
+
+export async function updateCurrentUserDebugMode(uid, isDebugMode, currentUserProfile) {
+  if (!uid) throw new Error("Firebase Auth UID is required.");
+  if (!hasActiveProfile(currentUserProfile) || currentUserProfile.id !== uid) {
+    throw new Error("You do not have permission to update this debug setting.");
+  }
+
+  if (!isSuperAdmin(currentUserProfile)) {
+    throw new Error("You do not have permission to update this debug setting.");
+  }
+
+  if (typeof isDebugMode !== "boolean") {
+    throw new Error("Debug mode must be enabled or disabled.");
+  }
+
+  return await updateDoc(getUserProfileRef(uid), {
+    debugMode: isDebugMode,
+    updatedAt: serverTimestamp(),
+  });
+}

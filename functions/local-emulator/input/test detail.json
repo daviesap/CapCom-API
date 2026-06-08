@@ -1,0 +1,126 @@
+{
+  "data": {
+    "scheduleDetail": [
+      {
+        "entryId": "0rZm6JSVtfGSqPcG6KEw",
+        "date": "2026-06-06",
+        "dateFriendly": "Saturday, 6 June 2026",
+        "time": " - ",
+        "description": "Item 1",
+        "tags": [
+          "Truck"
+        ],
+        "tagIds": [
+          "3NjqeSVAiE65U1bfJevn"
+        ],
+        "supplier": [
+          "EST"
+        ],
+        "supplierId": "poJeKriOrb8pyhf11yjb",
+        "locationIds": "d3OfA2nhfXDFVcjG8qWv",
+        "locations": "jj",
+        "sortField": "20260606/ - /Item 1"
+      },
+      {
+        "entryId": "0aEeC1J9BCsS3JOWTAk3",
+        "date": "2026-06-06",
+        "dateFriendly": "Saturday, 6 June 2026",
+        "time": " - ",
+        "description": "Item 3",
+        "tags": [],
+        "tagIds": [],
+        "supplier": [],
+        "sortField": "20260606/ - /Item 3"
+      },
+      {
+        "entryId": "Wmlv9X3Q9Hhat6xVnab0",
+        "date": "2026-06-06",
+        "dateFriendly": "Saturday, 6 June 2026",
+        "time": " - ",
+        "description": "Item 2",
+        "tags": [
+          "Truck"
+        ],
+        "tagIds": [
+          "3NjqeSVAiE65U1bfJevn"
+        ],
+        "supplier": [
+          "EST"
+        ],
+        "supplierId": "poJeKriOrb8pyhf11yjb",
+        "locationIds": "d3OfA2nhfXDFVcjG8qWv",
+        "locations": "jj",
+        "sortField": "20260606/ - /Item 2"
+      },
+      {
+        "entryId": "0etkm6A4BCsBaqY2J72q",
+        "date": "2026-06-06",
+        "dateFriendly": "Saturday, 6 June 2026",
+        "time": " - ",
+        "description": "ww",
+        "tags": [
+          "Truck"
+        ],
+        "tagIds": [
+          "3NjqeSVAiE65U1bfJevn"
+        ],
+        "supplier": [],
+        "sortField": "20260606/ - /ww"
+      },
+      {
+        "entryId": "PujI7Rqt8mtMXAcGqVXG",
+        "date": "2026-06-06",
+        "dateFriendly": "Saturday, 6 June 2026",
+        "time": "12:00 - ",
+        "description": "Des",
+        "tags": [
+          "Truck"
+        ],
+        "tagIds": [
+          "3NjqeSVAiE65U1bfJevn"
+        ],
+        "supplier": [
+          "Flair"
+        ],
+        "supplierId": "72bYXQC6KjhUl62aeVLG",
+        "locationIds": "dOJJuJjAWRyNJIi9X35o",
+        "locations": "mkkm",
+        "sortField": "20260606/12:00 - /Des"
+      },
+      {
+        "entryId": "wr0yfhmbMjDgomQfnB5m",
+        "date": "2026-06-06",
+        "dateFriendly": "Saturday, 6 June 2026",
+        "time": "14:06 - ",
+        "description": "",
+        "tags": [
+          "Truck"
+        ],
+        "tagIds": [
+          "3NjqeSVAiE65U1bfJevn"
+        ],
+        "supplier": [
+          "EST"
+        ],
+        "supplierId": "poJeKriOrb8pyhf11yjb",
+        "truckId": "Lp5FSYav7YsTcroIgG77",
+        "sortField": "20260606/14:06 - /"
+      },
+      {
+        "entryId": "pb7wUVPK9spUdqkCMn5u",
+        "date": "2026-06-07",
+        "dateFriendly": "Sunday, 7 June 2026",
+        "time": " - ",
+        "description": "Hello",
+        "tags": [
+          "Truck"
+        ],
+        "tagIds": [
+          "3NjqeSVAiE65U1bfJevn"
+        ],
+        "supplier": [],
+        "sortField": "20260607/ - /Hello"
+      }
+    ]
+  }
+}

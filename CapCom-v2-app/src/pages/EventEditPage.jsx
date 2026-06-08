@@ -12,6 +12,7 @@ import SummaryPanel from "../components/event-edit/SummaryPanel.jsx";
 import TruckingPanel from "../components/event-edit/TruckingPanel.jsx";
 import Loading from "../components/Loading.jsx";
 import useOnlineStatus from "../hooks/useOnlineStatus.js";
+import { isEventAdmin } from "../auth/roles.js";
 import { getClients } from "../services/clientService.js";
 import {
   getEvent,
@@ -66,6 +67,12 @@ import {
   updateCompanyContact,
   updateCompanyContactOrder,
 } from "../services/companyContactService.js";
+import {
+  createFilteredView,
+  deleteFilteredView,
+  getFilteredViews,
+  updateFilteredView,
+} from "../services/filteredViewService.js";
 import { getCompanies } from "../services/companyService.js";
 
 const emptyEventForm = {
@@ -85,6 +92,7 @@ const eventEditTabs = [
   { id: "summary", label: "Summary", icon: "summary" },
   { id: "detail", label: "Detail", icon: "detail" },
   { id: "trucks", label: "Trucking", icon: "trucking" },
+  { id: "share", label: "Share", icon: "share" },
   { id: "settings", label: "Settings", icon: "settings" },
 ];
 
@@ -120,6 +128,74 @@ const emptyCompanyContactForm = {
   role: "",
 };
 
+const emptyFilteredViewForm = {
+  name: "",
+  filterBox: true,
+  showKeyInfo: true,
+  showLocations: false,
+  groupPresetId: "",
+  filterTagIds: [],
+  filterLocationIds: [],
+  filterSubLocationIds: [],
+  filterSupplierIds: [],
+  filterGroup: "",
+  group: "",
+  sortOrder: 1,
+};
+
+const FALLBACK_FILTERED_VIEW_SORT_ORDER = 1;
+
+function getArrayValue(primary, fallback) {
+  if (Array.isArray(primary)) return primary;
+  if (typeof primary === "string") {
+    return primary
+      .split(",")
+      .map((entry) => entry.trim())
+      .filter(Boolean);
+  }
+  if (Array.isArray(fallback)) return fallback;
+  if (typeof fallback === "string") {
+    return fallback
+      .split(",")
+      .map((entry) => entry.trim())
+      .filter(Boolean);
+  }
+  return [];
+}
+
+function readBooleanValue(value, fallback = false) {
+  if (typeof value === "boolean") return value;
+  if (typeof value === "string") {
+    const normalised = value.trim().toLowerCase();
+    if (normalised === "true") return true;
+    if (normalised === "false") return false;
+  }
+  return fallback;
+}
+
+function normaliseString(value) {
+  if (typeof value === "string") return value.trim();
+  return "";
+}
+
+function normaliseSortOrderValue(value, fallback = FALLBACK_FILTERED_VIEW_SORT_ORDER) {
+  const parsed = Number(value);
+  if (Number.isFinite(parsed) && parsed > 0) return parsed;
+  return fallback;
+}
+
+function getNextFilteredViewSortOrder(existingViews) {
+  const maxSortOrder = existingViews.reduce((maxValue, view) => {
+    const nextValue = Number(view?.sortOrder);
+    if (!Number.isFinite(nextValue)) return maxValue;
+    return nextValue > maxValue ? nextValue : maxValue;
+  }, 0);
+
+  return Number.isFinite(maxSortOrder) && maxSortOrder > 0
+    ? maxSortOrder + 1
+    : FALLBACK_FILTERED_VIEW_SORT_ORDER;
+}
+
 function formatFriendlyDate(dateString) {
   if (!dateString) return "";
   return new Intl.DateTimeFormat("en-GB", {
@@ -152,6 +228,23 @@ function formatDateOrdinal(date) {
     day % 10 === 3 && day !== 13 ? "rd" :
     "th";
   return `${day}${suffix}`;
+}
+
+function formatLongFriendlyDate(dateString) {
+  if (!dateString) return "";
+  return new Intl.DateTimeFormat("en-GB", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(new Date(`${dateString}T00:00:00`));
+}
+
+function toApiDetailTime(value) {
+  const nextTime = String(value || "").trim();
+  if (!nextTime) return " - ";
+  if (nextTime.includes("-")) return nextTime;
+  return `${nextTime} - `;
 }
 
 function formatEventDateRange(startDateString, endDateString) {
@@ -290,6 +383,13 @@ export default function EventEditPage() {
   const [deletingCompanyContactId, setDeletingCompanyContactId] = useState("");
   const [reorderingCompanyContactId, setReorderingCompanyContactId] = useState("");
   const [savingContactCompanyOrder, setSavingContactCompanyOrder] = useState(false);
+  const [filteredViews, setFilteredViews] = useState([]);
+  const [filteredViewsLoading, setFilteredViewsLoading] = useState(false);
+  const [filteredViewFormMode, setFilteredViewFormMode] = useState("");
+  const [editingFilteredViewId, setEditingFilteredViewId] = useState("");
+  const [filteredViewForm, setFilteredViewForm] = useState(emptyFilteredViewForm);
+  const [savingFilteredView, setSavingFilteredView] = useState(false);
+  const [deletingFilteredViewId, setDeletingFilteredViewId] = useState("");
   const [reorderingDayId, setReorderingDayId] = useState("");
   const [movingLocationId, setMovingLocationId] = useState("");
   const [locationDropTargetId, setLocationDropTargetId] = useState("");
@@ -304,6 +404,8 @@ export default function EventEditPage() {
   const draggedContactCompanyIdRef = useRef("");
   const draggedCompanyContactIdRef = useRef("");
   const canManageCompanyContacts = isSuperAdmin || isClientAdmin;
+  const canManageFilteredViews = isSuperAdmin || isClientAdmin || isEventAdmin(userProfile);
+  const canUseDebugJson = Boolean(userProfile?.debugMode);
   const canManageContactCompanyOrder = canManageCompanyContacts;
   const editableClients = clients.filter((client) => (
     client.isActive !== false || client.id === form.clientId
@@ -354,6 +456,7 @@ export default function EventEditPage() {
         setForm(loadedEventForm);
         setSavedEventForm(loadedEventForm);
         setScheduleDays(days);
+        setFilteredViews([]);
         setLoading(false);
 
         const loadOptionalEditorData = async ({
@@ -413,6 +516,13 @@ export default function EventEditPage() {
             loadData: () => getTrucks(eventId),
             applyData: setTrucks,
             errorMessage: "Could not load trucks. Other event data is still available.",
+          }),
+          loadOptionalEditorData({
+            label: "filtered views",
+            setLoadingState: setFilteredViewsLoading,
+            loadData: () => getFilteredViews(eventId),
+            applyData: setFilteredViews,
+            errorMessage: "Could not load filtered views. Other event data is still available.",
           }),
           loadOptionalEditorData({
             label: "companies",
@@ -554,6 +664,22 @@ export default function EventEditPage() {
       }));
   }, [locations]);
 
+  const filteredViewLocationOptions = useMemo(
+    () => locations.filter((location) => !location.parentLocationId),
+    [locations]
+  );
+
+  const filteredViewSubLocationOptions = useMemo(() => {
+    if (filteredViewForm.filterLocationIds.length === 0) {
+      return [];
+    }
+
+    const selectedLocationIds = new Set(filteredViewForm.filterLocationIds);
+    return locations.filter((location) =>
+      location.parentLocationId && selectedLocationIds.has(location.parentLocationId)
+    );
+  }, [locations, filteredViewForm.filterLocationIds]);
+
   const locationById = useMemo(() => {
     return new Map(locations.map((location) => [location.id, location]));
   }, [locations]);
@@ -561,6 +687,10 @@ export default function EventEditPage() {
   const truckSizeById = useMemo(() => {
     return new Map(truckSizes.map((truckSize) => [truckSize.id, truckSize]));
   }, [truckSizes]);
+
+  const tagById = useMemo(() => {
+    return new Map(tags.map((tag) => [tag.id, tag]));
+  }, [tags]);
 
   const companyById = useMemo(() => {
     return new Map(companies.map((company) => [company.id, company]));
@@ -622,6 +752,108 @@ export default function EventEditPage() {
         .filter(Boolean)
     );
   }, [scheduleDetails]);
+
+  const filteredViewCompanyOptions = useMemo(() => {
+    const eventCompanyIds = new Set([
+      ...(Array.isArray(form.contactCompanyOrder) ? form.contactCompanyOrder : []),
+      ...usedCompanyIds,
+    ]);
+
+    if (eventCompanyIds.size === 0) {
+      return [];
+    }
+
+    const companyOrder = new Map(
+      (Array.isArray(form.contactCompanyOrder) ? form.contactCompanyOrder : []).map(
+        (companyId, companyIndex) => [companyId, companyIndex]
+      )
+    );
+
+    return companies
+      .filter((company) => eventCompanyIds.has(company.id))
+      .sort((companyA, companyB) => {
+        const companyAOrder = companyOrder.get(companyA.id);
+        const companyBOrder = companyOrder.get(companyB.id);
+
+        if (companyAOrder === companyBOrder) {
+          return String(companyA.companyName || "").localeCompare(
+            String(companyB.companyName || "")
+          );
+        }
+
+        if (companyAOrder === undefined) return 1;
+        if (companyBOrder === undefined) return -1;
+        return companyAOrder - companyBOrder;
+      });
+  }, [companies, form.contactCompanyOrder, usedCompanyIds]);
+
+  const describeFilteredViewIds = (ids, getLabel, fallbackLabel) => {
+    const names = (ids || [])
+      .map((id) => getLabel(id))
+      .filter(Boolean);
+    return names.length > 0 ? names.join(", ") : fallbackLabel;
+  };
+
+  const detailExportRows = useMemo(() => {
+    if (scheduleDays.length === 0) return [];
+
+    return scheduleDays.flatMap((day) => {
+      const dayDetails = detailsByDayId[day.id] || [];
+      if (!Array.isArray(dayDetails) || dayDetails.length === 0) return [];
+
+      return dayDetails.map((detail) => {
+        const detailCompanyIds = Array.isArray(detail.companyIds)
+          ? detail.companyIds.filter(Boolean)
+          : typeof detail.supplierId === "string"
+            ? detail.supplierId.split(",").map((supplierId) => supplierId.trim()).filter(Boolean)
+            : [];
+        const deduplicatedCompanyIds = Array.from(new Set(detailCompanyIds));
+        const detailDate = day?.date || "";
+        const detailTagIds = Array.isArray(detail.tagIds) && detail.tagIds.length > 0
+          ? detail.tagIds
+          : detail.tagId
+            ? [detail.tagId]
+            : [];
+        const deduplicatedTagIds = Array.from(
+          new Set(detailTagIds.filter(Boolean).map((tagId) => String(tagId).trim()))
+        );
+        const detailTagNames = deduplicatedTagIds
+          .map((tagId) => tagById.get(tagId)?.name)
+          .filter(Boolean);
+        const detailLocationId = detail.locationId
+          ? detail.locationId
+          : Array.isArray(detail.locationIds)
+            ? detail.locationIds[0]
+            : typeof detail.locationIds === "string"
+              ? detail.locationIds.split(",").map((entry) => entry.trim()).find(Boolean) || ""
+              : "";
+        const detailLocation = detailLocationId ? locationById.get(detailLocationId) : null;
+        const detailTime = toApiDetailTime(detail.time);
+        const locationFriendly = detailLocation
+          ? detailLocation.displayName || detailLocation.name || ""
+          : "";
+
+        return {
+          entryId: detail.id || "",
+          date: detailDate,
+          dateFriendly: formatLongFriendlyDate(detailDate),
+          time: detailTime,
+          description: detail.description || "",
+          tags: detailTagNames,
+          tagIds: deduplicatedTagIds,
+          supplier: deduplicatedCompanyIds
+            .map((companyId) => companyById.get(companyId)?.companyName)
+            .filter(Boolean),
+          ...(deduplicatedCompanyIds.length > 0
+            ? { supplierId: deduplicatedCompanyIds.join(",") }
+            : {}),
+          ...(detailLocationId ? { locationIds: detailLocationId, locations: locationFriendly } : {}),
+          ...(detail.truckId ? { truckId: detail.truckId } : {}),
+          sortField: `${detailDate.replace(/-/g, "")}/${detailTime}/${detail.description || ""}`,
+        };
+      });
+    });
+  }, [scheduleDays, detailsByDayId, tagById, locationById, companyById]);
 
   const usedCompanies = useMemo(() => {
     return companies.filter((company) => usedCompanyIds.has(company.id));
@@ -868,6 +1100,18 @@ export default function EventEditPage() {
       setError("Could not load trucks.");
     } finally {
       setTrucksLoading(false);
+    }
+  };
+
+  const loadFilteredViews = async () => {
+    setFilteredViewsLoading(true);
+    try {
+      setFilteredViews(await getFilteredViews(eventId));
+    } catch (loadError) {
+      console.error("Could not load filtered views.", loadError);
+      setError("Could not load filtered views.");
+    } finally {
+      setFilteredViewsLoading(false);
     }
   };
 
@@ -1175,6 +1419,303 @@ export default function EventEditPage() {
       setError("Could not delete company contact.");
     } finally {
       setDeletingCompanyContactId("");
+    }
+  };
+
+  const resetFilteredViewForm = () => {
+    setFilteredViewFormMode("");
+    setEditingFilteredViewId("");
+    setFilteredViewForm(emptyFilteredViewForm);
+  };
+
+  const updateFilteredViewFormField = (field, value) => {
+    setFilteredViewForm((current) => ({
+      ...current,
+      [field]: value,
+    }));
+  };
+
+  const updateFilteredViewMultiSelectField = (field, event) => {
+    const selectedValues = Array.from(event.target.selectedOptions)
+      .map((option) => option.value)
+      .filter(Boolean);
+
+    if (field === "filterLocationIds") {
+      const locationIdSet = new Set(selectedValues);
+      setFilteredViewForm((current) => ({
+        ...current,
+        filterLocationIds: selectedValues,
+        filterSubLocationIds: (current.filterSubLocationIds || []).filter((subLocationId) => {
+          const location = locationById.get(subLocationId);
+          return location?.parentLocationId && locationIdSet.has(location.parentLocationId);
+        }),
+      }));
+      return;
+    }
+
+    updateFilteredViewFormField(
+      field,
+      selectedValues
+    );
+  };
+
+  const copyText = async (text) => {
+    if (typeof text !== "string") {
+      throw new Error("Nothing to copy.");
+    }
+
+    try {
+      const copyUsingFallbackCommand = () => {
+        if (typeof document === "undefined" || !document.body) {
+          throw new Error("Clipboard is not available.");
+        }
+
+        const fallback = document.createElement("textarea");
+        fallback.value = text;
+        fallback.setAttribute("readonly", "");
+        fallback.style.position = "fixed";
+        fallback.style.left = "-9999px";
+        fallback.style.top = "0";
+        fallback.style.opacity = "0";
+        document.body.appendChild(fallback);
+        fallback.focus();
+        fallback.select();
+
+        let copySuccessful = false;
+        try {
+          copySuccessful = document.execCommand("copy");
+        } finally {
+          if (fallback.parentNode) {
+            document.body.removeChild(fallback);
+          }
+        }
+
+        if (!copySuccessful) {
+          throw new Error("Clipboard command was rejected.");
+        }
+      };
+
+      if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
+        try {
+          await navigator.clipboard.writeText(text);
+          return;
+        } catch (clipboardError) {
+          console.warn("Clipboard API write failed. Falling back to document copy.", clipboardError);
+        }
+      }
+
+      copyUsingFallbackCommand();
+    } catch (copyError) {
+      const sourceError =
+        copyError instanceof Error
+          ? copyError.message
+          : "Clipboard is unavailable.";
+      throw new Error(sourceError);
+    }
+  };
+
+  const copyTextFallbackPrompt = (text) => {
+    if (typeof window !== "undefined" && typeof window.prompt === "function") {
+      window.prompt("Copy failed. Please copy the JSON below:", text);
+      return true;
+    }
+    return false;
+  };
+
+  const buildFilteredViewApiPayload = (sourceView) => {
+    const nextName = String(sourceView?.name || "").trim();
+    return {
+      eventId,
+      name: nextName,
+      filterBox: readBooleanValue(sourceView?.filterBox, true),
+      showKeyInfo: readBooleanValue(sourceView?.showKeyInfo, true),
+      showLocations: readBooleanValue(sourceView?.showLocations, false),
+      groupPresetId: normaliseString(sourceView?.groupPresetId),
+      filterTagIds: getArrayValue(sourceView?.filterTagIds, sourceView?.tagIds),
+      filterLocationIds: getArrayValue(sourceView?.filterLocationIds, sourceView?.locationIds),
+      filterSubLocationIds: getArrayValue(
+        sourceView?.filterSubLocationIds,
+        sourceView?.subLocationIds
+      ),
+      filterSupplierIds: getArrayValue(
+        sourceView?.filterSupplierIds,
+        sourceView?.companyIds
+      ),
+      filterGroup: normaliseString(sourceView?.filterGroup),
+      group: normaliseString(sourceView?.group || nextName),
+      sortOrder: normaliseSortOrderValue(sourceView?.sortOrder, FALLBACK_FILTERED_VIEW_SORT_ORDER),
+    };
+  };
+
+  const copyAllFilteredViewsPayload = async () => {
+    const payload = filteredViews.map((view) => buildFilteredViewApiPayload(view));
+    const copyTextValue = JSON.stringify(payload, null, 2);
+    try {
+      await copyText(copyTextValue);
+      setMessage(`Copied ${payload.length} filtered view${payload.length === 1 ? "" : "s"} as JSON.`);
+      setError("");
+    } catch (copyError) {
+      console.error(copyError);
+      const copyErrorMessage =
+        copyError instanceof Error ? copyError.message : "Clipboard is unavailable.";
+      if (!copyTextFallbackPrompt(copyTextValue)) {
+        setError(`Could not copy filtered views JSON: ${copyErrorMessage}`);
+        return;
+      }
+      setMessage("Clipboard was blocked. JSON copied text opened for manual copy.");
+      setError("");
+    }
+  };
+
+  const copyDetailPayload = async () => {
+    const payload = {
+      data: {
+        scheduleDetail: detailExportRows,
+      },
+    };
+    try {
+      await copyText(JSON.stringify(payload, null, 2));
+      setMessage(`Copied ${payload.data.scheduleDetail.length} schedule detail row${payload.data.scheduleDetail.length === 1 ? "" : "s"} as JSON.`);
+      setError("");
+    } catch (copyError) {
+      console.error(copyError);
+      const copyErrorMessage =
+        copyError instanceof Error ? copyError.message : "Clipboard is unavailable.";
+      const copyTextValue = JSON.stringify(payload, null, 2);
+      if (!copyTextFallbackPrompt(copyTextValue)) {
+        setError(`Could not copy schedule detail JSON: ${copyErrorMessage}`);
+        return;
+      }
+      setMessage("Clipboard was blocked. JSON copied text opened for manual copy.");
+    }
+  };
+
+  const startAddingFilteredView = () => {
+    if (!canManageFilteredViews) return;
+    setFilteredViewFormMode("add");
+    setEditingFilteredViewId("");
+    setFilteredViewForm({
+      ...emptyFilteredViewForm,
+      sortOrder: getNextFilteredViewSortOrder(filteredViews),
+    });
+    setMessage("");
+    setError("");
+  };
+
+  const startEditingFilteredView = (view) => {
+    if (!canManageFilteredViews) return;
+    setFilteredViewFormMode("edit");
+    setEditingFilteredViewId(view.id);
+
+    const nextTagIds = getArrayValue(view.filterTagIds, view.tagIds);
+    const nextLocationIds = getArrayValue(view.filterLocationIds, view.locationIds);
+    const nextSubLocationIds = getArrayValue(view.filterSubLocationIds, view.subLocationIds);
+    const nextSupplierIds = getArrayValue(view.filterSupplierIds, view.companyIds);
+    const inferredLocationIds = nextSubLocationIds
+      .map((subLocationId) => locationById.get(subLocationId)?.parentLocationId)
+      .filter(Boolean);
+
+    const mergedLocationIds = [...new Set([...nextLocationIds, ...inferredLocationIds])];
+
+    setFilteredViewForm({
+      name: view.name || "",
+      filterBox: readBooleanValue(view.filterBox, true),
+      showKeyInfo: readBooleanValue(view.showKeyInfo, true),
+      showLocations: readBooleanValue(view.showLocations, false),
+      groupPresetId: view.groupPresetId || "",
+      filterTagIds: nextTagIds,
+      filterLocationIds: mergedLocationIds,
+      filterSubLocationIds: nextSubLocationIds.filter((subLocationId) => {
+        const subLocation = locationById.get(subLocationId);
+        return (
+          subLocation?.parentLocationId
+          && (mergedLocationIds.length > 0 ? mergedLocationIds.includes(subLocation.parentLocationId) : false)
+        );
+      }),
+      filterSupplierIds: nextSupplierIds,
+      filterGroup: view.filterGroup || "",
+      group: view.group || "",
+      sortOrder: normaliseSortOrderValue(view.sortOrder, FALLBACK_FILTERED_VIEW_SORT_ORDER),
+    });
+    setMessage("");
+    setError("");
+  };
+
+  const saveFilteredView = async (submitEvent) => {
+    submitEvent.preventDefault();
+    if (isOffline) {
+      setError("Editing is disabled while offline.");
+      return;
+    }
+    if (!canManageFilteredViews) {
+      setError("Your role cannot manage filtered views.");
+      return;
+    }
+
+    const name = filteredViewForm.name.trim();
+    if (!name) {
+      setError("Filtered view name is required.");
+      return;
+    }
+
+    setSavingFilteredView(true);
+    setMessage("");
+    setError("");
+
+    try {
+      const nextFilteredView = buildFilteredViewApiPayload({
+        ...filteredViewForm,
+        name,
+      });
+
+      if (editingFilteredViewId) {
+        await updateFilteredView(editingFilteredViewId, nextFilteredView);
+        setMessage("Filtered view saved.");
+      } else {
+        await createFilteredView(nextFilteredView);
+        setMessage("Filtered view created.");
+      }
+
+      resetFilteredViewForm();
+      await loadFilteredViews();
+    } catch (filteredViewError) {
+      console.error(filteredViewError);
+      setError("Could not save filtered view.");
+    } finally {
+      setSavingFilteredView(false);
+    }
+  };
+
+  const removeFilteredView = async (filteredViewId) => {
+    if (isOffline) {
+      setError("Editing is disabled while offline.");
+      return;
+    }
+    if (!canManageFilteredViews) {
+      setError("Your role cannot manage filtered views.");
+      return;
+    }
+
+    const targetView = filteredViews.find((view) => view.id === filteredViewId);
+    const confirmed = window.confirm(
+      `Delete ${targetView?.name ? `"${targetView.name}"` : "this filtered view"}?`
+    );
+    if (!confirmed) return;
+
+    setDeletingFilteredViewId(filteredViewId);
+    setMessage("");
+    setError("");
+
+    try {
+      await deleteFilteredView(filteredViewId);
+      if (editingFilteredViewId === filteredViewId) resetFilteredViewForm();
+      await loadFilteredViews();
+      setMessage("Filtered view deleted.");
+    } catch (filteredViewError) {
+      console.error(filteredViewError);
+      setError("Could not delete filtered view.");
+    } finally {
+      setDeletingFilteredViewId("");
     }
   };
 
@@ -2975,6 +3516,18 @@ export default function EventEditPage() {
 
       {activeTab === "detail" ? (
       <section className="panel">
+        <div className="settings-section-toolbar">
+          {canUseDebugJson ? (
+            <button
+              className="button secondary"
+              type="button"
+              disabled={isOffline || detailsLoading}
+              onClick={copyDetailPayload}
+            >
+              Copy detail JSON
+            </button>
+          ) : null}
+        </div>
         <DetailFilters
           usedTags={usedTags}
           usedLocationFilters={usedLocationFilters}
@@ -3132,6 +3685,298 @@ export default function EventEditPage() {
         savingDraftDayId={savingDraftDayId}
         saveDraftTruckDetail={saveDraftTruckDetail}
       />
+      ) : null}
+
+      {activeTab === "share" ? (
+      <section className="panel">
+        <div className="panel-heading">
+          <h2>Filtered views</h2>
+          <p className="item-meta">Save filter combinations for quick reuse.</p>
+        </div>
+
+        <div className="settings-section-toolbar">
+          {canUseDebugJson ? (
+            <button
+              className="button secondary"
+              type="button"
+              disabled={isOffline || filteredViewsLoading}
+              onClick={copyAllFilteredViewsPayload}
+            >
+              Copy all filtered views JSON
+            </button>
+          ) : null}
+          {canManageFilteredViews && !filteredViewFormMode ? (
+            <button
+              className="button"
+              type="button"
+              disabled={isOffline}
+              onClick={startAddingFilteredView}
+            >
+              New filtered view
+            </button>
+          ) : null}
+        </div>
+
+        {filteredViewFormMode ? (
+          <form className="tag-form" onSubmit={saveFilteredView}>
+            <div className="form-grid">
+              <div className="form-row full">
+                <label htmlFor="filteredViewName">Filtered view name</label>
+                <input
+                  id="filteredViewName"
+                  value={filteredViewForm.name}
+                  disabled={isOffline}
+                  onChange={(event) => updateFilteredViewFormField("name", event.target.value)}
+                  placeholder="Example: Main floor / confirmed only"
+                  required
+                />
+              </div>
+              <div className="form-row">
+                <label htmlFor="filteredViewTagIds">Tags</label>
+                <select
+                  id="filteredViewTagIds"
+                  multiple
+                  value={filteredViewForm.filterTagIds}
+                  disabled={isOffline || tags.length === 0}
+                  onChange={(event) => updateFilteredViewMultiSelectField("filterTagIds", event)}
+                >
+                  {tags.map((tag) => (
+                    <option key={tag.id} value={tag.id}>
+                      {tag.name}
+                    </option>
+                  ))}
+                </select>
+                {tags.length === 0 ? <span className="item-meta">No tags available.</span> : null}
+              </div>
+              <div className="form-row">
+                <label htmlFor="filteredViewLocationIds">Locations</label>
+                <select
+                  id="filteredViewLocationIds"
+                  multiple
+                  value={filteredViewForm.filterLocationIds}
+                  disabled={isOffline || filteredViewLocationOptions.length === 0}
+                  onChange={(event) => updateFilteredViewMultiSelectField("filterLocationIds", event)}
+                >
+                  {filteredViewLocationOptions.map((location) => (
+                    <option key={location.id} value={location.id}>
+                      {location.name}
+                    </option>
+                  ))}
+                </select>
+                {filteredViewLocationOptions.length === 0 ? (
+                  <span className="item-meta">No locations available.</span>
+                ) : null}
+              </div>
+              <div className="form-row">
+                <label htmlFor="filteredViewSubLocationIds">Sub locations</label>
+                <select
+                  id="filteredViewSubLocationIds"
+                  multiple
+                  value={filteredViewForm.filterSubLocationIds}
+                  disabled={isOffline || filteredViewSubLocationOptions.length === 0}
+                  onChange={(event) => updateFilteredViewMultiSelectField("filterSubLocationIds", event)}
+                >
+                  {filteredViewSubLocationOptions.map((location) => (
+                    <option key={location.id} value={location.id}>
+                      {location.displayName || location.name}
+                    </option>
+                  ))}
+                </select>
+                {filteredViewSubLocationOptions.length === 0 ? (
+                  <span className="item-meta">
+                    {filteredViewForm.filterLocationIds.length === 0
+                      ? "Select a location to add sub locations."
+                      : "No sub locations available for selected location(s)."}
+                  </span>
+                ) : null}
+              </div>
+              <div className="form-row">
+                <label htmlFor="filteredViewCompanyIds">Suppliers</label>
+                <select
+                  id="filteredViewCompanyIds"
+                  multiple
+                  value={filteredViewForm.filterSupplierIds}
+                  disabled={isOffline || filteredViewCompanyOptions.length === 0}
+                  onChange={(event) => updateFilteredViewMultiSelectField("filterSupplierIds", event)}
+                >
+                  {filteredViewCompanyOptions.map((company) => (
+                    <option key={company.id} value={company.id}>
+                      {company.companyName}
+                    </option>
+                  ))}
+                </select>
+                {filteredViewCompanyOptions.length === 0 ? (
+                  <span className="item-meta">No suppliers available for this event.</span>
+                ) : null}
+              </div>
+              <div className="form-row">
+                <label htmlFor="filteredViewGroupPresetId">Group preset</label>
+                <input
+                  id="filteredViewGroupPresetId"
+                  value={filteredViewForm.groupPresetId}
+                  disabled={isOffline}
+                  onChange={(event) => updateFilteredViewFormField("groupPresetId", event.target.value)}
+                  placeholder="DY-1"
+                />
+              </div>
+              <div className="form-row">
+                <label htmlFor="filteredViewFilterGroup">Filter group</label>
+                <input
+                  id="filteredViewFilterGroup"
+                  value={filteredViewForm.filterGroup}
+                  disabled={isOffline}
+                  onChange={(event) => updateFilteredViewFormField("filterGroup", event.target.value)}
+                  placeholder="a-euY4.fxRfmBhTGPs7gO-A"
+                />
+              </div>
+              <div className="form-row">
+                <label htmlFor="filteredViewGroup">Group</label>
+                <input
+                  id="filteredViewGroup"
+                  value={filteredViewForm.group}
+                  disabled={isOffline}
+                  onChange={(event) => updateFilteredViewFormField("group", event.target.value)}
+                  placeholder="Full schedule"
+                />
+              </div>
+              <div className="form-row">
+                <label htmlFor="filteredViewSortOrder">Sort order</label>
+                <input
+                  id="filteredViewSortOrder"
+                  type="number"
+                  min="1"
+                  value={filteredViewForm.sortOrder}
+                  disabled={isOffline}
+                  onChange={(event) => updateFilteredViewFormField("sortOrder", event.target.value)}
+                  placeholder="1"
+                />
+              </div>
+              <div className="form-row">
+                <label className="checkbox-row">
+                  <input
+                    checked={filteredViewForm.filterBox}
+                    disabled={isOffline}
+                    type="checkbox"
+                    onChange={(event) => updateFilteredViewFormField("filterBox", event.target.checked)}
+                  />
+                  <span>Show filter box</span>
+                </label>
+              </div>
+              <div className="form-row">
+                <label className="checkbox-row">
+                  <input
+                    checked={filteredViewForm.showKeyInfo}
+                    disabled={isOffline}
+                    type="checkbox"
+                    onChange={(event) => updateFilteredViewFormField("showKeyInfo", event.target.checked)}
+                  />
+                  <span>Show key info</span>
+                </label>
+              </div>
+              <div className="form-row">
+                <label className="checkbox-row">
+                  <input
+                    checked={filteredViewForm.showLocations}
+                    disabled={isOffline}
+                    type="checkbox"
+                    onChange={(event) => updateFilteredViewFormField("showLocations", event.target.checked)}
+                  />
+                  <span>Show locations</span>
+                </label>
+              </div>
+            </div>
+            <div className="actions">
+              <button className="button" type="submit" disabled={savingFilteredView || isOffline}>
+                {savingFilteredView ? "Saving..." : editingFilteredViewId ? "Save filtered view" : "Create filtered view"}
+              </button>
+              <button
+                className="button secondary"
+                type="button"
+                disabled={savingFilteredView || isOffline}
+                onClick={resetFilteredViewForm}
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        ) : null}
+
+        {filteredViewsLoading ? (
+          <p className="item-meta">Loading filtered views...</p>
+        ) : filteredViews.length === 0 ? (
+          <p className="item-meta">No filtered views yet.</p>
+        ) : (
+          <div className="tag-list">
+            {filteredViews.map((view) => {
+              const tagSummary = describeFilteredViewIds(
+                view.filterTagIds || view.tagIds,
+                (tagId) => tagById.get(tagId)?.name,
+                "All tags"
+              );
+              const locationSummary = describeFilteredViewIds(
+                view.filterLocationIds || view.locationIds,
+                (locationId) => locationById.get(locationId)?.name,
+                "All locations"
+              );
+              const subLocationSummary = describeFilteredViewIds(
+                view.filterSubLocationIds || view.subLocationIds,
+                (locationId) => locationById.get(locationId)?.displayName || locationById.get(locationId)?.name,
+                "All sub locations"
+              );
+              const companySummary = describeFilteredViewIds(
+                view.filterSupplierIds || view.companyIds,
+                (companyId) => companyById.get(companyId)?.companyName,
+                "All companies"
+              );
+              const flagSummary = [
+                `Show filter box: ${view.filterBox === false ? "No" : "Yes"}`,
+                `Show key info: ${view.showKeyInfo === false ? "No" : "Yes"}`,
+                `Show locations: ${view.showLocations ? "Yes" : "No"}`,
+              ].join(" • ");
+              const filterSummary = [
+                view.groupPresetId || "No preset",
+                view.filterGroup || "No filter group",
+                view.group || "No group",
+              ].join(" • ");
+
+              return (
+                <article className="tag-list-row" key={view.id}>
+                  <div>
+                    <h3>{view.name || "Unnamed filtered view"}</h3>
+                    <p className="item-meta">Sort order: {view.sortOrder || "n/a"}</p>
+                    <p className="item-meta">Settings: {flagSummary}</p>
+                    <p className="item-meta">Preset / Group: {filterSummary}</p>
+                    <p className="item-meta">Tags: {tagSummary}</p>
+                    <p className="item-meta">Locations: {locationSummary}</p>
+                    <p className="item-meta">Sub locations: {subLocationSummary}</p>
+                    <p className="item-meta">Companies: {companySummary}</p>
+                  </div>
+                  {canManageFilteredViews ? (
+                    <div className="tag-list-actions">
+                      <button
+                        className="compact-button"
+                        type="button"
+                        disabled={isOffline}
+                        onClick={() => startEditingFilteredView(view)}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="compact-button"
+                        type="button"
+                        disabled={deletingFilteredViewId === view.id || isOffline}
+                        onClick={() => removeFilteredView(view.id)}
+                      >
+                        {deletingFilteredViewId === view.id ? "Deleting..." : "Delete"}
+                      </button>
+                    </div>
+                  ) : null}
+                </article>
+              );
+            })}
+          </div>
+        )}
+      </section>
       ) : null}
 
       {activeTab === "settings" ? (

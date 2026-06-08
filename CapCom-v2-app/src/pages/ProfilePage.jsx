@@ -1,8 +1,48 @@
+import { useEffect, useState } from "react";
 import { useAuth } from "../auth/AuthProvider.jsx";
 import { CapcomIcon } from "../icons/capcomIcons.jsx";
+import { updateCurrentUserDebugMode } from "../services/userService.js";
 
 export default function ProfilePage() {
-  const { user, userProfile, profileLoading, profileError, logout } = useAuth();
+  const {
+    user,
+    userProfile,
+    profileLoading,
+    profileError,
+    logout,
+    isSuperAdmin,
+  } = useAuth();
+
+  const [debugMode, setDebugMode] = useState(false);
+  const [debugSaving, setDebugSaving] = useState(false);
+  const [debugMessage, setDebugMessage] = useState("");
+  const [debugError, setDebugError] = useState("");
+
+  useEffect(() => {
+    if (!userProfile) return;
+
+    setDebugMode(Boolean(userProfile.debugMode));
+  }, [userProfile]);
+
+  async function handleDebugModeChange(event) {
+    const nextDebugMode = event.target.checked;
+    const previousDebugMode = debugMode;
+    setDebugMode(nextDebugMode);
+    setDebugMessage("");
+    setDebugError("");
+    setDebugSaving(true);
+
+    try {
+      await updateCurrentUserDebugMode(user?.uid, nextDebugMode, userProfile);
+      setDebugMessage("Debug setting saved.");
+    } catch (error) {
+      console.error("Could not update debug setting.", error);
+      setDebugMode(previousDebugMode);
+      setDebugError(error instanceof Error ? error.message : "Could not save debug setting.");
+    } finally {
+      setDebugSaving(false);
+    }
+  }
 
   return (
     <section className="page">
@@ -61,9 +101,29 @@ export default function ProfilePage() {
                   : "Unknown"}
             </dd>
           </div>
+
+          {isSuperAdmin ? (
+            <div>
+              <dt>Debug mode</dt>
+              <dd>
+                <label className="checkbox-row form-row full" htmlFor="debugMode">
+                  <input
+                    id="debugMode"
+                    type="checkbox"
+                    checked={debugMode}
+                    disabled={debugSaving || profileLoading || !user?.uid}
+                    onChange={handleDebugModeChange}
+                  />
+                  <span>Enable debug mode</span>
+                </label>
+              </dd>
+            </div>
+          ) : null}
         </dl>
 
         {profileError ? <p className="error">{profileError}</p> : null}
+        {debugMessage ? <p className="message success-message">{debugMessage}</p> : null}
+        {debugError ? <p className="error">{debugError}</p> : null}
 
         <div className="actions profile-actions">
           <button className="button secondary icon-text-button" type="button" onClick={logout}>

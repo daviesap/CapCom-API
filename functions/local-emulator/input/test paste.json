@@ -1,0 +1,38 @@
+[
+  {
+    "eventId": "0DX7ypgwquTf1EKiRbLk",
+    "name": "Trucking only",
+    "filterBox": true,
+    "showKeyInfo": true,
+    "showLocations": true,
+    "groupPresetId": "",
+    "filterTagIds": [],
+    "filterLocationIds": [],
+    "filterSubLocationIds": [],
+    "filterSupplierIds": [],
+    "filterGroup": "",
+    "group": "Trucking only",
+    "sortOrder": 1
+  },
+  {
+    "eventId": "0DX7ypgwquTf1EKiRbLk",
+    "name": "Full schedule",
+    "filterBox": true,
+    "showKeyInfo": true,
+    "showLocations": false,
+    "groupPresetId": "",
+    "filterTagIds": [
+      "3NjqeSVAiE65U1bfJevn"
+    ],
+    "filterLocationIds": [
+      "dOJJuJjAWRyNJIi9X35o"
+    ],
+    "filterSubLocationIds": [],
+    "filterSupplierIds": [
+      "poJeKriOrb8pyhf11yjb"
+    ],
+    "filterGroup": "",
+    "group": "Full schedule",
+    "sortOrder": 1
+  }
+]

@@ -2,6 +2,7 @@ export const USER_ROLES = {
   SUPER_ADMIN: "SuperAdmin",
   CLIENT_ADMIN: "ClientAdmin",
   CLIENT_USER: "ClientUser",
+  EVENT_ADMIN: "EventAdmin",
 };
 
 export function isSuperAdmin(userProfile) {
@@ -14,6 +15,10 @@ export function isClientAdmin(userProfile) {
 
 export function isClientUser(userProfile) {
   return userProfile?.role === USER_ROLES.CLIENT_USER;
+}
+
+export function isEventAdmin(userProfile) {
+  return userProfile?.role === USER_ROLES.EVENT_ADMIN;
 }
 
 export function hasActiveProfile(userProfile) {

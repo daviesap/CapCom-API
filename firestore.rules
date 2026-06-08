@@ -32,6 +32,11 @@ service cloud.firestore {
         && currentUser().clientId is string;
     }
 
+    function isEventAdmin() {
+      return hasActiveProfile()
+        && currentUser().role == "EventAdmin";
+    }
+
     function isClientUser() {
       return hasActiveProfile()
         && currentUser().role == "ClientUser"
@@ -131,6 +136,16 @@ service cloud.firestore {
       return canReadEvent(eventId);
     }
 
+    function canManageFilteredViewData(filteredView) {
+      return filteredView.eventId is string
+        && canReadEvent(filteredView.eventId)
+        && (
+          isSuperAdmin()
+          || isClientAdmin()
+          || isEventAdmin()
+        );
+    }
+
     function scheduleDayPath(scheduleDayId) {
       return /databases/$(database)/documents/scheduleDays/$(scheduleDayId);
     }
@@ -207,6 +222,13 @@ service cloud.firestore {
             && existingProfile.role != "SuperAdmin"
             && nextProfile.role in ["ClientAdmin", "ClientUser"]
             && nextProfile.clientId is string
+          )
+          || (
+            isSuperAdmin()
+            && existingProfile.role == "SuperAdmin"
+            && nextProfile.role == "SuperAdmin"
+            && (nextProfile.clientId == existingProfile.clientId)
+            && nextProfile.debugMode is bool
           )
           || (
             isClientAdmin()
@@ -317,6 +339,15 @@ service cloud.firestore {
         && canManageEvent(resource.data.eventId);
       allow delete: if resource.data.eventId is string
         && canManageEvent(resource.data.eventId);
+    }
+
+    match /filteredViews/{filteredViewId} {
+      allow get, list: if canManageFilteredViewData(resource.data);
+      allow create: if canManageFilteredViewData(request.resource.data);
+      allow update: if canManageFilteredViewData(resource.data)
+        && request.resource.data.eventId == resource.data.eventId
+        && canManageFilteredViewData(request.resource.data);
+      allow delete: if canManageFilteredViewData(resource.data);
     }
 
     // Legacy collections used by the existing PDF/profile frontend.
