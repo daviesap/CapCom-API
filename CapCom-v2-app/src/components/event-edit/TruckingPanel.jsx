@@ -65,6 +65,28 @@ export default function TruckingPanel({
   savingDraftDayId,
   saveDraftTruckDetail,
 }) {
+  const handleDraftTruckDetailKeyDown = (event, truck, draft, draftIndex) => {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      removeDraftTruckDetail(truck.id, draftIndex);
+      return;
+    }
+
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      if (
+        savingDraftDayId === truck.id ||
+        !draft.scheduleDayId ||
+        (showTruckDestinationColumn && !getTruckDestinationValue(draft)) ||
+        isOffline
+      ) {
+        return;
+      }
+
+      saveDraftTruckDetail(truck, draftIndex, draft);
+    }
+  };
+
   return (
     <section className="panel">
       <div className="settings-section">
@@ -610,6 +632,9 @@ export default function TruckingPanel({
                                     event.target.value
                                   )
                                 }
+                                onKeyDown={(event) =>
+                                  handleDraftTruckDetailKeyDown(event, truck, draft, draftIndex)
+                                }
                                 required
                               >
                                 <option value="">Choose date</option>
@@ -626,6 +651,9 @@ export default function TruckingPanel({
                               type="time"
                               value={draft.time}
                               disabled={isOffline}
+                              onKeyDown={(event) =>
+                                handleDraftTruckDetailKeyDown(event, truck, draft, draftIndex)
+                              }
                               onChange={(event) =>
                                 updateDraftTruckDetail(truck.id, draftIndex, "time", event.target.value)
                               }
@@ -658,7 +686,14 @@ export default function TruckingPanel({
                                   value={getTruckDestinationValue(draft)}
                                   disabled={isOffline}
                                   onChange={(event) =>
-                                    updateDraftTruckDestination(truck.id, draftIndex, event.target.value)
+                                    updateDraftTruckDestination(
+                                      truck.id,
+                                      draftIndex,
+                                      event.target.value
+                                    )
+                                  }
+                                  onKeyDown={(event) =>
+                                    handleDraftTruckDetailKeyDown(event, truck, draft, draftIndex)
                                   }
                                 >
                                   <option value="">No destination</option>
