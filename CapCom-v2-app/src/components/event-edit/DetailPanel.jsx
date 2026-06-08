@@ -140,6 +140,31 @@ export default function DetailPanel({
     savingDraftDayId,
     saveDraftDetail,
   };
+  const hasActiveDetailFilters =
+    Boolean(selectedTagFilterId) ||
+    selectedLocationFilterIds.length > 0 ||
+    selectedSubLocationFilterIds.length > 0 ||
+    selectedCompanyFilterIds.length > 0;
+  const dayRows = scheduleDays.map((day) => {
+    const allDayDetails = detailsByDayId[day.id] || [];
+    const dayDetails = filterDetailRows(allDayDetails, detailFilters);
+    const draftDetails = draftDetailsByDayId[day.id] || [];
+
+    return {
+      allDayDetails,
+      day,
+      dayDetails,
+      draftDetails,
+    };
+  });
+  const totalDetailCount = dayRows.reduce(
+    (total, { allDayDetails }) => total + allDayDetails.length,
+    0
+  );
+  const visibleDetailCount = dayRows.reduce(
+    (total, { dayDetails }) => total + dayDetails.length,
+    0
+  );
 
   return (
     <>
@@ -147,29 +172,29 @@ export default function DetailPanel({
         <p className="item-meta">No schedule days yet.</p>
       ) : (
         <section className="list">
-          {scheduleDays.map((day) => {
-            const allDayDetails = detailsByDayId[day.id] || [];
-            const dayDetails = filterDetailRows(allDayDetails, detailFilters);
-            const draftDetails = draftDetailsByDayId[day.id] || [];
-
-            return (
-              <DetailDayCard
-                key={day.id}
-                day={day}
-                dayDetails={dayDetails}
-                allDayDetailCount={allDayDetails.length}
-                draftDetails={draftDetails}
-                detailDisplay={detailDisplay}
-                dayActions={dayActions}
-                rowEditing={rowEditing}
-                rowOrdering={rowOrdering}
-                rowAssignments={rowAssignments}
-                rowNotes={rowNotes}
-                rowActions={rowActions}
-                draftActions={draftActions}
-              />
-            );
-          })}
+          {hasActiveDetailFilters ? (
+            <p className="detail-filter-summary">
+              Showing {visibleDetailCount} of {totalDetailCount} schedule row
+              {totalDetailCount === 1 ? "" : "s"}.
+            </p>
+          ) : null}
+          {dayRows.map(({ allDayDetails, day, dayDetails, draftDetails }) => (
+            <DetailDayCard
+              key={day.id}
+              day={day}
+              dayDetails={dayDetails}
+              allDayDetailCount={allDayDetails.length}
+              draftDetails={draftDetails}
+              detailDisplay={detailDisplay}
+              dayActions={dayActions}
+              rowEditing={rowEditing}
+              rowOrdering={rowOrdering}
+              rowAssignments={rowAssignments}
+              rowNotes={rowNotes}
+              rowActions={rowActions}
+              draftActions={draftActions}
+            />
+          ))}
         </section>
       )}
 
