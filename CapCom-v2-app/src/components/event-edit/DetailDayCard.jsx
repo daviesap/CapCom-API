@@ -1,14 +1,10 @@
-import DetailDayCard from "./DetailDayCard.jsx";
+import DetailRow from "./DetailRow.jsx";
+import DraftDetailRow from "./DraftDetailRow.jsx";
 
-export default function DetailPanel({
-  scheduleDays,
-  detailsByDayId,
-  selectedTagFilterId,
-  locationById,
-  selectedLocationFilterIds,
-  selectedSubLocationFilterIds,
-  selectedCompanyFilterIds,
-  draftDetailsByDayId,
+export default function DetailDayCard({
+  day,
+  dayDetails,
+  draftDetails,
   formatDetailDate,
   isOffline,
   addDraftDetail,
@@ -65,46 +61,49 @@ export default function DetailPanel({
   saveDraftDetail,
 }) {
   return (
-    <>
-      {scheduleDays.length === 0 ? (
-        <p className="item-meta">No schedule days yet.</p>
-      ) : (
-        <section className="list">
-          {scheduleDays.map((day) => {
-            const allDayDetails = detailsByDayId[day.id] || [];
-            const dayDetails = allDayDetails.filter((detail) => {
-              const matchesTag = !selectedTagFilterId || detail.tagId === selectedTagFilterId;
-              const detailLocation = detail.locationId
-                ? locationById.get(detail.locationId)
-                : null;
-              const detailTopLocationId =
-                detailLocation?.parentLocationId || detailLocation?.id || "";
-              const matchesLocation =
-                selectedLocationFilterIds.length === 0 ||
-                selectedLocationFilterIds.includes(detailTopLocationId);
-              const matchesSubLocation =
-                selectedSubLocationFilterIds.length === 0 ||
-                selectedSubLocationFilterIds.includes(detail.locationId);
-              const matchesCompany =
-                selectedCompanyFilterIds.length === 0 ||
-                selectedCompanyFilterIds.some((companyId) =>
-                  (detail.companyIds || []).includes(companyId)
-                );
-              return matchesTag && matchesLocation && matchesSubLocation && matchesCompany;
-            });
-            const draftDetails = draftDetailsByDayId[day.id] || [];
+    <article className="list-item">
+      <div className="day-card-content">
+        <div className="day-heading">
+          <div>
+            <p className="item-title day-title-line">
+              <span>{formatDetailDate(day.date)}</span>
+              {day.summary ? (
+                <span className="item-meta day-title-summary">{day.summary}</span>
+              ) : null}
+            </p>
+          </div>
+        </div>
+        <div className="day-card-actions">
+          <button
+            className="small-button"
+            type="button"
+            disabled={isOffline}
+            onClick={() => addDraftDetail(day.id)}
+          >
+            Add row
+          </button>
+          <button
+            className="compact-button"
+            type="button"
+            disabled={isOffline}
+            onClick={() => startEditingDay(day, "overlay")}
+          >
+            Edit day
+          </button>
+        </div>
 
-            return (
-              <DetailDayCard
-                key={day.id}
+        {dayDetails.length === 0 && draftDetails.length === 0 ? (
+          <p className="item-meta">{getNoRowsMessage()}</p>
+        ) : (
+          <div className="detail-list">
+            {dayDetails.map((detail, detailIndex) => (
+              <DetailRow
+                key={detail.id}
                 day={day}
+                detail={detail}
+                detailIndex={detailIndex}
                 dayDetails={dayDetails}
-                draftDetails={draftDetails}
-                formatDetailDate={formatDetailDate}
                 isOffline={isOffline}
-                addDraftDetail={addDraftDetail}
-                startEditingDay={startEditingDay}
-                getNoRowsMessage={getNoRowsMessage}
                 isEditingDetailCell={isEditingDetailCell}
                 canMoveDetail={canMoveDetail}
                 getAdjacentDay={getAdjacentDay}
@@ -150,16 +149,40 @@ export default function DetailPanel({
                 duplicateDetail={duplicateDetail}
                 closeActionMenu={closeActionMenu}
                 deleteDetail={deleteDetail}
+              />
+            ))}
+            {draftDetails.map((draft, draftIndex) => (
+              <DraftDetailRow
+                key={`draft-${draftIndex}`}
+                dayId={day.id}
+                draft={draft}
+                draftIndex={draftIndex}
+                isOffline={isOffline}
+                getDetailRowStyle={getDetailRowStyle}
+                showTagColumn={showTagColumn}
+                getTagStyle={getTagStyle}
+                getTagById={getTagById}
+                normaliseHexColour={normaliseHexColour}
+                tags={tags}
+                showLocationColumn={showLocationColumn}
+                getLocationById={getLocationById}
+                locationOptions={locationOptions}
+                showCompanyColumn={showCompanyColumn}
+                getCompanyLabel={getCompanyLabel}
+                companies={companies}
+                toggleCompanyIds={toggleCompanyIds}
                 updateDraftDetail={updateDraftDetail}
                 removeDraftDetail={removeDraftDetail}
                 savingDraftDayId={savingDraftDayId}
                 saveDraftDetail={saveDraftDetail}
               />
-            );
-          })}
-        </section>
-      )}
-
-    </>
+            ))}
+          </div>
+        )}
+        {day.endOfDayTarget ? (
+          <p className="end-target">End of day target: {day.endOfDayTarget}</p>
+        ) : null}
+      </div>
+    </article>
   );
 }
