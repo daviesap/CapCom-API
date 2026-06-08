@@ -622,6 +622,7 @@ export default function TruckingPanel({
                                 aria-label="New truck detail date"
                                 value={draft.scheduleDayId}
                                 disabled={isOffline}
+                                autoFocus={draftIndex === draftTruckDetails.length - 1}
                                 onChange={(event) =>
                                   updateDraftTruckDetail(
                                     truck.id,
