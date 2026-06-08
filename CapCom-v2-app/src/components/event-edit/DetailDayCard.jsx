@@ -39,13 +39,15 @@ function DetailDayRowCount({ totalCount, visibleCount }) {
 
 function getDetailCompletenessWarnings({
   dayRows,
+  draftRows,
   showTagColumn,
   showLocationColumn,
   showCompanyColumn,
   getTagById,
   getLocationById,
 }) {
-  return dayRows.filter((detail) => {
+  const allRows = [...dayRows, ...draftRows];
+  return allRows.filter((detail) => {
     if (showTagColumn && !getTagById(detail.tagId)) return true;
     if (showLocationColumn && !getLocationById(detail.locationId)) return true;
     if (showCompanyColumn && (detail.companyIds || []).length === 0) return true;
@@ -79,6 +81,7 @@ export default function DetailDayCard({
   const { isOffline, addDraftDetail, startEditingDay } = dayActions;
   const incompleteDayDetailCount = getDetailCompletenessWarnings({
     dayRows: allDayDetails,
+    draftRows: draftDetails,
     showTagColumn,
     showLocationColumn,
     showCompanyColumn,
