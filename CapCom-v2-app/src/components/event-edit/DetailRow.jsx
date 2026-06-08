@@ -32,18 +32,23 @@ export default function DetailRow({
 }) {
   const {
     getDetailRowStyle,
+    getTruckDetailRowStyle,
     getRowTagStyle,
     getTagById,
     showTagColumn,
     getTagStyle,
     normaliseHexColour,
     tags,
+    companyById,
     showLocationColumn,
     getLocationById,
     locationOptions,
     showCompanyColumn,
     getCompanyLabel,
     companies,
+    showTruckDestinationColumn,
+    getTruckDestinationValue,
+    truckById,
   } = detailDisplay;
   const {
     isEditingDetailCell,
@@ -66,6 +71,7 @@ export default function DetailRow({
     assignDetailLocation,
     assignDetailCompanies,
     toggleCompanyIds,
+    assignTruckDetailDestination,
   } = rowAssignments;
   const {
     openNotesDetailId,
@@ -86,8 +92,22 @@ export default function DetailRow({
   } = rowActions;
   const isEditingTime = isEditingDetailCell(detail.id, "time");
   const isEditingDescription = isEditingDetailCell(detail.id, "description");
+  const isTruckRow = Boolean(detail.truckId);
+  const rowStyle = isTruckRow
+    ? getTruckDetailRowStyle(getRowTagStyle(getTagById(detail.tagId)))
+    : getDetailRowStyle(getRowTagStyle(getTagById(detail.tagId)));
   const previousDay = getAdjacentDay(day.id, -1);
   const nextDay = getAdjacentDay(day.id, 1);
+  const truck = truckById.get(detail.truckId);
+  const truckCompanyName = String(companyById.get(truck?.companyId)?.companyName || "").trim();
+  const truckSummary = [
+    String(detail.truckNumber || truck?.truckNumber || "").trim(),
+    truckCompanyName ? `(${truckCompanyName})` : "",
+    String(detail.action || "").trim(),
+  ]
+    .filter(Boolean)
+    .join(" ");
+  const hasTruckDestination = Boolean(getTruckDestinationValue(detail));
   const dragPreviewRef = useRef(null);
   const clearDragPreview = () => {
     dragPreviewRef.current?.remove();
@@ -97,7 +117,7 @@ export default function DetailRow({
   return (
     <div
       className="detail-row draggable-row"
-      style={getDetailRowStyle(getRowTagStyle(getTagById(detail.tagId)))}
+      style={rowStyle}
       draggable={!isEditingTime && !isEditingDescription && !isOffline}
       onDragStart={(event) => {
         draggedDetailIdRef.current = detail.id;
@@ -176,7 +196,15 @@ export default function DetailRow({
           {detail.time || "tbc"}
         </button>
       )}
-      {isEditingDescription ? (
+      {isTruckRow ? (
+        <button
+          className="detail-cell detail-description-cell"
+          type="button"
+          disabled={isOffline}
+        >
+          <span className="detail-description-text">{truckSummary}</span>
+        </button>
+      ) : isEditingDescription ? (
         <input
           ref={detailCellInputRef}
           className="plain-input"
@@ -212,7 +240,7 @@ export default function DetailRow({
           <span className="detail-description-text">{detail.description || ""}</span>
         </button>
       )}
-      {showTagColumn ? (
+      {!isTruckRow && showTagColumn ? (
         <div
           className="tag-select-wrap detail-select-field"
           style={getTagStyle(getTagById(detail.tagId))}
@@ -239,7 +267,7 @@ export default function DetailRow({
           </select>
         </div>
       ) : null}
-      {showLocationColumn ? (
+      {!isTruckRow && showLocationColumn ? (
         <div className="location-select-wrap detail-select-field">
           <select
             aria-label={`Location for ${detail.description || "schedule detail"}`}
@@ -256,7 +284,7 @@ export default function DetailRow({
           </select>
         </div>
       ) : null}
-      {showCompanyColumn ? (
+      {!isTruckRow && showCompanyColumn ? (
         <details className="company-dropdown detail-select-field">
           <summary
             aria-label={`Company for ${detail.description || "schedule detail"}`}
@@ -284,6 +312,44 @@ export default function DetailRow({
             ))}
           </div>
         </details>
+      ) : null}
+      {isTruckRow && showTruckDestinationColumn ? (
+        <div
+          className={[
+            "location-select-wrap",
+            "detail-select-field",
+            hasTruckDestination ? "" : "detail-select-field-missing",
+          ].filter(Boolean).join(" ")}
+        >
+          <select
+            aria-label="Destination for truck detail"
+            value={getTruckDestinationValue(detail)}
+            disabled={savingDetailId === detail.id || isOffline}
+            onChange={(event) =>
+              assignTruckDetailDestination(day.id, detail, event.target.value)
+            }
+          >
+            <option value="">No destination</option>
+            {companies.length > 0 ? (
+              <optgroup label="Companies">
+                {companies.map((company) => (
+                  <option key={company.id} value={`company:${company.id}`}>
+                    {company.companyName}
+                  </option>
+                ))}
+              </optgroup>
+            ) : null}
+            {locationOptions.length > 0 ? (
+              <optgroup label="Locations">
+                {locationOptions.map((location) => (
+                  <option key={location.id} value={`location:${location.id}`}>
+                    {location.displayName}
+                  </option>
+                ))}
+              </optgroup>
+            ) : null}
+          </select>
+        </div>
       ) : null}
       <DetailRowActions
         day={day}

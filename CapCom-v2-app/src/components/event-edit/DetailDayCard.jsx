@@ -6,7 +6,7 @@ function DetailFilterNotice({ hiddenDetailCount, isEmpty }) {
   if (hiddenDetailCount > 0) {
     return (
       <p className="filter-empty-message">
-        {hiddenDetailCount} row{hiddenDetailCount === 1 ? "" : "s"} hidden by filters.
+        {hiddenDetailCount} row{hiddenDetailCount === 1 ? "" : "s"} hidden by filters
       </p>
     );
   }

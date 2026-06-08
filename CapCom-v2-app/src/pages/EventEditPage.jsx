@@ -69,8 +69,13 @@ import {
   deleteCompanyContact,
   getCompanyContacts,
   updateCompanyContact,
-  updateCompanyContactOrder,
 } from "../services/companyContactService.js";
+import {
+  addEventContactsFromCompanyContacts,
+  getEventContacts,
+  updateEventContact,
+  updateEventContactOrder,
+} from "../services/eventContactService.js";
 import {
   createFilteredView,
   deleteFilteredView,
@@ -128,12 +133,16 @@ const emptyTruckForm = {
   contents: "",
 };
 
-const truckDetailActions = ["", "Load", "Collect"];
+const truckDetailActions = ["", "Load", "Deliver"];
 
 const emptyCompanyContactForm = {
   name: "",
   email: "",
   phone: "",
+  role: "",
+};
+
+const emptyEventContactRoleForm = {
   role: "",
 };
 
@@ -360,6 +369,10 @@ function getTagStyle(tag) {
   };
 }
 
+function getSortOrder(contact, fallbackIndex = 0) {
+  return typeof contact?.sortOrder === "number" ? contact.sortOrder : fallbackIndex;
+}
+
 function getRowTagStyle(tag) {
   const colour = normaliseHexColour(tag?.colour);
   if (!colour) return undefined;
@@ -398,6 +411,7 @@ export default function EventEditPage() {
   const [trucks, setTrucks] = useState([]);
   const [companies, setCompanies] = useState([]);
   const [companyContactsByCompanyId, setCompanyContactsByCompanyId] = useState({});
+  const [eventContactsByCompanyId, setEventContactsByCompanyId] = useState({});
   const [tagForm, setTagForm] = useState(emptyTagForm);
   const [locationForm, setLocationForm] = useState(emptyLocationForm);
   const [truckSizeForm, setTruckSizeForm] = useState(emptyTruckSizeForm);
@@ -407,12 +421,17 @@ export default function EventEditPage() {
   const [truckForm, setTruckForm] = useState(emptyTruckForm);
   const [truckFormMode, setTruckFormMode] = useState("");
   const [companyContactForm, setCompanyContactForm] = useState(emptyCompanyContactForm);
+  const [eventContactRoleForm, setEventContactRoleForm] = useState(
+    emptyEventContactRoleForm
+  );
   const [editingTagId, setEditingTagId] = useState("");
   const [editingTruckSizeId, setEditingTruckSizeId] = useState("");
   const [editingTruckId, setEditingTruckId] = useState("");
   const [editingLocationId, setEditingLocationId] = useState("");
   const [editingCompanyContactId, setEditingCompanyContactId] = useState("");
   const [editingCompanyContactCompanyId, setEditingCompanyContactCompanyId] = useState("");
+  const [editingEventContactCompanyId, setEditingEventContactCompanyId] = useState("");
+  const [editingEventContactId, setEditingEventContactId] = useState("");
   const [editingDetailCell, setEditingDetailCell] = useState(null);
   const [openActionMenuId, setOpenActionMenuId] = useState("");
   const [openNotesDetailId, setOpenNotesDetailId] = useState("");
@@ -433,6 +452,7 @@ export default function EventEditPage() {
   const [trucksLoading, setTrucksLoading] = useState(false);
   const [companiesLoading, setCompaniesLoading] = useState(false);
   const [companyContactsLoading, setCompanyContactsLoading] = useState(false);
+  const [eventContactsLoading, setEventContactsLoading] = useState(false);
   const [savingEvent, setSavingEvent] = useState(false);
   const [savingDayId, setSavingDayId] = useState("");
   const [savingDetailId, setSavingDetailId] = useState("");
@@ -447,6 +467,7 @@ export default function EventEditPage() {
   const [deletingLocationId, setDeletingLocationId] = useState("");
   const [savingCompanyContact, setSavingCompanyContact] = useState(false);
   const [deletingCompanyContactId, setDeletingCompanyContactId] = useState("");
+  const [savingEventContact, setSavingEventContact] = useState(false);
   const [reorderingCompanyContactId, setReorderingCompanyContactId] = useState("");
   const [savingContactCompanyOrder, setSavingContactCompanyOrder] = useState(false);
   const [filteredViews, setFilteredViews] = useState([]);
@@ -466,8 +487,11 @@ export default function EventEditPage() {
   const [companyContactDropTargetId, setCompanyContactDropTargetId] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [warning, setWarning] = useState("");
   const suppressDetailBlurRef = useRef(false);
   const detailCellInputRef = useRef(null);
+  const seededEventContactCompanyIdsRef = useRef(new Set());
+  const eventContactSeedErrorCompanyIdsRef = useRef(new Set());
   const draggedDetailIdRef = useRef("");
   const draggedLocationIdRef = useRef("");
   const draggedContactCompanyIdRef = useRef("");
@@ -481,7 +505,12 @@ export default function EventEditPage() {
     client.isActive !== false || client.id === form.clientId
   ));
 
-  useLoadingToast(companyContactsLoading, "Loading contacts...");
+  useLoadingToast(
+    (companyContactsLoading || eventContactsLoading) &&
+      activeTab === "info" &&
+      activeInfoTab === "contacts",
+    "Loading contacts..."
+  );
   useLoadingToast(truckSizesLoading && activeTab === "settings", "Loading truck sizes...");
   useLoadingToast(filteredViewsLoading && activeTab === "share", "Loading filtered views...");
   useLoadingToast(shareArchiveLoading && activeTab === "share", "Loading archive...");
@@ -496,12 +525,13 @@ export default function EventEditPage() {
       setDetailsLoading(false);
       setTagsLoading(false);
       setLocationsLoading(false);
-      setTruckSizesLoading(false);
-      setTrucksLoading(false);
-      setCompaniesLoading(false);
-      setShareArchiveLoading(false);
-      setError("");
-      try {
+          setTruckSizesLoading(false);
+          setTrucksLoading(false);
+          setCompaniesLoading(false);
+          setShareArchiveLoading(false);
+          setError("");
+          setWarning("");
+          try {
         const event = await getEvent(eventId, userProfile);
         if (cancelled) return;
         if (!event) {
@@ -537,6 +567,7 @@ export default function EventEditPage() {
         setScheduleDays(days);
         setFilteredViews([]);
         setShareArchive([]);
+        setEventContactsByCompanyId({});
         setLoading(false);
 
         const loadOptionalEditorData = async ({
@@ -548,15 +579,15 @@ export default function EventEditPage() {
         }) => {
           setLoadingState(true);
           try {
-            const data = await loadData();
-            if (cancelled) return;
-            applyData(data);
-          } catch (optionalLoadError) {
-            console.error(`Could not load ${label}.`, optionalLoadError);
-            if (!cancelled) {
-              setError((currentError) => currentError || errorMessage);
-            }
-          } finally {
+              const data = await loadData();
+              if (cancelled) return;
+              applyData(data);
+            } catch (optionalLoadError) {
+              console.error(`Could not load ${label}.`, optionalLoadError);
+              if (!cancelled) {
+                setWarning((currentWarning) => currentWarning || errorMessage);
+              }
+            } finally {
             if (!cancelled) setLoadingState(false);
           }
         };
@@ -779,6 +810,10 @@ export default function EventEditPage() {
     return new Map(truckSizes.map((truckSize) => [truckSize.id, truckSize]));
   }, [truckSizes]);
 
+  const truckById = useMemo(() => {
+    return new Map(trucks.map((truck) => [truck.id, truck]));
+  }, [trucks]);
+
   const companyById = useMemo(() => {
     return new Map(companies.map((company) => [company.id, company]));
   }, [companies]);
@@ -920,6 +955,19 @@ export default function EventEditPage() {
     "--detail-row-columns": truckDetailRowGridColumns,
     "--detail-actions-column": truckDetailActionGridColumn,
   });
+  const detailTruckRowGridColumnParts = [
+    "76px",
+    "minmax(0, 1fr)",
+    showTruckDestinationColumn ? "180px" : "",
+    "auto",
+  ].filter(Boolean);
+  const detailTruckRowGridColumns = detailTruckRowGridColumnParts.join(" ");
+  const detailTruckActionGridColumn = detailTruckRowGridColumnParts.length;
+  const getDetailTruckDetailRowStyle = (rowStyle) => ({
+    ...rowStyle,
+    "--detail-row-columns": detailTruckRowGridColumns,
+    "--detail-actions-column": detailTruckActionGridColumn,
+  });
 
   const contactCompanies = useMemo(() => {
     const companyOrder = Array.isArray(form.contactCompanyOrder)
@@ -964,33 +1012,49 @@ export default function EventEditPage() {
       );
       return [...currentOpenCompanyIds, ...nextCompanyIds];
     });
-  }, [contactCompanyIds]);
+  }, [contactCompanyIds, eventId]);
 
   useEffect(() => {
     let cancelled = false;
 
     const loadContacts = async () => {
       if (contactCompanyIds.length === 0) {
+        setEventContactsByCompanyId({});
         setCompanyContactsByCompanyId({});
+        setEventContactsLoading(false);
+        setCompanyContactsLoading(false);
         return;
       }
 
+      setEventContactsLoading(true);
       setCompanyContactsLoading(true);
       try {
-        const contacts = await getCompanyContacts(contactCompanyIds);
+        const [eventContactRows, companyContactRows] = await Promise.all([
+          getEventContacts(eventId, contactCompanyIds),
+          getCompanyContacts(contactCompanyIds),
+        ]);
         if (cancelled) return;
+        setEventContactsByCompanyId(
+          Object.fromEntries(
+            contactCompanyIds.map((companyId) => [
+              companyId,
+              eventContactRows.filter((contact) => contact.companyId === companyId),
+            ])
+          )
+        );
         setCompanyContactsByCompanyId(
           Object.fromEntries(
             contactCompanyIds.map((companyId) => [
               companyId,
-              contacts.filter((contact) => contact.companyId === companyId),
+              companyContactRows.filter((contact) => contact.companyId === companyId),
             ])
           )
         );
       } catch (loadError) {
-        console.error("Could not load company contacts.", loadError);
-        if (!cancelled) setError("Could not load company contacts.");
+        console.error("Could not load event contacts.", loadError);
+        if (!cancelled) setWarning("Could not load company contacts.");
       } finally {
+        if (!cancelled) setEventContactsLoading(false);
         if (!cancelled) setCompanyContactsLoading(false);
       }
     };
@@ -1000,6 +1064,90 @@ export default function EventEditPage() {
       cancelled = true;
     };
   }, [contactCompanyIds]);
+
+  useEffect(() => {
+    if (isOffline || contactCompanyIds.length === 0 || eventContactsLoading) return;
+
+    const companyIdsToSeed = contactCompanyIds.filter((companyId) => {
+      const seeded = seededEventContactCompanyIdsRef.current.has(companyId);
+      const hadSeedError = eventContactSeedErrorCompanyIdsRef.current.has(companyId);
+      const hasExistingContacts = (eventContactsByCompanyId[companyId] || []).length > 0;
+      const hasCompanyContacts = (companyContactsByCompanyId[companyId] || []).length > 0;
+      return !seeded && !hadSeedError && !hasExistingContacts && hasCompanyContacts;
+    });
+
+    if (companyIdsToSeed.length === 0) return;
+
+    let cancelled = false;
+
+  const seedCompanyContactsForEvent = async () => {
+      let didSeedContacts = false;
+
+      for (const companyId of companyIdsToSeed) {
+        if (cancelled) return;
+        seededEventContactCompanyIdsRef.current.add(companyId);
+
+        const companyContacts = companyContactsByCompanyId[companyId];
+        if (!companyContacts || companyContacts.length === 0) {
+          seededEventContactCompanyIdsRef.current.delete(companyId);
+          continue;
+        }
+
+        try {
+          const existingEventContacts = eventContactsByCompanyId[companyId] || [];
+          const existingCompanyContactIds = new Set(
+            existingEventContacts
+              .map((contact) => contact.companyContactId || contact.id)
+              .filter(Boolean)
+          );
+          const contactsToSeed = companyContacts.filter(
+            (contact) => !existingCompanyContactIds.has(contact.id)
+          );
+
+          if (contactsToSeed.length === 0) {
+            continue;
+          }
+
+          const nextSortOrder = existingEventContacts.reduce(
+            (currentMax, contact, contactIndex) => Math.max(currentMax, getSortOrder(contact, contactIndex)),
+            -1
+          ) + 1;
+
+          await addEventContactsFromCompanyContacts({
+            eventId,
+            companyId,
+            companyContacts: contactsToSeed,
+            startSortOrder: nextSortOrder,
+          });
+          didSeedContacts = true;
+        } catch (seedError) {
+          console.error("Could not seed event contacts.", seedError);
+          if (!cancelled) {
+            eventContactSeedErrorCompanyIdsRef.current.add(companyId);
+            setError("Could not seed event contacts for this event.");
+          }
+        } finally {
+          seededEventContactCompanyIdsRef.current.delete(companyId);
+        }
+      }
+
+      if (!cancelled && didSeedContacts) {
+        await reloadEventContacts();
+      }
+    };
+
+    seedCompanyContactsForEvent();
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    contactCompanyIds,
+    isOffline,
+    companyContactsByCompanyId,
+    eventContactsByCompanyId,
+    eventContactsLoading,
+    eventId,
+  ]);
 
   useEffect(() => {
     if (selectedTagFilterIds.some((tagId) => !usedTagIds.has(tagId))) {
@@ -1076,13 +1224,38 @@ export default function EventEditPage() {
     applyScheduleDays(days);
   };
 
+  const reloadEventContacts = async (companyIds = contactCompanyIds) => {
+    if (companyIds.length === 0) {
+      setEventContactsByCompanyId({});
+      return;
+    }
+
+    setEventContactsLoading(true);
+    try {
+      const contacts = await getEventContacts(eventId, companyIds);
+      setEventContactsByCompanyId(
+        Object.fromEntries(
+          companyIds.map((companyId) => [
+            companyId,
+            contacts.filter((contact) => contact.companyId === companyId),
+          ])
+        )
+      );
+    } catch (loadError) {
+      console.error("Could not load event contacts.", loadError);
+      setWarning("Could not load company contacts.");
+    } finally {
+      setEventContactsLoading(false);
+    }
+  };
+
   const loadTags = async () => {
     setTagsLoading(true);
     try {
       setTags(await getTags(eventId));
     } catch (loadError) {
       console.error("Could not load tags.", loadError);
-      setError("Could not load tags.");
+      setWarning("Could not load tags.");
     } finally {
       setTagsLoading(false);
     }
@@ -1094,7 +1267,7 @@ export default function EventEditPage() {
       setLocations(await getLocations(eventId));
     } catch (loadError) {
       console.error("Could not load locations.", loadError);
-      setError("Could not load locations.");
+      setWarning("Could not load locations.");
     } finally {
       setLocationsLoading(false);
     }
@@ -1106,7 +1279,7 @@ export default function EventEditPage() {
       setTruckSizes(await getTruckSizes(eventId));
     } catch (loadError) {
       console.error("Could not load truck sizes.", loadError);
-      setError("Could not load truck sizes.");
+      setWarning("Could not load truck sizes.");
     } finally {
       setTruckSizesLoading(false);
     }
@@ -1118,7 +1291,7 @@ export default function EventEditPage() {
       setTrucks(await getTrucks(eventId));
     } catch (loadError) {
       console.error("Could not load trucks.", loadError);
-      setError("Could not load trucks.");
+      setWarning("Could not load trucks.");
     } finally {
       setTrucksLoading(false);
     }
@@ -1130,7 +1303,7 @@ export default function EventEditPage() {
       setFilteredViews(await getFilteredViews(eventId));
     } catch (loadError) {
       console.error("Could not load filtered views.", loadError);
-      setError("Could not load filtered views.");
+      setWarning("Could not load filtered views.");
     } finally {
       setFilteredViewsLoading(false);
     }
@@ -1142,7 +1315,7 @@ export default function EventEditPage() {
       setCompanies(await getCompanies(clientId));
     } catch (loadError) {
       console.error("Could not load companies.", loadError);
-      setError("Could not load companies.");
+      setWarning("Could not load companies.");
     } finally {
       setCompaniesLoading(false);
     }
@@ -1161,7 +1334,7 @@ export default function EventEditPage() {
       );
     } catch (loadError) {
       console.error("Could not load schedule details.", loadError);
-      setError("Could not load schedule details.");
+      setWarning("Could not load schedule details.");
     } finally {
       setDetailsLoading(false);
     }
@@ -1313,6 +1486,7 @@ export default function EventEditPage() {
   const reloadCompanyContacts = async (companyIds = contactCompanyIds) => {
     if (companyIds.length === 0) {
       setCompanyContactsByCompanyId({});
+      setCompanyContactsLoading(false);
       return;
     }
 
@@ -1329,7 +1503,7 @@ export default function EventEditPage() {
       );
     } catch (loadError) {
       console.error("Could not load company contacts.", loadError);
-      setError("Could not load company contacts.");
+      setWarning("Could not load company contacts.");
     } finally {
       setCompanyContactsLoading(false);
     }
@@ -1339,10 +1513,20 @@ export default function EventEditPage() {
     setCompanyContactForm((current) => ({ ...current, [field]: value }));
   };
 
+  const updateEventContactRoleFormField = (field, value) => {
+    setEventContactRoleForm((current) => ({ ...current, [field]: value }));
+  };
+
   const resetCompanyContactForm = () => {
     setEditingCompanyContactId("");
     setEditingCompanyContactCompanyId("");
     setCompanyContactForm(emptyCompanyContactForm);
+  };
+
+  const resetEventContactRoleForm = () => {
+    setEditingEventContactId("");
+    setEditingEventContactCompanyId("");
+    setEventContactRoleForm(emptyEventContactRoleForm);
   };
 
   const startAddingCompanyContact = (companyId) => {
@@ -1356,12 +1540,23 @@ export default function EventEditPage() {
 
   const startEditingCompanyContact = (companyId, contact) => {
     if (!canManageCompanyContacts || isOffline) return;
-    setEditingCompanyContactId(contact.id);
+    setEditingCompanyContactId(contact.companyContactId || "");
     setEditingCompanyContactCompanyId(companyId);
     setCompanyContactForm({
       name: contact.name || "",
       email: contact.email || "",
       phone: contact.phone || "",
+      role: contact.role || "",
+    });
+    setMessage("");
+    setError("");
+  };
+
+  const startEditingEventContactRole = (companyId, contact) => {
+    if (!canManageCompanyContacts || isOffline) return;
+    setEditingEventContactCompanyId(companyId);
+    setEditingEventContactId(contact.id);
+    setEventContactRoleForm({
       role: contact.role || "",
     });
     setMessage("");
@@ -1404,6 +1599,9 @@ export default function EventEditPage() {
         });
         setMessage("Company contact saved.");
       } else {
+        eventContactSeedErrorCompanyIdsRef.current.delete(
+          editingCompanyContactCompanyId
+        );
         await createCompanyContact({
           companyId: editingCompanyContactCompanyId,
           name,
@@ -1421,6 +1619,61 @@ export default function EventEditPage() {
       setError("Could not save company contact.");
     } finally {
       setSavingCompanyContact(false);
+    }
+  };
+
+  const saveEventContactRole = async (submitEvent) => {
+    submitEvent.preventDefault();
+    if (isOffline) {
+      setError("Editing is disabled while offline.");
+      return;
+    }
+    if (!canManageCompanyContacts) {
+      setError("Your role cannot manage company contacts.");
+      return;
+    }
+    if (!editingEventContactId) return;
+
+    const role = eventContactRoleForm.role.trim();
+
+    setSavingEventContact(true);
+    setMessage("");
+    setError("");
+
+    try {
+      await updateEventContact(editingEventContactId, { role });
+      setMessage("Event contact role saved.");
+      resetEventContactRoleForm();
+      await reloadEventContacts();
+    } catch (contactError) {
+      console.error(contactError);
+      setError("Could not save event contact role.");
+    } finally {
+      setSavingEventContact(false);
+    }
+  };
+
+  const toggleEventContactHidden = async (contactId) => {
+    const targetContact = Object.values(eventContactsByCompanyId)
+      .flat()
+      .find((contact) => contact.id === contactId);
+
+    if (!targetContact || isOffline || !canManageCompanyContacts) return;
+
+    setMessage("");
+    setError("");
+
+    try {
+      await updateEventContact(contactId, {
+        isHidden: !targetContact.isHidden,
+      });
+      await reloadEventContacts();
+      setMessage(
+        targetContact.isHidden ? "Event contact unhidden." : "Event contact hidden."
+      );
+    } catch (contactError) {
+      console.error(contactError);
+      setError("Could not update event contact visibility.");
     }
   };
 
@@ -1711,7 +1964,7 @@ export default function EventEditPage() {
       return;
     }
 
-    const currentContacts = companyContactsByCompanyId[companyId] || [];
+    const currentContacts = eventContactsByCompanyId[companyId] || [];
     const sourceIndex = currentContacts.findIndex((contact) => contact.id === sourceContactId);
     const targetIndex = currentContacts.findIndex((contact) => contact.id === targetContactId);
     if (sourceIndex < 0 || targetIndex < 0) return;
@@ -1724,7 +1977,7 @@ export default function EventEditPage() {
       sortOrder: contactIndex,
     }));
 
-    setCompanyContactsByCompanyId((current) => ({
+    setEventContactsByCompanyId((current) => ({
       ...current,
       [companyId]: orderedContacts,
     }));
@@ -1734,11 +1987,11 @@ export default function EventEditPage() {
     setError("");
 
     try {
-      await updateCompanyContactOrder(orderedContacts);
+      await updateEventContactOrder(orderedContacts);
     } catch (reorderError) {
       console.error(reorderError);
       setError("Could not reorder company contacts.");
-      await reloadCompanyContacts();
+      await reloadEventContacts();
     } finally {
       setReorderingCompanyContactId("");
     }
@@ -2060,6 +2313,16 @@ export default function EventEditPage() {
     setMessage("");
 
     try {
+      const targetTag = tags.find((tag) => tag.id === tagId);
+      const isTruckTag =
+        String(targetTag?.name || "").trim().toLowerCase() === "truck";
+      if (isTruckTag && truckScheduleDetails.length > 0) {
+        showToast("Truck can not be deleted whilst truck entires exist", {
+          variant: "error",
+        });
+        return;
+      }
+
       await deleteTag(tagId);
       if (editingTagId === tagId) resetTagForm();
       await loadTags();
@@ -3049,16 +3312,18 @@ export default function EventEditPage() {
     return truckScheduleDetails
       .filter((detail) => detail.truckId === truck.id)
       .sort((detailA, detailB) => {
-        const orderA = typeof detailA.sortOrder === "number" ? detailA.sortOrder : 0;
-        const orderB = typeof detailB.sortOrder === "number" ? detailB.sortOrder : 0;
-        const orderComparison = orderA - orderB;
-        if (orderComparison !== 0) return orderComparison;
-
-        const dateComparison = String(scheduleDayById.get(detailA.scheduleDayId)?.date || "")
-          .localeCompare(String(scheduleDayById.get(detailB.scheduleDayId)?.date || ""));
+        const dateA = String(scheduleDayById.get(detailA.scheduleDayId)?.date || "");
+        const dateB = String(scheduleDayById.get(detailB.scheduleDayId)?.date || "");
+        const dateComparison = dateA.localeCompare(dateB);
         if (dateComparison !== 0) return dateComparison;
 
-        return String(detailA.time || "").localeCompare(String(detailB.time || ""));
+        const orderA = typeof detailA.sortOrder === "number" ? detailA.sortOrder : 0;
+        const orderB = typeof detailB.sortOrder === "number" ? detailB.sortOrder : 0;
+        const timeComparison = String(detailA.time || "").localeCompare(String(detailB.time || ""));
+        if (timeComparison !== 0) return timeComparison;
+        if (orderA !== orderB) return orderA - orderB;
+
+        return String(detailA.id || "").localeCompare(String(detailB.id || ""));
       });
   };
 
@@ -3138,10 +3403,6 @@ export default function EventEditPage() {
     }
     if (!draft.scheduleDayId) {
       setError("Date is required.");
-      return;
-    }
-    if (showTruckDestinationColumn && !getTruckDestinationValue(draft)) {
-      setError("Destination is required.");
       return;
     }
     setSavingDraftDayId(truck.id);
@@ -3244,7 +3505,9 @@ export default function EventEditPage() {
   };
 
   const getNextTruckDetailAction = (currentAction) => {
-    const currentActionIndex = truckDetailActions.indexOf(currentAction || "");
+    const normalisedAction =
+      currentAction === "Collect" ? "Deliver" : currentAction || "";
+    const currentActionIndex = truckDetailActions.indexOf(normalisedAction);
     return truckDetailActions[(currentActionIndex + 1) % truckDetailActions.length];
   };
 
@@ -3478,6 +3741,7 @@ export default function EventEditPage() {
 
       <EventEditorStatusMessages
         error={error}
+        warning={warning}
         isOffline={isOffline}
         isSuperAdmin={isSuperAdmin}
         clientId={form.clientId}
@@ -3502,8 +3766,9 @@ export default function EventEditPage() {
         detailsLoading={detailsLoading}
         companiesLoading={companiesLoading}
         contactCompanies={contactCompanies}
-        companyContactsByCompanyId={companyContactsByCompanyId}
+        companyContactsByCompanyId={eventContactsByCompanyId}
         editingCompanyContactCompanyId={editingCompanyContactCompanyId}
+        editingEventContactCompanyId={editingEventContactCompanyId}
         openContactCompanyIds={openContactCompanyIds}
         canManageContactCompanyOrder={canManageContactCompanyOrder}
         canManageCompanyContacts={canManageCompanyContacts}
@@ -3511,13 +3776,14 @@ export default function EventEditPage() {
         savingContactCompanyOrder={savingContactCompanyOrder}
         contactCompanyDropTargetId={contactCompanyDropTargetId}
         draggedContactCompanyIdRef={draggedContactCompanyIdRef}
-        companyContactsLoading={companyContactsLoading}
+        companyContactsLoading={eventContactsLoading}
         companyContactDropTargetId={companyContactDropTargetId}
         reorderingCompanyContactId={reorderingCompanyContactId}
         draggedCompanyContactIdRef={draggedCompanyContactIdRef}
         savingCompanyContact={savingCompanyContact}
         deletingCompanyContactId={deletingCompanyContactId}
         companyContactForm={companyContactForm}
+        eventContactForm={eventContactRoleForm}
         editingCompanyContactId={editingCompanyContactId}
         reorderContactCompany={reorderContactCompany}
         reorderCompanyContact={reorderCompanyContact}
@@ -3526,9 +3792,15 @@ export default function EventEditPage() {
         toggleContactCompanyOpen={toggleContactCompanyOpen}
         startAddingCompanyContact={startAddingCompanyContact}
         startEditingCompanyContact={startEditingCompanyContact}
+        startEditingEventContactRole={startEditingEventContactRole}
         removeCompanyContact={removeCompanyContact}
         updateCompanyContactFormField={updateCompanyContactFormField}
+        updateEventContactRoleFormField={updateEventContactRoleFormField}
         saveCompanyContact={saveCompanyContact}
+        saveEventContactRole={saveEventContactRole}
+        resetEventContactRoleForm={resetEventContactRoleForm}
+        toggleEventContactHidden={toggleEventContactHidden}
+        savingEventContact={savingEventContact}
         resetCompanyContactForm={resetCompanyContactForm}
       />
       ) : null}
@@ -3593,8 +3865,11 @@ export default function EventEditPage() {
           canMoveDetail={canMoveDetail}
           getAdjacentDay={getAdjacentDay}
           getDetailRowStyle={getDetailRowStyle}
+          getTruckDetailRowStyle={getDetailTruckDetailRowStyle}
           getRowTagStyle={getRowTagStyle}
           getTagById={getTagById}
+          truckById={truckById}
+          companyById={companyById}
           draggedDetailIdRef={draggedDetailIdRef}
           reorderDetail={reorderDetail}
           detailCellInputRef={detailCellInputRef}
@@ -3618,6 +3893,9 @@ export default function EventEditPage() {
           companies={companies}
           assignDetailCompanies={assignDetailCompanies}
           toggleCompanyIds={toggleCompanyIds}
+          showTruckDestinationColumn={showTruckDestinationColumn}
+          getTruckDestinationValue={getTruckDestinationValue}
+          assignTruckDetailDestination={assignTruckDetailDestination}
           openNotesDetailId={openNotesDetailId}
           closeNotesEditor={closeNotesEditor}
           openNotesEditor={openNotesEditor}

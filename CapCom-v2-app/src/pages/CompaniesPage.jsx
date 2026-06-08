@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "../auth/AuthProvider.jsx";
 import Loading from "../components/Loading.jsx";
 import Modal from "../components/Modal.jsx";
+import { useToast } from "../components/ToastProvider.jsx";
 import useOnlineStatus from "../hooks/useOnlineStatus.js";
 import { getClient, getClients } from "../services/clientService.js";
 import {
@@ -23,6 +24,7 @@ export default function CompaniesPage() {
     isSuperAdmin,
     isClientAdmin,
   } = useAuth();
+  const { showToast } = useToast();
   const isOnline = useOnlineStatus();
   const isOffline = !isOnline;
   const [clients, setClients] = useState([]);
@@ -35,8 +37,6 @@ export default function CompaniesPage() {
   const [companiesLoading, setCompaniesLoading] = useState(false);
   const [savingCompany, setSavingCompany] = useState(false);
   const [deletingCompanyId, setDeletingCompanyId] = useState("");
-  const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
   const canManageCompanies = isSuperAdmin || isClientAdmin;
   const selectedClient = useMemo(
     () => clients.find((client) => client.id === selectedClientId),
@@ -48,7 +48,6 @@ export default function CompaniesPage() {
 
     const loadClients = async () => {
       setClientsLoading(true);
-      setError("");
       try {
         if (isSuperAdmin) {
           const clientRecords = await getClients();
@@ -68,7 +67,7 @@ export default function CompaniesPage() {
         setSelectedClientId("");
       } catch (loadError) {
         console.error(loadError);
-        setError("Could not load clients.");
+        showToast("Could not load clients.", { variant: "error" });
       } finally {
         setClientsLoading(false);
       }
@@ -84,12 +83,11 @@ export default function CompaniesPage() {
     }
 
     setCompaniesLoading(true);
-    setError("");
     try {
       setCompanies(await getCompanies(clientId));
     } catch (loadError) {
       console.error(loadError);
-      setError("Could not load companies.");
+      showToast("Could not load companies.", { variant: "error" });
     } finally {
       setCompaniesLoading(false);
     }
@@ -115,8 +113,6 @@ export default function CompaniesPage() {
     setIsCompanyFormOpen(true);
     setEditingCompanyId("");
     setCompanyForm(emptyCompanyForm);
-    setError("");
-    setMessage("");
   };
 
   const startEditingCompany = (company) => {
@@ -126,34 +122,30 @@ export default function CompaniesPage() {
       companyName: company.companyName || "",
       address: company.address || "",
     });
-    setError("");
-    setMessage("");
   };
 
   const saveCompany = async (submitEvent) => {
     submitEvent.preventDefault();
     if (isOffline) {
-      setError("Editing is disabled while offline.");
+      showToast("Editing is disabled while offline.", { variant: "error" });
       return;
     }
     if (!canManageCompanies) {
-      setError("Your role cannot manage companies.");
+      showToast("Your role cannot manage companies.", { variant: "error" });
       return;
     }
     if (!selectedClientId) {
-      setError("Choose a client before adding companies.");
+      showToast("Choose a client before adding companies.", { variant: "error" });
       return;
     }
 
     setSavingCompany(true);
-    setError("");
-    setMessage("");
 
     try {
       const companyName = companyForm.companyName.trim();
       const address = companyForm.address.trim();
       if (!companyName) {
-        setError("Company name is required.");
+        showToast("Company name is required.", { variant: "error" });
         return;
       }
 
@@ -163,21 +155,21 @@ export default function CompaniesPage() {
           companyName,
           address,
         });
-        setMessage("Company saved.");
+        showToast("Company saved.", { variant: "success" });
       } else {
         await createCompany({
           clientId: selectedClientId,
           companyName,
           address,
         });
-        setMessage("Company created.");
+        showToast("Company created.", { variant: "success" });
       }
 
       resetCompanyForm();
       await loadCompanies(selectedClientId);
     } catch (companyError) {
       console.error(companyError);
-      setError("Could not save company.");
+      showToast("Could not save company.", { variant: "error" });
     } finally {
       setSavingCompany(false);
     }
@@ -185,26 +177,24 @@ export default function CompaniesPage() {
 
   const removeCompany = async (companyId) => {
     if (isOffline) {
-      setError("Editing is disabled while offline.");
+      showToast("Editing is disabled while offline.", { variant: "error" });
       return;
     }
     if (!canManageCompanies) {
-      setError("Your role cannot manage companies.");
+      showToast("Your role cannot manage companies.", { variant: "error" });
       return;
     }
 
     setDeletingCompanyId(companyId);
-    setError("");
-    setMessage("");
 
     try {
       await deleteCompany(companyId);
       if (editingCompanyId === companyId) resetCompanyForm();
       await loadCompanies(selectedClientId);
-      setMessage("Company deleted.");
+      showToast("Company deleted.", { variant: "success" });
     } catch (companyError) {
       console.error(companyError);
-      setError("Could not delete company.");
+      showToast("Could not delete company.", { variant: "error" });
     } finally {
       setDeletingCompanyId("");
     }
@@ -220,8 +210,6 @@ export default function CompaniesPage() {
         </div>
       </div>
 
-      {error ? <p className="error">{error}</p> : null}
-      {message ? <p className="message success-message">{message}</p> : null}
       {isOffline ? (
         <p className="message offline-message">Offline mode: company records are read-only.</p>
       ) : null}

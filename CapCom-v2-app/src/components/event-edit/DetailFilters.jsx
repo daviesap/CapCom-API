@@ -33,10 +33,12 @@ export default function DetailFilters({
   }
 
   const renderMultiFilterSummary = (selectedIds, prefix, allLabel) => {
-    if (selectedIds.length === 0) return `${prefix}: ${allLabel}`;
+    if (selectedIds.length === 0) return prefix === allLabel ? prefix : `${prefix}: ${allLabel}`;
     const selectedCount = selectedIds.length;
-    return `${prefix}: ${selectedCount} selected`;
+    return `${prefix}: ${selectedCount}`;
   };
+  const selectedLocationCount =
+    selectedLocationFilterIds.length + selectedSubLocationFilterIds.length;
 
   return (
     <div className="filter-menu-bar" aria-label="Filter schedule rows">
@@ -56,7 +58,7 @@ export default function DetailFilters({
                   checked={selectedTagFilterIds.length === 0}
                   onChange={() => setSelectedTagFilterIds([])}
                 />
-                <span>All tags</span>
+                <span>All</span>
               </label>
               {usedTags.map((tag) => (
                 <label
@@ -79,77 +81,63 @@ export default function DetailFilters({
           </details>
         </div>
       ) : null}
-      {usedLocationFilters.length > 0 ? (
+      {usedLocationFilters.length > 0 || usedSubLocationFilters.length > 0 ? (
         <div className="filter-menu-group" aria-label="Filter schedule rows by location">
           <details className="filter-menu-item company-dropdown">
             <summary className="filter-menu-trigger">
-              {renderMultiFilterSummary(selectedLocationFilterIds, "Locations", "Locations")}
+              {selectedLocationCount === 0 ? "Locations" : `Locations: ${selectedLocationCount}`}
             </summary>
             <div className="filter-menu-panel">
               <label className="filter-menu-option" htmlFor="detail-filter-location-all">
                 <input
                   id="detail-filter-location-all"
                   type="checkbox"
-                  checked={selectedLocationFilterIds.length === 0}
-                  onChange={() => setSelectedLocationFilterIds([])}
+                  checked={selectedLocationCount === 0}
+                  onChange={() => {
+                    setSelectedLocationFilterIds([]);
+                    setSelectedSubLocationFilterIds([]);
+                  }}
                 />
-                <span>All locations</span>
+                <span>All</span>
               </label>
               {usedLocationFilters.map((location) => (
-                <label
-                  className="filter-menu-option"
-                  htmlFor={`detail-filter-location-${location.id}`}
-                  key={location.id}
-                >
-                  <input
-                    id={`detail-filter-location-${location.id}`}
-                    type="checkbox"
-                    checked={selectedLocationFilterIds.includes(location.id)}
-                    onChange={() => toggleLocationFilter(location.id)}
-                  />
-                  <span>{location.name}</span>
-                  <span className="filter-count">
-                    {detailCountByLocationFilterId[location.id] || 0}
-                  </span>
-                </label>
-              ))}
-            </div>
-          </details>
-        </div>
-      ) : null}
-      {usedSubLocationFilters.length > 0 ? (
-        <div className="filter-menu-group" aria-label="Filter schedule rows by sub location">
-          <details className="filter-menu-item company-dropdown">
-            <summary className="filter-menu-trigger">
-              {renderMultiFilterSummary(selectedSubLocationFilterIds, "Sub locations", "Sub locations")}
-            </summary>
-            <div className="filter-menu-panel">
-              <label className="filter-menu-option" htmlFor="detail-filter-sub-location-all">
-                <input
-                  id="detail-filter-sub-location-all"
-                  type="checkbox"
-                  checked={selectedSubLocationFilterIds.length === 0}
-                  onChange={() => setSelectedSubLocationFilterIds([])}
-                />
-                <span>All sub locations</span>
-              </label>
-              {usedSubLocationFilters.map((location) => (
-                <label
-                  className="filter-menu-option"
-                  htmlFor={`detail-filter-sub-location-${location.id}`}
-                  key={location.id}
-                >
-                  <input
-                    id={`detail-filter-sub-location-${location.id}`}
-                    type="checkbox"
-                    checked={selectedSubLocationFilterIds.includes(location.id)}
-                    onChange={() => toggleSubLocationFilter(location.id)}
-                  />
-                  <span>{location.displayName}</span>
-                  <span className="filter-count">
-                    {detailCountBySubLocationId[location.id] || 0}
-                  </span>
-                </label>
+                <div className="filter-menu-location-group" key={location.id}>
+                  <label
+                    className="filter-menu-option"
+                    htmlFor={`detail-filter-location-${location.id}`}
+                  >
+                    <input
+                      id={`detail-filter-location-${location.id}`}
+                      type="checkbox"
+                      checked={selectedLocationFilterIds.includes(location.id)}
+                      onChange={() => toggleLocationFilter(location.id)}
+                    />
+                    <span>{location.name}</span>
+                    <span className="filter-count">
+                      {detailCountByLocationFilterId[location.id] || 0}
+                    </span>
+                  </label>
+                  {usedSubLocationFilters
+                    .filter((subLocation) => subLocation.parentLocationId === location.id)
+                    .map((subLocation) => (
+                      <label
+                        className="filter-menu-option sub-location"
+                        htmlFor={`detail-filter-sub-location-${subLocation.id}`}
+                        key={subLocation.id}
+                      >
+                        <input
+                          id={`detail-filter-sub-location-${subLocation.id}`}
+                          type="checkbox"
+                          checked={selectedSubLocationFilterIds.includes(subLocation.id)}
+                          onChange={() => toggleSubLocationFilter(subLocation.id)}
+                        />
+                        <span>{subLocation.name}</span>
+                        <span className="filter-count">
+                          {detailCountBySubLocationId[subLocation.id] || 0}
+                        </span>
+                      </label>
+                    ))}
+                </div>
               ))}
             </div>
           </details>
@@ -169,7 +157,7 @@ export default function DetailFilters({
                   checked={selectedCompanyFilterIds.length === 0}
                   onChange={() => setSelectedCompanyFilterIds([])}
                 />
-                <span>All companies</span>
+                <span>All</span>
               </label>
               {usedCompanies.map((company) => (
                 <label

@@ -13,11 +13,11 @@ export function filterDetailRows(details, filters) {
       ? locationById.get(detail.locationId)
       : null;
     const detailTopLocationId = detailLocation?.parentLocationId || detailLocation?.id || "";
+    const hasLocationFilters =
+      selectedLocationFilterIds.length > 0 || selectedSubLocationFilterIds.length > 0;
     const matchesLocation =
-      selectedLocationFilterIds.length === 0 ||
-      selectedLocationFilterIds.includes(detailTopLocationId);
-    const matchesSubLocation =
-      selectedSubLocationFilterIds.length === 0 ||
+      !hasLocationFilters ||
+      selectedLocationFilterIds.includes(detailTopLocationId) ||
       selectedSubLocationFilterIds.includes(detail.locationId);
     const matchesCompany =
       selectedCompanyFilterIds.length === 0 ||
@@ -25,6 +25,6 @@ export function filterDetailRows(details, filters) {
         (detail.companyIds || []).includes(companyId)
       );
 
-    return matchesTag && matchesLocation && matchesSubLocation && matchesCompany;
+    return matchesTag && matchesLocation && matchesCompany;
   });
 }

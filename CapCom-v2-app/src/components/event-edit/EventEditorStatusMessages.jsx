@@ -1,8 +1,10 @@
-import { CapcomIcon } from "../../icons/capcomIcons.jsx";
+import { useEffect } from "react";
 import useLoadingToast from "../../hooks/useLoadingToast.js";
+import { useToast } from "../../components/ToastProvider.jsx";
 
 export default function EventEditorStatusMessages({
   error,
+  warning,
   isOffline,
   isSuperAdmin,
   clientId,
@@ -13,6 +15,8 @@ export default function EventEditorStatusMessages({
   trucksLoading,
   companiesLoading,
 }) {
+  const { showToast } = useToast();
+
   useLoadingToast(
     detailsLoading && (activeTab === "info" || activeTab === "detail"),
     "Loading schedule details..."
@@ -25,33 +29,29 @@ export default function EventEditorStatusMessages({
     "Loading companies..."
   );
 
-  return (
-    <>
-      {error ? <p className="error">{error}</p> : null}
-      {isOffline ? (
-        <p className="message offline-message">Offline mode: previously loaded schedules are read-only.</p>
-      ) : null}
-      {isSuperAdmin && !clientId ? (
-        <p className="message warning-message">
-          <CapcomIcon name="warning" size={18} weight="bold" />
-          This event does not have a clientId yet. Choose a client and save the event to finish the assignment.
-        </p>
-      ) : null}
-      {detailsLoading && (activeTab === "info" || activeTab === "detail") ? (
-        <p className="message">Loading schedule details...</p>
-      ) : null}
-      {tagsLoading && activeTab === "settings" ? (
-        <p className="message">Loading tags...</p>
-      ) : null}
-      {locationsLoading && activeTab === "settings" ? (
-        <p className="message">Loading locations...</p>
-      ) : null}
-      {trucksLoading && activeTab === "trucks" ? (
-        <p className="message">Loading trucks...</p>
-      ) : null}
-      {companiesLoading && (activeTab === "info" || activeTab === "detail" || activeTab === "trucks") ? (
-        <p className="message">Loading companies...</p>
-      ) : null}
-    </>
-  );
+  useEffect(() => {
+    if (!error) return;
+    showToast(error, { variant: "error" });
+  }, [error, showToast]);
+
+  useEffect(() => {
+    if (!warning) return;
+    showToast(warning, { variant: "info" });
+  }, [warning, showToast]);
+
+  useEffect(() => {
+    if (isOffline) {
+      showToast("Offline mode: previously loaded schedules are read-only.", { variant: "info" });
+    }
+  }, [isOffline, showToast]);
+
+  useEffect(() => {
+    if (!isSuperAdmin || clientId || isOffline) return;
+    showToast(
+      "This event does not have a clientId yet. Choose a client and save the event to finish the assignment.",
+      { variant: "info" }
+    );
+  }, [isSuperAdmin, clientId, isOffline, showToast]);
+
+  return null;
 }

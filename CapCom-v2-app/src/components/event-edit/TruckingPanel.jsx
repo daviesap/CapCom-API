@@ -78,7 +78,6 @@ export default function TruckingPanel({
       if (
         savingDraftDayId === truck.id ||
         !draft.scheduleDayId ||
-        (showTruckDestinationColumn && !getTruckDestinationValue(draft)) ||
         isOffline
       ) {
         return;
@@ -224,23 +223,6 @@ export default function TruckingPanel({
             {trucks.map((truck) => {
               const truckDetails = getTruckDetails(truck);
               const draftTruckDetails = draftTruckDetailsByTruckId[truck.id] || [];
-              const savedIncompleteCount = truckDetails.filter((detail) => {
-                const hasDate = Boolean(detail.scheduleDayId);
-                const hasDestination = !showTruckDestinationColumn || Boolean(
-                  getTruckDestinationValue(detail)
-                );
-
-                return !(hasDate && hasDestination);
-              }).length;
-              const draftIncompleteCount = draftTruckDetails.filter((draft) => {
-                const hasDate = Boolean(draft.scheduleDayId);
-                const hasDestination = !showTruckDestinationColumn || Boolean(
-                  getTruckDestinationValue(draft)
-                );
-
-                return !(hasDate && hasDestination);
-              }).length;
-              const incompleteTruckDetailCount = savedIncompleteCount + draftIncompleteCount;
 
               return (
                 <article className="list-item" key={truck.id}>
@@ -261,11 +243,6 @@ export default function TruckingPanel({
                               {companyById.get(truck.companyId)?.companyName ||
                                 truck.companyName ||
                                 "Unknown company"}
-                            </span>
-                          ) : null}
-                          {incompleteTruckDetailCount > 0 ? (
-                            <span className="day-row-count warning">
-                              {incompleteTruckDetailCount} incomplete
                             </span>
                           ) : null}
                         </p>
@@ -311,7 +288,7 @@ export default function TruckingPanel({
                     {scheduleDays.length === 0 ? (
                       <p className="item-meta">Add schedule days before adding truck rows.</p>
                     ) : truckDetails.length === 0 && draftTruckDetails.length === 0 ? (
-                      <p className="item-meta">No truck rows yet.</p>
+                      <p className="item-meta">No entries yet</p>
                     ) : (
                       <div className="detail-list">
                         {truckDetails.map((detail, detailIndex) => {
@@ -434,7 +411,7 @@ export default function TruckingPanel({
                                 disabled={savingDetailId === detail.id || isOffline}
                                 onClick={() => toggleTruckDetailAction(dayId, detail)}
                               >
-                                {detail.action || ""}
+                                {detail.action || "Action?"}
                               </button>
                               {showTruckDestinationColumn ? (
                                 <div
@@ -673,21 +650,21 @@ export default function TruckingPanel({
                                 updateDraftTruckDetail(truck.id, draftIndex, "time", event.target.value)
                               }
                             />
-                            <button
-                              className="detail-cell"
-                              type="button"
-                              disabled={isOffline}
-                              onClick={() =>
+                              <button
+                                className="detail-cell"
+                                type="button"
+                                disabled={isOffline}
+                                onClick={() =>
                                 updateDraftTruckDetail(
                                   truck.id,
                                   draftIndex,
                                   "action",
                                   getNextTruckDetailAction(draft.action)
                                 )
-                              }
-                            >
-                              {draft.action || ""}
-                            </button>
+                                  }
+                                >
+                                {draft.action || "Action?"}
+                              </button>
                             {showTruckDestinationColumn ? (
                               <div
                                 className={[
@@ -748,7 +725,6 @@ export default function TruckingPanel({
                                 disabled={
                                   savingDraftDayId === truck.id ||
                                   !draft.scheduleDayId ||
-                                  (showTruckDestinationColumn && !getTruckDestinationValue(draft)) ||
                                   isOffline
                                 }
                                 onClick={() => saveDraftTruckDetail(truck, draftIndex, draft)}

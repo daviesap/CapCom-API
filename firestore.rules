@@ -89,6 +89,16 @@ service cloud.firestore {
         && canManageCompanyData(companyData(contact.companyId));
     }
 
+    function canReadEventContactData(eventContact) {
+      return eventContact.eventId is string
+        && canReadEvent(eventContact.eventId);
+    }
+
+    function canManageEventContactData(eventContact) {
+      return eventContact.eventId is string
+        && canManageEvent(eventContact.eventId);
+    }
+
     function eventPath(eventId) {
       return /databases/$(database)/documents/events/$(eventId);
     }
@@ -267,6 +277,14 @@ service cloud.firestore {
       allow update: if canManageCompanyContactData(resource.data)
         && canManageCompanyContactData(request.resource.data);
       allow delete: if canManageCompanyContactData(resource.data);
+    }
+
+    match /eventContacts/{eventContactId} {
+      allow get, list: if canReadEventContactData(resource.data);
+      allow create: if canManageEventContactData(request.resource.data);
+      allow update: if canManageEventContactData(resource.data)
+        && canManageEventContactData(request.resource.data);
+      allow delete: if canManageEventContactData(resource.data);
     }
 
     match /events/{eventId} {

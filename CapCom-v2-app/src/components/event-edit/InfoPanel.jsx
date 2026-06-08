@@ -34,6 +34,14 @@ export default function InfoPanel({
   removeCompanyContact,
   updateCompanyContactFormField,
   saveCompanyContact,
+  eventContactForm,
+  startEditingEventContactRole,
+  updateEventContactRoleFormField,
+  saveEventContactRole,
+  resetEventContactRoleForm,
+  editingEventContactCompanyId,
+  toggleEventContactHidden,
+  savingEventContact,
   resetCompanyContactForm,
 }) {
   return (
@@ -67,8 +75,12 @@ export default function InfoPanel({
             <div className="company-list">
               {contactCompanies.map((company) => {
                 const companyContacts = companyContactsByCompanyId[company.id] || [];
+                const visibleContacts = companyContacts.filter((contact) => !contact.isHidden);
+                const hiddenContacts = companyContacts.filter((contact) => contact.isHidden);
                 const isEditingThisCompanyContact =
                   editingCompanyContactCompanyId === company.id;
+                const isEditingThisCompanyEventContactRole =
+                  editingEventContactCompanyId === company.id;
                 const isCompanyOpen = openContactCompanyIds.includes(company.id);
 
                 return (
@@ -136,9 +148,14 @@ export default function InfoPanel({
                               {company.companyName || "Unnamed company"}
                             </span>
                             <span className="item-meta company-accordion-meta">
-                              {companyContacts.length} contact
+                              {visibleContacts.length}/{companyContacts.length} contact
                               {companyContacts.length === 1 ? "" : "s"}
                             </span>
+                            {hiddenContacts.length > 0 ? (
+                              <span className="item-meta company-accordion-meta">
+                                {hiddenContacts.length} hidden
+                              </span>
+                            ) : null}
                           </span>
                         </button>
                         {canManageCompanyContacts ? (
@@ -165,17 +182,18 @@ export default function InfoPanel({
                           ) : companyContacts.length === 0 ? (
                             <p className="item-meta">No contacts yet.</p>
                           ) : (
-                            <div className="company-contact-list">
-                              {companyContacts.map((contact) => (
-                                <div
-                                  className={[
-                                    "company-contact-row",
-                                    canManageCompanyContacts && !isOffline
-                                      ? "draggable-contact-row"
-                                      : "",
-                                    companyContactDropTargetId === contact.id
-                                      ? "drop-target"
-                                      : "",
+                                <div className="company-contact-list">
+                                  {companyContacts.map((contact) => (
+                                    <div
+                                      className={[
+                                        "company-contact-row",
+                                        contact.isHidden ? "is-hidden" : "",
+                                        canManageCompanyContacts && !isOffline
+                                          ? "draggable-contact-row"
+                                          : "",
+                                        companyContactDropTargetId === contact.id
+                                          ? "drop-target"
+                                          : "",
                                   ].filter(Boolean).join(" ")}
                                   key={contact.id}
                                   draggable={
@@ -224,6 +242,9 @@ export default function InfoPanel({
                                 >
                                   <div>
                                     <p className="item-title">{contact.name}</p>
+                                    {contact.isHidden ? (
+                                      <p className="item-meta company-contact-hidden-label">Hidden on event</p>
+                                    ) : null}
                                     {contact.role ? (
                                       <p className="item-meta">{contact.role}</p>
                                     ) : null}
@@ -241,7 +262,28 @@ export default function InfoPanel({
                                       <button
                                         className="compact-button"
                                         type="button"
-                                        disabled={isOffline || savingCompanyContact}
+                                        disabled={savingEventContact || isOffline}
+                                        onClick={() => startEditingEventContactRole(company.id, contact)}
+                                      >
+                                        <CapcomIcon name="edit" size={16} />
+                                        Event role
+                                      </button>
+                                      <button
+                                        className="compact-button"
+                                        type="button"
+                                        disabled={savingEventContact || isOffline}
+                                        onClick={() => toggleEventContactHidden(contact.id)}
+                                      >
+                                        {contact.isHidden ? "Unhide" : "Hide"}
+                                      </button>
+                                      <button
+                                        className="compact-button"
+                                        type="button"
+                                        disabled={
+                                          !contact.companyContactId ||
+                                          isOffline ||
+                                          savingCompanyContact
+                                        }
                                         onClick={() => startEditingCompanyContact(company.id, contact)}
                                       >
                                         <CapcomIcon name="edit" size={16} />
@@ -251,17 +293,18 @@ export default function InfoPanel({
                                         className="compact-button"
                                         type="button"
                                         disabled={
-                                          deletingCompanyContactId === contact.id ||
+                                          !contact.companyContactId ||
+                                          deletingCompanyContactId === contact.companyContactId ||
                                           isOffline ||
                                           savingCompanyContact
                                         }
-                                        onClick={() => removeCompanyContact(contact.id)}
-                                      >
-                                        <CapcomIcon name="delete" size={16} />
-                                        {deletingCompanyContactId === contact.id
-                                          ? "Deleting..."
-                                          : "Delete"}
-                                      </button>
+                                        onClick={() => removeCompanyContact(contact.companyContactId || contact.id)}
+                                        >
+                                          <CapcomIcon name="delete" size={16} />
+                                          {deletingCompanyContactId === contact.companyContactId
+                                            ? "Deleting..."
+                                            : "Delete"}
+                                        </button>
                                     </div>
                                   ) : null}
                                 </div>
@@ -349,6 +392,50 @@ export default function InfoPanel({
                                 </button>
                               </div>
                             </form>
+                            </Modal>
+                          ) : null}
+
+                          {canManageCompanyContacts && isEditingThisCompanyEventContactRole ? (
+                            <Modal
+                              title="Edit event role"
+                              subtitle={company.companyName || "Company contact role"}
+                              labelledBy={`eventContactRoleFormTitle-${company.id}`}
+                              closeLabel="Close event role form"
+                              onClose={resetEventContactRoleForm}
+                            >
+                              <form className="company-contact-form" onSubmit={saveEventContactRole}>
+                                <div className="form-row">
+                                  <label htmlFor={`eventContactRole-${company.id}`}>Role for this event</label>
+                                  <input
+                                    id={`eventContactRole-${company.id}`}
+                                    value={eventContactForm.role}
+                                    disabled={savingEventContact || isOffline}
+                                    onChange={(event) =>
+                                      updateEventContactRoleFormField(
+                                        "role",
+                                        event.target.value
+                                      )
+                                    }
+                                  />
+                                </div>
+                                <div className="actions">
+                                  <button
+                                    className="button"
+                                    type="submit"
+                                    disabled={savingEventContact || isOffline}
+                                  >
+                                    {savingEventContact ? "Saving..." : "Save event role"}
+                                  </button>
+                                  <button
+                                    className="button secondary"
+                                    type="button"
+                                    disabled={savingEventContact || isOffline}
+                                    onClick={resetEventContactRoleForm}
+                                  >
+                                    Cancel
+                                  </button>
+                                </div>
+                              </form>
                             </Modal>
                           ) : null}
                         </div>

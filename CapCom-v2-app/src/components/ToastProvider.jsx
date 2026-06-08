@@ -4,6 +4,13 @@ const ToastContext = createContext(null);
 
 export function ToastProvider({ children }) {
   const [toasts, setToasts] = useState([]);
+  const defaultDurations = {
+    error: 8000,
+    warning: 5000,
+    info: 3500,
+    success: 3500,
+    loading: 3500,
+  };
 
   const dismissToast = useCallback((toastId) => {
     setToasts((current) => current.map((toast) =>
@@ -19,22 +26,35 @@ export function ToastProvider({ children }) {
     if (!message) return "";
 
     const toastId = options.id || `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    const variant = options.variant || "info";
     const nextToast = {
       id: toastId,
       message,
-      variant: options.variant || "info",
+      variant,
       exiting: false,
     };
 
-    setToasts((current) => [
-      nextToast,
+    setToasts((current) => {
+      const duplicateActiveToast = !options.id && current.some((toast) =>
+        !toast.exiting && toast.message === message && toast.variant === variant
+      );
+
+      if (duplicateActiveToast) {
+        return current;
+      }
+
+      return [
+        nextToast,
+        ...current.filter((toast) => toast.id !== toastId),
+      ];
+    });
       ...current.filter((toast) => toast.id !== toastId),
     ].slice(0, 4));
 
     if (!options.persist) {
       window.setTimeout(() => {
         dismissToast(toastId);
-      }, options.duration || 3500);
+      }, options.duration || defaultDurations[variant] || 3500);
     }
 
     return toastId;

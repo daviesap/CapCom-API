@@ -903,14 +903,15 @@ textarea {
 }
 
 .filter-empty-message {
-  background: var(--color-warning-bg);
+  /*background: var(--color-warning-bg);
   border: 1px solid var(--color-warning-border);
-  border-radius: 8px;
+  border-radius: 8px;*/
   color: var(--color-warning-text);
-  font-size: 14px;
-  font-weight: 700;
+  font-size: 12px;
+  font-weight: 400;
   margin: 10px 0 0;
   padding: 10px 12px;
+  text-align: right;
 }
 
 .filter-menu-bar {
@@ -1455,6 +1456,13 @@ textarea {
   background: var(--color-surface-soft);
 }
 
+.filter-menu-option.sub-location {
+  color: var(--color-text-mid-muted);
+  font-size: 14px;
+  min-height: 36px;
+  padding-left: 44px;
+}
+
 .filter-menu-option input {
   height: 14px;
   margin: 0;
@@ -1772,6 +1780,14 @@ textarea {
 .company-contact-row.drop-target {
   background: var(--color-primary-soft);
   border-color: var(--color-focus);
+}
+
+.company-contact-row.is-hidden {
+  opacity: 0.68;
+}
+
+.company-contact-hidden-label {
+  color: var(--color-text-muted);
 }
 
 .draggable-contact-row {
