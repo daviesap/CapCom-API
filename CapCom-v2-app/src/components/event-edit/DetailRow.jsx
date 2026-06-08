@@ -76,6 +76,9 @@ export default function DetailRow({
   const canMoveDown = canMoveDetail(dayDetails, detailIndex, 1);
   const previousDay = getAdjacentDay(day.id, -1);
   const nextDay = getAdjacentDay(day.id, 1);
+  const hasTag = Boolean(getTagById(detail.tagId));
+  const hasLocation = Boolean(getLocationById(detail.locationId));
+  const hasCompany = (detail.companyIds || []).length > 0;
 
   return (
     <div
@@ -187,7 +190,11 @@ export default function DetailRow({
       )}
       {showTagColumn ? (
         <div
-          className="tag-select-wrap"
+          className={[
+            "tag-select-wrap",
+            "detail-select-field",
+            hasTag ? "" : "detail-select-field-missing",
+          ].filter(Boolean).join(" ")}
           style={getTagStyle(getTagById(detail.tagId))}
         >
           <span
@@ -213,7 +220,13 @@ export default function DetailRow({
         </div>
       ) : null}
       {showLocationColumn ? (
-        <div className="location-select-wrap">
+        <div
+          className={[
+            "location-select-wrap",
+            "detail-select-field",
+            hasLocation ? "" : "detail-select-field-missing",
+          ].filter(Boolean).join(" ")}
+        >
           <select
             aria-label={`Location for ${detail.description || "schedule detail"}`}
             value={getLocationById(detail.locationId) ? detail.locationId : ""}
@@ -230,10 +243,19 @@ export default function DetailRow({
         </div>
       ) : null}
       {showCompanyColumn ? (
-        <details className="company-dropdown">
+        <details
+          className={[
+            "company-dropdown",
+            "detail-select-field",
+            hasCompany ? "" : "detail-select-field-missing",
+          ].filter(Boolean).join(" ")}
+        >
           <summary
             aria-label={`Company for ${detail.description || "schedule detail"}`}
-            className="company-dropdown-trigger"
+            className={[
+              "company-dropdown-trigger",
+              hasCompany ? "" : "detail-select-field-empty",
+            ].filter(Boolean).join(" ")}
           >
             {getCompanyLabel(detail.companyIds || [])}
           </summary>

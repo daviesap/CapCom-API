@@ -1200,6 +1200,21 @@ textarea {
   padding: 0 10px;
 }
 
+.detail-select-field {
+  transition: border-color 120ms ease, color 120ms ease, background-color 120ms ease;
+}
+
+.detail-select-field-missing {
+  background: #fff7ed;
+  border-color: #fed7aa;
+  color: #9a3412;
+}
+
+.detail-select-field-empty {
+  color: #9a3412;
+  font-weight: 600;
+}
+
 .tag-chip {
   align-items: center;
   background: #ffffff;
