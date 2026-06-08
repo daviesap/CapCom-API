@@ -2505,6 +2505,15 @@ export default function EventEditPage() {
 
   const addDraftTruckDetail = (truckId) => {
     if (isOffline) return;
+    const hasSingleDestination =
+      showTruckDestinationColumn &&
+      (locationOptions.length + companies.length === 1);
+    const defaultTruckDestination = hasSingleDestination && locationOptions.length === 1
+      ? { locationId: locationOptions[0].id, companyIds: [] }
+      : hasSingleDestination && companies.length === 1
+      ? { locationId: "", companyIds: [companies[0].id] }
+      : { locationId: "", companyIds: [] };
+
     setDraftTruckDetailsByTruckId((current) => ({
       ...current,
       [truckId]: [
@@ -2516,8 +2525,7 @@ export default function EventEditPage() {
           description: "",
           colour: "",
           tagId: "",
-          locationId: "",
-          companyIds: [],
+          ...defaultTruckDestination,
         },
       ],
     }));
