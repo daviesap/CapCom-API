@@ -2139,7 +2139,15 @@ textarea {
 }
 
 .toast-loading {
-  background: var(--color-primary);
+  background: var(--color-warning-bg);
+  border: 1px solid var(--color-warning-border);
+  color: var(--color-warning-text);
+}
+
+.toast-warning {
+  background: var(--color-warning-bg);
+  border: 1px solid var(--color-warning-border);
+  color: var(--color-warning-text);
 }
 
 .toast-success {

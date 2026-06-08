@@ -4,7 +4,9 @@ import Loading from "../components/Loading.jsx";
 import Modal from "../components/Modal.jsx";
 import { useToast } from "../components/ToastProvider.jsx";
 import useOnlineStatus from "../hooks/useOnlineStatus.js";
+import useLoadingToast from "../hooks/useLoadingToast.js";
 import { getClient, getClients } from "../services/clientService.js";
+import { getSectionLoadingMessage } from "../utils/loadingMessages.js";
 import {
   createCompany,
   deleteCompany,
@@ -37,6 +39,19 @@ export default function CompaniesPage() {
   const [companiesLoading, setCompaniesLoading] = useState(false);
   const [savingCompany, setSavingCompany] = useState(false);
   const [deletingCompanyId, setDeletingCompanyId] = useState("");
+  const companiesLoadingMessage = useMemo(() => {
+    if (profileLoading) return "Loading companies...";
+    return getSectionLoadingMessage([
+      ["clients", clientsLoading],
+      ["companies", companiesLoading],
+    ]);
+  }, [clientsLoading, companiesLoading, profileLoading]);
+
+  useLoadingToast(Boolean(companiesLoadingMessage), companiesLoadingMessage, {
+    variant: "loading",
+    id: "companies-page-loading",
+    persist: true,
+  });
   const canManageCompanies = isSuperAdmin || isClientAdmin;
   const selectedClient = useMemo(
     () => clients.find((client) => client.id === selectedClientId),
@@ -200,7 +215,16 @@ export default function CompaniesPage() {
     }
   };
 
-  if (profileLoading) return <Loading label="Loading companies..." />;
+  if (profileLoading) {
+    return (
+      <Loading
+        label="Loading companies..."
+        withToast
+        id="companies-page-initial-load"
+        showAfterMs={250}
+      />
+    );
+  }
 
   return (
     <main className="page">
@@ -251,11 +275,7 @@ export default function CompaniesPage() {
           </div>
         </div>
 
-        {clientsLoading ? <p className="message">Loading clients...</p> : null}
-
-        {companiesLoading ? (
-          <p className="item-meta">Loading companies...</p>
-        ) : companies.length === 0 ? (
+        {companies.length === 0 ? (
           <p className="item-meta">No companies yet.</p>
         ) : (
           <div className="company-list">

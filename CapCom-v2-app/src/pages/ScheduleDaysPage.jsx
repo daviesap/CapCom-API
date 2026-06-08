@@ -6,6 +6,7 @@ import Loading from "../components/Loading.jsx";
 import ScheduleCacheStatus from "../components/ScheduleCacheStatus.jsx";
 import { CapcomIcon } from "../icons/capcomIcons.jsx";
 import useOnlineStatus from "../hooks/useOnlineStatus.js";
+import useLoadingToast from "../hooks/useLoadingToast.js";
 import { getEvent } from "../services/eventService.js";
 import { getScheduleDays } from "../services/scheduleDayService.js";
 import {
@@ -30,6 +31,8 @@ export default function ScheduleDaysPage() {
   const [loading, setLoading] = useState(true);
   const [detailsLoading, setDetailsLoading] = useState(false);
   const [error, setError] = useState("");
+
+  useLoadingToast(detailsLoading, "Loading schedule details...", { variant: "loading" });
 
   const loadPage = async () => {
     setLoading(true);
@@ -195,7 +198,7 @@ export default function ScheduleDaysPage() {
     }
   };
 
-  if (loading) return <Loading label="Loading schedule days..." />;
+  if (loading) return <Loading label="Loading schedule days..." withToast />;
 
   return (
     <main className="page">
@@ -214,7 +217,6 @@ export default function ScheduleDaysPage() {
       {isOffline ? (
         <p className="message offline-message">Offline mode: schedule editing is disabled.</p>
       ) : null}
-      {detailsLoading ? <p className="message">Loading schedule details...</p> : null}
       {days.length === 0 ? <EmptyState message="No schedule days yet." /> : null}
 
       <section className="list">

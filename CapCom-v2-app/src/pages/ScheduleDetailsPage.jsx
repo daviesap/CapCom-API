@@ -4,6 +4,7 @@ import { useAuth } from "../auth/AuthProvider.jsx";
 import EmptyState from "../components/EmptyState.jsx";
 import Loading from "../components/Loading.jsx";
 import useOnlineStatus from "../hooks/useOnlineStatus.js";
+import useLoadingToast from "../hooks/useLoadingToast.js";
 import { getEvent } from "../services/eventService.js";
 import {
   createScheduleDetail,
@@ -25,6 +26,8 @@ export default function ScheduleDetailsPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+
+  useLoadingToast(loading, "Loading schedule details...", { variant: "loading" });
 
   const loadDetails = async () => {
     setLoading(true);
@@ -81,7 +84,7 @@ export default function ScheduleDetailsPage() {
     }
   };
 
-  if (loading) return <Loading label="Loading schedule details..." />;
+  if (loading) return <Loading label="Loading schedule details..." withToast />;
 
   return (
     <main className="page">

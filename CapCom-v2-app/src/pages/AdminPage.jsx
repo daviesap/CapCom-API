@@ -4,6 +4,7 @@ import { USER_ROLES } from "../auth/roles.js";
 import Modal from "../components/Modal.jsx";
 import { CapcomIcon } from "../icons/capcomIcons.jsx";
 import useLoadingToast from "../hooks/useLoadingToast.js";
+import { getSectionLoadingMessage } from "../utils/loadingMessages.js";
 import {
   CLIENT_DEFAULTS,
   createClient,
@@ -89,9 +90,19 @@ export default function AdminPage() {
     return clients.filter((client) => client.id === userProfile.clientId);
   }, [clients, isSuperAdmin, userProfile?.clientId]);
 
-  useLoadingToast(profileLoading, "Loading access profile...");
-  useLoadingToast(clientsLoading, "Loading clients...");
-  useLoadingToast(usersLoading, "Loading users...");
+  const adminLoadingMessage = useMemo(() => {
+    if (profileLoading) return "Loading access profile...";
+    return getSectionLoadingMessage([
+      ["clients", clientsLoading],
+      ["users", usersLoading],
+    ]);
+  }, [clientsLoading, profileLoading, usersLoading]);
+
+  useLoadingToast(Boolean(adminLoadingMessage), adminLoadingMessage, {
+    variant: "loading",
+    id: "admin-page-loading",
+    persist: true,
+  });
 
   const loadClients = async () => {
     setClientsLoading(true);
@@ -411,8 +422,6 @@ export default function AdminPage() {
         </div>
       ) : null}
 
-      {profileLoading ? <p className="message">Loading access profile...</p> : null}
-
       {!profileLoading && canManageUsers ? (
         <div className="admin-subnav tabs" aria-label="Admin sections">
           <button
@@ -455,7 +464,6 @@ export default function AdminPage() {
               ) : null}
             </div>
 
-            {clientsLoading ? <p className="message">Loading clients...</p> : null}
             {clientError ? <p className="error">{clientError}</p> : null}
             {clientMessage ? <p className="message success-message">{clientMessage}</p> : null}
 
@@ -614,7 +622,6 @@ export default function AdminPage() {
               ) : null}
             </div>
 
-            {usersLoading ? <p className="message">Loading users...</p> : null}
             {userError ? <p className="error">{userError}</p> : null}
             {userMessage ? <p className="message success-message">{userMessage}</p> : null}
 

@@ -1,6 +1,7 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import useLoadingToast from "../../hooks/useLoadingToast.js";
 import { useToast } from "../../components/ToastProvider.jsx";
+import { getSectionLoadingMessage } from "../../utils/loadingMessages.js";
 
 export default function EventEditorStatusMessages({
   error,
@@ -9,24 +10,71 @@ export default function EventEditorStatusMessages({
   isSuperAdmin,
   clientId,
   activeTab,
+  activeInfoTab,
   detailsLoading,
   tagsLoading,
   locationsLoading,
   trucksLoading,
   companiesLoading,
+  contactCompaniesLoading,
+  truckSizesLoading,
+  filteredViewsLoading,
+  shareArchiveLoading,
 }) {
   const { showToast } = useToast();
 
+  const editorSectionLoadingMessage = useMemo(() => {
+    const loadingSections = [];
+    if (detailsLoading && (activeTab === "info" || activeTab === "detail")) {
+      loadingSections.push(["schedule details", true]);
+    }
+    if (contactCompaniesLoading && activeTab === "info" && activeInfoTab === "contacts") {
+      loadingSections.push(["contacts", true]);
+    }
+    if (tagsLoading && activeTab === "settings") {
+      loadingSections.push(["tags", true]);
+    }
+    if (locationsLoading && activeTab === "settings") {
+      loadingSections.push(["locations", true]);
+    }
+    if (truckSizesLoading && activeTab === "settings") {
+      loadingSections.push(["truck sizes", true]);
+    }
+    if (trucksLoading && activeTab === "trucks") {
+      loadingSections.push(["trucks", true]);
+    }
+    if (filteredViewsLoading && activeTab === "share") {
+      loadingSections.push(["filtered views", true]);
+    }
+    if (shareArchiveLoading && activeTab === "share") {
+      loadingSections.push(["archive", true]);
+    }
+    if (
+      companiesLoading &&
+      (activeTab === "info" || activeTab === "detail" || activeTab === "trucks")
+    ) {
+      loadingSections.push(["companies", true]);
+    }
+
+    return getSectionLoadingMessage(loadingSections);
+  }, [
+    activeTab,
+    activeInfoTab,
+    contactCompaniesLoading,
+    companiesLoading,
+    detailsLoading,
+    locationsLoading,
+    truckSizesLoading,
+    tagsLoading,
+    filteredViewsLoading,
+    shareArchiveLoading,
+    trucksLoading,
+  ]);
+
   useLoadingToast(
-    detailsLoading && (activeTab === "info" || activeTab === "detail"),
-    "Loading schedule details..."
-  );
-  useLoadingToast(tagsLoading && activeTab === "settings", "Loading tags...");
-  useLoadingToast(locationsLoading && activeTab === "settings", "Loading locations...");
-  useLoadingToast(trucksLoading && activeTab === "trucks", "Loading trucks...");
-  useLoadingToast(
-    companiesLoading && (activeTab === "info" || activeTab === "detail" || activeTab === "trucks"),
-    "Loading companies..."
+    Boolean(editorSectionLoadingMessage),
+    editorSectionLoadingMessage || "Loading event data...",
+    { variant: "loading" }
   );
 
   useEffect(() => {

@@ -1,7 +1,18 @@
 import useLoadingToast from "../hooks/useLoadingToast.js";
 
-export default function Loading({ label = "Loading..." }) {
-  useLoadingToast(true, label);
+export default function Loading({
+  label = "Loading...",
+  withToast = false,
+  id,
+  showAfterMs = 0,
+  persist = true,
+}) {
+  useLoadingToast(withToast, label, {
+    id,
+    persist,
+    showAfterMs,
+    variant: "loading",
+  });
 
-  return <div className="message">{label}</div>;
+  return null;
 }

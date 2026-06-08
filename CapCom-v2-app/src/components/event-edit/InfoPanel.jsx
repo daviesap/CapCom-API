@@ -80,9 +80,7 @@ export default function InfoPanel({
 
       {activeInfoTab === "contacts" ? (
         <div className="settings-section">
-          {detailsLoading || companiesLoading ? (
-            <p className="item-meta">Loading contacts...</p>
-          ) : contactCompanies.length === 0 ? (
+          {contactCompanies.length === 0 ? (
             <p className="item-meta">No companies are tagged in this event schedule yet.</p>
           ) : (
             <div className="company-list">
@@ -190,9 +188,7 @@ export default function InfoPanel({
                             <p className="item-meta company-address">{company.address}</p>
                           ) : null}
 
-                          {companyContactsLoading ? (
-                            <p className="item-meta">Loading contacts...</p>
-                          ) : companyContacts.length === 0 ? (
+                          {companyContacts.length === 0 ? (
                             <p className="item-meta">No contacts yet.</p>
                           ) : (
                             <>

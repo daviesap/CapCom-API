@@ -1,12 +1,44 @@
 import { useEffect, useRef } from "react";
 import { useToast } from "../components/ToastProvider.jsx";
 
-export default function useLoadingToast(isLoading, label = "Loading...") {
+export default function useLoadingToast(
+  isLoading,
+  label = "Loading...",
+  options = {}
+) {
   const { dismissToast, showToast } = useToast();
+  const {
+    variant = "loading",
+    id,
+    persist = true,
+    showAfterMs = 0,
+  } = options;
   const toastIdRef = useRef("");
+  const pendingToastRef = useRef(null);
 
   useEffect(() => {
+    const resolvedId = id || `loading-${label}`;
+    const clearPendingToast = () => {
+      if (pendingToastRef.current) {
+        window.clearTimeout(pendingToastRef.current);
+        pendingToastRef.current = null;
+      }
+    };
+
+    const showLoadingToast = () => {
+      if (toastIdRef.current && toastIdRef.current !== resolvedId) {
+        dismissToast(toastIdRef.current);
+      }
+
+      toastIdRef.current = showToast(label, {
+        id: resolvedId,
+        persist,
+        variant,
+      });
+    };
+
     if (!isLoading) {
+      clearPendingToast();
       if (toastIdRef.current) {
         dismissToast(toastIdRef.current);
         toastIdRef.current = "";
@@ -14,17 +46,27 @@ export default function useLoadingToast(isLoading, label = "Loading...") {
       return undefined;
     }
 
-    toastIdRef.current = showToast(label, {
-      id: `loading-${label}`,
-      persist: true,
-      variant: "loading",
-    });
+    clearPendingToast();
+
+    const delay = Math.max(0, Number(showAfterMs) || 0);
+    if (delay === 0) {
+      showLoadingToast(resolvedId);
+      return () => {
+        if (toastIdRef.current) {
+          dismissToast(toastIdRef.current);
+          toastIdRef.current = "";
+        }
+      };
+    }
+
+    pendingToastRef.current = window.setTimeout(() => {
+      showLoadingToast();
+      pendingToastRef.current = null;
+    }, delay);
 
     return () => {
-      if (toastIdRef.current) {
-        dismissToast(toastIdRef.current);
-        toastIdRef.current = "";
-      }
+      clearPendingToast();
     };
-  }, [dismissToast, isLoading, label, showToast]);
+
+  }, [dismissToast, id, isLoading, label, persist, showAfterMs, showToast, variant]);
 }

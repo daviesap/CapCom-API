@@ -7,9 +7,9 @@ export function ToastProvider({ children }) {
   const defaultDurations = {
     error: 8000,
     warning: 5000,
+    loading: 5000,
     info: 3500,
     success: 3500,
-    loading: 3500,
   };
 
   const dismissToast = useCallback((toastId) => {
@@ -35,19 +35,18 @@ export function ToastProvider({ children }) {
     };
 
     setToasts((current) => {
-      const duplicateActiveToast = !options.id && current.some((toast) =>
-        !toast.exiting && toast.message === message && toast.variant === variant
-      );
+      if (!options.id) {
+        const duplicateActiveToast = current.some((toast) =>
+          !toast.exiting && toast.message === message && toast.variant === variant
+        );
+        if (duplicateActiveToast) return current;
+      }
 
-    if (duplicateActiveToast) {
-      return current;
-    }
-
-    return [
-      nextToast,
-      ...current.filter((toast) => toast.id !== toastId),
-    ].slice(0, 4);
-  });
+      return [
+        nextToast,
+        ...current.filter((toast) => toast.id !== toastId),
+      ].slice(0, 4);
+    });
 
     if (!options.persist) {
       window.setTimeout(() => {

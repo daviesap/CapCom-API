@@ -14,8 +14,8 @@ import CompaniesPage from "../pages/CompaniesPage.jsx";
 function ProtectedRoute() {
   const { user, authLoading } = useAuth();
 
-  if (authLoading) {
-    return <Loading label="Checking sign-in state..." />;
+    if (authLoading) {
+    return <Loading label="Checking sign-in state..." withToast />;
   }
 
   if (!user) {

@@ -6,7 +6,6 @@ import EmptyState from "../components/EmptyState.jsx";
 import Loading from "../components/Loading.jsx";
 import Modal from "../components/Modal.jsx";
 import { CapcomIcon } from "../icons/capcomIcons.jsx";
-import useLoadingToast from "../hooks/useLoadingToast.js";
 import useOnlineStatus from "../hooks/useOnlineStatus.js";
 import { getClient, getClients } from "../services/clientService.js";
 import { createEvent, getEvents } from "../services/eventService.js";
@@ -42,8 +41,6 @@ export default function EventListPage() {
   const [error, setError] = useState("");
   const userCanCreateEvents = canCreateEvents(userProfile);
   const activeClients = clients.filter((client) => client.isActive !== false);
-
-  useLoadingToast(clientsLoading, "Loading clients...");
 
   const loadEvents = async () => {
     setLoading(true);
@@ -192,7 +189,14 @@ export default function EventListPage() {
       {!profileLoading && isClientUser ? (
         <p className="message">ClientUser accounts can view assigned client events but cannot create events.</p>
       ) : null}
-      {loading ? <Loading label="Loading events..." /> : null}
+      {loading ? (
+        <Loading
+          label="Loading events..."
+          withToast
+          id="events-page-loading"
+          showAfterMs={250}
+        />
+      ) : null}
       {!loading && events.length === 0 ? <EmptyState message="No events yet." /> : null}
 
       <section className="list">

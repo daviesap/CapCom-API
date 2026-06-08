@@ -256,9 +256,7 @@ export default function SettingsPanel({
             </Modal>
           ) : null}
 
-          {tagsLoading ? (
-            <p className="item-meta">Loading tags...</p>
-          ) : tags.length === 0 ? (
+          {tags.length === 0 ? (
             <p className="item-meta">No tags yet.</p>
           ) : (
             <div className="tag-list">
@@ -382,9 +380,7 @@ export default function SettingsPanel({
             </Modal>
           ) : null}
 
-          {locationsLoading ? (
-            <p className="item-meta">Loading locations...</p>
-          ) : locations.length === 0 ? (
+          {locations.length === 0 ? (
             <p className="item-meta">No locations yet.</p>
           ) : (
             <div
@@ -467,9 +463,7 @@ export default function SettingsPanel({
             </Modal>
           ) : null}
 
-          {truckSizesLoading ? (
-            <p className="item-meta">Loading truck sizes...</p>
-          ) : truckSizes.length === 0 ? (
+          {truckSizes.length === 0 ? (
             <p className="item-meta">No truck sizes yet.</p>
           ) : (
             <div className="tag-list">

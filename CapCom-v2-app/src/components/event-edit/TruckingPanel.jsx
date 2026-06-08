@@ -214,9 +214,7 @@ export default function TruckingPanel({
           </Modal>
         ) : null}
 
-        {trucksLoading ? (
-          <p className="item-meta">Loading trucks...</p>
-        ) : trucks.length === 0 ? (
+        {trucks.length === 0 ? (
           <p className="item-meta">No trucks yet.</p>
         ) : (
           <section className="list">

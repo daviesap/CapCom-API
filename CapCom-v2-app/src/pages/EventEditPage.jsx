@@ -14,7 +14,6 @@ import TruckingPanel from "../components/event-edit/TruckingPanel.jsx";
 import Loading from "../components/Loading.jsx";
 import { useToast } from "../components/ToastProvider.jsx";
 import { CapcomIcon } from "../icons/capcomIcons.jsx";
-import useLoadingToast from "../hooks/useLoadingToast.js";
 import useOnlineStatus from "../hooks/useOnlineStatus.js";
 import { isEventAdmin } from "../auth/roles.js";
 import { getClients } from "../services/clientService.js";
@@ -502,16 +501,6 @@ export default function EventEditPage() {
   const editableClients = clients.filter((client) => (
     client.isActive !== false || client.id === form.clientId
   ));
-
-  useLoadingToast(
-    (companyContactsLoading || eventContactsLoading) &&
-      activeTab === "info" &&
-      activeInfoTab === "contacts",
-    "Loading contacts..."
-  );
-  useLoadingToast(truckSizesLoading && activeTab === "settings", "Loading truck sizes...");
-  useLoadingToast(filteredViewsLoading && activeTab === "share", "Loading filtered views...");
-  useLoadingToast(shareArchiveLoading && activeTab === "share", "Loading archive...");
 
   useEffect(() => {
     if (profileLoading) return undefined;
@@ -3739,7 +3728,7 @@ export default function EventEditPage() {
     }
   };
 
-  if (loading) return <Loading label="Loading event editor..." />;
+      if (loading) return <Loading label="Loading event editor..." withToast />;
 
   const eventHeaderImageUrl = eventImagePreviewUrl || form.imageUrl;
   const eventDateRangeLabel = formatEventDateRange(form.startDate, form.endDate);
@@ -3776,11 +3765,16 @@ export default function EventEditPage() {
         isSuperAdmin={isSuperAdmin}
         clientId={form.clientId}
         activeTab={activeTab}
+        activeInfoTab={activeInfoTab}
         detailsLoading={detailsLoading}
         tagsLoading={tagsLoading}
         locationsLoading={locationsLoading}
         trucksLoading={trucksLoading}
         companiesLoading={companiesLoading}
+        contactCompaniesLoading={companyContactsLoading || eventContactsLoading}
+        truckSizesLoading={truckSizesLoading}
+        filteredViewsLoading={filteredViewsLoading}
+        shareArchiveLoading={shareArchiveLoading}
       />
 
       <EventEditorTabs
@@ -4268,9 +4262,7 @@ export default function EventEditPage() {
           </form>
         ) : null}
 
-        {filteredViewsLoading ? (
-          <p className="item-meta">Loading filtered views...</p>
-        ) : filteredViews.length === 0 ? (
+        {filteredViews.length === 0 ? (
           <p className="item-meta">No filtered views yet.</p>
         ) : (
           <div className="tag-list">
@@ -4310,9 +4302,7 @@ export default function EventEditPage() {
           <h2>Archive</h2>
         </div>
 
-        {shareArchiveLoading ? (
-          <p className="item-meta">Loading archive...</p>
-        ) : shareArchive.length === 0 ? (
+        {shareArchive.length === 0 ? (
           <p className="item-meta">No archive entries yet.</p>
         ) : (
           <div className="table-wrap">

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../auth/AuthProvider.jsx";
 import { CapcomIcon } from "../icons/capcomIcons.jsx";
+import useLoadingToast from "../hooks/useLoadingToast.js";
 import { updateCurrentUserDebugMode } from "../services/userService.js";
 
 export default function ProfilePage() {
@@ -18,6 +19,8 @@ export default function ProfilePage() {
   const [debugSaving, setDebugSaving] = useState(false);
   const [debugMessage, setDebugMessage] = useState("");
   const [debugError, setDebugError] = useState("");
+
+  useLoadingToast(profileLoading, "Loading access profile...", { variant: "loading" });
 
   useEffect(() => {
     if (!userProfile) return;
@@ -86,21 +89,17 @@ export default function ProfilePage() {
           <div>
             <dt>Access role</dt>
             <dd>
-              {profileLoading ? "Loading..." : userProfile?.role || "No Firestore profile"}
+              {userProfile?.role || "Unavailable"}
             </dd>
           </div>
           <div>
             <dt>Client ID</dt>
-            <dd>{profileLoading ? "Loading..." : userProfile?.clientId || "None"}</dd>
+            <dd>{userProfile?.clientId || "None"}</dd>
           </div>
           <div>
             <dt>Account active</dt>
             <dd>
-              {profileLoading
-                ? "Loading..."
-                : userProfile
-                  ? userProfile.isActive ? "Yes" : "No"
-                  : "Unknown"}
+              {userProfile ? (userProfile.isActive ? "Yes" : "No") : "Unknown"}
             </dd>
           </div>
 
