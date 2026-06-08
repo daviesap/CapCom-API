@@ -124,7 +124,11 @@ export default function InfoPanel({
                           onClick={() => toggleContactCompanyOpen(company.id)}
                         >
                           <span className="accordion-indicator" aria-hidden="true">
-                            {isCompanyOpen ? "v" : ">"}
+                            <CapcomIcon
+                              name={isCompanyOpen ? "caretDoubleDown" : "caretDoubleRight"}
+                              size={14}
+                              weight="bold"
+                            />
                           </span>
                           <span>
                             <span className="company-accordion-title">

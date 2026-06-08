@@ -3,6 +3,7 @@ import {
   AddressBookTabs,
   CaretDoubleLeft,
   CaretDoubleRight,
+  CaretDoubleDown,
   ArrowDown,
   ArrowUp,
   Buildings,
@@ -31,6 +32,7 @@ import {
 export const capcomIcons = {
   caretDoubleLeft: CaretDoubleLeft,
   caretDoubleRight: CaretDoubleRight,
+  caretDoubleDown: CaretDoubleDown,
   admin: ShieldCheck,
   catering: ForkKnife,
   contact: AddressBook,
