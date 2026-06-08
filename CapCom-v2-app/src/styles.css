@@ -686,6 +686,12 @@ textarea {
   color: #9a3412;
 }
 
+.day-row-count.warning {
+  background: #fff4e6;
+  border-color: #f6c77a;
+  color: #8a4d10;
+}
+
 .day-edit-list {
   display: grid;
   gap: 14px;
