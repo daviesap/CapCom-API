@@ -47,13 +47,20 @@ export default function DraftDetailRow({
 
     if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
-      if (savingDraftDayId === dayId || !draft.description.trim() || isOffline) return;
+      if (!canSaveDraft) return;
       saveDraftDetail(dayId, draftIndex, draft);
     }
   };
   const hasTag = Boolean(getTagById(draft.tagId));
   const hasLocation = Boolean(getLocationById(draft.locationId));
   const hasCompany = (draft.companyIds || []).length > 0;
+  const canSaveDraft =
+    Boolean(draft.description.trim()) &&
+    (!showTagColumn || hasTag) &&
+    (!showLocationColumn || hasLocation) &&
+    (!showCompanyColumn || hasCompany) &&
+    savingDraftDayId !== dayId &&
+    !isOffline;
 
   return (
     <div
@@ -190,7 +197,7 @@ export default function DraftDetailRow({
         <button
           className="button"
           type="button"
-          disabled={savingDraftDayId === dayId || !draft.description.trim() || isOffline}
+          disabled={!canSaveDraft}
           onClick={() => saveDraftDetail(dayId, draftIndex, draft)}
         >
           {savingDraftDayId === dayId ? "Saving..." : "Save"}
