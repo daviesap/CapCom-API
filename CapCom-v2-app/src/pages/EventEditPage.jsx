@@ -2400,6 +2400,22 @@ export default function EventEditPage() {
       setError("Editing is disabled while offline.");
       return;
     }
+    if (!draft.description?.trim()) {
+      setError("Description is required.");
+      return;
+    }
+    if (showTagColumn && !getTagById(draft.tagId)) {
+      setError("Tag is required.");
+      return;
+    }
+    if (showLocationColumn && !getLocationById(draft.locationId)) {
+      setError("Location is required.");
+      return;
+    }
+    if (showCompanyColumn && (draft.companyIds || []).length === 0) {
+      setError("Company is required.");
+      return;
+    }
     setSavingDraftDayId(dayId);
     setError("");
 
