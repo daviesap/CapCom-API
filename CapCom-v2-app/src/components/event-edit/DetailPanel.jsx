@@ -64,6 +64,77 @@ export default function DetailPanel({
   savingDraftDayId,
   saveDraftDetail,
 }) {
+  const detailDisplay = {
+    formatDetailDate,
+    getNoRowsMessage,
+    getDetailRowStyle,
+    getRowTagStyle,
+    getTagById,
+    showTagColumn,
+    getTagStyle,
+    normaliseHexColour,
+    tags,
+    showLocationColumn,
+    getLocationById,
+    locationOptions,
+    showCompanyColumn,
+    getCompanyLabel,
+    companies,
+  };
+  const dayActions = {
+    isOffline,
+    addDraftDetail,
+    startEditingDay,
+  };
+  const rowEditing = {
+    isEditingDetailCell,
+    detailCellInputRef,
+    suppressDetailBlurRef,
+    saveDetailCell,
+    updateDetailField,
+    handleDetailCellKeyDown,
+    startEditingDetailCell,
+  };
+  const rowOrdering = {
+    canMoveDetail,
+    getAdjacentDay,
+    draggedDetailIdRef,
+    reorderDetail,
+    reorderingDayId,
+    moveDetail,
+    moveDetailToDay,
+  };
+  const rowAssignments = {
+    savingDetailId,
+    assignDetailTag,
+    assignDetailLocation,
+    assignDetailCompanies,
+    toggleCompanyIds,
+  };
+  const rowNotes = {
+    openNotesDetailId,
+    closeNotesEditor,
+    openNotesEditor,
+    notesDraft,
+    setNotesDraft,
+    saveDetailNotes,
+  };
+  const rowActions = {
+    openActionMenuId,
+    setOpenActionMenuId,
+    beginRowAction,
+    endRowAction,
+    duplicateDetail,
+    closeActionMenu,
+    deleteDetail,
+  };
+  const draftActions = {
+    updateDraftDetail,
+    removeDraftDetail,
+    savingDraftDayId,
+    saveDraftDetail,
+  };
+
   return (
     <>
       {scheduleDays.length === 0 ? (
@@ -100,60 +171,14 @@ export default function DetailPanel({
                 day={day}
                 dayDetails={dayDetails}
                 draftDetails={draftDetails}
-                formatDetailDate={formatDetailDate}
-                isOffline={isOffline}
-                addDraftDetail={addDraftDetail}
-                startEditingDay={startEditingDay}
-                getNoRowsMessage={getNoRowsMessage}
-                isEditingDetailCell={isEditingDetailCell}
-                canMoveDetail={canMoveDetail}
-                getAdjacentDay={getAdjacentDay}
-                getDetailRowStyle={getDetailRowStyle}
-                getRowTagStyle={getRowTagStyle}
-                getTagById={getTagById}
-                draggedDetailIdRef={draggedDetailIdRef}
-                reorderDetail={reorderDetail}
-                detailCellInputRef={detailCellInputRef}
-                suppressDetailBlurRef={suppressDetailBlurRef}
-                saveDetailCell={saveDetailCell}
-                updateDetailField={updateDetailField}
-                handleDetailCellKeyDown={handleDetailCellKeyDown}
-                startEditingDetailCell={startEditingDetailCell}
-                showTagColumn={showTagColumn}
-                getTagStyle={getTagStyle}
-                normaliseHexColour={normaliseHexColour}
-                savingDetailId={savingDetailId}
-                assignDetailTag={assignDetailTag}
-                tags={tags}
-                showLocationColumn={showLocationColumn}
-                getLocationById={getLocationById}
-                assignDetailLocation={assignDetailLocation}
-                locationOptions={locationOptions}
-                showCompanyColumn={showCompanyColumn}
-                getCompanyLabel={getCompanyLabel}
-                companies={companies}
-                assignDetailCompanies={assignDetailCompanies}
-                toggleCompanyIds={toggleCompanyIds}
-                openNotesDetailId={openNotesDetailId}
-                closeNotesEditor={closeNotesEditor}
-                openNotesEditor={openNotesEditor}
-                notesDraft={notesDraft}
-                setNotesDraft={setNotesDraft}
-                saveDetailNotes={saveDetailNotes}
-                openActionMenuId={openActionMenuId}
-                setOpenActionMenuId={setOpenActionMenuId}
-                beginRowAction={beginRowAction}
-                endRowAction={endRowAction}
-                reorderingDayId={reorderingDayId}
-                moveDetail={moveDetail}
-                moveDetailToDay={moveDetailToDay}
-                duplicateDetail={duplicateDetail}
-                closeActionMenu={closeActionMenu}
-                deleteDetail={deleteDetail}
-                updateDraftDetail={updateDraftDetail}
-                removeDraftDetail={removeDraftDetail}
-                savingDraftDayId={savingDraftDayId}
-                saveDraftDetail={saveDraftDetail}
+                detailDisplay={detailDisplay}
+                dayActions={dayActions}
+                rowEditing={rowEditing}
+                rowOrdering={rowOrdering}
+                rowAssignments={rowAssignments}
+                rowNotes={rowNotes}
+                rowActions={rowActions}
+                draftActions={draftActions}
               />
             );
           })}

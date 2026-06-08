@@ -5,61 +5,18 @@ export default function DetailDayCard({
   day,
   dayDetails,
   draftDetails,
-  formatDetailDate,
-  isOffline,
-  addDraftDetail,
-  startEditingDay,
-  getNoRowsMessage,
-  isEditingDetailCell,
-  canMoveDetail,
-  getAdjacentDay,
-  getDetailRowStyle,
-  getRowTagStyle,
-  getTagById,
-  draggedDetailIdRef,
-  reorderDetail,
-  detailCellInputRef,
-  suppressDetailBlurRef,
-  saveDetailCell,
-  updateDetailField,
-  handleDetailCellKeyDown,
-  startEditingDetailCell,
-  showTagColumn,
-  getTagStyle,
-  normaliseHexColour,
-  savingDetailId,
-  assignDetailTag,
-  tags,
-  showLocationColumn,
-  getLocationById,
-  assignDetailLocation,
-  locationOptions,
-  showCompanyColumn,
-  getCompanyLabel,
-  companies,
-  assignDetailCompanies,
-  toggleCompanyIds,
-  openNotesDetailId,
-  closeNotesEditor,
-  openNotesEditor,
-  notesDraft,
-  setNotesDraft,
-  saveDetailNotes,
-  openActionMenuId,
-  setOpenActionMenuId,
-  beginRowAction,
-  endRowAction,
-  reorderingDayId,
-  moveDetail,
-  moveDetailToDay,
-  duplicateDetail,
-  closeActionMenu,
-  deleteDetail,
-  updateDraftDetail,
-  removeDraftDetail,
-  savingDraftDayId,
-  saveDraftDetail,
+  detailDisplay,
+  dayActions,
+  rowEditing,
+  rowOrdering,
+  rowAssignments,
+  rowNotes,
+  rowActions,
+  draftActions,
 }) {
+  const { formatDetailDate, getNoRowsMessage } = detailDisplay;
+  const { isOffline, addDraftDetail, startEditingDay } = dayActions;
+
   return (
     <article className="list-item">
       <div className="day-card-content">
@@ -104,51 +61,12 @@ export default function DetailDayCard({
                 detailIndex={detailIndex}
                 dayDetails={dayDetails}
                 isOffline={isOffline}
-                isEditingDetailCell={isEditingDetailCell}
-                canMoveDetail={canMoveDetail}
-                getAdjacentDay={getAdjacentDay}
-                getDetailRowStyle={getDetailRowStyle}
-                getRowTagStyle={getRowTagStyle}
-                getTagById={getTagById}
-                draggedDetailIdRef={draggedDetailIdRef}
-                reorderDetail={reorderDetail}
-                detailCellInputRef={detailCellInputRef}
-                suppressDetailBlurRef={suppressDetailBlurRef}
-                saveDetailCell={saveDetailCell}
-                updateDetailField={updateDetailField}
-                handleDetailCellKeyDown={handleDetailCellKeyDown}
-                startEditingDetailCell={startEditingDetailCell}
-                showTagColumn={showTagColumn}
-                getTagStyle={getTagStyle}
-                normaliseHexColour={normaliseHexColour}
-                savingDetailId={savingDetailId}
-                assignDetailTag={assignDetailTag}
-                tags={tags}
-                showLocationColumn={showLocationColumn}
-                getLocationById={getLocationById}
-                assignDetailLocation={assignDetailLocation}
-                locationOptions={locationOptions}
-                showCompanyColumn={showCompanyColumn}
-                getCompanyLabel={getCompanyLabel}
-                companies={companies}
-                assignDetailCompanies={assignDetailCompanies}
-                toggleCompanyIds={toggleCompanyIds}
-                openNotesDetailId={openNotesDetailId}
-                closeNotesEditor={closeNotesEditor}
-                openNotesEditor={openNotesEditor}
-                notesDraft={notesDraft}
-                setNotesDraft={setNotesDraft}
-                saveDetailNotes={saveDetailNotes}
-                openActionMenuId={openActionMenuId}
-                setOpenActionMenuId={setOpenActionMenuId}
-                beginRowAction={beginRowAction}
-                endRowAction={endRowAction}
-                reorderingDayId={reorderingDayId}
-                moveDetail={moveDetail}
-                moveDetailToDay={moveDetailToDay}
-                duplicateDetail={duplicateDetail}
-                closeActionMenu={closeActionMenu}
-                deleteDetail={deleteDetail}
+                detailDisplay={detailDisplay}
+                rowEditing={rowEditing}
+                rowOrdering={rowOrdering}
+                rowAssignments={rowAssignments}
+                rowNotes={rowNotes}
+                rowActions={rowActions}
               />
             ))}
             {draftDetails.map((draft, draftIndex) => (
@@ -158,23 +76,9 @@ export default function DetailDayCard({
                 draft={draft}
                 draftIndex={draftIndex}
                 isOffline={isOffline}
-                getDetailRowStyle={getDetailRowStyle}
-                showTagColumn={showTagColumn}
-                getTagStyle={getTagStyle}
-                getTagById={getTagById}
-                normaliseHexColour={normaliseHexColour}
-                tags={tags}
-                showLocationColumn={showLocationColumn}
-                getLocationById={getLocationById}
-                locationOptions={locationOptions}
-                showCompanyColumn={showCompanyColumn}
-                getCompanyLabel={getCompanyLabel}
-                companies={companies}
-                toggleCompanyIds={toggleCompanyIds}
-                updateDraftDetail={updateDraftDetail}
-                removeDraftDetail={removeDraftDetail}
-                savingDraftDayId={savingDraftDayId}
-                saveDraftDetail={saveDraftDetail}
+                detailDisplay={detailDisplay}
+                rowAssignments={rowAssignments}
+                draftActions={draftActions}
               />
             ))}
           </div>

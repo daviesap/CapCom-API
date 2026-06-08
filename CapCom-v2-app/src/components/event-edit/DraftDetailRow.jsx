@@ -3,24 +3,32 @@ export default function DraftDetailRow({
   draft,
   draftIndex,
   isOffline,
-  getDetailRowStyle,
-  showTagColumn,
-  getTagStyle,
-  getTagById,
-  normaliseHexColour,
-  tags,
-  showLocationColumn,
-  getLocationById,
-  locationOptions,
-  showCompanyColumn,
-  getCompanyLabel,
-  companies,
-  toggleCompanyIds,
-  updateDraftDetail,
-  removeDraftDetail,
-  savingDraftDayId,
-  saveDraftDetail,
+  detailDisplay,
+  rowAssignments,
+  draftActions,
 }) {
+  const {
+    getDetailRowStyle,
+    showTagColumn,
+    getTagStyle,
+    getTagById,
+    normaliseHexColour,
+    tags,
+    showLocationColumn,
+    getLocationById,
+    locationOptions,
+    showCompanyColumn,
+    getCompanyLabel,
+    companies,
+  } = detailDisplay;
+  const { toggleCompanyIds } = rowAssignments;
+  const {
+    updateDraftDetail,
+    removeDraftDetail,
+    savingDraftDayId,
+    saveDraftDetail,
+  } = draftActions;
+
   return (
     <div
       className="detail-row draft-row"
