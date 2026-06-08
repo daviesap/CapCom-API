@@ -1,4 +1,5 @@
 import { CapcomIcon } from "../../icons/capcomIcons.jsx";
+import useLoadingToast from "../../hooks/useLoadingToast.js";
 
 export default function EventEditorStatusMessages({
   error,
@@ -12,6 +13,18 @@ export default function EventEditorStatusMessages({
   trucksLoading,
   companiesLoading,
 }) {
+  useLoadingToast(
+    detailsLoading && (activeTab === "info" || activeTab === "detail"),
+    "Loading schedule details..."
+  );
+  useLoadingToast(tagsLoading && activeTab === "settings", "Loading tags...");
+  useLoadingToast(locationsLoading && activeTab === "settings", "Loading locations...");
+  useLoadingToast(trucksLoading && activeTab === "trucks", "Loading trucks...");
+  useLoadingToast(
+    companiesLoading && (activeTab === "info" || activeTab === "detail" || activeTab === "trucks"),
+    "Loading companies..."
+  );
+
   return (
     <>
       {error ? <p className="error">{error}</p> : null}

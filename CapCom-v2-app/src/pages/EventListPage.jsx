@@ -6,6 +6,7 @@ import EmptyState from "../components/EmptyState.jsx";
 import Loading from "../components/Loading.jsx";
 import Modal from "../components/Modal.jsx";
 import { CapcomIcon } from "../icons/capcomIcons.jsx";
+import useLoadingToast from "../hooks/useLoadingToast.js";
 import useOnlineStatus from "../hooks/useOnlineStatus.js";
 import { getClient, getClients } from "../services/clientService.js";
 import { createEvent, getEvents } from "../services/eventService.js";
@@ -41,6 +42,8 @@ export default function EventListPage() {
   const [error, setError] = useState("");
   const userCanCreateEvents = canCreateEvents(userProfile);
   const activeClients = clients.filter((client) => client.isActive !== false);
+
+  useLoadingToast(clientsLoading, "Loading clients...");
 
   const loadEvents = async () => {
     setLoading(true);

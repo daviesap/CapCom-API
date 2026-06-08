@@ -3,6 +3,7 @@ import { useAuth } from "../auth/AuthProvider.jsx";
 import { USER_ROLES } from "../auth/roles.js";
 import Modal from "../components/Modal.jsx";
 import { CapcomIcon } from "../icons/capcomIcons.jsx";
+import useLoadingToast from "../hooks/useLoadingToast.js";
 import {
   CLIENT_DEFAULTS,
   createClient,
@@ -87,6 +88,10 @@ export default function AdminPage() {
     if (!userProfile?.clientId) return [];
     return clients.filter((client) => client.id === userProfile.clientId);
   }, [clients, isSuperAdmin, userProfile?.clientId]);
+
+  useLoadingToast(profileLoading, "Loading access profile...");
+  useLoadingToast(clientsLoading, "Loading clients...");
+  useLoadingToast(usersLoading, "Loading users...");
 
   const loadClients = async () => {
     setClientsLoading(true);

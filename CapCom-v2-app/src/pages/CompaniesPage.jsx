@@ -3,6 +3,7 @@ import { useAuth } from "../auth/AuthProvider.jsx";
 import Loading from "../components/Loading.jsx";
 import Modal from "../components/Modal.jsx";
 import { CapcomIcon } from "../icons/capcomIcons.jsx";
+import useLoadingToast from "../hooks/useLoadingToast.js";
 import useOnlineStatus from "../hooks/useOnlineStatus.js";
 import { getClient, getClients } from "../services/clientService.js";
 import {
@@ -43,6 +44,9 @@ export default function CompaniesPage() {
     () => clients.find((client) => client.id === selectedClientId),
     [clients, selectedClientId]
   );
+
+  useLoadingToast(clientsLoading, "Loading clients...");
+  useLoadingToast(companiesLoading, "Loading companies...");
 
   useEffect(() => {
     if (profileLoading) return;

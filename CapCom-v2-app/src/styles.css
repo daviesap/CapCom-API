@@ -1968,20 +1968,42 @@ textarea {
   text-align: left;
 }
 
+.toast-region {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  left: 50%;
+  pointer-events: none;
+  position: fixed;
+  top: 18px;
+  transform: translateX(-50%);
+  width: min(420px, calc(100vw - 32px));
+  z-index: 60;
+}
+
 .toast {
   background: var(--color-text);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-raised);
   color: var(--color-surface);
   font-weight: 600;
-  left: 50%;
-  max-width: min(420px, calc(100vw - 32px));
+  max-width: 100%;
   padding: 12px 16px;
-  position: fixed;
   text-align: center;
-  top: 18px;
-  transform: translateX(-50%);
-  z-index: 30;
+  width: fit-content;
+}
+
+.toast-loading {
+  background: #223143;
+}
+
+.toast-success {
+  background: var(--color-success-text);
+}
+
+.toast-error {
+  background: var(--color-danger-text);
 }
 
 .error {

@@ -12,7 +12,9 @@ import SettingsPanel from "../components/event-edit/SettingsPanel.jsx";
 import SummaryPanel from "../components/event-edit/SummaryPanel.jsx";
 import TruckingPanel from "../components/event-edit/TruckingPanel.jsx";
 import Loading from "../components/Loading.jsx";
+import { useToast } from "../components/ToastProvider.jsx";
 import { CapcomIcon } from "../icons/capcomIcons.jsx";
+import useLoadingToast from "../hooks/useLoadingToast.js";
 import useOnlineStatus from "../hooks/useOnlineStatus.js";
 import { isEventAdmin } from "../auth/roles.js";
 import { getClients } from "../services/clientService.js";
@@ -354,6 +356,7 @@ function getRowTagStyle(tag) {
 export default function EventEditPage() {
   const { eventId } = useParams();
   const { userProfile, profileLoading, isSuperAdmin, isClientAdmin } = useAuth();
+  const { showToast } = useToast();
   const isOnline = useOnlineStatus();
   const isOffline = !isOnline;
   const [form, setForm] = useState(emptyEventForm);
@@ -461,6 +464,11 @@ export default function EventEditPage() {
   const editableClients = clients.filter((client) => (
     client.isActive !== false || client.id === form.clientId
   ));
+
+  useLoadingToast(companyContactsLoading, "Loading contacts...");
+  useLoadingToast(truckSizesLoading && activeTab === "settings", "Loading truck sizes...");
+  useLoadingToast(filteredViewsLoading && activeTab === "share", "Loading filtered views...");
+  useLoadingToast(shareArchiveLoading && activeTab === "share", "Loading archive...");
 
   useEffect(() => {
     if (profileLoading) return undefined;
@@ -665,14 +673,10 @@ export default function EventEditPage() {
   }, [eventImageFile]);
 
   useEffect(() => {
-    if (!message) return undefined;
-
-    const toastTimer = window.setTimeout(() => {
-      setMessage("");
-    }, 3500);
-
-    return () => window.clearTimeout(toastTimer);
-  }, [message]);
+    if (!message) return;
+    showToast(message, { variant: "success" });
+    setMessage("");
+  }, [message, showToast]);
 
   const scheduleDetails = useMemo(() => {
     return Object.values(detailsByDayId).flat();
@@ -3357,11 +3361,6 @@ export default function EventEditPage() {
 
   return (
     <main className="page">
-      {message ? (
-        <div className="toast" role="status" aria-live="polite">
-          {message}
-        </div>
-      ) : null}
       <EventEditorHeader
         eventId={eventId}
         form={form}
