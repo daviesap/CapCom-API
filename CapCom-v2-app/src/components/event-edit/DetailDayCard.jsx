@@ -72,24 +72,24 @@ export default function DetailDayCard({
               />
             </p>
           </div>
-        </div>
-        <div className="day-card-actions">
-          <button
-            className="small-button"
-            type="button"
-            disabled={isOffline}
-            onClick={() => addDraftDetail(day.id)}
-          >
-            Add row
-          </button>
-          <button
-            className="compact-button"
-            type="button"
-            disabled={isOffline}
-            onClick={() => startEditingDay(day, "overlay")}
-          >
-            Edit day
-          </button>
+          <div className="day-card-actions">
+            <button
+              className="small-button"
+              type="button"
+              disabled={isOffline}
+              onClick={() => addDraftDetail(day.id)}
+            >
+              Add row
+            </button>
+            <button
+              className="compact-button"
+              type="button"
+              disabled={isOffline}
+              onClick={() => startEditingDay(day, "overlay")}
+            >
+              Edit day
+            </button>
+          </div>
         </div>
 
         {!hasRowsOrDrafts ? (
