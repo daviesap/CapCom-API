@@ -51,6 +51,9 @@ export default function DraftDetailRow({
       saveDraftDetail(dayId, draftIndex, draft);
     }
   };
+  const hasTag = Boolean(getTagById(draft.tagId));
+  const hasLocation = Boolean(getLocationById(draft.locationId));
+  const hasCompany = (draft.companyIds || []).length > 0;
 
   return (
     <div
@@ -59,6 +62,7 @@ export default function DraftDetailRow({
       style={getDetailRowStyle()}
     >
       <input
+        className="plain-input"
         aria-label="New detail time"
         type="time"
         value={draft.time}
@@ -67,6 +71,7 @@ export default function DraftDetailRow({
         onKeyDown={handleDraftKeyDown}
       />
       <input
+        className="plain-input"
         ref={descriptionInputRef}
         aria-label="New detail description"
         value={draft.description}
@@ -80,7 +85,11 @@ export default function DraftDetailRow({
       />
       {showTagColumn ? (
         <div
-          className="tag-select-wrap"
+          className={[
+            "tag-select-wrap",
+            "detail-select-field",
+            hasTag ? "" : "detail-select-field-missing",
+          ].filter(Boolean).join(" ")}
           style={getTagStyle(getTagById(draft.tagId))}
         >
           <span
@@ -106,7 +115,13 @@ export default function DraftDetailRow({
         </div>
       ) : null}
       {showLocationColumn ? (
-        <div className="location-select-wrap">
+        <div
+          className={[
+            "location-select-wrap",
+            "detail-select-field",
+            hasLocation ? "" : "detail-select-field-missing",
+          ].filter(Boolean).join(" ")}
+        >
           <select
             aria-label="New detail location"
             value={getLocationById(draft.locationId) ? draft.locationId : ""}
@@ -125,10 +140,19 @@ export default function DraftDetailRow({
         </div>
       ) : null}
       {showCompanyColumn ? (
-        <details className="company-dropdown">
+        <details
+          className={[
+            "company-dropdown",
+            "detail-select-field",
+            hasCompany ? "" : "detail-select-field-missing",
+          ].filter(Boolean).join(" ")}
+        >
           <summary
             aria-label="New detail company"
-            className="company-dropdown-trigger"
+            className={[
+              "company-dropdown-trigger",
+              hasCompany ? "" : "detail-select-field-empty",
+            ].filter(Boolean).join(" ")}
           >
             {getCompanyLabel(draft.companyIds || [])}
           </summary>
