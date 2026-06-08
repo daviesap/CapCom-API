@@ -2363,6 +2363,14 @@ export default function EventEditPage() {
 
   const addDraftDetail = (dayId) => {
     if (isOffline) return;
+    const defaultTagId =
+      showTagColumn && selectedTagFilterId ? selectedTagFilterId :
+      showTagColumn && tags.length === 1 ? tags[0].id :
+      "";
+    const defaultLocationId =
+      showLocationColumn && locationOptions.length === 1 ? locationOptions[0].id : "";
+    const defaultCompanyIds =
+      showCompanyColumn && companies.length === 1 ? [companies[0].id] : [];
     setDraftDetailsByDayId((current) => ({
       ...current,
       [dayId]: [
@@ -2371,9 +2379,9 @@ export default function EventEditPage() {
           time: "",
           description: "",
           colour: "",
-          tagId: selectedTagFilterId || "",
-          locationId: "",
-          companyIds: [],
+          tagId: defaultTagId,
+          locationId: defaultLocationId,
+          companyIds: defaultCompanyIds,
         },
       ],
     }));
