@@ -220,18 +220,16 @@ export default function TruckingPanel({
                 const hasDestination = !showTruckDestinationColumn || Boolean(
                   getTruckDestinationValue(detail)
                 );
-                const hasTime = Boolean(detail.time);
 
-                return !(hasDate && hasDestination && hasTime);
+                return !(hasDate && hasDestination);
               }).length;
               const draftIncompleteCount = draftTruckDetails.filter((draft) => {
                 const hasDate = Boolean(draft.scheduleDayId);
                 const hasDestination = !showTruckDestinationColumn || Boolean(
                   getTruckDestinationValue(draft)
                 );
-                const hasTime = Boolean(draft.time);
 
-                return !(hasDate && hasDestination && hasTime);
+                return !(hasDate && hasDestination);
               }).length;
               const incompleteTruckDetailCount = savedIncompleteCount + draftIncompleteCount;
 
