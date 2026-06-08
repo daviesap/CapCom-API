@@ -4,6 +4,7 @@ import { useAuth } from "../auth/AuthProvider.jsx";
 import EventEditorHeader from "../components/event-edit/EventEditorHeader.jsx";
 import EventEditorStatusMessages from "../components/event-edit/EventEditorStatusMessages.jsx";
 import EventEditorTabs from "../components/event-edit/EventEditorTabs.jsx";
+import DetailFilters from "../components/event-edit/DetailFilters.jsx";
 import InfoPanel from "../components/event-edit/InfoPanel.jsx";
 import SettingsPanel from "../components/event-edit/SettingsPanel.jsx";
 import SummaryPanel from "../components/event-edit/SummaryPanel.jsx";
@@ -2921,143 +2922,27 @@ export default function EventEditPage() {
 
       {activeTab === "detail" ? (
       <section className="panel">
-        {usedTags.length > 0 ||
-        usedLocationFilters.length > 0 ||
-        usedSubLocationFilters.length > 0 ||
-        usedCompanies.length > 0 ? (
-          <div className="filter-groups" aria-label="Filter schedule rows">
-            {hasActiveScheduleFilters ? (
-              <div className="tag-filter-bar" aria-label="Clear schedule row filters">
-                <button
-                  className="tag-filter-button"
-                  type="button"
-                  onClick={clearScheduleFilters}
-                >
-                  Clear filters
-                </button>
-              </div>
-            ) : null}
-            {usedTags.length > 0 ? (
-              <div className="tag-filter-bar" aria-label="Filter schedule rows by tag">
-                <button
-                  className={!selectedTagFilterId ? "tag-filter-button active" : "tag-filter-button"}
-                  type="button"
-                  onClick={() => setSelectedTagFilterId("")}
-                >
-                  All tags
-                </button>
-                {usedTags.map((tag) => (
-                  <button
-                    className={
-                      selectedTagFilterId === tag.id
-                        ? "tag-filter-button active"
-                        : "tag-filter-button"
-                    }
-                    type="button"
-                    key={tag.id}
-                    style={selectedTagFilterId === tag.id ? getTagStyle(tag) : undefined}
-                    onClick={() =>
-                      setSelectedTagFilterId((current) => (current === tag.id ? "" : tag.id))
-                    }
-                  >
-                    <span
-                      className="tag-dot"
-                      style={{ backgroundColor: normaliseHexColour(tag.colour) }}
-                    />
-                    {tag.name}
-                  </button>
-                ))}
-              </div>
-            ) : null}
-            {usedLocationFilters.length > 0 ? (
-              <div className="tag-filter-bar" aria-label="Filter schedule rows by location">
-                <button
-                  className={
-                    selectedLocationFilterIds.length === 0
-                      ? "tag-filter-button active"
-                      : "tag-filter-button"
-                  }
-                  type="button"
-                  onClick={() => setSelectedLocationFilterIds([])}
-                >
-                  All locations
-                </button>
-                {usedLocationFilters.map((location) => (
-                  <button
-                    className={
-                      selectedLocationFilterIds.includes(location.id)
-                        ? "tag-filter-button active"
-                        : "tag-filter-button"
-                    }
-                    type="button"
-                    key={location.id}
-                    onClick={() => toggleLocationFilter(location.id)}
-                  >
-                    {location.name}
-                  </button>
-                ))}
-              </div>
-            ) : null}
-            {usedSubLocationFilters.length > 0 ? (
-              <div className="tag-filter-bar" aria-label="Filter schedule rows by sub location">
-                <button
-                  className={
-                    selectedSubLocationFilterIds.length === 0
-                      ? "tag-filter-button active"
-                      : "tag-filter-button"
-                  }
-                  type="button"
-                  onClick={() => setSelectedSubLocationFilterIds([])}
-                >
-                  All sub locations
-                </button>
-                {usedSubLocationFilters.map((location) => (
-                  <button
-                    className={
-                      selectedSubLocationFilterIds.includes(location.id)
-                        ? "tag-filter-button active"
-                        : "tag-filter-button"
-                    }
-                    type="button"
-                    key={location.id}
-                    onClick={() => toggleSubLocationFilter(location.id)}
-                  >
-                    {location.displayName}
-                  </button>
-                ))}
-              </div>
-            ) : null}
-            {usedCompanies.length > 0 ? (
-              <div className="tag-filter-bar" aria-label="Filter schedule rows by company">
-                <button
-                  className={
-                    selectedCompanyFilterIds.length === 0
-                      ? "tag-filter-button active"
-                      : "tag-filter-button"
-                  }
-                  type="button"
-                  onClick={() => setSelectedCompanyFilterIds([])}
-                >
-                  All companies
-                </button>
-                {usedCompanies.map((company) => (
-                  <button
-                    className={
-                      selectedCompanyFilterIds.includes(company.id)
-                        ? "tag-filter-button active"
-                        : "tag-filter-button"
-                    }
-                    type="button"
-                    key={company.id}
-                    onClick={() => toggleCompanyFilter(company.id)}
-                  >
-                    {company.companyName}
-                  </button>
-                ))}
-              </div>
-            ) : null}
-          </div>
-        ) : null}
+        <DetailFilters
+          usedTags={usedTags}
+          usedLocationFilters={usedLocationFilters}
+          usedSubLocationFilters={usedSubLocationFilters}
+          usedCompanies={usedCompanies}
+          hasActiveScheduleFilters={hasActiveScheduleFilters}
+          selectedTagFilterId={selectedTagFilterId}
+          selectedLocationFilterIds={selectedLocationFilterIds}
+          selectedSubLocationFilterIds={selectedSubLocationFilterIds}
+          selectedCompanyFilterIds={selectedCompanyFilterIds}
+          getTagStyle={getTagStyle}
+          normaliseHexColour={normaliseHexColour}
+          clearScheduleFilters={clearScheduleFilters}
+          setSelectedTagFilterId={setSelectedTagFilterId}
+          setSelectedLocationFilterIds={setSelectedLocationFilterIds}
+          setSelectedSubLocationFilterIds={setSelectedSubLocationFilterIds}
+          setSelectedCompanyFilterIds={setSelectedCompanyFilterIds}
+          toggleLocationFilter={toggleLocationFilter}
+          toggleSubLocationFilter={toggleSubLocationFilter}
+          toggleCompanyFilter={toggleCompanyFilter}
+        />
         {scheduleDays.length === 0 ? (
           <p className="item-meta">No schedule days yet.</p>
         ) : (
