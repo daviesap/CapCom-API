@@ -971,6 +971,30 @@ textarea {
   white-space: nowrap;
 }
 
+.detail-description-cell {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+}
+
+.detail-description-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.detail-notes-badge {
+  background: #eef2ff;
+  border: 1px solid #c7d2fe;
+  border-radius: var(--radius-pill);
+  color: #3730a3;
+  flex: 0 0 auto;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  padding: 3px 7px;
+}
+
 .detail-cell:hover:not(:disabled),
 .detail-cell:focus-visible {
   background: #f7f9fb;

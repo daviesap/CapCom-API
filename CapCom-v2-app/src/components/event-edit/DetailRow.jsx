@@ -177,7 +177,8 @@ export default function DetailRow({
           disabled={isOffline}
           onClick={() => startEditingDetailCell(day.id, detail.id, "description")}
         >
-          {detail.description || ""}
+          <span className="detail-description-text">{detail.description || ""}</span>
+          {detail.notes?.trim() ? <span className="detail-notes-badge">Notes</span> : null}
         </button>
       )}
       {showTagColumn ? (
