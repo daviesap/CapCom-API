@@ -1,12 +1,16 @@
+import { useEffect, useRef } from "react";
+
 export default function DraftDetailRow({
   dayId,
   draft,
   draftIndex,
+  shouldFocusDescription,
   isOffline,
   detailDisplay,
   rowAssignments,
   draftActions,
 }) {
+  const descriptionInputRef = useRef(null);
   const {
     getDetailRowStyle,
     showTagColumn,
@@ -29,6 +33,11 @@ export default function DraftDetailRow({
     saveDraftDetail,
   } = draftActions;
 
+  useEffect(() => {
+    if (!shouldFocusDescription || isOffline) return;
+    descriptionInputRef.current?.focus({ preventScroll: true });
+  }, [isOffline, shouldFocusDescription]);
+
   return (
     <div
       className="detail-row draft-row"
@@ -43,6 +52,7 @@ export default function DraftDetailRow({
         onChange={(event) => updateDraftDetail(dayId, draftIndex, "time", event.target.value)}
       />
       <input
+        ref={descriptionInputRef}
         aria-label="New detail description"
         value={draft.description}
         disabled={isOffline}

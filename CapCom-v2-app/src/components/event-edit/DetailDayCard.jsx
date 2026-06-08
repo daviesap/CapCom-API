@@ -122,6 +122,7 @@ export default function DetailDayCard({
                   dayId={day.id}
                   draft={draft}
                   draftIndex={draftIndex}
+                  shouldFocusDescription={draftIndex === draftDetails.length - 1}
                   isOffline={isOffline}
                   detailDisplay={detailDisplay}
                   rowAssignments={rowAssignments}
