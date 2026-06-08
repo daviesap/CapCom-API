@@ -14,7 +14,6 @@ export default function DetailPanel({
   isOffline,
   addDraftDetail,
   startEditingDay,
-  getNoRowsMessage,
   isEditingDetailCell,
   canMoveDetail,
   getAdjacentDay,
@@ -74,7 +73,6 @@ export default function DetailPanel({
   };
   const detailDisplay = {
     formatDetailDate,
-    getNoRowsMessage,
     getDetailRowStyle,
     getRowTagStyle,
     getTagById,

@@ -1,6 +1,22 @@
 import DetailRow from "./DetailRow.jsx";
 import DraftDetailRow from "./DraftDetailRow.jsx";
 
+function DetailFilterNotice({ hiddenDetailCount, isEmpty }) {
+  if (hiddenDetailCount > 0) {
+    return (
+      <p className="filter-empty-message">
+        {hiddenDetailCount} row{hiddenDetailCount === 1 ? "" : "s"} hidden by filters.
+      </p>
+    );
+  }
+
+  if (isEmpty) {
+    return <p className="item-meta">No schedule details yet.</p>;
+  }
+
+  return null;
+}
+
 export default function DetailDayCard({
   day,
   dayDetails,
@@ -15,13 +31,10 @@ export default function DetailDayCard({
   rowActions,
   draftActions,
 }) {
-  const { formatDetailDate, getNoRowsMessage } = detailDisplay;
+  const { formatDetailDate } = detailDisplay;
   const { isOffline, addDraftDetail, startEditingDay } = dayActions;
   const hiddenDetailCount = allDayDetailCount - dayDetails.length;
-  const emptyMessage =
-    hiddenDetailCount > 0
-      ? `${hiddenDetailCount} row${hiddenDetailCount === 1 ? "" : "s"} hidden by filters.`
-      : getNoRowsMessage();
+  const hasRowsOrDrafts = dayDetails.length > 0 || draftDetails.length > 0;
 
   return (
     <article className="list-item">
@@ -55,10 +68,11 @@ export default function DetailDayCard({
           </button>
         </div>
 
-        {dayDetails.length === 0 && draftDetails.length === 0 ? (
-          <p className={hiddenDetailCount > 0 ? "filter-empty-message" : "item-meta"}>
-            {emptyMessage}
-          </p>
+        {!hasRowsOrDrafts ? (
+          <DetailFilterNotice
+            hiddenDetailCount={hiddenDetailCount}
+            isEmpty={allDayDetailCount === 0}
+          />
         ) : (
           <>
             <div className="detail-list">
@@ -91,9 +105,7 @@ export default function DetailDayCard({
                 />
               ))}
             </div>
-            {hiddenDetailCount > 0 ? (
-              <p className="filter-empty-message">{emptyMessage}</p>
-            ) : null}
+            <DetailFilterNotice hiddenDetailCount={hiddenDetailCount} isEmpty={false} />
           </>
         )}
         {day.endOfDayTarget ? (

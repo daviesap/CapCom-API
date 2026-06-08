@@ -1265,15 +1265,6 @@ export default function EventEditPage() {
     setSelectedSubLocationFilterIds([]);
     setSelectedCompanyFilterIds([]);
   };
-  const getNoRowsMessage = () => {
-    if (activeScheduleFilterCount > 1) return "No rows for selected filters.";
-    if (selectedTagFilterId) return "No rows for selected tag.";
-    if (selectedLocationFilterIds.length > 0) return "No rows for selected locations.";
-    if (selectedSubLocationFilterIds.length > 0) return "No rows for selected sub locations.";
-    if (selectedCompanyFilterIds.length > 0) return "No rows for selected companies.";
-    return "No schedule details yet.";
-  };
-
   const ensureTruckTag = async () => {
     const existingTruckTag = tags.find(
       (tag) => String(tag.name || "").trim().toLowerCase() === "truck"
@@ -2956,7 +2947,6 @@ export default function EventEditPage() {
           isOffline={isOffline}
           addDraftDetail={addDraftDetail}
           startEditingDay={startEditingDay}
-          getNoRowsMessage={getNoRowsMessage}
           isEditingDetailCell={isEditingDetailCell}
           canMoveDetail={canMoveDetail}
           getAdjacentDay={getAdjacentDay}
