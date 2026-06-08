@@ -16,14 +16,11 @@ import {
   NotePencil,
   ShieldCheck,
   SignOut,
-  Square,
   Tag,
   Truck,
   User,
   Users,
 } from "@phosphor-icons/react";
-
-const tabPlaceholderIcon = Square;
 
 export const capcomIcons = {
   admin: ShieldCheck,

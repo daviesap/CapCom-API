@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useAuth } from "../auth/AuthProvider.jsx";
+import EventEditorHeader from "../components/event-edit/EventEditorHeader.jsx";
+import EventEditorStatusMessages from "../components/event-edit/EventEditorStatusMessages.jsx";
+import EventEditorTabs from "../components/event-edit/EventEditorTabs.jsx";
 import Loading from "../components/Loading.jsx";
-import ScheduleCacheStatus from "../components/ScheduleCacheStatus.jsx";
 import { CapcomIcon } from "../icons/capcomIcons.jsx";
 import useOnlineStatus from "../hooks/useOnlineStatus.js";
 import { getClients } from "../services/clientService.js";
@@ -2905,6 +2907,7 @@ export default function EventEditPage() {
   if (loading) return <Loading label="Loading event editor..." />;
 
   const eventHeaderImageUrl = eventImagePreviewUrl || form.imageUrl;
+  const eventDateRangeLabel = formatEventDateRange(form.startDate, form.endDate);
 
   return (
     <main className="page">
@@ -2913,204 +2916,47 @@ export default function EventEditPage() {
           {message}
         </div>
       ) : null}
-      <section className="event-edit-header">
-        <div className="event-edit-header-summary">
-          <div className="event-edit-header-main">
-            {eventHeaderImageUrl ? (
-              <img
-                className="event-header-image"
-                src={eventHeaderImageUrl}
-                alt=""
-              />
-            ) : null}
-            <div>
-              <h1 className="event-edit-title">{form.name || eventId}</h1>
-              <p className="event-edit-date-range">
-                {formatEventDateRange(form.startDate, form.endDate) || "No event dates"}
-              </p>
-              <ScheduleCacheStatus eventId={eventId} />
-            </div>
-          </div>
-          {!isEditingEventDetails ? (
-            <button
-              className="button secondary"
-              type="button"
-              disabled={isOffline}
-              onClick={() => {
-                setIsEditingEventDetails(true);
-                setMessage("");
-                setError("");
-              }}
-            >
-              Edit
-            </button>
-          ) : null}
-        </div>
+      <EventEditorHeader
+        eventId={eventId}
+        form={form}
+        imageUrl={eventHeaderImageUrl}
+        dateRangeLabel={eventDateRangeLabel}
+        isEditing={isEditingEventDetails}
+        isOffline={isOffline}
+        isSuperAdmin={isSuperAdmin}
+        editableClients={editableClients}
+        savingEvent={savingEvent}
+        onStartEditing={() => {
+          setIsEditingEventDetails(true);
+          setMessage("");
+          setError("");
+        }}
+        onSubmit={handleEventSave}
+        onCancel={cancelEditingEventDetails}
+        onUpdateField={updateField}
+        onUpdateClient={updateClient}
+        onImageChange={handleEventImageChange}
+        onRemoveImage={removeEventImage}
+      />
 
-        {isEditingEventDetails ? (
-          <form className="event-header-form" onSubmit={handleEventSave}>
-            <div className="form-grid">
-              <div className="form-row">
-                <label htmlFor="editName">Name</label>
-                <input
-                  id="editName"
-                  value={form.name}
-                  disabled={isOffline}
-                  onChange={(event) => updateField("name", event.target.value)}
-                  required
-                />
-              </div>
-              <div className="form-row">
-                <label htmlFor={isSuperAdmin ? "editClientId" : "editClientName"}>Client</label>
-                {isSuperAdmin ? (
-                  <select
-                    id="editClientId"
-                    value={form.clientId}
-                    disabled={isOffline}
-                    onChange={(event) => updateClient(event.target.value)}
-                    required
-                  >
-                    <option value="">Choose a client</option>
-                    {editableClients.map((client) => (
-                      <option key={client.id} value={client.id}>
-                        {client.clientName}{client.isActive === false ? " (inactive)" : ""}
-                      </option>
-                    ))}
-                  </select>
-                ) : (
-                  <input
-                    id="editClientName"
-                    value={form.clientName}
-                    disabled
-                    required
-                  />
-                )}
-              </div>
-              <div className="form-row">
-                <label htmlFor="editStartDate">Start date</label>
-                <input
-                  id="editStartDate"
-                  type="date"
-                  value={form.startDate}
-                  disabled={isOffline}
-                  onChange={(event) => updateField("startDate", event.target.value)}
-                  required
-                />
-              </div>
-              <div className="form-row">
-                <label htmlFor="editEndDate">End date</label>
-                <input
-                  id="editEndDate"
-                  type="date"
-                  value={form.endDate}
-                  disabled={isOffline}
-                  onChange={(event) => updateField("endDate", event.target.value)}
-                  required
-                />
-              </div>
-              <div className="form-row">
-                <label htmlFor="editScheduleStartDate">Schedule start date</label>
-                <input
-                  id="editScheduleStartDate"
-                  type="date"
-                  value={form.scheduleStartDate}
-                  disabled={isOffline}
-                  onChange={(event) => updateField("scheduleStartDate", event.target.value)}
-                  required
-                />
-              </div>
-              <div className="form-row">
-                <label htmlFor="editScheduleEndDate">Schedule end date</label>
-                <input
-                  id="editScheduleEndDate"
-                  type="date"
-                  value={form.scheduleEndDate}
-                  disabled={isOffline}
-                  onChange={(event) => updateField("scheduleEndDate", event.target.value)}
-                  required
-                />
-              </div>
-              <div className="form-row full">
-                <label htmlFor="editEventImage">Event image</label>
-                <input
-                  id="editEventImage"
-                  type="file"
-                  accept="image/*"
-                  disabled={savingEvent || isOffline}
-                  onChange={handleEventImageChange}
-                />
-                {eventHeaderImageUrl ? (
-                  <div className="event-image-upload-preview">
-                    <img src={eventHeaderImageUrl} alt="" />
-                    <button
-                      className="compact-button"
-                      type="button"
-                      disabled={savingEvent || isOffline}
-                      onClick={removeEventImage}
-                    >
-                      Remove image
-                    </button>
-                  </div>
-                ) : (
-                  <p className="item-meta">Upload a small image, up to 2 MB.</p>
-                )}
-              </div>
-            </div>
-            <div className="actions">
-              <button className="button" type="submit" disabled={savingEvent || isOffline}>
-                {savingEvent ? "Saving..." : "Save event"}
-              </button>
-              <button
-                className="button secondary"
-                type="button"
-                disabled={savingEvent || isOffline}
-                onClick={cancelEditingEventDetails}
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
-        ) : null}
-      </section>
+      <EventEditorStatusMessages
+        error={error}
+        isOffline={isOffline}
+        isSuperAdmin={isSuperAdmin}
+        clientId={form.clientId}
+        activeTab={activeTab}
+        detailsLoading={detailsLoading}
+        tagsLoading={tagsLoading}
+        locationsLoading={locationsLoading}
+        trucksLoading={trucksLoading}
+        companiesLoading={companiesLoading}
+      />
 
-      {error ? <p className="error">{error}</p> : null}
-      {isOffline ? (
-        <p className="message offline-message">Offline mode: previously loaded schedules are read-only.</p>
-      ) : null}
-      {isSuperAdmin && !form.clientId ? (
-        <p className="message warning-message">
-          This event does not have a clientId yet. Choose a client and save the event to finish the assignment.
-        </p>
-      ) : null}
-      {detailsLoading && (activeTab === "info" || activeTab === "detail") ? (
-        <p className="message">Loading schedule details...</p>
-      ) : null}
-      {tagsLoading && activeTab === "settings" ? (
-        <p className="message">Loading tags...</p>
-      ) : null}
-      {locationsLoading && activeTab === "settings" ? (
-        <p className="message">Loading locations...</p>
-      ) : null}
-      {trucksLoading && activeTab === "trucks" ? (
-        <p className="message">Loading trucks...</p>
-      ) : null}
-      {companiesLoading && (activeTab === "info" || activeTab === "detail" || activeTab === "trucks") ? (
-        <p className="message">Loading companies...</p>
-      ) : null}
-
-      <nav className="tabs" aria-label="Event edit sections">
-        {eventEditTabs.map((tab) => (
-          <button
-            className={activeTab === tab.id ? "tab active" : "tab"}
-            type="button"
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-          >
-            <CapcomIcon name={tab.icon} size={18} weight="duotone" />
-            <span>{tab.label}</span>
-          </button>
-        ))}
-      </nav>
+      <EventEditorTabs
+        tabs={eventEditTabs}
+        activeTab={activeTab}
+        onChange={setActiveTab}
+      />
 
       {activeTab === "info" ? (
       <section className="panel">

@@ -1,0 +1,178 @@
+import ScheduleCacheStatus from "../ScheduleCacheStatus.jsx";
+
+export default function EventEditorHeader({
+  eventId,
+  form,
+  imageUrl,
+  dateRangeLabel,
+  isEditing,
+  isOffline,
+  isSuperAdmin,
+  editableClients,
+  savingEvent,
+  onStartEditing,
+  onSubmit,
+  onCancel,
+  onUpdateField,
+  onUpdateClient,
+  onImageChange,
+  onRemoveImage,
+}) {
+  return (
+    <section className="event-edit-header">
+      <div className="event-edit-header-summary">
+        <div className="event-edit-header-main">
+          {imageUrl ? (
+            <img
+              className="event-header-image"
+              src={imageUrl}
+              alt=""
+            />
+          ) : null}
+          <div>
+            <h1 className="event-edit-title">{form.name || eventId}</h1>
+            <p className="event-edit-date-range">
+              {dateRangeLabel || "No event dates"}
+            </p>
+            <ScheduleCacheStatus eventId={eventId} />
+          </div>
+        </div>
+        {!isEditing ? (
+          <button
+            className="button secondary"
+            type="button"
+            disabled={isOffline}
+            onClick={onStartEditing}
+          >
+            Edit
+          </button>
+        ) : null}
+      </div>
+
+      {isEditing ? (
+        <form className="event-header-form" onSubmit={onSubmit}>
+          <div className="form-grid">
+            <div className="form-row">
+              <label htmlFor="editName">Name</label>
+              <input
+                id="editName"
+                value={form.name}
+                disabled={isOffline}
+                onChange={(event) => onUpdateField("name", event.target.value)}
+                required
+              />
+            </div>
+            <div className="form-row">
+              <label htmlFor={isSuperAdmin ? "editClientId" : "editClientName"}>Client</label>
+              {isSuperAdmin ? (
+                <select
+                  id="editClientId"
+                  value={form.clientId}
+                  disabled={isOffline}
+                  onChange={(event) => onUpdateClient(event.target.value)}
+                  required
+                >
+                  <option value="">Choose a client</option>
+                  {editableClients.map((client) => (
+                    <option key={client.id} value={client.id}>
+                      {client.clientName}{client.isActive === false ? " (inactive)" : ""}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <input
+                  id="editClientName"
+                  value={form.clientName}
+                  disabled
+                  required
+                />
+              )}
+            </div>
+            <div className="form-row">
+              <label htmlFor="editStartDate">Start date</label>
+              <input
+                id="editStartDate"
+                type="date"
+                value={form.startDate}
+                disabled={isOffline}
+                onChange={(event) => onUpdateField("startDate", event.target.value)}
+                required
+              />
+            </div>
+            <div className="form-row">
+              <label htmlFor="editEndDate">End date</label>
+              <input
+                id="editEndDate"
+                type="date"
+                value={form.endDate}
+                disabled={isOffline}
+                onChange={(event) => onUpdateField("endDate", event.target.value)}
+                required
+              />
+            </div>
+            <div className="form-row">
+              <label htmlFor="editScheduleStartDate">Schedule start date</label>
+              <input
+                id="editScheduleStartDate"
+                type="date"
+                value={form.scheduleStartDate}
+                disabled={isOffline}
+                onChange={(event) => onUpdateField("scheduleStartDate", event.target.value)}
+                required
+              />
+            </div>
+            <div className="form-row">
+              <label htmlFor="editScheduleEndDate">Schedule end date</label>
+              <input
+                id="editScheduleEndDate"
+                type="date"
+                value={form.scheduleEndDate}
+                disabled={isOffline}
+                onChange={(event) => onUpdateField("scheduleEndDate", event.target.value)}
+                required
+              />
+            </div>
+            <div className="form-row full">
+              <label htmlFor="editEventImage">Event image</label>
+              <input
+                id="editEventImage"
+                type="file"
+                accept="image/*"
+                disabled={savingEvent || isOffline}
+                onChange={onImageChange}
+              />
+              {imageUrl ? (
+                <div className="event-image-upload-preview">
+                  <img src={imageUrl} alt="" />
+                  <button
+                    className="compact-button"
+                    type="button"
+                    disabled={savingEvent || isOffline}
+                    onClick={onRemoveImage}
+                  >
+                    Remove image
+                  </button>
+                </div>
+              ) : (
+                <p className="item-meta">Upload a small image, up to 2 MB.</p>
+              )}
+            </div>
+          </div>
+          <div className="actions">
+            <button className="button" type="submit" disabled={savingEvent || isOffline}>
+              {savingEvent ? "Saving..." : "Save event"}
+            </button>
+            <button
+              className="button secondary"
+              type="button"
+              disabled={savingEvent || isOffline}
+              onClick={onCancel}
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      ) : null}
+    </section>
+  );
+}

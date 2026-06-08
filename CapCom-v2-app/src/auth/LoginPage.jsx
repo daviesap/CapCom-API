@@ -34,26 +34,28 @@ export default function LoginPage() {
         <h1 className="page-title">CapCom v2</h1>
         <p className="page-subtitle">Sign in with Firebase Authentication.</p>
 
-        <div className="form-row" style={{ marginTop: 20 }}>
-          <label htmlFor="email">Email</label>
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            required
-          />
-        </div>
+        <div className="login-fields">
+          <div className="form-row">
+            <label htmlFor="email">Email</label>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              required
+            />
+          </div>
 
-        <div className="form-row" style={{ marginTop: 12 }}>
-          <label htmlFor="password">Password</label>
-          <input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            required
-          />
+          <div className="form-row">
+            <label htmlFor="password">Password</label>
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              required
+            />
+          </div>
         </div>
 
         {error ? <p className="error">{error}</p> : null}
