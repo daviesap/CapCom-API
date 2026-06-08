@@ -2583,7 +2583,7 @@ export default function EventEditPage() {
         truckNumber: truck.truckNumber || "",
         action: draft.action || "",
         time: draft.time,
-        description: draft.description,
+        description: String(draft.description || "").trim(),
         notes: "",
         sortOrder: getNextTruckDetailSortOrder(truck.id),
         colour: normaliseHexColour(truckTag.colour),
