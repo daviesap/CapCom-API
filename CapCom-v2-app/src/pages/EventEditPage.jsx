@@ -524,6 +524,14 @@ export default function EventEditPage() {
     return tags.filter((tag) => usedTagIds.has(tag.id));
   }, [tags, usedTagIds]);
 
+  const detailCountByTagId = useMemo(() => {
+    return scheduleDetails.reduce((counts, detail) => {
+      if (!detail.tagId) return counts;
+      counts[detail.tagId] = (counts[detail.tagId] || 0) + 1;
+      return counts;
+    }, {});
+  }, [scheduleDetails]);
+
   const locationOptions = useMemo(() => {
     const mainLocations = locations.filter((location) => !location.parentLocationId);
     return mainLocations.flatMap((location) => [
@@ -582,11 +590,30 @@ export default function EventEditPage() {
     );
   }, [locations, usedLocationFilterIds]);
 
+  const detailCountByLocationFilterId = useMemo(() => {
+    return scheduleDetails.reduce((counts, detail) => {
+      if (!detail.locationId) return counts;
+      const location = locationById.get(detail.locationId);
+      if (!location) return counts;
+      const filterLocationId = location.parentLocationId || location.id;
+      counts[filterLocationId] = (counts[filterLocationId] || 0) + 1;
+      return counts;
+    }, {});
+  }, [locationById, scheduleDetails]);
+
   const usedSubLocationFilters = useMemo(() => {
     return locationOptions.filter(
       (location) => location.parentLocationId && usedLocationIds.has(location.id)
     );
   }, [locationOptions, usedLocationIds]);
+
+  const detailCountBySubLocationId = useMemo(() => {
+    return scheduleDetails.reduce((counts, detail) => {
+      if (!detail.locationId) return counts;
+      counts[detail.locationId] = (counts[detail.locationId] || 0) + 1;
+      return counts;
+    }, {});
+  }, [scheduleDetails]);
 
   const usedCompanyIds = useMemo(() => {
     return new Set(
@@ -599,6 +626,16 @@ export default function EventEditPage() {
   const usedCompanies = useMemo(() => {
     return companies.filter((company) => usedCompanyIds.has(company.id));
   }, [companies, usedCompanyIds]);
+
+  const detailCountByCompanyId = useMemo(() => {
+    return scheduleDetails.reduce((counts, detail) => {
+      (detail.companyIds || []).forEach((companyId) => {
+        if (!companyId) return;
+        counts[companyId] = (counts[companyId] || 0) + 1;
+      });
+      return counts;
+    }, {});
+  }, [scheduleDetails]);
   const showTagColumn = tags.length > 0;
   const showLocationColumn = locationOptions.length > 0;
   const showCompanyColumn = companies.length > 0;
@@ -634,14 +671,6 @@ export default function EventEditPage() {
   });
 
   const contactCompanies = useMemo(() => {
-    const detailCountByCompanyId = scheduleDetails.reduce((counts, detail) => {
-      (detail.companyIds || []).forEach((companyId) => {
-        if (!companyId) return;
-        counts[companyId] = (counts[companyId] || 0) + 1;
-      });
-      return counts;
-    }, {});
-
     const companyOrder = Array.isArray(form.contactCompanyOrder)
       ? form.contactCompanyOrder
       : [];
@@ -667,7 +696,7 @@ export default function EventEditPage() {
           String(companyB.companyName || "")
         );
       });
-  }, [form.contactCompanyOrder, scheduleDetails, usedCompanies]);
+  }, [detailCountByCompanyId, form.contactCompanyOrder, usedCompanies]);
 
   const contactCompanyIds = useMemo(
     () => contactCompanies.map((company) => company.id),
@@ -2918,6 +2947,10 @@ export default function EventEditPage() {
           usedLocationFilters={usedLocationFilters}
           usedSubLocationFilters={usedSubLocationFilters}
           usedCompanies={usedCompanies}
+          detailCountByTagId={detailCountByTagId}
+          detailCountByLocationFilterId={detailCountByLocationFilterId}
+          detailCountBySubLocationId={detailCountBySubLocationId}
+          detailCountByCompanyId={detailCountByCompanyId}
           hasActiveScheduleFilters={hasActiveScheduleFilters}
           selectedTagFilterId={selectedTagFilterId}
           selectedLocationFilterIds={selectedLocationFilterIds}

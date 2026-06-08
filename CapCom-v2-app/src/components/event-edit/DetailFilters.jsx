@@ -3,6 +3,10 @@ export default function DetailFilters({
   usedLocationFilters,
   usedSubLocationFilters,
   usedCompanies,
+  detailCountByTagId,
+  detailCountByLocationFilterId,
+  detailCountBySubLocationId,
+  detailCountByCompanyId,
   hasActiveScheduleFilters,
   selectedTagFilterId,
   selectedLocationFilterIds,
@@ -69,6 +73,7 @@ export default function DetailFilters({
                 style={{ backgroundColor: normaliseHexColour(tag.colour) }}
               />
               {tag.name}
+              <span className="filter-count">{detailCountByTagId[tag.id] || 0}</span>
             </button>
           ))}
         </div>
@@ -98,6 +103,9 @@ export default function DetailFilters({
               onClick={() => toggleLocationFilter(location.id)}
             >
               {location.name}
+              <span className="filter-count">
+                {detailCountByLocationFilterId[location.id] || 0}
+              </span>
             </button>
           ))}
         </div>
@@ -127,6 +135,9 @@ export default function DetailFilters({
               onClick={() => toggleSubLocationFilter(location.id)}
             >
               {location.displayName}
+              <span className="filter-count">
+                {detailCountBySubLocationId[location.id] || 0}
+              </span>
             </button>
           ))}
         </div>
@@ -156,6 +167,7 @@ export default function DetailFilters({
               onClick={() => toggleCompanyFilter(company.id)}
             >
               {company.companyName}
+              <span className="filter-count">{detailCountByCompanyId[company.id] || 0}</span>
             </button>
           ))}
         </div>
