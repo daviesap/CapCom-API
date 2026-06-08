@@ -2126,6 +2126,14 @@ export default function EventEditPage() {
       setError("Editing is disabled while offline.");
       return;
     }
+
+    const detail = (detailsByDayId[dayId] || []).find(
+      (currentDetail) => currentDetail.id === detailId
+    );
+    const detailLabel = detail?.description?.trim() || detail?.time || "this schedule row";
+    const confirmed = window.confirm(`Delete ${detailLabel}? This cannot be undone.`);
+    if (!confirmed) return;
+
     setSavingDetailId(detailId);
     setError("");
 
