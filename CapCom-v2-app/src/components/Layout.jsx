@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, Outlet } from "react-router-dom";
 import AppNav from "./AppNav.jsx";
 import ConnectionStatus from "./ConnectionStatus.jsx";
+import { CapcomIcon } from "../icons/capcomIcons.jsx";
 
 export default function Layout() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -21,7 +22,11 @@ export default function Layout() {
             aria-expanded={!isSidebarCollapsed}
             onClick={() => setIsSidebarCollapsed((current) => !current)}
           >
-            {isSidebarCollapsed ? ">" : "<"}
+            <CapcomIcon
+              name={isSidebarCollapsed ? "caretDoubleRight" : "caretDoubleLeft"}
+              size={16}
+              weight="bold"
+            />
           </button>
         </div>
         <AppNav variant="desktop" collapsed={isSidebarCollapsed} />

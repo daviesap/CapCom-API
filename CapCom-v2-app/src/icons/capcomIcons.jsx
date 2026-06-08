@@ -1,6 +1,8 @@
 import {
   AddressBook,
   AddressBookTabs,
+  CaretDoubleLeft,
+  CaretDoubleRight,
   ArrowDown,
   ArrowUp,
   Buildings,
@@ -27,6 +29,8 @@ import {
 } from "@phosphor-icons/react";
 
 export const capcomIcons = {
+  caretDoubleLeft: CaretDoubleLeft,
+  caretDoubleRight: CaretDoubleRight,
   admin: ShieldCheck,
   catering: ForkKnife,
   contact: AddressBook,
