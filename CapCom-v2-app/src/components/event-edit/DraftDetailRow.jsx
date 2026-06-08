@@ -38,6 +38,20 @@ export default function DraftDetailRow({
     descriptionInputRef.current?.focus({ preventScroll: true });
   }, [isOffline, shouldFocusDescription]);
 
+  const handleDraftKeyDown = (event) => {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      removeDraftDetail(dayId, draftIndex);
+      return;
+    }
+
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      if (savingDraftDayId === dayId || !draft.description.trim() || isOffline) return;
+      saveDraftDetail(dayId, draftIndex, draft);
+    }
+  };
+
   return (
     <div
       className="detail-row draft-row"
@@ -50,6 +64,7 @@ export default function DraftDetailRow({
         value={draft.time}
         disabled={isOffline}
         onChange={(event) => updateDraftDetail(dayId, draftIndex, "time", event.target.value)}
+        onKeyDown={handleDraftKeyDown}
       />
       <input
         ref={descriptionInputRef}
@@ -59,6 +74,7 @@ export default function DraftDetailRow({
         onChange={(event) =>
           updateDraftDetail(dayId, draftIndex, "description", event.target.value)
         }
+        onKeyDown={handleDraftKeyDown}
         placeholder="Description"
         required
       />
