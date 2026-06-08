@@ -193,6 +193,15 @@ export default function TruckingPanel({
             {trucks.map((truck) => {
               const truckDetails = getTruckDetails(truck);
               const draftTruckDetails = draftTruckDetailsByTruckId[truck.id] || [];
+              const incompleteTruckDetailCount = truckDetails.filter((detail) => {
+                const hasDate = Boolean(detail.scheduleDayId);
+                const hasDestination = !showTruckDestinationColumn || Boolean(
+                  getTruckDestinationValue(detail)
+                );
+                const hasTime = Boolean(detail.time);
+
+                return !(hasDate && hasDestination && hasTime);
+              }).length;
 
               return (
                 <article className="list-item" key={truck.id}>
@@ -213,6 +222,11 @@ export default function TruckingPanel({
                               {companyById.get(truck.companyId)?.companyName ||
                                 truck.companyName ||
                                 "Unknown company"}
+                            </span>
+                          ) : null}
+                          {incompleteTruckDetailCount > 0 ? (
+                            <span className="day-row-count warning">
+                              {incompleteTruckDetailCount} incomplete
                             </span>
                           ) : null}
                         </p>
