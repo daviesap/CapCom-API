@@ -11,6 +11,7 @@ export default function ProfilePage() {
     profileError,
     logout,
     isSuperAdmin,
+    refreshUserProfile,
   } = useAuth();
 
   const [debugMode, setDebugMode] = useState(false);
@@ -34,6 +35,7 @@ export default function ProfilePage() {
 
     try {
       await updateCurrentUserDebugMode(user?.uid, nextDebugMode, userProfile);
+      await refreshUserProfile();
       setDebugMessage("Debug setting saved.");
     } catch (error) {
       console.error("Could not update debug setting.", error);

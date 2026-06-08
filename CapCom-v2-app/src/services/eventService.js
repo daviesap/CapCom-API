@@ -141,6 +141,7 @@ export async function updateEvent(eventId, eventData, userProfile) {
     return await updateDoc(doc(db, "events", eventId), {
       name: eventData.name,
       clientName: eventData.clientName,
+      profileId: eventData.profileId,
       clientId,
       startDate: eventData.startDate,
       endDate: eventData.endDate,

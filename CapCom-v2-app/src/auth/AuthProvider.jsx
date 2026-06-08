@@ -21,6 +21,27 @@ export function AuthProvider({ children }) {
   const [profileLoading, setProfileLoading] = useState(false);
   const [profileError, setProfileError] = useState("");
 
+  const refreshUserProfile = async (targetUser) => {
+    const uid = typeof targetUser === "string"
+      ? targetUser
+      : targetUser?.uid || user?.uid;
+
+    if (!uid) return;
+
+    setProfileLoading(true);
+    setProfileError("");
+    try {
+      const profile = await getUserProfile(uid);
+      setUserProfile(profile);
+    } catch (error) {
+      console.error("Could not load user profile.", error);
+      setUserProfile(null);
+      setProfileError("Could not load user profile.");
+    } finally {
+      setProfileLoading(false);
+    }
+  };
+
   useEffect(() => {
     let cancelled = false;
 
@@ -35,23 +56,16 @@ export function AuthProvider({ children }) {
         return;
       }
 
-      setProfileLoading(true);
-      setProfileError("");
-
       try {
-        const profile = await getUserProfile(firebaseUser.uid);
+        await refreshUserProfile(firebaseUser);
         if (!cancelled) {
-          setUserProfile(profile);
+          setProfileLoading(false);
         }
       } catch (error) {
         console.error("Could not load user profile.", error);
         if (!cancelled) {
           setUserProfile(null);
           setProfileError("Could not load user profile.");
-        }
-      } finally {
-        if (!cancelled) {
-          setProfileLoading(false);
         }
       }
     });
@@ -72,10 +86,11 @@ export function AuthProvider({ children }) {
       isSuperAdmin: isSuperAdmin(userProfile),
       isClientAdmin: isClientAdmin(userProfile),
       isClientUser: isClientUser(userProfile),
+      refreshUserProfile,
       login: (email, password) => signInWithEmailAndPassword(auth, email, password),
       logout: () => signOut(auth),
     };
-  }, [user, userProfile, authLoading, profileLoading, profileError]);
+  }, [user, userProfile, authLoading, profileLoading, profileError, refreshUserProfile]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

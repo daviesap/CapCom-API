@@ -89,6 +89,15 @@ export default function EventEditorHeader({
               )}
             </div>
             <div className="form-row">
+              <label htmlFor="editProfileId">Profile ID</label>
+              <input
+                id="editProfileId"
+                value={form.profileId}
+                disabled={isOffline}
+                onChange={(event) => onUpdateField("profileId", event.target.value)}
+              />
+            </div>
+            <div className="form-row">
               <label htmlFor="editStartDate">Start date</label>
               <input
                 id="editStartDate"
