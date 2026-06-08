@@ -1,3 +1,4 @@
+import Modal from "../Modal.jsx";
 import { CapcomIcon } from "../../icons/capcomIcons.jsx";
 
 export default function SettingsPanel({
@@ -193,6 +194,12 @@ export default function SettingsPanel({
           ) : null}
 
           {tagFormMode ? (
+            <Modal
+              title={editingTagId ? "Edit tag" : "New tag"}
+              labelledBy="tagFormTitle"
+              closeLabel="Close tag form"
+              onClose={resetTagForm}
+            >
             <form className="tag-form" onSubmit={saveTag}>
               <div className="form-grid">
                 <div className="form-row">
@@ -243,6 +250,7 @@ export default function SettingsPanel({
                 </button>
               </div>
             </form>
+            </Modal>
           ) : null}
 
           {tagsLoading ? (
@@ -302,6 +310,26 @@ export default function SettingsPanel({
           ) : null}
 
           {locationFormMode ? (
+            <Modal
+              title={
+                editingLocationId
+                  ? "Edit location"
+                  : locationForm.parentLocationId
+                    ? "New sub-location"
+                    : "New location"
+              }
+              subtitle={
+                locationForm.parentLocationId
+                  ? `Under ${
+                      locations.find((location) => location.id === locationForm.parentLocationId)
+                        ?.name || "selected location"
+                    }`
+                  : ""
+              }
+              labelledBy="locationFormTitle"
+              closeLabel="Close location form"
+              onClose={resetLocationForm}
+            >
             <form className="location-form" onSubmit={saveLocation}>
               <div className="form-row">
                 <label htmlFor="locationName">
@@ -345,6 +373,7 @@ export default function SettingsPanel({
                 </button>
               </div>
             </form>
+            </Modal>
           ) : null}
 
           {locationsLoading ? (
@@ -396,6 +425,12 @@ export default function SettingsPanel({
           ) : null}
 
           {truckSizeFormMode ? (
+            <Modal
+              title={editingTruckSizeId ? "Edit truck size" : "New truck size"}
+              labelledBy="truckSizeFormTitle"
+              closeLabel="Close truck size form"
+              onClose={resetTruckSizeForm}
+            >
             <form className="truck-size-form" onSubmit={saveTruckSize}>
               <div className="form-row">
                 <label htmlFor="truckSize">Truck size</label>
@@ -422,6 +457,7 @@ export default function SettingsPanel({
                 </button>
               </div>
             </form>
+            </Modal>
           ) : null}
 
           {truckSizesLoading ? (

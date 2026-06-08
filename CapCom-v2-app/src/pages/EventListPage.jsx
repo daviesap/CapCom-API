@@ -4,6 +4,7 @@ import { useAuth } from "../auth/AuthProvider.jsx";
 import { canCreateEvents } from "../auth/roles.js";
 import EmptyState from "../components/EmptyState.jsx";
 import Loading from "../components/Loading.jsx";
+import Modal from "../components/Modal.jsx";
 import useOnlineStatus from "../hooks/useOnlineStatus.js";
 import { getClient, getClients } from "../services/clientService.js";
 import { createEvent, getEvents } from "../services/eventService.js";
@@ -216,29 +217,13 @@ export default function EventListPage() {
       </section>
 
       {showCreateOverlay ? (
-        <div className="overlay-backdrop" role="presentation" onMouseDown={closeCreateOverlay}>
-          <section
-            className="overlay-panel"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="createEventTitle"
-            onMouseDown={(event) => event.stopPropagation()}
-          >
-            <div className="overlay-header">
-              <div>
-                <h2 id="createEventTitle">Create Event</h2>
-                <p className="page-subtitle">Add the basic event record.</p>
-              </div>
-              <button
-                className="icon-button"
-                type="button"
-                aria-label="Close create event overlay"
-                onClick={closeCreateOverlay}
-              >
-                ×
-              </button>
-            </div>
-
+        <Modal
+          title="Create Event"
+          subtitle="Add the basic event record."
+          labelledBy="createEventTitle"
+          closeLabel="Close create event form"
+          onClose={closeCreateOverlay}
+        >
             {error ? <p className="error">{error}</p> : null}
 
             <form onSubmit={handleSubmit}>
@@ -340,8 +325,7 @@ export default function EventListPage() {
                 </button>
               </div>
             </form>
-          </section>
-        </div>
+        </Modal>
       ) : null}
     </main>
   );

@@ -1,3 +1,4 @@
+import Modal from "../Modal.jsx";
 import { CapcomIcon } from "../../icons/capcomIcons.jsx";
 
 export default function InfoPanel({
@@ -271,6 +272,13 @@ export default function InfoPanel({
                           )}
 
                           {canManageCompanyContacts && isEditingThisCompanyContact ? (
+                            <Modal
+                              title={editingCompanyContactId ? "Edit contact" : "Add contact"}
+                              subtitle={company.companyName || "Company contact"}
+                              labelledBy={`companyContactFormTitle-${company.id}`}
+                              closeLabel="Close contact form"
+                              onClose={resetCompanyContactForm}
+                            >
                             <form className="company-contact-form" onSubmit={saveCompanyContact}>
                               <div className="form-grid">
                                 <div className="form-row">
@@ -343,6 +351,7 @@ export default function InfoPanel({
                                 </button>
                               </div>
                             </form>
+                            </Modal>
                           ) : null}
                         </div>
                       ) : null}

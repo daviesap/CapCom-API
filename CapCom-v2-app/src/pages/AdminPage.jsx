@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "../auth/AuthProvider.jsx";
 import { USER_ROLES } from "../auth/roles.js";
+import Modal from "../components/Modal.jsx";
 import { CapcomIcon } from "../icons/capcomIcons.jsx";
 import {
   CLIENT_DEFAULTS,
@@ -453,14 +454,14 @@ export default function AdminPage() {
             {clientMessage ? <p className="message success-message">{clientMessage}</p> : null}
 
             {isClientFormOpen ? (
+              <Modal
+                title={editingClientId ? "Edit Client" : "Create New Client"}
+                subtitle="Clients can be deactivated, not deleted."
+                labelledBy="clientFormTitle"
+                closeLabel="Close client form"
+                onClose={closeClientForm}
+              >
               <form className="admin-inline-form" onSubmit={handleClientSubmit}>
-                <div className="panel-heading">
-                  <div>
-                    <h2>{editingClientId ? "Edit Client" : "Create New Client"}</h2>
-                    <p className="page-subtitle">Clients can be deactivated, not deleted.</p>
-                  </div>
-                </div>
-
                 <div className="form-grid">
                   <div className="form-row">
                     <label htmlFor="clientName">Client name</label>
@@ -537,6 +538,7 @@ export default function AdminPage() {
                   </button>
                 </div>
               </form>
+              </Modal>
             ) : null}
 
             {!clientsLoading && clients.length === 0 ? (
@@ -609,18 +611,18 @@ export default function AdminPage() {
             {userMessage ? <p className="message success-message">{userMessage}</p> : null}
 
             {isUserFormOpen ? (
+              <Modal
+                title={editingUserId ? "Edit User Profile" : "Add New User"}
+                subtitle={
+                  editingUserId
+                    ? "Edit the Firestore profile for this Firebase Auth user."
+                    : "Create a Firebase Auth user and matching Firestore profile."
+                }
+                labelledBy="userFormTitle"
+                closeLabel="Close user form"
+                onClose={closeUserForm}
+              >
               <form className="admin-inline-form" onSubmit={handleUserSubmit}>
-                <div className="panel-heading">
-                  <div>
-                    <h2>{editingUserId ? "Edit User Profile" : "Add New User"}</h2>
-                    <p className="page-subtitle">
-                      {editingUserId
-                        ? "Edit the Firestore profile for this Firebase Auth user."
-                        : "Create a Firebase Auth user and matching Firestore profile."}
-                    </p>
-                  </div>
-                </div>
-
                 <div className="form-grid">
                   {editingUserId ? (
                     <div className="form-row full">
@@ -724,6 +726,7 @@ export default function AdminPage() {
                   </button>
                 </div>
               </form>
+              </Modal>
             ) : null}
 
             {!usersLoading && userProfiles.length === 0 ? (

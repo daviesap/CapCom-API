@@ -1,3 +1,4 @@
+import Modal from "../Modal.jsx";
 import ScheduleCacheStatus from "../ScheduleCacheStatus.jsx";
 
 export default function EventEditorHeader({
@@ -50,6 +51,13 @@ export default function EventEditorHeader({
       </div>
 
       {isEditing ? (
+        <Modal
+          title="Edit event"
+          subtitle={dateRangeLabel || "No event dates"}
+          labelledBy="eventEditFormTitle"
+          closeLabel="Close event edit form"
+          onClose={onCancel}
+        >
         <form className="event-header-form" onSubmit={onSubmit}>
           <div className="form-grid">
             <div className="form-row">
@@ -181,6 +189,7 @@ export default function EventEditorHeader({
             </button>
           </div>
         </form>
+        </Modal>
       ) : null}
     </section>
   );

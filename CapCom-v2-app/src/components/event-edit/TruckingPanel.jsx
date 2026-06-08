@@ -1,3 +1,4 @@
+import Modal from "../Modal.jsx";
 import { CapcomIcon } from "../../icons/capcomIcons.jsx";
 
 export default function TruckingPanel({
@@ -105,6 +106,12 @@ export default function TruckingPanel({
         ) : null}
 
         {truckFormMode ? (
+          <Modal
+            title={editingTruckId ? "Edit truck" : "Add truck"}
+            labelledBy="truckFormTitle"
+            closeLabel="Close truck form"
+            onClose={resetTruckForm}
+          >
           <form className="truck-form" onSubmit={saveTruck}>
             <div className="form-grid">
               <div className="form-row">
@@ -204,6 +211,7 @@ export default function TruckingPanel({
               </button>
             </div>
           </form>
+          </Modal>
         ) : null}
 
         {trucksLoading ? (

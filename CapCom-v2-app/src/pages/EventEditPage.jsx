@@ -7,6 +7,7 @@ import EventEditorTabs from "../components/event-edit/EventEditorTabs.jsx";
 import DetailFilters from "../components/event-edit/DetailFilters.jsx";
 import DetailPanel from "../components/event-edit/DetailPanel.jsx";
 import InfoPanel from "../components/event-edit/InfoPanel.jsx";
+import Modal from "../components/Modal.jsx";
 import SettingsPanel from "../components/event-edit/SettingsPanel.jsx";
 import SummaryPanel from "../components/event-edit/SummaryPanel.jsx";
 import TruckingPanel from "../components/event-edit/TruckingPanel.jsx";
@@ -4039,75 +4040,56 @@ export default function EventEditPage() {
       ) : null}
 
       {editingDayMode === "overlay" ? (
-        <div className="overlay-backdrop" role="presentation" onMouseDown={cancelEditingDay}>
-          <section
-            className="overlay-panel"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="editDayTitle"
-            onMouseDown={(event) => event.stopPropagation()}
-          >
-            <div className="overlay-header">
-              <div>
-                <h2 id="editDayTitle">Edit day</h2>
-                <p className="page-subtitle">
-                  {formatDetailDate(scheduleDays.find((day) => day.id === editingDayId)?.date)}
-                </p>
-              </div>
-              <button
-                className="icon-button"
-                type="button"
-                aria-label="Close edit day overlay"
-                onClick={cancelEditingDay}
-              >
-                ×
-              </button>
+        <Modal
+          title="Edit day"
+          subtitle={formatDetailDate(scheduleDays.find((day) => day.id === editingDayId)?.date)}
+          labelledBy="editDayTitle"
+          closeLabel="Close edit day form"
+          onClose={cancelEditingDay}
+        >
+          <div className="form-grid">
+            <div className="form-row full">
+              <label htmlFor="overlayDaySummary">Summary</label>
+              <input
+                id="overlayDaySummary"
+                value={editingDayDraft.summary}
+                disabled={isOffline}
+                onChange={(event) => updateEditingDayField("summary", event.target.value)}
+              />
             </div>
+            <div className="form-row full">
+              <label htmlFor="overlayDayTarget">End of day target</label>
+              <input
+                id="overlayDayTarget"
+                value={editingDayDraft.endOfDayTarget}
+                disabled={isOffline}
+                onChange={(event) => updateEditingDayField("endOfDayTarget", event.target.value)}
+              />
+            </div>
+          </div>
 
-            <div className="form-grid">
-              <div className="form-row full">
-                <label htmlFor="overlayDaySummary">Summary</label>
-                <input
-                  id="overlayDaySummary"
-                  value={editingDayDraft.summary}
-                  disabled={isOffline}
-                  onChange={(event) => updateEditingDayField("summary", event.target.value)}
-                />
-              </div>
-              <div className="form-row full">
-                <label htmlFor="overlayDayTarget">End of day target</label>
-                <input
-                  id="overlayDayTarget"
-                  value={editingDayDraft.endOfDayTarget}
-                  disabled={isOffline}
-                  onChange={(event) => updateEditingDayField("endOfDayTarget", event.target.value)}
-                />
-              </div>
-            </div>
-
-            <div className="actions">
-              <button
-                className="button"
-                type="button"
-                disabled={savingDayId === editingDayId || isOffline}
-                onClick={() => {
-                  const day = scheduleDays.find((nextDay) => nextDay.id === editingDayId);
-                  if (day) saveDay(day, editingDayDraft);
-                }}
-              >
-                {savingDayId === editingDayId ? "Saving..." : "Save day"}
-              </button>
-              <button
-                className="button secondary"
-                type="button"
-                disabled={savingDayId === editingDayId || isOffline}
-                onClick={cancelEditingDay}
-              >
-                Cancel
-              </button>
-            </div>
-          </section>
-        </div>
+          <div className="actions">
+            <button
+              className="button"
+              type="button"
+              disabled={savingDayId === editingDayId || isOffline}
+              onClick={() => {
+                const day = scheduleDays.find((nextDay) => nextDay.id === editingDayId);
+                if (day) saveDay(day, editingDayDraft);
+              }}
+            >
+              {savingDayId === editingDayId ? "Saving..." : "Save day"}
+            </button>
+            <button
+              className="button secondary"
+              type="button"
+              disabled={savingDayId === editingDayId || isOffline}
+              onClick={cancelEditingDay}
+            >
+              Cancel
+            </button>
+          </div>
+        </Modal>
       ) : null}
     </main>
   );

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "../auth/AuthProvider.jsx";
 import Loading from "../components/Loading.jsx";
+import Modal from "../components/Modal.jsx";
 import useOnlineStatus from "../hooks/useOnlineStatus.js";
 import { getClient, getClients } from "../services/clientService.js";
 import {
@@ -308,10 +309,14 @@ export default function CompaniesPage() {
         )}
 
         {canManageCompanies && isCompanyFormOpen ? (
+          <Modal
+            title={editingCompanyId ? "Edit company" : "Add company"}
+            subtitle={selectedClient?.clientName || "Company record"}
+            labelledBy="companyFormTitle"
+            closeLabel="Close company form"
+            onClose={resetCompanyForm}
+          >
           <form className="company-form" onSubmit={saveCompany}>
-            <div className="company-form-heading">
-              <h3>{editingCompanyId ? "Edit company" : "Add company"}</h3>
-            </div>
             <div className="form-grid">
               <div className="form-row">
                 <label htmlFor="companyName">Company name</label>
@@ -360,6 +365,7 @@ export default function CompaniesPage() {
               </button>
             </div>
           </form>
+          </Modal>
         ) : null}
       </section>
     </main>
