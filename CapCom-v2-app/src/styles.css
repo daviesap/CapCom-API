@@ -659,6 +659,32 @@ textarea {
   margin-top: 8px;
 }
 
+.day-row-count {
+  align-items: center;
+  background: #edf2f7;
+  border: 1px solid #d7dee6;
+  border-radius: var(--radius-pill);
+  color: #526477;
+  display: inline-flex;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  min-height: 24px;
+  padding: 4px 8px;
+  white-space: nowrap;
+}
+
+.day-row-count.empty {
+  background: #f8fafc;
+  color: #7b8794;
+}
+
+.day-row-count.filtered {
+  background: #fff7ed;
+  border-color: #fed7aa;
+  color: #9a3412;
+}
+
 .day-edit-list {
   display: grid;
   gap: 14px;
