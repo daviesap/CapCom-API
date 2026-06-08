@@ -210,7 +210,6 @@ export default function DetailRow({
           onClick={() => startEditingDetailCell(day.id, detail.id, "description")}
         >
           <span className="detail-description-text">{detail.description || ""}</span>
-          {detail.notes?.trim() ? <span className="detail-notes-badge">Notes</span> : null}
         </button>
       )}
       {showTagColumn ? (

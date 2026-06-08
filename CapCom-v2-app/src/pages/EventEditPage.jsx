@@ -75,6 +75,7 @@ import {
   getFilteredViews,
   updateFilteredView,
 } from "../services/filteredViewService.js";
+import { getShareArchive } from "../services/shareArchiveService.js";
 import { getCompanies } from "../services/companyService.js";
 import { generateHomeForEvent } from "../services/functionService.js";
 
@@ -280,7 +281,11 @@ function toDateValue(value) {
   if (!value) return null;
   if (value instanceof Date) return value;
   if (typeof value.toDate === "function") return value.toDate();
-  const parsed = new Date(value);
+  const dateText = typeof value === "string" ? value.trim() : value;
+  const timezoneLessIsoDate = typeof dateText === "string"
+    && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(dateText)
+    && !/[zZ]|[+-]\d{2}:?\d{2}$/.test(dateText);
+  const parsed = new Date(timezoneLessIsoDate ? `${dateText}Z` : dateText);
   return Number.isNaN(parsed.getTime()) ? null : parsed;
 }
 
@@ -303,6 +308,18 @@ function formatRelativeDate(value) {
   if (!unit) return "just now";
   const valueForUnit = Math.round(diffSeconds / unit.seconds);
   return new Intl.RelativeTimeFormat("en-GB", { numeric: "auto" }).format(valueForUnit, unit.name);
+}
+
+function formatArchiveDate(value) {
+  const date = toDateValue(value);
+  if (!date) return "n/a";
+  return new Intl.DateTimeFormat("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(date);
 }
 
 function normaliseApiResponse(value) {
@@ -432,6 +449,8 @@ export default function EventEditPage() {
   const [savingContactCompanyOrder, setSavingContactCompanyOrder] = useState(false);
   const [filteredViews, setFilteredViews] = useState([]);
   const [filteredViewsLoading, setFilteredViewsLoading] = useState(false);
+  const [shareArchive, setShareArchive] = useState([]);
+  const [shareArchiveLoading, setShareArchiveLoading] = useState(false);
   const [filteredViewFormMode, setFilteredViewFormMode] = useState("");
   const [editingFilteredViewId, setEditingFilteredViewId] = useState("");
   const [filteredViewForm, setFilteredViewForm] = useState(emptyFilteredViewForm);
@@ -473,6 +492,7 @@ export default function EventEditPage() {
       setTruckSizesLoading(false);
       setTrucksLoading(false);
       setCompaniesLoading(false);
+      setShareArchiveLoading(false);
       setError("");
       try {
         const event = await getEvent(eventId, userProfile);
@@ -509,6 +529,7 @@ export default function EventEditPage() {
         setSavedEventForm(loadedEventForm);
         setScheduleDays(days);
         setFilteredViews([]);
+        setShareArchive([]);
         setLoading(false);
 
         const loadOptionalEditorData = async ({
@@ -577,6 +598,13 @@ export default function EventEditPage() {
             errorMessage: "Could not load filtered views. Other event data is still available.",
           }),
           loadOptionalEditorData({
+            label: "share archive",
+            setLoadingState: setShareArchiveLoading,
+            loadData: () => getShareArchive(eventId),
+            applyData: setShareArchive,
+            errorMessage: "Could not load share archive. Other event data is still available.",
+          }),
+          loadOptionalEditorData({
             label: "companies",
             setLoadingState: setCompaniesLoading,
             loadData: () => getCompanies(loadedEventForm.clientId),
@@ -597,6 +625,7 @@ export default function EventEditPage() {
           setTruckSizesLoading(false);
           setTrucksLoading(false);
           setCompaniesLoading(false);
+          setShareArchiveLoading(false);
         }
       }
     };
@@ -666,7 +695,10 @@ export default function EventEditPage() {
     return Object.values(detailsByDayId).flat();
   }, [detailsByDayId]);
 
-  const shareLastUpdatedText = useMemo(() => formatRelativeDate(form.updatedAt), [form.updatedAt]);
+  const shareLastUpdatedText = useMemo(
+    () => formatRelativeDate(form.apiResponse?.timestamp),
+    [form.apiResponse]
+  );
   const shareProtectedHomeUrl = form.apiResponse?.protectedHomeUrl || "";
   const shareHtmlUrl = form.apiResponse?.["html URL"] || form.apiResponse?.htmlUrl || "";
 
@@ -1556,7 +1588,15 @@ export default function EventEditPage() {
 
     try {
       const result = await generateHomeForEvent(eventId, { debugPayload: canUseDebugJson });
-      await getEvent(eventId, userProfile);
+      const refreshedEvent = await getEvent(eventId, userProfile);
+      if (refreshedEvent) {
+        setForm((currentForm) => ({
+          ...currentForm,
+          updatedAt: refreshedEvent.updatedAt || currentForm.updatedAt,
+          apiResponse: normaliseApiResponse(refreshedEvent["API Response"]),
+        }));
+      }
+      setShareArchive(await getShareArchive(eventId));
       const payloadPath = result?.debugPayloadPath;
       const responsePath = result?.debugResponsePath;
       const debugStatus = result?.debug?.reason || "";
@@ -2511,7 +2551,7 @@ export default function EventEditPage() {
     setNotesDraft("");
   };
 
-  const saveDetailNotes = async (detail) => {
+  const saveDetailNotes = async (detail, nextNotes = notesDraft) => {
     if (isOffline) {
       setError("Editing is disabled while offline.");
       return;
@@ -2522,14 +2562,14 @@ export default function EventEditPage() {
 
     try {
       await updateScheduleDetail(detail.id, {
-        notes: notesDraft,
+        notes: nextNotes,
       });
-      updateDetailAcrossDays(detail.id, { notes: notesDraft });
+      updateDetailAcrossDays(detail.id, { notes: nextNotes });
       setSavedDetailsById((current) => ({
         ...current,
         [detail.id]: {
           ...(current[detail.id] || {}),
-          notes: notesDraft,
+          notes: nextNotes,
         },
       }));
       closeNotesEditor();
@@ -2672,13 +2712,6 @@ export default function EventEditPage() {
       setError("Editing is disabled while offline.");
       return;
     }
-
-    const detail = (detailsByDayId[dayId] || []).find(
-      (currentDetail) => currentDetail.id === detailId
-    );
-    const detailLabel = detail?.description?.trim() || detail?.time || "this schedule row";
-    const confirmed = window.confirm(`Delete ${detailLabel}? This cannot be undone.`);
-    if (!confirmed) return;
 
     setSavingDetailId(detailId);
     setError("");
@@ -2909,11 +2942,6 @@ export default function EventEditPage() {
 
   const addDraftDetail = (dayId) => {
     if (isOffline) return;
-    const selectedTagExists = selectedTagFilterId && getTagById(selectedTagFilterId);
-    const defaultTagId =
-      showTagColumn && selectedTagExists ? selectedTagFilterId :
-      showTagColumn && tags.length === 1 ? tags[0].id :
-      "";
     const defaultLocationId =
       showLocationColumn && locationOptions.length === 1 ? locationOptions[0].id : "";
     const defaultCompanyIds =
@@ -2926,7 +2954,7 @@ export default function EventEditPage() {
           time: "",
           description: "",
           colour: "",
-          tagId: defaultTagId,
+          tagId: "",
           locationId: defaultLocationId,
           companyIds: defaultCompanyIds,
         },
@@ -3962,6 +3990,37 @@ export default function EventEditPage() {
                   ) : null}
                 </article>
               ))}
+          </div>
+        )}
+
+        <div className="panel-heading">
+          <h2>Archive</h2>
+        </div>
+
+        {shareArchiveLoading ? (
+          <p className="item-meta">Loading archive...</p>
+        ) : shareArchive.length === 0 ? (
+          <p className="item-meta">No archive entries yet.</p>
+        ) : (
+          <div className="table-wrap">
+            <table className="schedule-days-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Number of changes</th>
+                  <th>Text or changes</th>
+                </tr>
+              </thead>
+              <tbody>
+                {shareArchive.map((archiveRow) => (
+                  <tr key={archiveRow.id}>
+                    <td>{formatArchiveDate(archiveRow.timestamp || archiveRow.createdAt)}</td>
+                    <td>{archiveRow.numberOfChanges ?? 0}</td>
+                    <td>{archiveRow.text || "No change text recorded."}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
       </section>

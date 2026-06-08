@@ -79,7 +79,8 @@ export default function DetailRowActions({
                 className="compact-button primary"
                 type="button"
                 disabled={savingDetailId === detail.id || isOffline}
-                onClick={() => saveDetailNotes(detail)}
+                onMouseDown={(event) => event.preventDefault()}
+                onClick={() => saveDetailNotes(detail, notesDraft)}
               >
                 {savingDetailId === detail.id ? "Saving..." : "Save"}
               </button>

@@ -139,6 +139,23 @@ function parseJsonResponseValue(value) {
   return null;
 }
 
+function parseArchiveValue(value) {
+  if (!value) return null;
+  if (typeof value === "string") {
+    try {
+      return JSON.parse(value);
+    } catch {
+      return null;
+    }
+  }
+  if (typeof value === "object") return value;
+  return null;
+}
+
+function getEventArchiveValue(eventRecord) {
+  return parseArchiveValue(eventRecord?.Archive ?? eventRecord?.archive);
+}
+
 function deriveShareArchiveRow(previousApiResponse) {
   if (!previousApiResponse || typeof previousApiResponse !== "object") return null;
   const diff = previousApiResponse.diff;
@@ -335,7 +352,7 @@ export async function generateHomeForEventCallable({
 
   const payload = buildGenerateHomePayload({
     apiKey,
-    previousData: generationData.eventRecord.archive,
+    previousData: getEventArchiveValue(generationData.eventRecord),
     ...generationData,
     callerUid: request.auth.uid,
     callerEmail: request.auth.token?.email || callerProfile.email || "",

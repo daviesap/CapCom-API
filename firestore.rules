@@ -350,6 +350,12 @@ service cloud.firestore {
       allow delete: if canManageFilteredViewData(resource.data);
     }
 
+    match /shareArchive/{archiveId} {
+      allow get, list: if resource.data.eventId is string
+        && canReadEvent(resource.data.eventId);
+      allow create, update, delete: if false;
+    }
+
     // Legacy collections used by the existing PDF/profile frontend.
     // Keep authenticated access for now so this RBAC change does not break that app.
     match /profiles/{document} {
