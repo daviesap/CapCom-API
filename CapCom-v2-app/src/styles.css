@@ -2118,6 +2118,12 @@ textarea {
   padding-top: 12px;
 }
 
+.company-contact-reorder-controls {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
 .company-contact-row {
   align-items: flex-start;
   background: var(--color-surface-subtle);

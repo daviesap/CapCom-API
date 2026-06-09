@@ -52,8 +52,28 @@ export default function InfoPanel({
 }) {
   const [openHiddenContactSections, setOpenHiddenContactSections] = useState({});
   const [keyInfoDropTargetId, setKeyInfoDropTargetId] = useState("");
+  const [reorderingContactsCompanyId, setReorderingContactsCompanyId] = useState("");
 
   const isHiddenSectionOpen = (companyId) => Boolean(openHiddenContactSections[companyId]);
+
+  const stopReorderingContacts = () => {
+    setReorderingContactsCompanyId("");
+    draggedCompanyContactIdRef.current = "";
+    setCompanyContactDropTargetId("");
+  };
+
+  const toggleReorderingContacts = (companyId) => {
+    setReorderingContactsCompanyId((current) => {
+      if (current === companyId) {
+        draggedCompanyContactIdRef.current = "";
+        setCompanyContactDropTargetId("");
+        return "";
+      }
+      draggedCompanyContactIdRef.current = "";
+      setCompanyContactDropTargetId("");
+      return companyId;
+    });
+  };
 
   const setHiddenSectionOpen = (companyId, open) => {
     setOpenHiddenContactSections((current) => {
@@ -99,6 +119,8 @@ export default function InfoPanel({
                 const isEditingThisCompanyContact =
                   editingCompanyContactCompanyId === company.id;
                 const isCompanyOpen = openContactCompanyIds.includes(company.id);
+                const isReorderingThisCompanyContacts =
+                  reorderingContactsCompanyId === company.id;
 
                 return (
                   <div
@@ -108,10 +130,19 @@ export default function InfoPanel({
                       contactCompanyDropTargetId === company.id ? "drop-target" : "",
                     ].filter(Boolean).join(" ")}
                     key={company.id}
-                    draggable={canManageContactCompanyOrder && !isOffline && !savingContactCompanyOrder}
+                    draggable={
+                      canManageContactCompanyOrder &&
+                      !isOffline &&
+                      !savingContactCompanyOrder &&
+                      !isEditingThisCompanyContact
+                    }
                     onDragStart={(event) => {
                       if (event.target.closest(".company-contact-row")) return;
-                      if (!canManageContactCompanyOrder || isOffline) return;
+                      if (
+                        !canManageContactCompanyOrder ||
+                        isOffline ||
+                        isEditingThisCompanyContact
+                      ) return;
                       draggedContactCompanyIdRef.current = company.id;
                       event.dataTransfer.effectAllowed = "move";
                     }}
@@ -151,7 +182,10 @@ export default function InfoPanel({
                           className="company-accordion-trigger"
                           type="button"
                           aria-expanded={isCompanyOpen}
-                          onClick={() => toggleContactCompanyOpen(company.id)}
+                          onClick={() => {
+                            stopReorderingContacts();
+                            toggleContactCompanyOpen(company.id);
+                          }}
                         >
                           <span className="accordion-indicator" aria-hidden="true">
                             <CapcomIcon
@@ -181,7 +215,10 @@ export default function InfoPanel({
                             type="button"
                             aria-label={`Add contact to ${company.companyName || "company"}`}
                             disabled={isOffline || savingCompanyContact}
-                            onClick={() => startAddingCompanyContact(company.id)}
+                            onClick={() => {
+                              stopReorderingContacts();
+                              startAddingCompanyContact(company.id);
+                            }}
                           >
                             <CapcomIcon name="add" size={16} weight="bold" />
                             <span className="button-label">Add contact</span>
@@ -195,6 +232,25 @@ export default function InfoPanel({
                             <p className="item-meta">No contacts yet.</p>
                           ) : (
                             <>
+                              {canManageCompanyContacts && !isOffline ? (
+                                <div className="company-contact-reorder-controls">
+                                  <button
+                                    className="compact-button"
+                                    type="button"
+                                    aria-pressed={isReorderingThisCompanyContacts}
+                                    disabled={
+                                      savingCompanyContact ||
+                                      savingEventContact ||
+                                      reorderingCompanyContactId === company.id
+                                    }
+                                    onClick={() => toggleReorderingContacts(company.id)}
+                                  >
+                                    {isReorderingThisCompanyContacts
+                                      ? "I have finished reordering"
+                                      : "Reorder"}
+                                  </button>
+                                </div>
+                              ) : null}
                               <div className="company-contact-list">
                                 {visibleContacts.length === 0 ? (
                                   <p className="item-meta">No visible contacts.</p>
@@ -203,7 +259,9 @@ export default function InfoPanel({
                                     <div
                                       className={[
                                         "company-contact-row",
-                                        canManageCompanyContacts && !isOffline
+                                        isReorderingThisCompanyContacts &&
+                                        canManageCompanyContacts &&
+                                        !isOffline
                                           ? "draggable-contact-row"
                                           : "",
                                         companyContactDropTargetId === contact.id
@@ -214,10 +272,15 @@ export default function InfoPanel({
                                       draggable={
                                         canManageCompanyContacts &&
                                         !isOffline &&
+                                        isReorderingThisCompanyContacts &&
                                         reorderingCompanyContactId !== company.id
                                       }
                                       onDragStart={(event) => {
-                                        if (!canManageCompanyContacts || isOffline) return;
+                                        if (
+                                          !canManageCompanyContacts ||
+                                          isOffline ||
+                                          !isReorderingThisCompanyContacts
+                                        ) return;
                                         event.stopPropagation();
                                         draggedCompanyContactIdRef.current = contact.id;
                                         event.dataTransfer.effectAllowed = "move";
@@ -226,6 +289,7 @@ export default function InfoPanel({
                                         if (
                                           !canManageCompanyContacts ||
                                           isOffline ||
+                                          !isReorderingThisCompanyContacts ||
                                           reorderingCompanyContactId ||
                                           !draggedCompanyContactIdRef.current ||
                                           draggedCompanyContactIdRef.current === contact.id
@@ -275,7 +339,10 @@ export default function InfoPanel({
                                             className="compact-button"
                                             type="button"
                                             disabled={savingEventContact || isOffline}
-                                            onClick={() => toggleEventContactHidden(contact.id)}
+                                            onClick={() => {
+                                              stopReorderingContacts();
+                                              toggleEventContactHidden(contact.id);
+                                            }}
                                           >
                                             Hide
                                           </button>
@@ -287,7 +354,10 @@ export default function InfoPanel({
                                               isOffline ||
                                               savingCompanyContact
                                             }
-                                            onClick={() => startEditingCompanyContact(company.id, contact)}
+                                            onClick={() => {
+                                              stopReorderingContacts();
+                                              startEditingCompanyContact(company.id, contact);
+                                            }}
                                           >
                                             <CapcomIcon name="edit" size={16} />
                                             Edit
@@ -330,7 +400,9 @@ export default function InfoPanel({
                                         className={[
                                           "company-contact-row",
                                           "is-hidden",
-                                          canManageCompanyContacts && !isOffline
+                                          isReorderingThisCompanyContacts &&
+                                          canManageCompanyContacts &&
+                                          !isOffline
                                             ? "draggable-contact-row"
                                             : "",
                                           companyContactDropTargetId === contact.id
@@ -341,10 +413,15 @@ export default function InfoPanel({
                                         draggable={
                                           canManageCompanyContacts &&
                                           !isOffline &&
+                                          isReorderingThisCompanyContacts &&
                                           reorderingCompanyContactId !== company.id
                                         }
                                         onDragStart={(event) => {
-                                          if (!canManageCompanyContacts || isOffline) return;
+                                          if (
+                                            !canManageCompanyContacts ||
+                                            isOffline ||
+                                            !isReorderingThisCompanyContacts
+                                          ) return;
                                           event.stopPropagation();
                                           draggedCompanyContactIdRef.current = contact.id;
                                           event.dataTransfer.effectAllowed = "move";
@@ -353,6 +430,7 @@ export default function InfoPanel({
                                           if (
                                             !canManageCompanyContacts ||
                                             isOffline ||
+                                            !isReorderingThisCompanyContacts ||
                                             reorderingCompanyContactId ||
                                             !draggedCompanyContactIdRef.current ||
                                             draggedCompanyContactIdRef.current === contact.id
@@ -402,7 +480,10 @@ export default function InfoPanel({
                                               className="compact-button"
                                               type="button"
                                               disabled={savingEventContact || isOffline}
-                                              onClick={() => toggleEventContactHidden(contact.id)}
+                                              onClick={() => {
+                                                stopReorderingContacts();
+                                                toggleEventContactHidden(contact.id);
+                                              }}
                                             >
                                               Unhide
                                             </button>
@@ -414,7 +495,10 @@ export default function InfoPanel({
                                                 isOffline ||
                                                 savingCompanyContact
                                               }
-                                              onClick={() => startEditingCompanyContact(company.id, contact)}
+                                              onClick={() => {
+                                                stopReorderingContacts();
+                                                startEditingCompanyContact(company.id, contact);
+                                              }}
                                             >
                                               <CapcomIcon name="edit" size={16} />
                                               Edit

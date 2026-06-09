@@ -1167,12 +1167,15 @@ export default function EventEditPage() {
 
       setEventContactsLoading(true);
       setCompanyContactsLoading(true);
-      try {
-        const [eventContactRows, companyContactRows] = await Promise.all([
-          getEventContacts(eventId, contactCompanyIds),
-          getCompanyContacts(contactCompanyIds),
-        ]);
-        if (cancelled) return;
+      const [eventContactsResult, companyContactsResult] = await Promise.allSettled([
+        getEventContacts(eventId, contactCompanyIds),
+        getCompanyContacts(contactCompanyIds),
+      ]);
+
+      if (cancelled) return;
+
+      if (eventContactsResult.status === "fulfilled") {
+        const eventContactRows = eventContactsResult.value;
         setEventContactsByCompanyId(
           Object.fromEntries(
             contactCompanyIds.map((companyId) => [
@@ -1181,6 +1184,14 @@ export default function EventEditPage() {
             ])
           )
         );
+      } else {
+        console.error("Could not load event contacts.", eventContactsResult.reason);
+        setEventContactsByCompanyId({});
+        setWarning("Could not load event contacts.");
+      }
+
+      if (companyContactsResult.status === "fulfilled") {
+        const companyContactRows = companyContactsResult.value;
         setCompanyContactsByCompanyId(
           Object.fromEntries(
             contactCompanyIds.map((companyId) => [
@@ -1189,13 +1200,14 @@ export default function EventEditPage() {
             ])
           )
         );
-      } catch (loadError) {
-        console.error("Could not load event contacts.", loadError);
-        if (!cancelled) setWarning("Could not load company contacts.");
-      } finally {
-        if (!cancelled) setEventContactsLoading(false);
-        if (!cancelled) setCompanyContactsLoading(false);
+      } else {
+        console.error("Could not load master company contacts.", companyContactsResult.reason);
+        setCompanyContactsByCompanyId({});
+        setWarning("Could not load master company contacts.");
       }
+
+      setEventContactsLoading(false);
+      setCompanyContactsLoading(false);
     };
 
     loadContacts();
@@ -1825,7 +1837,12 @@ export default function EventEditPage() {
           role,
         });
         if (editingEventContactId) {
-          await updateEventContact(editingEventContactId, { role });
+          await updateEventContact(editingEventContactId, {
+            name,
+            email,
+            phone,
+            role,
+          });
         }
         setMessage("Company contact saved.");
       } else {
@@ -1874,7 +1891,11 @@ export default function EventEditPage() {
       await reloadEventContacts();
     } catch (contactError) {
       console.error(contactError);
-      setError("Could not save company contact.");
+      setError(
+        contactError?.code === "permission-denied"
+          ? "You do not have permission to save contacts for this company."
+          : "Could not save company contact."
+      );
     } finally {
       setSavingCompanyContact(false);
     }
@@ -2444,24 +2465,13 @@ export default function EventEditPage() {
       }));
       await updateScheduleDetail(detail.id, {
         eventId,
-        time: detail.time || "",
-        description: detail.description || "",
-        sortOrder: detail.sortOrder,
-        colour: normaliseHexColour(detail.colour),
         tagId: nextTagId,
-        locationId: detail.locationId || "",
-        companyIds: detail.companyIds || [],
       });
       setSavedDetailsById((current) => ({
         ...current,
         [detail.id]: {
-          time: detail.time || "",
-          description: detail.description || "",
-          sortOrder: detail.sortOrder,
-          colour: normaliseHexColour(detail.colour),
+          ...(current[detail.id] || {}),
           tagId: nextTagId,
-          locationId: detail.locationId || "",
-          companyIds: detail.companyIds || [],
         },
       }));
     } catch (tagError) {
@@ -2488,29 +2498,15 @@ export default function EventEditPage() {
     }));
 
     try {
-      const tagId = detail.truckId
-        ? (await ensureTruckTag()).id
-        : getEditableDetailTagId(detail.tagId);
       await updateScheduleDetail(detail.id, {
         eventId,
-        time: detail.time || "",
-        description: detail.description || "",
-        sortOrder: detail.sortOrder,
-        colour: normaliseHexColour(detail.colour),
-        tagId,
         locationId,
-        companyIds: detail.companyIds || [],
       });
       setSavedDetailsById((current) => ({
         ...current,
         [detail.id]: {
-          time: detail.time || "",
-          description: detail.description || "",
-          sortOrder: detail.sortOrder,
-          colour: normaliseHexColour(detail.colour),
-          tagId,
+          ...(current[detail.id] || {}),
           locationId,
-          companyIds: detail.companyIds || [],
         },
       }));
     } catch (locationError) {
@@ -2537,28 +2533,14 @@ export default function EventEditPage() {
     }));
 
     try {
-      const tagId = detail.truckId
-        ? (await ensureTruckTag()).id
-        : getEditableDetailTagId(detail.tagId);
       await updateScheduleDetail(detail.id, {
         eventId,
-        time: detail.time || "",
-        description: detail.description || "",
-        sortOrder: detail.sortOrder,
-        colour: normaliseHexColour(detail.colour),
-        tagId,
-        locationId: detail.locationId || "",
         companyIds,
       });
       setSavedDetailsById((current) => ({
         ...current,
         [detail.id]: {
-          time: detail.time || "",
-          description: detail.description || "",
-          sortOrder: detail.sortOrder,
-          colour: normaliseHexColour(detail.colour),
-          tagId,
-          locationId: detail.locationId || "",
+          ...(current[detail.id] || {}),
           companyIds,
         },
       }));
@@ -3160,18 +3142,11 @@ export default function EventEditPage() {
     setError("");
 
     try {
-      const tagId = detail.truckId
-        ? (await ensureTruckTag()).id
-        : getEditableDetailTagId(detail.tagId);
       await updateScheduleDetail(detail.id, {
         eventId,
         time: detail.time || "",
         description: detail.description || "",
         sortOrder: detail.sortOrder,
-        colour: normaliseHexColour(detail.colour),
-        tagId,
-        locationId: detail.locationId || "",
-        companyIds: detail.companyIds || [],
       });
       setDetailsByDayId((current) => ({
         ...current,
@@ -3183,10 +3158,6 @@ export default function EventEditPage() {
                   time: detail.time || "",
                   description: detail.description || "",
                   sortOrder: detail.sortOrder,
-                  colour: normaliseHexColour(detail.colour),
-                  tagId,
-                  locationId: detail.locationId || "",
-                  companyIds: detail.companyIds || [],
                 }
               : nextDetail
           )
@@ -3195,13 +3166,10 @@ export default function EventEditPage() {
       setSavedDetailsById((current) => ({
         ...current,
         [detail.id]: {
+          ...(current[detail.id] || {}),
           time: detail.time || "",
           description: detail.description || "",
           sortOrder: detail.sortOrder,
-          colour: normaliseHexColour(detail.colour),
-          tagId,
-          locationId: detail.locationId || "",
-          companyIds: detail.companyIds || [],
         },
       }));
       setEditingDetailCell(nextCell);
@@ -4211,14 +4179,6 @@ export default function EventEditPage() {
       const truckTag = await ensureTruckTag();
       await updateScheduleDetail(detail.id, {
         eventId,
-        scheduleDayId: dayId,
-        truckId: detail.truckId || "",
-        truckNumber: detail.truckNumber || "",
-        action: detail.action || "",
-        time: detail.time || "",
-        description: detail.description || "",
-        sortOrder: detail.sortOrder,
-        colour: normaliseHexColour(detail.colour),
         tagId: truckTag.id,
         locationId: destination.locationId,
         companyIds: destination.companyIds,
@@ -4227,6 +4187,7 @@ export default function EventEditPage() {
         ...current,
         [detail.id]: {
           ...(current[detail.id] || {}),
+          tagId: truckTag.id,
           locationId: destination.locationId,
           companyIds: destination.companyIds,
         },

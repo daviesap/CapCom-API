@@ -116,12 +116,21 @@ export async function addEventContactsFromCompanyContacts({
   }
 }
 
-export async function updateEventContact(eventContactId, { isHidden, role }) {
+export async function updateEventContact(eventContactId, { isHidden, name, email, phone, role }) {
   assertOnline();
   const updates = {};
 
   if (typeof isHidden === "boolean") {
     updates.isHidden = isHidden;
+  }
+  if (typeof name === "string") {
+    updates.name = name;
+  }
+  if (typeof email === "string") {
+    updates.email = email;
+  }
+  if (typeof phone === "string") {
+    updates.phone = phone;
   }
   if (typeof role === "string") {
     updates.role = role;
