@@ -13,7 +13,6 @@ export default function TruckingPanel({
   savingTruck,
   editingTruckId,
   resetTruckForm,
-  trucksLoading,
   trucks,
   getTruckDetails,
   draftTruckDetailsByTruckId,

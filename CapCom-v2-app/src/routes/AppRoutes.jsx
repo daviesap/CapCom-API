@@ -15,7 +15,7 @@ function ProtectedRoute() {
   const { user, authLoading } = useAuth();
 
     if (authLoading) {
-    return <Loading label="Checking sign-in state..." withToast />;
+    return <Loading />;
   }
 
   if (!user) {

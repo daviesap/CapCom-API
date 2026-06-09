@@ -10,6 +10,14 @@ export default function Layout() {
 
   return (
     <div className={isSidebarCollapsed ? "app-shell sidebar-collapsed" : "app-shell"}>
+      <header className="mobile-header">
+        <Link className="brand" to="/events">
+          <img src="/flair-logo.png" alt="Flair" className="brand-logo" />
+          <span className="brand-short" aria-hidden="true">CC</span>
+        </Link>
+        <ConnectionStatus />
+      </header>
+
       <aside className="desktop-sidebar" aria-label="Primary navigation">
         <div className="sidebar-header">
           <Link className="brand" to="/events" title={isSidebarCollapsed ? "CapCom v2" : undefined}>

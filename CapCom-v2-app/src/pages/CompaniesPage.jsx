@@ -2,11 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "../auth/AuthProvider.jsx";
 import Loading from "../components/Loading.jsx";
 import Modal from "../components/Modal.jsx";
-import { useToast } from "../components/ToastProvider.jsx";
 import useOnlineStatus from "../hooks/useOnlineStatus.js";
-import useLoadingToast from "../hooks/useLoadingToast.js";
 import { getClient, getClients } from "../services/clientService.js";
-import { getSectionLoadingMessage } from "../utils/loadingMessages.js";
 import {
   createCompany,
   deleteCompany,
@@ -26,7 +23,6 @@ export default function CompaniesPage() {
     isSuperAdmin,
     isClientAdmin,
   } = useAuth();
-  const { showToast } = useToast();
   const isOnline = useOnlineStatus();
   const isOffline = !isOnline;
   const [clients, setClients] = useState([]);
@@ -36,22 +32,10 @@ export default function CompaniesPage() {
   const [isCompanyFormOpen, setIsCompanyFormOpen] = useState(false);
   const [editingCompanyId, setEditingCompanyId] = useState("");
   const [clientsLoading, setClientsLoading] = useState(false);
-  const [companiesLoading, setCompaniesLoading] = useState(false);
   const [savingCompany, setSavingCompany] = useState(false);
   const [deletingCompanyId, setDeletingCompanyId] = useState("");
-  const companiesLoadingMessage = useMemo(() => {
-    if (profileLoading) return "Loading companies...";
-    return getSectionLoadingMessage([
-      ["clients", clientsLoading],
-      ["companies", companiesLoading],
-    ]);
-  }, [clientsLoading, companiesLoading, profileLoading]);
-
-  useLoadingToast(Boolean(companiesLoadingMessage), companiesLoadingMessage, {
-    variant: "loading",
-    id: "companies-page-loading",
-    persist: true,
-  });
+  const [companyMessage, setCompanyMessage] = useState("");
+  const [companyError, setCompanyError] = useState("");
   const canManageCompanies = isSuperAdmin || isClientAdmin;
   const selectedClient = useMemo(
     () => clients.find((client) => client.id === selectedClientId),
@@ -82,7 +66,7 @@ export default function CompaniesPage() {
         setSelectedClientId("");
       } catch (loadError) {
         console.error(loadError);
-        showToast("Could not load clients.", { variant: "error" });
+        setCompanyError("Could not load clients.");
       } finally {
         setClientsLoading(false);
       }
@@ -97,14 +81,12 @@ export default function CompaniesPage() {
       return;
     }
 
-    setCompaniesLoading(true);
+    setCompanyError("");
     try {
       setCompanies(await getCompanies(clientId));
     } catch (loadError) {
       console.error(loadError);
-      showToast("Could not load companies.", { variant: "error" });
-    } finally {
-      setCompaniesLoading(false);
+      setCompanyError("Could not load companies.");
     }
   };
 
@@ -125,12 +107,16 @@ export default function CompaniesPage() {
   };
 
   const startAddingCompany = () => {
+    setCompanyMessage("");
+    setCompanyError("");
     setIsCompanyFormOpen(true);
     setEditingCompanyId("");
     setCompanyForm(emptyCompanyForm);
   };
 
   const startEditingCompany = (company) => {
+    setCompanyMessage("");
+    setCompanyError("");
     setIsCompanyFormOpen(true);
     setEditingCompanyId(company.id);
     setCompanyForm({
@@ -141,16 +127,18 @@ export default function CompaniesPage() {
 
   const saveCompany = async (submitEvent) => {
     submitEvent.preventDefault();
+    setCompanyMessage("");
+    setCompanyError("");
     if (isOffline) {
-      showToast("Editing is disabled while offline.", { variant: "error" });
+      setCompanyError("Editing is disabled while offline.");
       return;
     }
     if (!canManageCompanies) {
-      showToast("Your role cannot manage companies.", { variant: "error" });
+      setCompanyError("Your role cannot manage companies.");
       return;
     }
     if (!selectedClientId) {
-      showToast("Choose a client before adding companies.", { variant: "error" });
+      setCompanyError("Choose a client before adding companies.");
       return;
     }
 
@@ -160,7 +148,7 @@ export default function CompaniesPage() {
       const companyName = companyForm.companyName.trim();
       const address = companyForm.address.trim();
       if (!companyName) {
-        showToast("Company name is required.", { variant: "error" });
+        setCompanyError("Company name is required.");
         return;
       }
 
@@ -170,21 +158,21 @@ export default function CompaniesPage() {
           companyName,
           address,
         });
-        showToast("Company saved.", { variant: "success" });
+        setCompanyMessage("Company saved.");
       } else {
         await createCompany({
           clientId: selectedClientId,
           companyName,
           address,
         });
-        showToast("Company created.", { variant: "success" });
+        setCompanyMessage("Company created.");
       }
 
       resetCompanyForm();
       await loadCompanies(selectedClientId);
     } catch (companyError) {
       console.error(companyError);
-      showToast("Could not save company.", { variant: "error" });
+      setCompanyError("Could not save company.");
     } finally {
       setSavingCompany(false);
     }
@@ -192,39 +180,33 @@ export default function CompaniesPage() {
 
   const removeCompany = async (companyId) => {
     if (isOffline) {
-      showToast("Editing is disabled while offline.", { variant: "error" });
+      setCompanyError("Editing is disabled while offline.");
       return;
     }
     if (!canManageCompanies) {
-      showToast("Your role cannot manage companies.", { variant: "error" });
+      setCompanyError("Your role cannot manage companies.");
       return;
     }
 
+    setCompanyMessage("");
+    setCompanyError("");
     setDeletingCompanyId(companyId);
 
     try {
       await deleteCompany(companyId);
       if (editingCompanyId === companyId) resetCompanyForm();
       await loadCompanies(selectedClientId);
-      showToast("Company deleted.", { variant: "success" });
+      setCompanyMessage("Company deleted.");
     } catch (companyError) {
       console.error(companyError);
-      showToast("Could not delete company.", { variant: "error" });
+      setCompanyError("Could not delete company.");
     } finally {
       setDeletingCompanyId("");
     }
   };
 
   if (profileLoading) {
-    return (
-      <Loading
-        label="Loading companies..."
-        withToast
-        id="companies-page-initial-load"
-        showAfterMs={250}
-        minVisibleMs={1500}
-      />
-    );
+    return <Loading />;
   }
 
   return (
@@ -238,6 +220,8 @@ export default function CompaniesPage() {
       {isOffline ? (
         <p className="message offline-message">Offline mode: company records are read-only.</p>
       ) : null}
+      {companyError ? <p className="error">{companyError}</p> : null}
+      {companyMessage ? <p className="message">{companyMessage}</p> : null}
 
       <section className="panel">
         <div className="panel-heading">
@@ -321,6 +305,8 @@ export default function CompaniesPage() {
             closeLabel="Close company form"
             onClose={resetCompanyForm}
           >
+          {companyError ? <p className="error">{companyError}</p> : null}
+          {companyMessage ? <p className="message">{companyMessage}</p> : null}
           <form className="company-form" onSubmit={saveCompany}>
             <div className="form-grid">
               <div className="form-row">

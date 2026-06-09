@@ -3,8 +3,6 @@ import { useAuth } from "../auth/AuthProvider.jsx";
 import { USER_ROLES } from "../auth/roles.js";
 import Modal from "../components/Modal.jsx";
 import { CapcomIcon } from "../icons/capcomIcons.jsx";
-import useLoadingToast from "../hooks/useLoadingToast.js";
-import { getSectionLoadingMessage } from "../utils/loadingMessages.js";
 import {
   CLIENT_DEFAULTS,
   createClient,
@@ -89,20 +87,6 @@ export default function AdminPage() {
     if (!userProfile?.clientId) return [];
     return clients.filter((client) => client.id === userProfile.clientId);
   }, [clients, isSuperAdmin, userProfile?.clientId]);
-
-  const adminLoadingMessage = useMemo(() => {
-    if (profileLoading) return "Loading access profile...";
-    return getSectionLoadingMessage([
-      ["clients", clientsLoading],
-      ["users", usersLoading],
-    ]);
-  }, [clientsLoading, profileLoading, usersLoading]);
-
-  useLoadingToast(Boolean(adminLoadingMessage), adminLoadingMessage, {
-    variant: "loading",
-    id: "admin-page-loading",
-    persist: true,
-  });
 
   const loadClients = async () => {
     setClientsLoading(true);

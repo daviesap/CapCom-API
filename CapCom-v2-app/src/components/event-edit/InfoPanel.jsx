@@ -5,8 +5,6 @@ import { CapcomIcon } from "../../icons/capcomIcons.jsx";
 export default function InfoPanel({
   activeInfoTab,
   setActiveInfoTab,
-  detailsLoading,
-  companiesLoading,
   contactCompanies,
   companyContactsByCompanyId,
   editingCompanyContactCompanyId,
@@ -17,7 +15,6 @@ export default function InfoPanel({
   savingContactCompanyOrder,
   contactCompanyDropTargetId,
   draggedContactCompanyIdRef,
-  companyContactsLoading,
   companyContactDropTargetId,
   reorderingCompanyContactId,
   draggedCompanyContactIdRef,

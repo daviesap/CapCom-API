@@ -189,15 +189,7 @@ export default function EventListPage() {
       {!profileLoading && isClientUser ? (
         <p className="message">ClientUser accounts can view assigned client events but cannot create events.</p>
       ) : null}
-      {loading ? (
-        <Loading
-          label="Loading events..."
-          withToast
-          id="events-page-loading"
-          showAfterMs={250}
-          minVisibleMs={1500}
-        />
-      ) : null}
+      {loading ? <Loading /> : null}
       {!loading && events.length === 0 ? <EmptyState message="No events yet." /> : null}
 
       <section className="list">

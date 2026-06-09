@@ -6,7 +6,6 @@ import Loading from "../components/Loading.jsx";
 import ScheduleCacheStatus from "../components/ScheduleCacheStatus.jsx";
 import { CapcomIcon } from "../icons/capcomIcons.jsx";
 import useOnlineStatus from "../hooks/useOnlineStatus.js";
-import useLoadingToast from "../hooks/useLoadingToast.js";
 import { getEvent } from "../services/eventService.js";
 import { getScheduleDays } from "../services/scheduleDayService.js";
 import {
@@ -29,14 +28,10 @@ export default function ScheduleDaysPage() {
   const [savingDetailId, setSavingDetailId] = useState("");
   const [savingDraftDayId, setSavingDraftDayId] = useState("");
   const [loading, setLoading] = useState(true);
-  const [detailsLoading, setDetailsLoading] = useState(false);
   const [error, setError] = useState("");
-
-  useLoadingToast(detailsLoading, "Loading schedule details...", { variant: "loading" });
 
   const loadPage = async () => {
     setLoading(true);
-    setDetailsLoading(false);
     setError("");
     try {
       const eventRecord = await getEvent(eventId, userProfile);
@@ -51,7 +46,6 @@ export default function ScheduleDaysPage() {
       setEvent(eventRecord);
       setDays(dayRecords);
 
-      setDetailsLoading(true);
       setDetailsState(
         await getScheduleDetailsForEvent(eventId, dayRecords.map((day) => day.id))
       );
@@ -60,7 +54,6 @@ export default function ScheduleDaysPage() {
       setError("Could not load schedule days.");
     } finally {
       setLoading(false);
-      setDetailsLoading(false);
     }
   };
 
@@ -198,7 +191,7 @@ export default function ScheduleDaysPage() {
     }
   };
 
-  if (loading) return <Loading label="Loading schedule days..." withToast />;
+  if (loading) return <Loading />;
 
   return (
     <main className="page">

@@ -12,7 +12,6 @@ import SettingsPanel from "../components/event-edit/SettingsPanel.jsx";
 import SummaryPanel from "../components/event-edit/SummaryPanel.jsx";
 import TruckingPanel from "../components/event-edit/TruckingPanel.jsx";
 import Loading from "../components/Loading.jsx";
-import { useToast } from "../components/ToastProvider.jsx";
 import { CapcomIcon } from "../icons/capcomIcons.jsx";
 import useOnlineStatus from "../hooks/useOnlineStatus.js";
 import { isEventAdmin } from "../auth/roles.js";
@@ -383,7 +382,6 @@ function getRowTagStyle(tag) {
 export default function EventEditPage() {
   const { eventId } = useParams();
   const { userProfile, profileLoading, isSuperAdmin, isClientAdmin } = useAuth();
-  const { showToast } = useToast();
   const isOnline = useOnlineStatus();
   const isOffline = !isOnline;
   const [form, setForm] = useState(emptyEventForm);
@@ -482,7 +480,7 @@ export default function EventEditPage() {
   const [locationDropTargetId, setLocationDropTargetId] = useState("");
   const [contactCompanyDropTargetId, setContactCompanyDropTargetId] = useState("");
   const [companyContactDropTargetId, setCompanyContactDropTargetId] = useState("");
-  const [message, setMessage] = useState("");
+  const [, setMessage] = useState("");
   const [error, setError] = useState("");
   const [warning, setWarning] = useState("");
   const suppressDetailBlurRef = useRef(false);
@@ -705,12 +703,6 @@ export default function EventEditPage() {
     setEventImagePreviewUrl(nextPreviewUrl);
     return () => URL.revokeObjectURL(nextPreviewUrl);
   }, [eventImageFile]);
-
-  useEffect(() => {
-    if (!message) return;
-    showToast(message, { variant: "success" });
-    setMessage("");
-  }, [message, showToast]);
 
   const scheduleDetails = useMemo(() => {
     return Object.values(detailsByDayId).flat();
@@ -2336,9 +2328,7 @@ export default function EventEditPage() {
       const isTruckTag =
         String(targetTag?.name || "").trim().toLowerCase() === "truck";
       if (isTruckTag && truckScheduleDetails.length > 0) {
-        showToast("Truck can not be deleted whilst truck entires exist", {
-          variant: "error",
-        });
+        setError("Truck can not be deleted whilst truck entries exist.");
         return;
       }
 
@@ -3728,7 +3718,7 @@ export default function EventEditPage() {
     }
   };
 
-      if (loading) return <Loading label="Loading event editor..." withToast />;
+      if (loading) return <Loading />;
 
   const eventHeaderImageUrl = eventImagePreviewUrl || form.imageUrl;
   const eventDateRangeLabel = formatEventDateRange(form.startDate, form.endDate);
