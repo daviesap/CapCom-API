@@ -1,10 +1,11 @@
 {
   "name": "capcom-v2-app",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "predeploy": "npm version patch --no-git-tag-version",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
