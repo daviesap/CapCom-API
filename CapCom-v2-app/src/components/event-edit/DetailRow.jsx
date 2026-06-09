@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import DetailRowActions from "./DetailRowActions.jsx";
 
 function createDetailDragPreview(rowElement) {
@@ -87,6 +87,7 @@ export default function DetailRow({
     beginRowAction,
     endRowAction,
     duplicateDetail,
+    startEditingDetail,
     closeActionMenu,
     deleteDetail,
   } = rowActions;
@@ -108,7 +109,35 @@ export default function DetailRow({
     .filter(Boolean)
     .join(" ");
   const hasTruckDestination = Boolean(getTruckDestinationValue(detail));
+  const tagLabel = getTagById(detail.tagId)?.name || "No tag";
+  const locationLabel = getLocationById(detail.locationId)?.displayName || "No location";
+  const companyLabel = getCompanyLabel(detail.companyIds || []);
+  const truckDestinationValue = String(getTruckDestinationValue(detail) || "");
+  const truckDestinationLabel = truckDestinationValue.startsWith("company:")
+    ? companyById.get(truckDestinationValue.replace("company:", ""))?.companyName || "No destination"
+    : truckDestinationValue.startsWith("location:")
+      ? getLocationById(truckDestinationValue.replace("location:", ""))?.displayName || "No destination"
+      : "No destination";
+  const mobileMetaLabels = isTruckRow
+    ? [truckDestinationLabel]
+    : [tagLabel, locationLabel, companyLabel].filter(Boolean);
   const dragPreviewRef = useRef(null);
+  const [isMobileView, setIsMobileView] = useState(false);
+  const canDragRow =
+    !isMobileView && !isEditingTime && !isEditingDescription && !isOffline;
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 700px)");
+    const updateIsMobileView = () => setIsMobileView(mediaQuery.matches);
+
+    updateIsMobileView();
+    mediaQuery.addEventListener("change", updateIsMobileView);
+
+    return () => {
+      mediaQuery.removeEventListener("change", updateIsMobileView);
+    };
+  }, []);
+
   const clearDragPreview = () => {
     dragPreviewRef.current?.remove();
     dragPreviewRef.current = null;
@@ -118,8 +147,12 @@ export default function DetailRow({
     <div
       className="detail-row draggable-row"
       style={rowStyle}
-      draggable={!isEditingTime && !isEditingDescription && !isOffline}
+      draggable={canDragRow}
       onDragStart={(event) => {
+        if (!canDragRow) {
+          event.preventDefault();
+          return;
+        }
         draggedDetailIdRef.current = detail.id;
         event.dataTransfer.effectAllowed = "move";
         clearDragPreview();
@@ -240,116 +273,127 @@ export default function DetailRow({
           <span className="detail-description-text">{detail.description || ""}</span>
         </button>
       )}
+      <span className="mobile-detail-meta-line">
+        {mobileMetaLabels.join(" · ")}
+      </span>
       {!isTruckRow && showTagColumn ? (
-        <div
-          className="tag-select-wrap detail-select-field"
-          style={getTagStyle(getTagById(detail.tagId))}
-        >
-          <span
-            className="tag-dot"
-            style={{
-              backgroundColor:
-                normaliseHexColour(getTagById(detail.tagId)?.colour) || "transparent",
-            }}
-          />
-          <select
-            aria-label={`Tag for ${detail.description || "schedule detail"}`}
-            value={getTagById(detail.tagId) ? detail.tagId : ""}
-            disabled={savingDetailId === detail.id || isOffline || Boolean(detail.truckId)}
-            onChange={(event) => assignDetailTag(day.id, detail, event.target.value)}
+        <>
+          <div
+            className="tag-select-wrap detail-select-field"
+            style={getTagStyle(getTagById(detail.tagId))}
           >
-            <option value="">No tag</option>
-            {tags.map((tag) => (
-              <option key={tag.id} value={tag.id}>
-                {tag.name}
-              </option>
-            ))}
-          </select>
-        </div>
+            <span
+              className="tag-dot"
+              style={{
+                backgroundColor:
+                  normaliseHexColour(getTagById(detail.tagId)?.colour) || "transparent",
+              }}
+            />
+            <select
+              aria-label={`Tag for ${detail.description || "schedule detail"}`}
+              value={getTagById(detail.tagId) ? detail.tagId : ""}
+              disabled={savingDetailId === detail.id || isOffline || Boolean(detail.truckId)}
+              onChange={(event) => assignDetailTag(day.id, detail, event.target.value)}
+            >
+              <option value="">No tag</option>
+              {tags.map((tag) => (
+                <option key={tag.id} value={tag.id}>
+                  {tag.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        </>
       ) : null}
       {!isTruckRow && showLocationColumn ? (
-        <div className="location-select-wrap detail-select-field">
-          <select
-            aria-label={`Location for ${detail.description || "schedule detail"}`}
-            value={getLocationById(detail.locationId) ? detail.locationId : ""}
-            disabled={savingDetailId === detail.id || isOffline}
-            onChange={(event) => assignDetailLocation(day.id, detail, event.target.value)}
-          >
-            <option value="">No location</option>
-            {locationOptions.map((location) => (
-              <option key={location.id} value={location.id}>
-                {location.displayName}
-              </option>
-            ))}
-          </select>
-        </div>
+        <>
+          <div className="location-select-wrap detail-select-field">
+            <select
+              aria-label={`Location for ${detail.description || "schedule detail"}`}
+              value={getLocationById(detail.locationId) ? detail.locationId : ""}
+              disabled={savingDetailId === detail.id || isOffline}
+              onChange={(event) => assignDetailLocation(day.id, detail, event.target.value)}
+            >
+              <option value="">No location</option>
+              {locationOptions.map((location) => (
+                <option key={location.id} value={location.id}>
+                  {location.displayName}
+                </option>
+              ))}
+            </select>
+          </div>
+        </>
       ) : null}
       {!isTruckRow && showCompanyColumn ? (
-        <details className="company-dropdown detail-select-field">
-          <summary
-            aria-label={`Company for ${detail.description || "schedule detail"}`}
-            className="company-dropdown-trigger"
-          >
-            {getCompanyLabel(detail.companyIds || [])}
-          </summary>
-          <div className="company-dropdown-menu">
-            {companies.map((company) => (
-              <label className="company-dropdown-option" key={company.id}>
-                <input
-                  type="checkbox"
-                  checked={(detail.companyIds || []).includes(company.id)}
-                  disabled={savingDetailId === detail.id || isOffline}
-                  onChange={() =>
-                    assignDetailCompanies(
-                      day.id,
-                      detail,
-                      toggleCompanyIds(detail.companyIds || [], company.id)
-                    )
-                  }
-                />
-                <span>{company.companyName}</span>
-              </label>
-            ))}
-          </div>
-        </details>
+        <>
+          <details className="company-dropdown detail-select-field">
+            <summary
+              aria-label={`Company for ${detail.description || "schedule detail"}`}
+              className="company-dropdown-trigger"
+            >
+              {companyLabel}
+            </summary>
+            <div className="company-dropdown-menu">
+              {companies.map((company) => (
+                <label className="company-dropdown-option" key={company.id}>
+                  <input
+                    type="checkbox"
+                    checked={(detail.companyIds || []).includes(company.id)}
+                    disabled={savingDetailId === detail.id || isOffline}
+                    onChange={() =>
+                      assignDetailCompanies(
+                        day.id,
+                        detail,
+                        toggleCompanyIds(detail.companyIds || [], company.id)
+                      )
+                    }
+                  />
+                  <span>{company.companyName}</span>
+                </label>
+              ))}
+            </div>
+          </details>
+        </>
       ) : null}
       {isTruckRow && showTruckDestinationColumn ? (
-        <div
-          className={[
-            "location-select-wrap",
-            "detail-select-field",
-            hasTruckDestination ? "" : "detail-select-field-missing",
-          ].filter(Boolean).join(" ")}
-        >
-          <select
-            aria-label="Destination for truck detail"
-            value={getTruckDestinationValue(detail)}
-            disabled={savingDetailId === detail.id || isOffline}
-            onChange={(event) =>
-              assignTruckDetailDestination(day.id, detail, event.target.value)
-            }
+        <>
+          <div
+            className={[
+              "location-select-wrap",
+              "detail-select-field",
+              hasTruckDestination ? "" : "detail-select-field-missing",
+            ].filter(Boolean).join(" ")}
           >
-            <option value="">No destination</option>
-            {companies.length > 0 ? (
-              <optgroup label="Companies">
-                {companies.map((company) => (
-                  <option key={company.id} value={`company:${company.id}`}>
-                    {company.companyName}
-                  </option>
-                ))}
-              </optgroup>
-            ) : null}
-            {locationOptions.length > 0 ? (
-              <optgroup label="Locations">
-                {locationOptions.map((location) => (
-                  <option key={location.id} value={`location:${location.id}`}>
-                    {location.displayName}
-                  </option>
-                ))}
-              </optgroup>
-            ) : null}
-          </select>
-        </div>
+            <select
+              aria-label="Destination for truck detail"
+              value={getTruckDestinationValue(detail)}
+              disabled={savingDetailId === detail.id || isOffline}
+              onChange={(event) =>
+                assignTruckDetailDestination(day.id, detail, event.target.value)
+              }
+            >
+              <option value="">No destination</option>
+              {companies.length > 0 ? (
+                <optgroup label="Companies">
+                  {companies.map((company) => (
+                    <option key={company.id} value={`company:${company.id}`}>
+                      {company.companyName}
+                    </option>
+                  ))}
+                </optgroup>
+              ) : null}
+              {locationOptions.length > 0 ? (
+                <optgroup label="Locations">
+                  {locationOptions.map((location) => (
+                    <option key={location.id} value={`location:${location.id}`}>
+                      {location.displayName}
+                    </option>
+                  ))}
+                </optgroup>
+              ) : null}
+            </select>
+          </div>
+        </>
       ) : null}
       <DetailRowActions
         day={day}
@@ -370,6 +414,7 @@ export default function DetailRow({
         nextDay={nextDay}
         moveDetailToDay={moveDetailToDay}
         duplicateDetail={duplicateDetail}
+        startEditingDetail={startEditingDetail}
         closeActionMenu={closeActionMenu}
         deleteDetail={deleteDetail}
       />

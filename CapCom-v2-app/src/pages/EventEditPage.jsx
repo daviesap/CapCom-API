@@ -146,6 +146,15 @@ const emptyCompanyContactForm = {
   role: "",
 };
 
+const emptyDetailEditForm = {
+  time: "",
+  description: "",
+  tagId: "",
+  locationId: "",
+  companyIds: [],
+  notes: "",
+};
+
 const emptyKeyInfoForm = {
   title: "",
   description: "",
@@ -439,6 +448,8 @@ export default function EventEditPage() {
   const [editingCompanyContactCompanyId, setEditingCompanyContactCompanyId] = useState("");
   const [editingEventContactId, setEditingEventContactId] = useState("");
   const [editingDetailCell, setEditingDetailCell] = useState(null);
+  const [editingDetailModal, setEditingDetailModal] = useState(null);
+  const [detailEditForm, setDetailEditForm] = useState(emptyDetailEditForm);
   const [openActionMenuId, setOpenActionMenuId] = useState("");
   const [openNotesDetailId, setOpenNotesDetailId] = useState("");
   const [notesDraft, setNotesDraft] = useState("");
@@ -2988,6 +2999,109 @@ export default function EventEditPage() {
     }
   };
 
+  const startEditingDetail = (dayId, detail) => {
+    setEditingDetailModal({ dayId, detailId: detail.id });
+    setDetailEditForm({
+      time: detail.time || "",
+      description: detail.description || "",
+      tagId: detail.tagId || "",
+      locationId: detail.locationId || "",
+      companyIds: Array.isArray(detail.companyIds) ? detail.companyIds : [],
+      notes: detail.notes || "",
+    });
+    setOpenActionMenuId("");
+    setMessage("");
+    setError("");
+  };
+
+  const cancelEditingDetail = () => {
+    setEditingDetailModal(null);
+    setDetailEditForm(emptyDetailEditForm);
+  };
+
+  const updateDetailEditFormField = (field, value) => {
+    setDetailEditForm((currentForm) => ({
+      ...currentForm,
+      [field]: value,
+    }));
+  };
+
+  const toggleDetailEditCompany = (companyId) => {
+    setDetailEditForm((currentForm) => ({
+      ...currentForm,
+      companyIds: toggleCompanyIds(currentForm.companyIds || [], companyId),
+    }));
+  };
+
+  const saveDetailEditForm = async (submitEvent) => {
+    submitEvent.preventDefault();
+    if (!editingDetailModal) return;
+    if (isOffline) {
+      setError("Editing is disabled while offline.");
+      return;
+    }
+
+    const currentDetail = detailsByDayId[editingDetailModal.dayId]?.find(
+      (detail) => detail.id === editingDetailModal.detailId
+    );
+    if (!currentDetail) {
+      setError("Could not find schedule detail.");
+      return;
+    }
+
+    setSavingDetailId(currentDetail.id);
+    setMessage("");
+    setError("");
+
+    try {
+      const tagId = currentDetail.truckId
+        ? (await ensureTruckTag()).id
+        : detailEditForm.tagId || "";
+      const updates = {
+        eventId,
+        time: detailEditForm.time || "",
+        description: detailEditForm.description || "",
+        notes: detailEditForm.notes || "",
+        sortOrder: currentDetail.sortOrder,
+        colour: normaliseHexColour(currentDetail.colour),
+        tagId,
+        locationId: detailEditForm.locationId || "",
+        companyIds: detailEditForm.companyIds || [],
+      };
+
+      await updateScheduleDetail(currentDetail.id, updates);
+
+      setDetailsByDayId((current) => ({
+        ...current,
+        [editingDetailModal.dayId]: sortDetailsForDisplay(
+          (current[editingDetailModal.dayId] || []).map((detail) =>
+            detail.id === currentDetail.id
+              ? {
+                  ...detail,
+                  ...updates,
+                }
+              : detail
+          )
+        ),
+      }));
+      setSavedDetailsById((current) => ({
+        ...current,
+        [currentDetail.id]: {
+          ...(current[currentDetail.id] || {}),
+          ...updates,
+        },
+      }));
+      cancelEditingDetail();
+      setMessage("Schedule row saved.");
+    } catch (saveError) {
+      console.error(saveError);
+      setError("Could not save schedule row.");
+      await loadScheduleDetails(scheduleDays);
+    } finally {
+      setSavingDetailId("");
+    }
+  };
+
   const getNextDetailCell = (dayId, dayDetails, detailIndex, field, shiftKey) => {
     if (shiftKey) {
       if (field === "description") {
@@ -3890,6 +4004,14 @@ export default function EventEditPage() {
 
   const eventHeaderImageUrl = eventImagePreviewUrl || form.imageUrl;
   const eventDateRangeLabel = formatEventDateRange(form.startDate, form.endDate);
+  const editingDetailDay = editingDetailModal
+    ? scheduleDays.find((day) => day.id === editingDetailModal.dayId)
+    : null;
+  const editingDetail = editingDetailModal
+    ? detailsByDayId[editingDetailModal.dayId]?.find(
+        (detail) => detail.id === editingDetailModal.detailId
+      )
+    : null;
 
   return (
     <main className="page">
@@ -4107,6 +4229,7 @@ export default function EventEditPage() {
           moveDetail={moveDetail}
           moveDetailToDay={moveDetailToDay}
           duplicateDetail={duplicateDetail}
+          startEditingDetail={startEditingDetail}
           closeActionMenu={closeActionMenu}
           deleteDetail={deleteDetail}
           updateDraftDetail={updateDraftDetail}
@@ -4115,6 +4238,130 @@ export default function EventEditPage() {
           saveDraftDetail={saveDraftDetail}
         />
       </section>
+      ) : null}
+
+      {editingDetail ? (
+        <Modal
+          title="Edit row"
+          subtitle={editingDetailDay ? formatDetailDate(editingDetailDay.date) : ""}
+          labelledBy="editScheduleRowTitle"
+          closeLabel="Close edit row form"
+          onClose={cancelEditingDetail}
+        >
+          <form className="admin-inline-form" onSubmit={saveDetailEditForm}>
+            <div className="form-grid">
+              <div className="form-row">
+                <label htmlFor="detailEditTime">Time</label>
+                <input
+                  id="detailEditTime"
+                  type="time"
+                  value={detailEditForm.time}
+                  disabled={isOffline || savingDetailId === editingDetail.id}
+                  onChange={(event) => updateDetailEditFormField("time", event.target.value)}
+                />
+              </div>
+              <div className="form-row full">
+                <label htmlFor="detailEditDescription">Description</label>
+                <input
+                  id="detailEditDescription"
+                  value={detailEditForm.description}
+                  disabled={isOffline || savingDetailId === editingDetail.id}
+                  onChange={(event) =>
+                    updateDetailEditFormField("description", event.target.value)
+                  }
+                />
+              </div>
+              {!editingDetail.truckId && showTagColumn ? (
+                <div className="form-row">
+                  <label htmlFor="detailEditTag">Tag</label>
+                  <select
+                    id="detailEditTag"
+                    value={detailEditForm.tagId}
+                    disabled={isOffline || savingDetailId === editingDetail.id}
+                    onChange={(event) => updateDetailEditFormField("tagId", event.target.value)}
+                  >
+                    <option value="">No tag</option>
+                    {tags.map((tag) => (
+                      <option key={tag.id} value={tag.id}>
+                        {tag.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              ) : null}
+              {showLocationColumn ? (
+                <div className="form-row">
+                  <label htmlFor="detailEditLocation">Location</label>
+                  <select
+                    id="detailEditLocation"
+                    value={detailEditForm.locationId}
+                    disabled={isOffline || savingDetailId === editingDetail.id}
+                    onChange={(event) =>
+                      updateDetailEditFormField("locationId", event.target.value)
+                    }
+                  >
+                    <option value="">No location</option>
+                    {locationOptions.map((location) => (
+                      <option key={location.id} value={location.id}>
+                        {location.displayName}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              ) : null}
+              {!editingDetail.truckId && showCompanyColumn ? (
+                <div className="form-row full">
+                  <span className="form-label">Companies</span>
+                  <div className="checkbox-stack">
+                    {companies.length === 0 ? (
+                      <span className="item-meta">No companies available.</span>
+                    ) : (
+                      companies.map((company) => (
+                        <label className="checkbox-row" key={company.id}>
+                          <input
+                            type="checkbox"
+                            checked={(detailEditForm.companyIds || []).includes(company.id)}
+                            disabled={isOffline || savingDetailId === editingDetail.id}
+                            onChange={() => toggleDetailEditCompany(company.id)}
+                          />
+                          <span>{company.companyName}</span>
+                        </label>
+                      ))
+                    )}
+                  </div>
+                </div>
+              ) : null}
+              <div className="form-row full">
+                <label htmlFor="detailEditNotes">Notes</label>
+                <textarea
+                  id="detailEditNotes"
+                  value={detailEditForm.notes}
+                  disabled={isOffline || savingDetailId === editingDetail.id}
+                  rows={4}
+                  onChange={(event) => updateDetailEditFormField("notes", event.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="actions">
+              <button
+                className="button"
+                type="submit"
+                disabled={isOffline || savingDetailId === editingDetail.id}
+              >
+                {savingDetailId === editingDetail.id ? "Saving..." : "Save row"}
+              </button>
+              <button
+                className="button secondary"
+                type="button"
+                disabled={savingDetailId === editingDetail.id}
+                onClick={cancelEditingDetail}
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </Modal>
       ) : null}
 
       {activeTab === "trucks" ? (

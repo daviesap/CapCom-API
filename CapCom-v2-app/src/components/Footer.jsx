@@ -8,7 +8,10 @@ export default function Footer() {
           className="footer-logo"
         />
         <p className="footer-text">
-          Powered by CapCom from Flair Ltd -{" "}
+          Powered by CapCom
+          <br />
+          from Flair Ltd
+          <br />
           <a href="https://www.flair.london" target="_blank" rel="noopener noreferrer">
             www.flair.london
           </a>

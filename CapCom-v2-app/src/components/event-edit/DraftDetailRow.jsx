@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { CapcomIcon } from "../../icons/capcomIcons.jsx";
 
 export default function DraftDetailRow({
   dayId,
@@ -167,7 +168,8 @@ export default function DraftDetailRow({
           disabled={isOffline}
           onClick={() => removeDraftDetail(dayId, draftIndex)}
         >
-          Cancel
+          <CapcomIcon name="close" size={16} />
+          <span className="button-label">Cancel</span>
         </button>
         <button
           className="button"
@@ -175,7 +177,10 @@ export default function DraftDetailRow({
           disabled={!canSaveDraft}
           onClick={() => saveDraftDetail(dayId, draftIndex, draft)}
         >
-          {savingDraftDayId === dayId ? "Saving..." : "Save"}
+          <CapcomIcon name="check" size={16} />
+          <span className="button-label">
+            {savingDraftDayId === dayId ? "Saving..." : "Save"}
+          </span>
         </button>
       </div>
     </div>

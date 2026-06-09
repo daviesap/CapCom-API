@@ -19,6 +19,7 @@ export default function DetailRowActions({
   nextDay,
   moveDetailToDay,
   duplicateDetail,
+  startEditingDetail,
   closeActionMenu,
   deleteDetail,
 }) {
@@ -28,8 +29,10 @@ export default function DetailRowActions({
     Boolean(nextDay) && savingDetailId !== detail.id && !isOffline;
   const canDuplicate =
     savingDetailId !== detail.id && !isOffline && !detail.truckId;
+  const canEdit = savingDetailId !== detail.id && !isOffline;
   const canDelete = savingDetailId !== detail.id && !isOffline;
   const hasAvailableActions = [
+    canEdit,
     canMoveToPreviousDay,
     canMoveToNextDay,
     canDuplicate,
@@ -127,6 +130,20 @@ export default function DetailRowActions({
             className="action-menu-list"
             onMouseDown={beginRowAction}
           >
+            {canEdit ? (
+              <button
+                className="action-menu-item"
+                type="button"
+                onClick={() => {
+                  closeActionMenu();
+                  startEditingDetail(day.id, detail);
+                  endRowAction();
+                }}
+              >
+                <CapcomIcon name="edit" size={16} />
+                <span>Edit</span>
+              </button>
+            ) : null}
             {canMoveToPreviousDay ? (
               <button
                 className="action-menu-item"

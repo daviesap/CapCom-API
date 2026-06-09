@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link, Outlet } from "react-router-dom";
 import AppNav from "./AppNav.jsx";
-import ConnectionStatus from "./ConnectionStatus.jsx";
 import Footer from "./Footer.jsx";
 import { CapcomIcon } from "../icons/capcomIcons.jsx";
 
@@ -38,14 +37,11 @@ export default function Layout() {
           </button>
         </div>
         <AppNav variant="desktop" collapsed={isSidebarCollapsed} />
-        <div className="sidebar-footer">
-          <ConnectionStatus />
-        </div>
+        <Footer />
       </aside>
 
       <main className="app-main">
         <Outlet />
-        <Footer />
       </main>
 
       <nav className="mobile-bottom-nav" aria-label="Primary navigation">

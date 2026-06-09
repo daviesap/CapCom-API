@@ -12,7 +12,7 @@ function DetailFilterNotice({ hiddenDetailCount, isEmpty }) {
   }
 
   if (isEmpty) {
-    return <p className="item-meta">No schedule details yet.</p>;
+    return null;
   }
 
   return null;
@@ -113,7 +113,7 @@ export default function DetailDayCard({
           </>
         )}
         {day.endOfDayTarget ? (
-          <p className="end-target">End of day target: {day.endOfDayTarget}</p>
+          <p className="end-target eod-text">{day.endOfDayTarget}</p>
         ) : null}
       </div>
     </article>
