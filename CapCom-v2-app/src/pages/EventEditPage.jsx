@@ -637,6 +637,7 @@ export default function EventEditPage() {
       contactCompanyOrder: Array.isArray(event.contactCompanyOrder)
         ? event.contactCompanyOrder
         : [],
+      showMomContacts: readBooleanValue(event.showMomContacts, false),
       updatedAt: event.updatedAt || null,
       apiResponse: normaliseApiResponse(event["API Response"]),
     });
@@ -2177,6 +2178,38 @@ export default function EventEditPage() {
       setError(messageText);
     } finally {
       setUpdatingShareOutput(false);
+    }
+  };
+
+  const updateShowMomContacts = async (checked) => {
+    if (isWriteDisabled) {
+      setError("Editing is disabled while offline.");
+      return;
+    }
+    if (!canUpdateShareOutput) {
+      setError("Your role cannot update the share output.");
+      return;
+    }
+
+    const nextEventForm = {
+      ...form,
+      showMomContacts: checked,
+    };
+    setForm(nextEventForm);
+    setMessage("");
+    setError("");
+
+    try {
+      await updateEvent(eventId, nextEventForm, userProfile);
+      setSavedEventForm((current) => ({
+        ...current,
+        showMomContacts: checked,
+      }));
+      setMessage("Home page contact setting saved.");
+    } catch (updateError) {
+      console.error(updateError);
+      setForm(form);
+      setError("Could not save home page contact setting.");
     }
   };
 
@@ -5286,6 +5319,17 @@ export default function EventEditPage() {
                   </a>
                 ) : null}
               </div>
+            </div>
+            <div className="form-row share-home-options">
+              <label className="checkbox-row">
+                <input
+                  checked={form.showMomContacts}
+                  disabled={isWriteDisabled || updatingShareOutput}
+                  type="checkbox"
+                  onChange={(event) => updateShowMomContacts(event.target.checked)}
+                />
+                <span>Show contacts on home page</span>
+              </label>
             </div>
 
             {canManageFilteredViews && !filteredViewFormMode ? (

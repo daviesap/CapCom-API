@@ -14,6 +14,7 @@ const payload = buildGenerateHomePayload({
     startDate: "2026-06-22",
     endDate: "2026-06-26",
     contactCompanyOrder: ["company-2", "company-1"],
+    showMomContacts: true,
   },
   scheduleDays: [
     {
@@ -121,6 +122,7 @@ const payload = buildGenerateHomePayload({
 assert.equal(payload.api_key, "test-key");
 assert.equal(payload.event.eventId, "event-1");
 assert.equal(payload.event.profileId, "profile-1");
+assert.equal(payload.event.showMomContacts, true);
 assert.deepEqual(payload.event.keyInfo, [
   {
     title: "Venue websites",
