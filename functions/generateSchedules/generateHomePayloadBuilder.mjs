@@ -15,6 +15,22 @@ function formatEventDateRange(startDateString, endDateString) {
   return `${formatLongFriendlyDate(startDateString)} to ${formatLongFriendlyDate(endDateString)}`;
 }
 
+function formatHeaderFriendlyDate(dateString) {
+  if (!dateString) return "";
+  return new Intl.DateTimeFormat("en-GB", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(new Date(`${dateString}T00:00:00`));
+}
+
+function formatHeaderDateRange(startDateString, endDateString) {
+  if (!startDateString && !endDateString) return "";
+  if (!startDateString) return formatHeaderFriendlyDate(endDateString);
+  if (!endDateString || startDateString === endDateString) return formatHeaderFriendlyDate(startDateString);
+  return `${formatHeaderFriendlyDate(startDateString)} to ${formatHeaderFriendlyDate(endDateString)}`;
+}
+
 function toApiDetailTime(value) {
   const nextTime = String(value || "").trim();
   if (!nextTime) return " - ";
@@ -264,8 +280,9 @@ export function buildGenerateHomePayload({
   previousData,
 }) {
   const header = [
-    eventRecord.name || "",
-    formatEventDateRange(
+    normaliseString(eventRecord.name),
+    normaliseString(eventRecord.venue),
+    formatHeaderDateRange(
       eventRecord.startDate || eventRecord.scheduleStartDate,
       eventRecord.endDate || eventRecord.scheduleEndDate
     ),

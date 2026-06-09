@@ -9,6 +9,7 @@ const payload = buildGenerateHomePayload({
     id: "event-1",
     profileId: "profile-1",
     name: "Example Event",
+    venue: "Example Venue",
     clientName: "Example Client",
     imageUrl: "https://example.com/logo.png",
     startDate: "2026-06-22",
@@ -122,6 +123,11 @@ const payload = buildGenerateHomePayload({
 assert.equal(payload.api_key, "test-key");
 assert.equal(payload.event.eventId, "event-1");
 assert.equal(payload.event.profileId, "profile-1");
+assert.deepEqual(payload.event.header, [
+  "Example Event",
+  "Example Venue",
+  "22 June 2026 to 26 June 2026",
+]);
 assert.equal(payload.event.showMomContacts, true);
 assert.deepEqual(payload.event.keyInfo, [
   {
