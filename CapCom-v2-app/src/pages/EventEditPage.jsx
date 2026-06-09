@@ -17,6 +17,7 @@ import useOnlineStatus from "../hooks/useOnlineStatus.js";
 import { isEventAdmin } from "../auth/roles.js";
 import { getClients } from "../services/clientService.js";
 import {
+  getCachedEventForUser,
   getEvent,
   updateEvent,
   updateEventContactCompanyOrder,
@@ -89,6 +90,17 @@ import {
 import { getShareArchive } from "../services/shareArchiveService.js";
 import { getCompanies } from "../services/companyService.js";
 import { generateHomeForEvent } from "../services/functionService.js";
+import {
+  getCachedCompanies,
+  getCachedFilteredViews,
+  getCachedKeyInfo,
+  getCachedLocations,
+  getCachedScheduleDays,
+  getCachedScheduleDetails,
+  getCachedTags,
+  getCachedTrucks,
+  getCachedTruckSizes,
+} from "../services/localScheduleCache.js";
 
 const emptyEventForm = {
   name: "",
@@ -493,7 +505,7 @@ export default function EventEditPage() {
   const [savingLocation, setSavingLocation] = useState(false);
   const [deletingLocationId, setDeletingLocationId] = useState("");
   const [savingCompanyContact, setSavingCompanyContact] = useState(false);
-  const [savingEventContact, setSavingEventContact] = useState(false);
+  const [savingEventContact] = useState(false);
   const [reorderingCompanyContactId, setReorderingCompanyContactId] = useState("");
   const [savingContactCompanyOrder, setSavingContactCompanyOrder] = useState(false);
   const [filteredViews, setFilteredViews] = useState([]);
@@ -545,8 +557,56 @@ export default function EventEditPage() {
 
     let cancelled = false;
 
+    const buildEventForm = (event) => ({
+      name: event.name || "",
+      clientId: event.clientId || "",
+      clientName: event.clientName || "",
+      profileId: event.profileId || "",
+      startDate: event.startDate || "",
+      endDate: event.endDate || "",
+      scheduleStartDate: event.scheduleStartDate || event.startDate || "",
+      scheduleEndDate: event.scheduleEndDate || event.endDate || "",
+      imageUrl: event.imageUrl || "",
+      contactCompanyOrder: Array.isArray(event.contactCompanyOrder)
+        ? event.contactCompanyOrder
+        : [],
+      updatedAt: event.updatedAt || null,
+      apiResponse: normaliseApiResponse(event["API Response"]),
+    });
+
+    const seedCachedPage = () => {
+      const cachedEvent = getCachedEventForUser(eventId, userProfile);
+      const cachedDays = getCachedScheduleDays(eventId);
+      if (!cachedEvent) return false;
+
+      const cachedEventForm = buildEventForm(cachedEvent);
+      setForm(cachedEventForm);
+      setSavedEventForm(cachedEventForm);
+      setCompanies(getCachedCompanies(cachedEventForm.clientId));
+
+      if (cachedDays.length > 0) {
+        setScheduleDays(cachedDays);
+        setDetailsState(
+          Object.fromEntries(
+            cachedDays.map((day) => [day.id, getCachedScheduleDetails(day.id)])
+          )
+        );
+      }
+
+      setTags(getCachedTags(eventId));
+      setLocations(getCachedLocations(eventId));
+      setTruckSizes(getCachedTruckSizes(eventId));
+      setTrucks(getCachedTrucks(eventId));
+      setFilteredViews(getCachedFilteredViews(eventId));
+      setKeyInfoItems(getCachedKeyInfo(eventId));
+      setLoading(false);
+      return true;
+    };
+
+    const hasCachedSeed = seedCachedPage();
+
     const loadPage = async () => {
-      setLoading(true);
+      setLoading(!hasCachedSeed);
       setDetailsLoading(false);
       setTagsLoading(false);
       setLocationsLoading(false);
@@ -572,29 +632,16 @@ export default function EventEditPage() {
         if (cancelled) return;
 
         setClients(clientRecords);
-        const loadedEventForm = {
-          name: event.name || "",
-          clientId: event.clientId || "",
-          clientName: event.clientName || "",
-          profileId: event.profileId || "",
-          startDate: event.startDate || "",
-          endDate: event.endDate || "",
-          scheduleStartDate: event.scheduleStartDate || event.startDate || "",
-          scheduleEndDate: event.scheduleEndDate || event.endDate || "",
-          imageUrl: event.imageUrl || "",
-          contactCompanyOrder: Array.isArray(event.contactCompanyOrder)
-            ? event.contactCompanyOrder
-            : [],
-          updatedAt: event.updatedAt || null,
-          apiResponse: normaliseApiResponse(event["API Response"]),
-        };
+        const loadedEventForm = buildEventForm(event);
         setForm(loadedEventForm);
         setSavedEventForm(loadedEventForm);
         setScheduleDays(days);
-        setFilteredViews([]);
-        setKeyInfoItems([]);
-        setShareArchive([]);
-        setEventContactsByCompanyId({});
+        if (!hasCachedSeed) {
+          setFilteredViews([]);
+          setKeyInfoItems([]);
+          setShareArchive([]);
+          setEventContactsByCompanyId({});
+        }
         setLoading(false);
 
         const loadOptionalEditorData = async ({

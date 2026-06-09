@@ -10,7 +10,12 @@ import {
   where,
 } from "firebase/firestore";
 import { db } from "../firebase/firestore";
-import { assertOnline } from "./localScheduleCache.js";
+import {
+  assertOnline,
+  cacheFilteredViews,
+  getCachedFilteredViews,
+  isBrowserOffline,
+} from "./localScheduleCache.js";
 
 const filteredViewsRef = collection(db, "filteredViews");
 
@@ -100,14 +105,24 @@ function sortFilteredViews(filteredViews) {
 
 export async function getFilteredViews(eventId) {
   if (!eventId) return [];
+  if (isBrowserOffline()) return getCachedFilteredViews(eventId);
 
   const filteredViewsQuery = query(filteredViewsRef, where("eventId", "==", eventId));
-  const snapshot = await getDocs(filteredViewsQuery);
-  const views = snapshot.docs.map((viewDoc) => ({
-    id: viewDoc.id,
-    ...viewDoc.data(),
-  }));
-  return sortFilteredViews(views);
+  try {
+    const snapshot = await getDocs(filteredViewsQuery);
+    const views = sortFilteredViews(
+      snapshot.docs.map((viewDoc) => ({
+        id: viewDoc.id,
+        ...viewDoc.data(),
+      }))
+    );
+    cacheFilteredViews(eventId, views);
+    return views;
+  } catch (error) {
+    const cachedViews = getCachedFilteredViews(eventId);
+    if (cachedViews.length > 0) return cachedViews;
+    throw error;
+  }
 }
 
 export async function createFilteredView({

@@ -4,11 +4,12 @@ import { useAuth } from "../auth/AuthProvider.jsx";
 import EmptyState from "../components/EmptyState.jsx";
 import Loading from "../components/Loading.jsx";
 import useOnlineStatus from "../hooks/useOnlineStatus.js";
-import { getEvent } from "../services/eventService.js";
+import { getCachedEventForUser, getEvent } from "../services/eventService.js";
 import {
   createScheduleDetail,
   getScheduleDetails,
 } from "../services/scheduleDetailService.js";
+import { getCachedScheduleDetails } from "../services/localScheduleCache.js";
 
 const emptyForm = {
   time: "",
@@ -27,7 +28,14 @@ export default function ScheduleDetailsPage() {
   const [error, setError] = useState("");
 
   const loadDetails = async () => {
-    setLoading(true);
+    const cachedEvent = getCachedEventForUser(eventId, userProfile);
+    const cachedDetails = getCachedScheduleDetails(scheduleDayId);
+    if (cachedEvent || cachedDetails.length > 0) {
+      setDetails(cachedDetails);
+      setLoading(false);
+    } else {
+      setLoading(true);
+    }
     setError("");
     try {
       const eventRecord = await getEvent(eventId, userProfile);

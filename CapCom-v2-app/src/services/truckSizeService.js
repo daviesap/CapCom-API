@@ -10,7 +10,12 @@ import {
   where,
 } from "firebase/firestore";
 import { db } from "../firebase/firestore";
-import { assertOnline } from "./localScheduleCache.js";
+import {
+  assertOnline,
+  cacheTruckSizes,
+  getCachedTruckSizes,
+  isBrowserOffline,
+} from "./localScheduleCache.js";
 
 const truckSizesRef = collection(db, "truckSizes");
 
@@ -23,14 +28,24 @@ function sortTruckSizes(truckSizes) {
 }
 
 export async function getTruckSizes(eventId) {
+  if (isBrowserOffline()) return getCachedTruckSizes(eventId);
+
   const truckSizesQuery = query(truckSizesRef, where("eventId", "==", eventId));
-  const snapshot = await getDocs(truckSizesQuery);
-  return sortTruckSizes(
-    snapshot.docs.map((truckSizeDoc) => ({
-      id: truckSizeDoc.id,
-      ...truckSizeDoc.data(),
-    }))
-  );
+  try {
+    const snapshot = await getDocs(truckSizesQuery);
+    const truckSizes = sortTruckSizes(
+      snapshot.docs.map((truckSizeDoc) => ({
+        id: truckSizeDoc.id,
+        ...truckSizeDoc.data(),
+      }))
+    );
+    cacheTruckSizes(eventId, truckSizes);
+    return truckSizes;
+  } catch (error) {
+    const cachedTruckSizes = getCachedTruckSizes(eventId);
+    if (cachedTruckSizes.length > 0) return cachedTruckSizes;
+    throw error;
+  }
 }
 
 export async function createTruckSize({ eventId, size }) {

@@ -42,6 +42,16 @@ function getAllowedCachedEvents(userProfile) {
   return getCachedEvents().filter((eventRecord) => canReadEvent(userProfile, eventRecord));
 }
 
+export function getCachedEventsForUser(userProfile) {
+  if (!hasActiveProfile(userProfile)) return [];
+  return getAllowedCachedEvents(userProfile);
+}
+
+export function getCachedEventForUser(eventId, userProfile) {
+  const cachedEvent = getCachedEvent(eventId);
+  return canReadEvent(userProfile, cachedEvent) ? cachedEvent : null;
+}
+
 function requireEventCreateAccess(userProfile, eventData) {
   if (!canCreateEvents(userProfile)) {
     throw new Error("You do not have permission to create events.");

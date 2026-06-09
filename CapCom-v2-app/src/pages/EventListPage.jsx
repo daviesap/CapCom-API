@@ -8,7 +8,7 @@ import Modal from "../components/Modal.jsx";
 import { CapcomIcon } from "../icons/capcomIcons.jsx";
 import useOnlineStatus from "../hooks/useOnlineStatus.js";
 import { getClient, getClients } from "../services/clientService.js";
-import { createEvent, getEvents } from "../services/eventService.js";
+import { createEvent, getCachedEventsForUser, getEvents } from "../services/eventService.js";
 import { syncScheduleDaysToRange } from "../services/scheduleDayService.js";
 
 const emptyForm = {
@@ -83,7 +83,13 @@ export default function EventListPage() {
   const activeClients = clients.filter((client) => client.isActive !== false);
 
   const loadEvents = async () => {
-    setLoading(true);
+    const cachedEvents = getCachedEventsForUser(userProfile);
+    if (cachedEvents.length > 0) {
+      setEvents(cachedEvents);
+      setLoading(false);
+    } else {
+      setLoading(true);
+    }
     setError("");
     try {
       setEvents(await getEvents(userProfile));

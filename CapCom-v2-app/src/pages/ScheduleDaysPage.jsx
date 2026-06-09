@@ -6,7 +6,7 @@ import Loading from "../components/Loading.jsx";
 import ScheduleCacheStatus from "../components/ScheduleCacheStatus.jsx";
 import { CapcomIcon } from "../icons/capcomIcons.jsx";
 import useOnlineStatus from "../hooks/useOnlineStatus.js";
-import { getEvent } from "../services/eventService.js";
+import { getCachedEventForUser, getEvent } from "../services/eventService.js";
 import { getScheduleDays } from "../services/scheduleDayService.js";
 import {
   createScheduleDetail,
@@ -14,6 +14,10 @@ import {
   getScheduleDetailsForEvent,
   updateScheduleDetail,
 } from "../services/scheduleDetailService.js";
+import {
+  getCachedScheduleDays,
+  getCachedScheduleDetails,
+} from "../services/localScheduleCache.js";
 
 export default function ScheduleDaysPage() {
   const { eventId } = useParams();
@@ -31,7 +35,20 @@ export default function ScheduleDaysPage() {
   const [error, setError] = useState("");
 
   const loadPage = async () => {
-    setLoading(true);
+    const cachedEvent = getCachedEventForUser(eventId, userProfile);
+    const cachedDays = getCachedScheduleDays(eventId);
+    if (cachedEvent || cachedDays.length > 0) {
+      setEvent(cachedEvent);
+      setDays(cachedDays);
+      setDetailsState(
+        Object.fromEntries(
+          cachedDays.map((day) => [day.id, getCachedScheduleDetails(day.id)])
+        )
+      );
+      setLoading(false);
+    } else {
+      setLoading(true);
+    }
     setError("");
     try {
       const eventRecord = await getEvent(eventId, userProfile);

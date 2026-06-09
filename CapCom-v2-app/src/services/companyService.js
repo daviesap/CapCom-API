@@ -10,7 +10,12 @@ import {
   where,
 } from "firebase/firestore";
 import { db } from "../firebase/firestore";
-import { assertOnline } from "./localScheduleCache.js";
+import {
+  assertOnline,
+  cacheCompanies,
+  getCachedCompanies,
+  isBrowserOffline,
+} from "./localScheduleCache.js";
 
 const companiesRef = collection(db, "companies");
 
@@ -26,16 +31,24 @@ function sortCompanies(companies) {
 
 export async function getCompanies(clientId) {
   if (!clientId) return [];
+  if (isBrowserOffline()) return getCachedCompanies(clientId);
 
   const companiesQuery = query(companiesRef, where("clientId", "==", clientId));
-  const snapshot = await getDocs(companiesQuery);
-
-  return sortCompanies(
-    snapshot.docs.map((companyDoc) => ({
-      id: companyDoc.id,
-      ...companyDoc.data(),
-    }))
-  );
+  try {
+    const snapshot = await getDocs(companiesQuery);
+    const companies = sortCompanies(
+      snapshot.docs.map((companyDoc) => ({
+        id: companyDoc.id,
+        ...companyDoc.data(),
+      }))
+    );
+    cacheCompanies(clientId, companies);
+    return companies;
+  } catch (error) {
+    const cachedCompanies = getCachedCompanies(clientId);
+    if (cachedCompanies.length > 0) return cachedCompanies;
+    throw error;
+  }
 }
 
 export async function createCompany({ clientId, companyName, address }) {

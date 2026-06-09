@@ -56,8 +56,6 @@ export default function TruckingPanel({
   setOpenActionMenuId,
   beginRowAction,
   endRowAction,
-  reorderingDayId,
-  moveTruckDetail,
   duplicateTruckDetail,
   closeActionMenu,
   deleteDetail,

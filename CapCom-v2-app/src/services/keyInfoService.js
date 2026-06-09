@@ -11,7 +11,12 @@ import {
   writeBatch,
 } from "firebase/firestore";
 import { db } from "../firebase/firestore";
-import { assertOnline } from "./localScheduleCache.js";
+import {
+  assertOnline,
+  cacheKeyInfo,
+  getCachedKeyInfo,
+  isBrowserOffline,
+} from "./localScheduleCache.js";
 
 const keyInfoRef = collection(db, "keyInfo");
 
@@ -37,15 +42,24 @@ function getSortOrder(item, fallbackIndex = 0) {
 
 export async function getKeyInfo(eventId) {
   if (!eventId) return [];
+  if (isBrowserOffline()) return getCachedKeyInfo(eventId);
 
   const keyInfoQuery = query(keyInfoRef, where("eventId", "==", eventId));
-  const snapshot = await getDocs(keyInfoQuery);
-  return sortKeyInfo(
-    snapshot.docs.map((keyInfoDoc) => ({
-      id: keyInfoDoc.id,
-      ...keyInfoDoc.data(),
-    }))
-  );
+  try {
+    const snapshot = await getDocs(keyInfoQuery);
+    const keyInfo = sortKeyInfo(
+      snapshot.docs.map((keyInfoDoc) => ({
+        id: keyInfoDoc.id,
+        ...keyInfoDoc.data(),
+      }))
+    );
+    cacheKeyInfo(eventId, keyInfo);
+    return keyInfo;
+  } catch (error) {
+    const cachedKeyInfo = getCachedKeyInfo(eventId);
+    if (cachedKeyInfo.length > 0) return cachedKeyInfo;
+    throw error;
+  }
 }
 
 export async function createKeyInfo({ eventId, title, description }) {

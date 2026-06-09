@@ -8,39 +8,60 @@ const emptyCache = {
   tagsByEventId: {},
   locationsByEventId: {},
   trucksByEventId: {},
+  truckSizesByEventId: {},
+  filteredViewsByEventId: {},
+  keyInfoByEventId: {},
+  companiesByClientId: {},
   updatedAtByScope: {},
 };
+
+let memoryCache = null;
+
+function normaliseCache(parsedCache = {}) {
+  return {
+    ...emptyCache,
+    ...parsedCache,
+    eventById: parsedCache.eventById || {},
+    daysByEventId: parsedCache.daysByEventId || {},
+    detailsByDayId: parsedCache.detailsByDayId || {},
+    tagsByEventId: parsedCache.tagsByEventId || {},
+    locationsByEventId: parsedCache.locationsByEventId || {},
+    trucksByEventId: parsedCache.trucksByEventId || {},
+    truckSizesByEventId: parsedCache.truckSizesByEventId || {},
+    filteredViewsByEventId: parsedCache.filteredViewsByEventId || {},
+    keyInfoByEventId: parsedCache.keyInfoByEventId || {},
+    companiesByClientId: parsedCache.companiesByClientId || {},
+    updatedAtByScope: parsedCache.updatedAtByScope || {},
+  };
+}
 
 function canUseStorage() {
   return typeof window !== "undefined" && Boolean(window.localStorage);
 }
 
 function readCache() {
-  if (!canUseStorage()) return emptyCache;
+  if (memoryCache) return memoryCache;
+  if (!canUseStorage()) {
+    memoryCache = normaliseCache();
+    return memoryCache;
+  }
 
   try {
     const parsedCache = JSON.parse(window.localStorage.getItem(CACHE_KEY) || "{}");
-    return {
-      ...emptyCache,
-      ...parsedCache,
-      eventById: parsedCache.eventById || {},
-      daysByEventId: parsedCache.daysByEventId || {},
-      detailsByDayId: parsedCache.detailsByDayId || {},
-      tagsByEventId: parsedCache.tagsByEventId || {},
-      locationsByEventId: parsedCache.locationsByEventId || {},
-      trucksByEventId: parsedCache.trucksByEventId || {},
-      updatedAtByScope: parsedCache.updatedAtByScope || {},
-    };
+    memoryCache = normaliseCache(parsedCache);
+    return memoryCache;
   } catch (cacheError) {
     console.warn("Could not read schedule cache.", cacheError);
-    return emptyCache;
+    memoryCache = normaliseCache();
+    return memoryCache;
   }
 }
 
 function writeCache(cache) {
+  memoryCache = normaliseCache(cache);
   if (!canUseStorage()) return;
   try {
-    window.localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
+    window.localStorage.setItem(CACHE_KEY, JSON.stringify(memoryCache));
     window.dispatchEvent(new CustomEvent("schedule-cache-updated"));
   } catch (cacheError) {
     console.warn("Could not write schedule cache.", cacheError);
@@ -132,6 +153,50 @@ export function getCachedTrucks(eventId) {
   return readCache().trucksByEventId[eventId] || [];
 }
 
+export function cacheTruckSizes(eventId, truckSizes) {
+  const cache = readCache();
+  cache.truckSizesByEventId[eventId] = truckSizes;
+  touch(cache, `truckSizes:${eventId}`);
+  writeCache(cache);
+}
+
+export function getCachedTruckSizes(eventId) {
+  return readCache().truckSizesByEventId[eventId] || [];
+}
+
+export function cacheFilteredViews(eventId, filteredViews) {
+  const cache = readCache();
+  cache.filteredViewsByEventId[eventId] = filteredViews;
+  touch(cache, `filteredViews:${eventId}`);
+  writeCache(cache);
+}
+
+export function getCachedFilteredViews(eventId) {
+  return readCache().filteredViewsByEventId[eventId] || [];
+}
+
+export function cacheKeyInfo(eventId, keyInfo) {
+  const cache = readCache();
+  cache.keyInfoByEventId[eventId] = keyInfo;
+  touch(cache, `keyInfo:${eventId}`);
+  writeCache(cache);
+}
+
+export function getCachedKeyInfo(eventId) {
+  return readCache().keyInfoByEventId[eventId] || [];
+}
+
+export function cacheCompanies(clientId, companies) {
+  const cache = readCache();
+  cache.companiesByClientId[clientId] = companies;
+  touch(cache, `companies:${clientId}`);
+  writeCache(cache);
+}
+
+export function getCachedCompanies(clientId) {
+  return readCache().companiesByClientId[clientId] || [];
+}
+
 export function getScheduleLastUpdated(eventId) {
   const cache = readCache();
   const timestamps = [
@@ -141,6 +206,9 @@ export function getScheduleLastUpdated(eventId) {
     cache.updatedAtByScope[`tags:${eventId}`],
     cache.updatedAtByScope[`locations:${eventId}`],
     cache.updatedAtByScope[`trucks:${eventId}`],
+    cache.updatedAtByScope[`truckSizes:${eventId}`],
+    cache.updatedAtByScope[`filteredViews:${eventId}`],
+    cache.updatedAtByScope[`keyInfo:${eventId}`],
   ].filter(Boolean);
 
   (cache.daysByEventId[eventId] || []).forEach((day) => {
