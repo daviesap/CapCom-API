@@ -119,6 +119,7 @@ export async function createEvent(eventData, userProfile) {
   try {
     return await addDoc(eventsRef, {
       name: eventData.name,
+      venue: eventData.venue || "",
       clientName: eventData.clientName,
       clientId,
       startDate: eventData.startDate,
@@ -150,6 +151,7 @@ export async function updateEvent(eventId, eventData, userProfile) {
 
     return await updateDoc(doc(db, "events", eventId), {
       name: eventData.name,
+      venue: eventData.venue || "",
       clientName: eventData.clientName,
       profileId: eventData.profileId,
       clientId,

@@ -104,6 +104,7 @@ import {
 
 const emptyEventForm = {
   name: "",
+  venue: "",
   clientId: "",
   clientName: "",
   profileId: "",
@@ -351,6 +352,67 @@ function formatArchiveDate(value) {
   }).format(date);
 }
 
+function formatArchiveChangeLine(value) {
+  return String(value || "").replace(/^-\s*/, "").trim();
+}
+
+function parseArchiveChangeText(value) {
+  const text = String(value || "").trim();
+  if (!text) return [{ heading: "", lines: ["No change text recorded."] }];
+
+  const groups = text
+    .split(/\n\s*\n/)
+    .map((groupText) => {
+      const lines = groupText
+        .split("\n")
+        .map((line) => line.trim())
+        .filter(Boolean);
+
+      if (lines.length === 0) return null;
+      if (lines.length === 1) {
+        const singleLineMatch = lines[0].match(/^(.+\d{4})\s+-\s+(.+)$/);
+        if (singleLineMatch) {
+          return {
+            heading: singleLineMatch[1].trim(),
+            lines: [formatArchiveChangeLine(singleLineMatch[2])],
+          };
+        }
+      }
+
+      return {
+        heading: lines.length > 1 ? lines[0] : "",
+        lines: (lines.length > 1 ? lines.slice(1) : lines).map(formatArchiveChangeLine),
+      };
+    })
+    .filter(Boolean);
+
+  return groups.length > 0 ? groups : [{ heading: "", lines: [text] }];
+}
+
+function ArchiveChangeText({ text }) {
+  const displayText = String(text || "No change text recorded.").trim();
+  const groups = parseArchiveChangeText(displayText);
+
+  return (
+    <div
+      className="archive-change-preview"
+      data-tooltip={displayText}
+      tabIndex={0}
+    >
+      <div className="archive-change-preview-content">
+        {groups.map((group, groupIndex) => (
+          <div className="archive-change-group" key={`${group.heading}-${groupIndex}`}>
+            {group.heading ? <strong>{group.heading}</strong> : null}
+            {group.lines.map((line, lineIndex) => (
+              <span key={`${line}-${lineIndex}`}>{line}</span>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function normaliseApiResponse(value) {
   if (!value) return null;
   if (typeof value === "object") return value;
@@ -559,6 +621,7 @@ export default function EventEditPage() {
 
     const buildEventForm = (event) => ({
       name: event.name || "",
+      venue: event.venue || "",
       clientId: event.clientId || "",
       clientName: event.clientName || "",
       profileId: event.profileId || "",
@@ -4829,322 +4892,328 @@ export default function EventEditPage() {
       ) : null}
 
       {activeTab === "share" ? (
-      <section className="panel">
-        <div className="panel-heading">
-          <p className="item-meta">
-            Last updated {shareLastUpdatedText || "not yet"}
-          </p>
-          <div className="settings-section-toolbar">
-            {canUpdateShareOutput ? (
-              <button
-                className="button secondary icon-text-button"
-                type="button"
-                disabled={
-                  isOffline ||
-                  updatingShareOutput ||
-                  filteredViewsLoading ||
-                  detailsLoading ||
-                  tagsLoading ||
-                  locationsLoading ||
-                  trucksLoading ||
-                  companiesLoading
-                }
-                onClick={updateShareOutput}
-              >
-                <CapcomIcon name="refresh" size={18} weight="bold" />
-                {updatingShareOutput ? "Updating..." : "Update"}
-              </button>
-            ) : null}
-            {shareProtectedHomeUrl ? (
-              <a
-                className="button secondary icon-text-button"
-                href={shareProtectedHomeUrl}
-                target="_blank"
-                rel="noreferrer"
-              >
-                <CapcomIcon name="bookOpen" size={18} weight="bold" />
-                Open protected home
-                <CapcomIcon name="externalLink" size={16} weight="bold" />
-              </a>
-            ) : null}
-            {shareHtmlUrl ? (
-              <a
-                className="button secondary icon-text-button"
-                href={shareHtmlUrl}
-                target="_blank"
-                rel="noreferrer"
-              >
-                <CapcomIcon name="bookOpen" size={18} weight="bold" />
-                Open HTML
-                <CapcomIcon name="externalLink" size={16} weight="bold" />
-              </a>
-            ) : null}
-          </div>
-        </div>
-
-        {canManageFilteredViews && !filteredViewFormMode ? (
-          <div className="settings-section-toolbar">
-            <button
-              className="button secondary"
-              type="button"
-              disabled={isOffline}
-              onClick={startAddingFilteredView}
-            >
-              <CapcomIcon name="add" size={18} weight="bold" />
-              New filtered view
-            </button>
-          </div>
-        ) : null}
-
-        {filteredViewFormMode ? (
-          <form className="tag-form" onSubmit={saveFilteredView}>
-            <div className="form-grid">
-              <div className="form-row full">
-                <label htmlFor="filteredViewName">Filtered view name</label>
-                <input
-                  id="filteredViewName"
-                  value={filteredViewForm.name}
-                  disabled={isOffline}
-                  onChange={(event) => updateFilteredViewFormField("name", event.target.value)}
-                  placeholder="Example: Main floor / confirmed only"
-                  required
-                />
-              </div>
-              <div className="form-row">
-                <label htmlFor="filteredViewTagIds">Tags</label>
-                <select
-                  id="filteredViewTagIds"
-                  multiple
-                  value={filteredViewForm.filterTagIds}
-                  disabled={isOffline || tags.length === 0}
-                  onChange={(event) => updateFilteredViewMultiSelectField("filterTagIds", event)}
-                >
-                  {tags.map((tag) => (
-                    <option key={tag.id} value={tag.id}>
-                      {tag.name}
-                    </option>
-                  ))}
-                </select>
-                {tags.length === 0 ? <span className="item-meta">No tags available.</span> : null}
-              </div>
-              <div className="form-row">
-                <label htmlFor="filteredViewLocationIds">Locations</label>
-                <select
-                  id="filteredViewLocationIds"
-                  multiple
-                  value={filteredViewForm.filterLocationIds}
-                  disabled={isOffline || filteredViewLocationOptions.length === 0}
-                  onChange={(event) => updateFilteredViewMultiSelectField("filterLocationIds", event)}
-                >
-                  {filteredViewLocationOptions.map((location) => (
-                    <option key={location.id} value={location.id}>
-                      {location.name}
-                    </option>
-                  ))}
-                </select>
-                {filteredViewLocationOptions.length === 0 ? (
-                  <span className="item-meta">No locations available.</span>
+        <>
+          <section className="panel">
+            <div className="panel-heading">
+              <p className="item-meta">
+                Last updated {shareLastUpdatedText || "not yet"}
+              </p>
+              <div className="settings-section-toolbar">
+                {canUpdateShareOutput ? (
+                  <button
+                    className="button secondary icon-text-button"
+                    type="button"
+                    disabled={
+                      isOffline ||
+                      updatingShareOutput ||
+                      filteredViewsLoading ||
+                      detailsLoading ||
+                      tagsLoading ||
+                      locationsLoading ||
+                      trucksLoading ||
+                      companiesLoading
+                    }
+                    onClick={updateShareOutput}
+                  >
+                    <CapcomIcon name="refresh" size={18} weight="bold" />
+                    {updatingShareOutput ? "Updating..." : "Update"}
+                  </button>
                 ) : null}
-              </div>
-              <div className="form-row">
-                <label htmlFor="filteredViewSubLocationIds">Sub locations</label>
-                <select
-                  id="filteredViewSubLocationIds"
-                  multiple
-                  value={filteredViewForm.filterSubLocationIds}
-                  disabled={isOffline || filteredViewSubLocationOptions.length === 0}
-                  onChange={(event) => updateFilteredViewMultiSelectField("filterSubLocationIds", event)}
-                >
-                  {filteredViewSubLocationOptions.map((location) => (
-                    <option key={location.id} value={location.id}>
-                      {location.displayName || location.name}
-                    </option>
-                  ))}
-                </select>
-                {filteredViewSubLocationOptions.length === 0 ? (
-                  <span className="item-meta">
-                    {filteredViewForm.filterLocationIds.length === 0
-                      ? "Select a location to add sub locations."
-                      : "No sub locations available for selected location(s)."}
-                  </span>
+                {shareProtectedHomeUrl ? (
+                  <a
+                    className="button secondary icon-text-button"
+                    href={shareProtectedHomeUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <CapcomIcon name="lock" size={16} weight="bold" />
+                    Open
+                    <CapcomIcon name="externalLink" size={16} weight="bold" />
+                  </a>
                 ) : null}
-              </div>
-              <div className="form-row">
-                <label htmlFor="filteredViewCompanyIds">Suppliers</label>
-                <select
-                  id="filteredViewCompanyIds"
-                  multiple
-                  value={filteredViewForm.filterSupplierIds}
-                  disabled={isOffline || filteredViewCompanyOptions.length === 0}
-                  onChange={(event) => updateFilteredViewMultiSelectField("filterSupplierIds", event)}
-                >
-                  {filteredViewCompanyOptions.map((company) => (
-                    <option key={company.id} value={company.id}>
-                      {company.companyName}
-                    </option>
-                  ))}
-                </select>
-                {filteredViewCompanyOptions.length === 0 ? (
-                  <span className="item-meta">No suppliers available for this event.</span>
+                {shareHtmlUrl ? (
+                  <a
+                    className="button secondary icon-text-button"
+                    href={shareHtmlUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <CapcomIcon name="bookOpen" size={18} weight="bold" />
+                    Open
+                    <CapcomIcon name="externalLink" size={16} weight="bold" />
+                  </a>
                 ) : null}
-              </div>
-              <div className="form-row">
-                <label htmlFor="filteredViewGroupPresetId">Group preset</label>
-                <input
-                  id="filteredViewGroupPresetId"
-                  value={filteredViewForm.groupPresetId}
-                  disabled={isOffline}
-                  onChange={(event) => updateFilteredViewFormField("groupPresetId", event.target.value)}
-                  placeholder="DY-1"
-                />
-              </div>
-              <div className="form-row">
-                <label htmlFor="filteredViewFilterGroup">Filter group</label>
-                <input
-                  id="filteredViewFilterGroup"
-                  value={filteredViewForm.filterGroup}
-                  disabled={isOffline}
-                  onChange={(event) => updateFilteredViewFormField("filterGroup", event.target.value)}
-                  placeholder="a-euY4.fxRfmBhTGPs7gO-A"
-                />
-              </div>
-              <div className="form-row">
-                <label htmlFor="filteredViewGroup">Group</label>
-                <input
-                  id="filteredViewGroup"
-                  value={filteredViewForm.group}
-                  disabled={isOffline}
-                  onChange={(event) => updateFilteredViewFormField("group", event.target.value)}
-                  placeholder="Full schedule"
-                />
-              </div>
-              <div className="form-row">
-                <label htmlFor="filteredViewSortOrder">Sort order</label>
-                <input
-                  id="filteredViewSortOrder"
-                  type="number"
-                  min="1"
-                  value={filteredViewForm.sortOrder}
-                  disabled={isOffline}
-                  onChange={(event) => updateFilteredViewFormField("sortOrder", event.target.value)}
-                  placeholder="1"
-                />
-              </div>
-              <div className="form-row">
-                <label className="checkbox-row">
-                  <input
-                    checked={filteredViewForm.filterBox}
-                    disabled={isOffline}
-                    type="checkbox"
-                    onChange={(event) => updateFilteredViewFormField("filterBox", event.target.checked)}
-                  />
-                  <span>Show filter box</span>
-                </label>
-              </div>
-              <div className="form-row">
-                <label className="checkbox-row">
-                  <input
-                    checked={filteredViewForm.showKeyInfo}
-                    disabled={isOffline}
-                    type="checkbox"
-                    onChange={(event) => updateFilteredViewFormField("showKeyInfo", event.target.checked)}
-                  />
-                  <span>Show key info</span>
-                </label>
-              </div>
-              <div className="form-row">
-                <label className="checkbox-row">
-                  <input
-                    checked={filteredViewForm.showLocations}
-                    disabled={isOffline}
-                    type="checkbox"
-                    onChange={(event) => updateFilteredViewFormField("showLocations", event.target.checked)}
-                  />
-                  <span>Show locations</span>
-                </label>
               </div>
             </div>
-            <div className="actions">
-              <button className="button" type="submit" disabled={savingFilteredView || isOffline}>
-                {savingFilteredView ? "Saving..." : editingFilteredViewId ? "Save filtered view" : "Create filtered view"}
-              </button>
-              <button
-                className="button secondary"
-                type="button"
-                disabled={savingFilteredView || isOffline}
-                onClick={resetFilteredViewForm}
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
-        ) : null}
 
-        {filteredViews.length === 0 ? (
-          <p className="item-meta">No filtered views yet.</p>
-        ) : (
-          <div className="tag-list">
-            {filteredViews.map((view) => (
-                <article className="tag-list-row" key={view.id}>
-                  <div>
-                    <h3>{view.name || "Unnamed filtered view"}</h3>
+            {canManageFilteredViews && !filteredViewFormMode ? (
+              <div className="settings-section-toolbar">
+                <button
+                  className="button secondary"
+                  type="button"
+                  disabled={isOffline}
+                  onClick={startAddingFilteredView}
+                >
+                  <CapcomIcon name="add" size={18} weight="bold" />
+                  New filtered view
+                </button>
+              </div>
+            ) : null}
+
+            {filteredViewFormMode ? (
+              <form className="tag-form" onSubmit={saveFilteredView}>
+                <div className="form-grid">
+                  <div className="form-row full">
+                    <label htmlFor="filteredViewName">Filtered view name</label>
+                    <input
+                      id="filteredViewName"
+                      value={filteredViewForm.name}
+                      disabled={isOffline}
+                      onChange={(event) => updateFilteredViewFormField("name", event.target.value)}
+                      placeholder="Example: Main floor / confirmed only"
+                      required
+                    />
                   </div>
-                  {canManageFilteredViews ? (
-                    <div className="tag-list-actions">
-                      <button
-                        className="compact-button"
-                        type="button"
+                  <div className="form-row">
+                    <label htmlFor="filteredViewTagIds">Tags</label>
+                    <select
+                      id="filteredViewTagIds"
+                      multiple
+                      value={filteredViewForm.filterTagIds}
+                      disabled={isOffline || tags.length === 0}
+                      onChange={(event) => updateFilteredViewMultiSelectField("filterTagIds", event)}
+                    >
+                      {tags.map((tag) => (
+                        <option key={tag.id} value={tag.id}>
+                          {tag.name}
+                        </option>
+                      ))}
+                    </select>
+                    {tags.length === 0 ? <span className="item-meta">No tags available.</span> : null}
+                  </div>
+                  <div className="form-row">
+                    <label htmlFor="filteredViewLocationIds">Locations</label>
+                    <select
+                      id="filteredViewLocationIds"
+                      multiple
+                      value={filteredViewForm.filterLocationIds}
+                      disabled={isOffline || filteredViewLocationOptions.length === 0}
+                      onChange={(event) => updateFilteredViewMultiSelectField("filterLocationIds", event)}
+                    >
+                      {filteredViewLocationOptions.map((location) => (
+                        <option key={location.id} value={location.id}>
+                          {location.name}
+                        </option>
+                      ))}
+                    </select>
+                    {filteredViewLocationOptions.length === 0 ? (
+                      <span className="item-meta">No locations available.</span>
+                    ) : null}
+                  </div>
+                  <div className="form-row">
+                    <label htmlFor="filteredViewSubLocationIds">Sub locations</label>
+                    <select
+                      id="filteredViewSubLocationIds"
+                      multiple
+                      value={filteredViewForm.filterSubLocationIds}
+                      disabled={isOffline || filteredViewSubLocationOptions.length === 0}
+                      onChange={(event) => updateFilteredViewMultiSelectField("filterSubLocationIds", event)}
+                    >
+                      {filteredViewSubLocationOptions.map((location) => (
+                        <option key={location.id} value={location.id}>
+                          {location.displayName || location.name}
+                        </option>
+                      ))}
+                    </select>
+                    {filteredViewSubLocationOptions.length === 0 ? (
+                      <span className="item-meta">
+                        {filteredViewForm.filterLocationIds.length === 0
+                          ? "Select a location to add sub locations."
+                          : "No sub locations available for selected location(s)."}
+                      </span>
+                    ) : null}
+                  </div>
+                  <div className="form-row">
+                    <label htmlFor="filteredViewCompanyIds">Suppliers</label>
+                    <select
+                      id="filteredViewCompanyIds"
+                      multiple
+                      value={filteredViewForm.filterSupplierIds}
+                      disabled={isOffline || filteredViewCompanyOptions.length === 0}
+                      onChange={(event) => updateFilteredViewMultiSelectField("filterSupplierIds", event)}
+                    >
+                      {filteredViewCompanyOptions.map((company) => (
+                        <option key={company.id} value={company.id}>
+                          {company.companyName}
+                        </option>
+                      ))}
+                    </select>
+                    {filteredViewCompanyOptions.length === 0 ? (
+                      <span className="item-meta">No suppliers available for this event.</span>
+                    ) : null}
+                  </div>
+                  <div className="form-row">
+                    <label htmlFor="filteredViewGroupPresetId">Group preset</label>
+                    <input
+                      id="filteredViewGroupPresetId"
+                      value={filteredViewForm.groupPresetId}
+                      disabled={isOffline}
+                      onChange={(event) => updateFilteredViewFormField("groupPresetId", event.target.value)}
+                      placeholder="DY-1"
+                    />
+                  </div>
+                  <div className="form-row">
+                    <label htmlFor="filteredViewFilterGroup">Filter group</label>
+                    <input
+                      id="filteredViewFilterGroup"
+                      value={filteredViewForm.filterGroup}
+                      disabled={isOffline}
+                      onChange={(event) => updateFilteredViewFormField("filterGroup", event.target.value)}
+                      placeholder="a-euY4.fxRfmBhTGPs7gO-A"
+                    />
+                  </div>
+                  <div className="form-row">
+                    <label htmlFor="filteredViewGroup">Group</label>
+                    <input
+                      id="filteredViewGroup"
+                      value={filteredViewForm.group}
+                      disabled={isOffline}
+                      onChange={(event) => updateFilteredViewFormField("group", event.target.value)}
+                      placeholder="Full schedule"
+                    />
+                  </div>
+                  <div className="form-row">
+                    <label htmlFor="filteredViewSortOrder">Sort order</label>
+                    <input
+                      id="filteredViewSortOrder"
+                      type="number"
+                      min="1"
+                      value={filteredViewForm.sortOrder}
+                      disabled={isOffline}
+                      onChange={(event) => updateFilteredViewFormField("sortOrder", event.target.value)}
+                      placeholder="1"
+                    />
+                  </div>
+                  <div className="form-row">
+                    <label className="checkbox-row">
+                      <input
+                        checked={filteredViewForm.filterBox}
                         disabled={isOffline}
-                        onClick={() => startEditingFilteredView(view)}
-                      >
-                        <CapcomIcon name="edit" size={16} />
-                        Edit
-                      </button>
-                      <button
-                        className="compact-button"
-                        type="button"
-                        disabled={deletingFilteredViewId === view.id || isOffline}
-                        onClick={() => removeFilteredView(view.id)}
-                      >
-                        <CapcomIcon name="delete" size={16} />
-                        {deletingFilteredViewId === view.id ? "Deleting..." : "Delete"}
-                      </button>
-                    </div>
-                  ) : null}
-                </article>
-              ))}
-          </div>
-        )}
+                        type="checkbox"
+                        onChange={(event) => updateFilteredViewFormField("filterBox", event.target.checked)}
+                      />
+                      <span>Show filter box</span>
+                    </label>
+                  </div>
+                  <div className="form-row">
+                    <label className="checkbox-row">
+                      <input
+                        checked={filteredViewForm.showKeyInfo}
+                        disabled={isOffline}
+                        type="checkbox"
+                        onChange={(event) => updateFilteredViewFormField("showKeyInfo", event.target.checked)}
+                      />
+                      <span>Show key info</span>
+                    </label>
+                  </div>
+                  <div className="form-row">
+                    <label className="checkbox-row">
+                      <input
+                        checked={filteredViewForm.showLocations}
+                        disabled={isOffline}
+                        type="checkbox"
+                        onChange={(event) => updateFilteredViewFormField("showLocations", event.target.checked)}
+                      />
+                      <span>Show locations</span>
+                    </label>
+                  </div>
+                </div>
+                <div className="actions">
+                  <button className="button" type="submit" disabled={savingFilteredView || isOffline}>
+                    {savingFilteredView ? "Saving..." : editingFilteredViewId ? "Save filtered view" : "Create filtered view"}
+                  </button>
+                  <button
+                    className="button secondary"
+                    type="button"
+                    disabled={savingFilteredView || isOffline}
+                    onClick={resetFilteredViewForm}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            ) : null}
 
-        <div className="panel-heading">
-          <h2>Archive</h2>
-        </div>
+            {filteredViews.length === 0 ? (
+              <p className="item-meta">No filtered views yet.</p>
+            ) : (
+              <div className="tag-list">
+                {filteredViews.map((view) => (
+                    <article className="tag-list-row" key={view.id}>
+                      <div>
+                        <h3>{view.name || "Unnamed filtered view"}</h3>
+                      </div>
+                      {canManageFilteredViews ? (
+                        <div className="tag-list-actions">
+                          <button
+                            className="compact-button"
+                            type="button"
+                            disabled={isOffline}
+                            onClick={() => startEditingFilteredView(view)}
+                          >
+                            <CapcomIcon name="edit" size={16} />
+                            Edit
+                          </button>
+                          <button
+                            className="compact-button"
+                            type="button"
+                            disabled={deletingFilteredViewId === view.id || isOffline}
+                            onClick={() => removeFilteredView(view.id)}
+                          >
+                            <CapcomIcon name="delete" size={16} />
+                            {deletingFilteredViewId === view.id ? "Deleting..." : "Delete"}
+                          </button>
+                        </div>
+                      ) : null}
+                    </article>
+                  ))}
+              </div>
+            )}
+          </section>
 
-        {shareArchive.length === 0 ? (
-          <p className="item-meta">No archive entries yet.</p>
-        ) : (
-          <div className="table-wrap">
-            <table className="schedule-days-table">
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Number of changes</th>
-                  <th>Text or changes</th>
-                </tr>
-              </thead>
-              <tbody>
-                {shareArchive.map((archiveRow) => (
-                  <tr key={archiveRow.id}>
-                    <td>{formatArchiveDate(archiveRow.timestamp || archiveRow.createdAt)}</td>
-                    <td>{archiveRow.numberOfChanges ?? 0}</td>
-                    <td>{archiveRow.text || "No change text recorded."}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </section>
+          <section className="panel">
+            <div className="panel-heading">
+              <h2>Archive</h2>
+            </div>
+
+            {shareArchive.length === 0 ? (
+              <p className="item-meta">No archive entries yet.</p>
+            ) : (
+              <div className="table-wrap">
+                <table className="schedule-days-table">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Changes</th>
+                      <th aria-label="Change details"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {shareArchive.map((archiveRow) => (
+                      <tr key={archiveRow.id}>
+                        <td>{formatArchiveDate(archiveRow.timestamp || archiveRow.createdAt)}</td>
+                        <td>{archiveRow.numberOfChanges ?? 0}</td>
+                        <td>
+                          <ArchiveChangeText text={archiveRow.text} />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </section>
+        </>
       ) : null}
 
       {activeTab === "settings" ? (

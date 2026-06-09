@@ -21,8 +21,15 @@ if (shouldUseServiceWorker && "serviceWorker" in navigator) {
 
 if (!shouldUseServiceWorker && "serviceWorker" in navigator) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.getRegistrations().then((registrations) => {
-      registrations.forEach((registration) => registration.unregister());
+    const hadActiveServiceWorker = Boolean(navigator.serviceWorker.controller);
+
+    navigator.serviceWorker.getRegistrations().then((registrations) => (
+      Promise.all(registrations.map((registration) => registration.unregister()))
+    )).then(() => {
+      if (hadActiveServiceWorker && !sessionStorage.getItem("capcom-v2-dev-sw-cleared")) {
+        sessionStorage.setItem("capcom-v2-dev-sw-cleared", "true");
+        window.location.reload();
+      }
     });
 
     if ("caches" in window) {

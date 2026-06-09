@@ -32,6 +32,9 @@ export default function EventEditorHeader({
           ) : null}
           <div>
             <h1 className="event-edit-title">{form.name || eventId}</h1>
+            {form.venue ? (
+              <p className="event-edit-venue">{form.venue}</p>
+            ) : null}
             <p className="event-edit-date-range">
               {dateRangeLabel || "No event dates"}
             </p>
@@ -104,6 +107,15 @@ export default function EventEditorHeader({
                 value={form.profileId}
                 disabled={isOffline}
                 onChange={(event) => onUpdateField("profileId", event.target.value)}
+              />
+            </div>
+            <div className="form-row">
+              <label htmlFor="editVenue">Venue</label>
+              <input
+                id="editVenue"
+                value={form.venue}
+                disabled={isOffline}
+                onChange={(event) => onUpdateField("venue", event.target.value)}
               />
             </div>
             <div className="form-row">

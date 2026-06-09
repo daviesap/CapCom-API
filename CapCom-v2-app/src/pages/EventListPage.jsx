@@ -13,6 +13,7 @@ import { syncScheduleDaysToRange } from "../services/scheduleDayService.js";
 
 const emptyForm = {
   name: "",
+  venue: "",
   clientId: "",
   clientName: "",
   startDate: "",
@@ -252,6 +253,7 @@ export default function EventListPage() {
               ) : null}
               <div>
               <p className="item-title">{event.name}</p>
+              {event.venue ? <p className="event-card-venue">{event.venue}</p> : null}
               <p className="item-meta">
                 {event.clientName} | {formatEventDateRange(event.startDate, event.endDate)}
               </p>
@@ -283,6 +285,14 @@ export default function EventListPage() {
                     value={form.name}
                     onChange={(event) => updateField("name", event.target.value)}
                     required
+                  />
+                </div>
+                <div className="form-row">
+                  <label htmlFor="venue">Venue</label>
+                  <input
+                    id="venue"
+                    value={form.venue}
+                    onChange={(event) => updateField("venue", event.target.value)}
                   />
                 </div>
                 {isSuperAdmin ? (

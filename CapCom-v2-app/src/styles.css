@@ -473,6 +473,13 @@ summary:focus-visible {
   margin: 0;
 }
 
+.event-edit-venue {
+  color: var(--color-text);
+  font-size: 18px;
+  font-weight: 700;
+  margin: 6px 0 0;
+}
+
 .event-edit-date-range {
   color: var(--color-text-mid-muted);
   font-size: 18px;
@@ -716,6 +723,13 @@ textarea {
   margin: 4px 0 0;
 }
 
+.event-card-venue {
+  color: var(--color-text);
+  font-size: 14px;
+  font-weight: 700;
+  margin: 3px 0 0;
+}
+
 .inline-warning {
   color: var(--color-warning-text);
   font-size: 13px;
@@ -840,6 +854,52 @@ textarea {
   color: var(--color-text-mid);
   font-size: 14px;
   font-weight: 700;
+}
+
+.archive-change-preview {
+  outline: 0;
+  position: relative;
+}
+
+.archive-change-preview-content {
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  display: -webkit-box;
+  line-height: 1.35;
+  overflow: hidden;
+}
+
+.archive-change-group {
+  display: block;
+}
+
+.archive-change-group strong,
+.archive-change-group span {
+  display: block;
+}
+
+.archive-change-group strong {
+  font-weight: 700;
+}
+
+.archive-change-preview:hover::after,
+.archive-change-preview:focus-visible::after {
+  background: var(--color-text);
+  border-radius: 6px;
+  bottom: calc(100% + 6px);
+  box-shadow: 0 8px 24px rgba(23, 32, 42, 0.18);
+  color: var(--color-surface);
+  content: attr(data-tooltip);
+  font-size: 13px;
+  left: 0;
+  line-height: 1.35;
+  max-width: min(680px, 80vw);
+  min-width: min(320px, 80vw);
+  padding: 10px 12px;
+  position: absolute;
+  white-space: pre-wrap;
+  width: max-content;
+  z-index: 20;
 }
 
 .schedule-days-table input {
@@ -2703,6 +2763,10 @@ textarea {
 
   .event-edit-title {
     font-size: 26px;
+  }
+
+  .event-edit-venue {
+    font-size: 16px;
   }
 
   .event-edit-date-range {
