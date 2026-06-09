@@ -1739,6 +1739,76 @@ textarea {
   padding-bottom: 16px;
 }
 
+.form-chip-label {
+  color: var(--color-text-soft);
+  font-weight: 700;
+}
+
+.multi-chip-list {
+  align-items: flex-start;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 6px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-height: 44px;
+  padding: 8px;
+}
+
+.location-chip-tree {
+  border: 1px solid var(--color-border-strong);
+  border-radius: 6px;
+  display: grid;
+  gap: 10px;
+  min-height: 44px;
+  padding: 8px;
+}
+
+.location-chip-group {
+  align-items: flex-start;
+  display: grid;
+  gap: 6px;
+  justify-items: start;
+}
+
+.location-sub-chip-list {
+  align-items: flex-start;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding-left: 14px;
+}
+
+.multi-chip {
+  align-items: center;
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider-subtle);
+  border-radius: var(--radius-pill);
+  color: var(--color-text-soft);
+  display: inline-flex;
+  font-size: 14px;
+  font-weight: 700;
+  min-height: 30px;
+  padding: 4px 10px;
+}
+
+.multi-chip:hover,
+.multi-chip:focus-visible {
+  border-color: var(--color-border-strong);
+  color: var(--color-text);
+}
+
+.multi-chip.selected {
+  background: var(--color-primary-soft);
+  border-color: var(--color-primary);
+  color: var(--color-primary-text);
+}
+
+.multi-chip.sub-location {
+  border-style: dashed;
+  font-size: 13px;
+}
+
 .tag-colour-field {
   display: grid;
   gap: 8px;

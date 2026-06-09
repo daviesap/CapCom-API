@@ -938,22 +938,6 @@ export default function EventEditPage() {
       }));
   }, [locations]);
 
-  const filteredViewLocationOptions = useMemo(
-    () => locations.filter((location) => !location.parentLocationId),
-    [locations]
-  );
-
-  const filteredViewSubLocationOptions = useMemo(() => {
-    if (filteredViewForm.filterLocationIds.length === 0) {
-      return [];
-    }
-
-    const selectedLocationIds = new Set(filteredViewForm.filterLocationIds);
-    return locations.filter((location) =>
-      location.parentLocationId && selectedLocationIds.has(location.parentLocationId)
-    );
-  }, [locations, filteredViewForm.filterLocationIds]);
-
   const locationById = useMemo(() => {
     return new Map(locations.map((location) => [location.id, location]));
   }, [locations]);
@@ -2051,28 +2035,35 @@ export default function EventEditPage() {
     }));
   };
 
-  const updateFilteredViewMultiSelectField = (field, event) => {
-    const selectedValues = Array.from(event.target.selectedOptions)
-      .map((option) => option.value)
-      .filter(Boolean);
+  const toggleFilteredViewMultiSelectField = (field, value) => {
+    if (!value) return;
 
     if (field === "filterLocationIds") {
-      const locationIdSet = new Set(selectedValues);
-      setFilteredViewForm((current) => ({
-        ...current,
-        filterLocationIds: selectedValues,
-        filterSubLocationIds: (current.filterSubLocationIds || []).filter((subLocationId) => {
-          const location = locationById.get(subLocationId);
-          return location?.parentLocationId && locationIdSet.has(location.parentLocationId);
-        }),
-      }));
+      setFilteredViewForm((current) => {
+        const currentValues = current.filterLocationIds || [];
+        const selectedValues = currentValues.includes(value)
+          ? currentValues.filter((currentValue) => currentValue !== value)
+          : [...currentValues, value];
+
+        return {
+          ...current,
+          filterLocationIds: selectedValues,
+        };
+      });
       return;
     }
 
-    updateFilteredViewFormField(
-      field,
-      selectedValues
-    );
+    setFilteredViewForm((current) => {
+      const currentValues = current[field] || [];
+      const selectedValues = currentValues.includes(value)
+        ? currentValues.filter((currentValue) => currentValue !== value)
+        : [...currentValues, value];
+
+      return {
+        ...current,
+        [field]: selectedValues,
+      };
+    });
   };
 
   const buildFilteredViewApiPayload = (sourceView) => {
@@ -4961,6 +4952,12 @@ export default function EventEditPage() {
             ) : null}
 
             {filteredViewFormMode ? (
+              <Modal
+                title={editingFilteredViewId ? "Edit filtered view" : "New filtered view"}
+                subtitle="Share view"
+                labelledBy="filteredViewFormTitle"
+                onClose={resetFilteredViewForm}
+              >
               <form className="tag-form" onSubmit={saveFilteredView}>
                 <div className="form-grid">
                   <div className="form-row full">
@@ -4975,81 +4972,94 @@ export default function EventEditPage() {
                     />
                   </div>
                   <div className="form-row">
-                    <label htmlFor="filteredViewTagIds">Tags</label>
-                    <select
-                      id="filteredViewTagIds"
-                      multiple
-                      value={filteredViewForm.filterTagIds}
-                      disabled={isOffline || tags.length === 0}
-                      onChange={(event) => updateFilteredViewMultiSelectField("filterTagIds", event)}
-                    >
-                      {tags.map((tag) => (
-                        <option key={tag.id} value={tag.id}>
-                          {tag.name}
-                        </option>
-                      ))}
-                    </select>
+                    <span className="form-chip-label">Tags</span>
+                    <div className="multi-chip-list" role="group" aria-label="Tags">
+                      {tags.map((tag) => {
+                        const isSelected = filteredViewForm.filterTagIds.includes(tag.id);
+                        return (
+                          <button
+                            className={isSelected ? "multi-chip selected" : "multi-chip"}
+                            type="button"
+                            key={tag.id}
+                            disabled={isOffline}
+                            aria-pressed={isSelected}
+                            onClick={() => toggleFilteredViewMultiSelectField("filterTagIds", tag.id)}
+                          >
+                            {tag.name}
+                          </button>
+                        );
+                      })}
+                    </div>
                     {tags.length === 0 ? <span className="item-meta">No tags available.</span> : null}
                   </div>
                   <div className="form-row">
-                    <label htmlFor="filteredViewLocationIds">Locations</label>
-                    <select
-                      id="filteredViewLocationIds"
-                      multiple
-                      value={filteredViewForm.filterLocationIds}
-                      disabled={isOffline || filteredViewLocationOptions.length === 0}
-                      onChange={(event) => updateFilteredViewMultiSelectField("filterLocationIds", event)}
-                    >
-                      {filteredViewLocationOptions.map((location) => (
-                        <option key={location.id} value={location.id}>
-                          {location.name}
-                        </option>
-                      ))}
-                    </select>
-                    {filteredViewLocationOptions.length === 0 ? (
+                    <span className="form-chip-label">Locations</span>
+                    <div className="location-chip-tree" role="group" aria-label="Locations">
+                      {locationTree.map((location) => {
+                        const isSelected = filteredViewForm.filterLocationIds.includes(location.id);
+                        return (
+                          <div className="location-chip-group" key={location.id}>
+                            <button
+                              className={isSelected ? "multi-chip selected" : "multi-chip"}
+                              type="button"
+                              disabled={isOffline}
+                              aria-pressed={isSelected}
+                              onClick={() => toggleFilteredViewMultiSelectField("filterLocationIds", location.id)}
+                            >
+                              {location.name}
+                            </button>
+                            {location.children.length > 0 ? (
+                              <div className="location-sub-chip-list">
+                                {location.children.map((subLocation) => {
+                                  const isSubLocationSelected = filteredViewForm.filterSubLocationIds.includes(subLocation.id);
+                                  return (
+                                    <button
+                                      className={
+                                        isSubLocationSelected
+                                          ? "multi-chip sub-location selected"
+                                          : "multi-chip sub-location"
+                                      }
+                                      type="button"
+                                      key={subLocation.id}
+                                      disabled={isOffline}
+                                      aria-pressed={isSubLocationSelected}
+                                      onClick={() => toggleFilteredViewMultiSelectField("filterSubLocationIds", subLocation.id)}
+                                    >
+                                      {subLocation.name}
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                            ) : null}
+                          </div>
+                        );
+                      })}
+                    </div>
+                    {locationTree.length === 0 ? (
                       <span className="item-meta">No locations available.</span>
                     ) : null}
                   </div>
                   <div className="form-row">
-                    <label htmlFor="filteredViewSubLocationIds">Sub locations</label>
-                    <select
-                      id="filteredViewSubLocationIds"
-                      multiple
-                      value={filteredViewForm.filterSubLocationIds}
-                      disabled={isOffline || filteredViewSubLocationOptions.length === 0}
-                      onChange={(event) => updateFilteredViewMultiSelectField("filterSubLocationIds", event)}
-                    >
-                      {filteredViewSubLocationOptions.map((location) => (
-                        <option key={location.id} value={location.id}>
-                          {location.displayName || location.name}
-                        </option>
-                      ))}
-                    </select>
-                    {filteredViewSubLocationOptions.length === 0 ? (
-                      <span className="item-meta">
-                        {filteredViewForm.filterLocationIds.length === 0
-                          ? "Select a location to add sub locations."
-                          : "No sub locations available for selected location(s)."}
-                      </span>
-                    ) : null}
-                  </div>
-                  <div className="form-row">
-                    <label htmlFor="filteredViewCompanyIds">Suppliers</label>
-                    <select
-                      id="filteredViewCompanyIds"
-                      multiple
-                      value={filteredViewForm.filterSupplierIds}
-                      disabled={isOffline || filteredViewCompanyOptions.length === 0}
-                      onChange={(event) => updateFilteredViewMultiSelectField("filterSupplierIds", event)}
-                    >
-                      {filteredViewCompanyOptions.map((company) => (
-                        <option key={company.id} value={company.id}>
-                          {company.companyName}
-                        </option>
-                      ))}
-                    </select>
+                    <span className="form-chip-label">Companies</span>
+                    <div className="multi-chip-list" role="group" aria-label="Companies">
+                      {filteredViewCompanyOptions.map((company) => {
+                        const isSelected = filteredViewForm.filterSupplierIds.includes(company.id);
+                        return (
+                          <button
+                            className={isSelected ? "multi-chip selected" : "multi-chip"}
+                            type="button"
+                            key={company.id}
+                            disabled={isOffline}
+                            aria-pressed={isSelected}
+                            onClick={() => toggleFilteredViewMultiSelectField("filterSupplierIds", company.id)}
+                          >
+                            {company.companyName}
+                          </button>
+                        );
+                      })}
+                    </div>
                     {filteredViewCompanyOptions.length === 0 ? (
-                      <span className="item-meta">No suppliers available for this event.</span>
+                      <span className="item-meta">No companies available for this event.</span>
                     ) : null}
                   </div>
                   <div className="form-row">
@@ -5142,6 +5152,7 @@ export default function EventEditPage() {
                   </button>
                 </div>
               </form>
+              </Modal>
             ) : null}
 
             {filteredViews.length === 0 ? (
