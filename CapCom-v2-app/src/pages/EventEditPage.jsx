@@ -535,6 +535,7 @@ export default function EventEditPage() {
   const [editingDetailModal, setEditingDetailModal] = useState(null);
   const [editingDetailTimeModal, setEditingDetailTimeModal] = useState(null);
   const [addingDetailDayId, setAddingDetailDayId] = useState("");
+  const [addingTruckDetailTruckId, setAddingTruckDetailTruckId] = useState("");
   const [detailEditForm, setDetailEditForm] = useState(emptyDetailEditForm);
   const [openActionMenuId, setOpenActionMenuId] = useState("");
   const [openNotesDetailId, setOpenNotesDetailId] = useState("");
@@ -3258,6 +3259,7 @@ export default function EventEditPage() {
     setEditingDetailModal(null);
     setEditingDetailTimeModal(null);
     setAddingDetailDayId("");
+    setAddingTruckDetailTruckId("");
     setDetailEditForm(emptyDetailEditForm);
   };
 
@@ -3901,19 +3903,36 @@ export default function EventEditPage() {
             ),
           -1
         ) + 1
-    );
+      );
   };
 
-  const addDraftTruckDetail = (truckId) => {
-    if (isWriteDisabled) return;
+  const buildDefaultTruckDestination = () => {
     const hasSingleDestination =
       showTruckDestinationColumn &&
       (locationOptions.length + companies.length === 1);
-    const defaultTruckDestination = hasSingleDestination && locationOptions.length === 1
+    return hasSingleDestination && locationOptions.length === 1
       ? { locationId: locationOptions[0].id, companyIds: [] }
       : hasSingleDestination && companies.length === 1
       ? { locationId: "", companyIds: [companies[0].id] }
       : { locationId: "", companyIds: [] };
+  };
+
+  const addDraftTruckDetail = (truckId) => {
+    if (isWriteDisabled) return;
+    const defaultTruckDestination = buildDefaultTruckDestination();
+
+    if (window.matchMedia("(max-width: 700px)").matches) {
+      setAddingTruckDetailTruckId(truckId);
+      setDetailEditForm({
+        ...emptyDetailEditForm,
+        scheduleDayId: scheduleDays[0]?.id || "",
+        destinationValue: getTruckDestinationValue(defaultTruckDestination),
+        ...defaultTruckDestination,
+      });
+      setMessage("");
+      setError("");
+      return;
+    }
 
     setDraftTruckDetailsByTruckId((current) => ({
       ...current,
@@ -3926,6 +3945,7 @@ export default function EventEditPage() {
           description: "",
           colour: "",
           tagId: "",
+          notes: "",
           ...defaultTruckDestination,
         },
       ],
@@ -3980,16 +4000,62 @@ export default function EventEditPage() {
         action: draft.action || "",
         time: draft.time,
         description: String(draft.description || "").trim(),
-        notes: "",
+        notes: draft.notes || "",
         sortOrder: getNextTruckDetailSortOrder(truck.id),
         colour: normaliseHexColour(truckTag.colour),
         tagId: truckTag.id,
         locationId: draft.locationId || "",
-        companyIds: draft.companyIds || [],
+        companyIds: draft.locationId ? [] : draft.companyIds || [],
       };
       const detailRef = await createScheduleDetail(detailData);
       removeDraftTruckDetail(truck.id, draftIndex);
       addCreatedDetailToDay(draft.scheduleDayId, detailRef, detailData);
+    } catch (saveError) {
+      console.error(saveError);
+      setError("Could not add truck detail.");
+    } finally {
+      setSavingDraftDayId("");
+    }
+  };
+
+  const saveMobileAddTruckDetailForm = async (submitEvent) => {
+    submitEvent.preventDefault();
+    if (!addingTruckDetailTruck) return;
+    if (isWriteDisabled) {
+      setError("Editing is disabled while offline.");
+      return;
+    }
+    if (!detailEditForm.scheduleDayId) {
+      setError("Date is required.");
+      return;
+    }
+
+    setSavingDraftDayId(addingTruckDetailTruck.id);
+    setMessage("");
+    setError("");
+
+    try {
+      const truckTag = await ensureTruckTag();
+      const destination = parseTruckDestinationValue(detailEditForm.destinationValue);
+      const detailData = {
+        eventId,
+        scheduleDayId: detailEditForm.scheduleDayId,
+        truckId: addingTruckDetailTruck.id,
+        truckNumber: addingTruckDetailTruck.truckNumber || "",
+        action: detailEditForm.action || "",
+        time: detailEditForm.time || "",
+        description: "",
+        notes: detailEditForm.notes || "",
+        sortOrder: getNextTruckDetailSortOrder(addingTruckDetailTruck.id),
+        colour: normaliseHexColour(truckTag.colour),
+        tagId: truckTag.id,
+        locationId: destination.locationId || "",
+        companyIds: destination.locationId ? [] : destination.companyIds || [],
+      };
+      const detailRef = await createScheduleDetail(detailData);
+      addCreatedDetailToDay(detailEditForm.scheduleDayId, detailRef, detailData);
+      cancelEditingDetail();
+      setMessage("Truck row added.");
     } catch (saveError) {
       console.error(saveError);
       setError("Could not add truck detail.");
@@ -4371,6 +4437,9 @@ export default function EventEditPage() {
   const addingDetailDay = addingDetailDayId
     ? scheduleDays.find((day) => day.id === addingDetailDayId)
     : null;
+  const addingTruckDetailTruck = addingTruckDetailTruckId
+    ? trucks.find((truck) => truck.id === addingTruckDetailTruckId)
+    : null;
   const editingDetailTimeDay = editingDetailTimeModal
     ? scheduleDays.find((day) => day.id === editingDetailTimeModal.dayId)
     : null;
@@ -4729,6 +4798,130 @@ export default function EventEditPage() {
                 className="button secondary"
                 type="button"
                 disabled={savingDraftDayId === addingDetailDayId}
+                onClick={cancelEditingDetail}
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </Modal>
+      ) : null}
+
+      {addingTruckDetailTruck ? (
+        <Modal
+          title="Add truck row"
+          subtitle={addingTruckDetailTruck.truckNumber || "Truck"}
+          labelledBy="addTruckRowTitle"
+          onClose={cancelEditingDetail}
+        >
+          <form className="admin-inline-form" onSubmit={saveMobileAddTruckDetailForm}>
+            <div className="form-grid">
+              <div className="form-row">
+                <label htmlFor="truckDetailAddDate">Date</label>
+                <select
+                  id="truckDetailAddDate"
+                  value={detailEditForm.scheduleDayId || ""}
+                  disabled={isWriteDisabled || savingDraftDayId === addingTruckDetailTruck.id}
+                  onChange={(event) =>
+                    updateDetailEditFormField("scheduleDayId", event.target.value)
+                  }
+                  required
+                >
+                  <option value="">Choose date</option>
+                  {scheduleDays.map((day) => (
+                    <option key={day.id} value={day.id}>
+                      {[formatDetailDate(day.date), day.summary].filter(Boolean).join(" - ")}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="form-row">
+                <label htmlFor="truckDetailAddTime">Time</label>
+                <input
+                  id="truckDetailAddTime"
+                  type="time"
+                  autoFocus
+                  value={detailEditForm.time}
+                  disabled={isWriteDisabled || savingDraftDayId === addingTruckDetailTruck.id}
+                  onChange={(event) => updateDetailEditFormField("time", event.target.value)}
+                />
+              </div>
+              <div className="form-row">
+                <label htmlFor="truckDetailAddAction">Action</label>
+                <select
+                  id="truckDetailAddAction"
+                  value={detailEditForm.action}
+                  disabled={isWriteDisabled || savingDraftDayId === addingTruckDetailTruck.id}
+                  onChange={(event) => updateDetailEditFormField("action", event.target.value)}
+                >
+                  {truckDetailActions.map((action) => (
+                    <option key={action || "none"} value={action}>
+                      {action || "Action"}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              {showTruckDestinationColumn ? (
+                <div className="form-row">
+                  <label htmlFor="truckDetailAddDestination">Destination</label>
+                  <select
+                    id="truckDetailAddDestination"
+                    value={detailEditForm.destinationValue}
+                    disabled={isWriteDisabled || savingDraftDayId === addingTruckDetailTruck.id}
+                    onChange={(event) =>
+                      updateDetailEditFormField("destinationValue", event.target.value)
+                    }
+                  >
+                    <option value="">No destination</option>
+                    {companies.length > 0 ? (
+                      <optgroup label="Companies">
+                        {companies.map((company) => (
+                          <option key={company.id} value={`company:${company.id}`}>
+                            {company.companyName}
+                          </option>
+                        ))}
+                      </optgroup>
+                    ) : null}
+                    {locationOptions.length > 0 ? (
+                      <optgroup label="Locations">
+                        {locationOptions.map((location) => (
+                          <option key={location.id} value={`location:${location.id}`}>
+                            {location.displayName}
+                          </option>
+                        ))}
+                      </optgroup>
+                    ) : null}
+                  </select>
+                </div>
+              ) : null}
+              <div className="form-row full">
+                <label htmlFor="truckDetailAddNotes">Notes</label>
+                <textarea
+                  id="truckDetailAddNotes"
+                  value={detailEditForm.notes}
+                  disabled={isWriteDisabled || savingDraftDayId === addingTruckDetailTruck.id}
+                  rows={4}
+                  onChange={(event) => updateDetailEditFormField("notes", event.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="actions">
+              <button
+                className="button"
+                type="submit"
+                disabled={
+                  isWriteDisabled ||
+                  savingDraftDayId === addingTruckDetailTruck.id ||
+                  !detailEditForm.scheduleDayId
+                }
+              >
+                {savingDraftDayId === addingTruckDetailTruck.id ? "Adding..." : "Add row"}
+              </button>
+              <button
+                className="button secondary"
+                type="button"
+                disabled={savingDraftDayId === addingTruckDetailTruck.id}
                 onClick={cancelEditingDetail}
               >
                 Cancel
