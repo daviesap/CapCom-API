@@ -966,6 +966,7 @@ textarea {
   justify-content: center;
   min-height: var(--control-height-sm);
   padding: 5px 10px;
+  text-decoration: none;
 }
 
 .detail-row .compact-button {
@@ -1743,6 +1744,168 @@ textarea {
   justify-content: flex-end;
 }
 
+.share-actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.share-section {
+  border-top: 1px solid var(--color-divider);
+  display: grid;
+  gap: 12px;
+  padding-top: 16px;
+}
+
+.share-home-section {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+}
+
+.share-section + .share-section {
+  margin-top: 16px;
+}
+
+.share-section h3,
+.share-filtered-view-row h3 {
+  color: var(--color-text-soft);
+  font-size: 15px;
+  margin: 0;
+}
+
+.share-section h3 {
+  white-space: nowrap;
+}
+
+.share-section-heading {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.share-section-heading h3 {
+  color: var(--color-text);
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.share-home-options {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+}
+
+.switch-row {
+  align-items: center;
+  color: var(--color-text-soft);
+  display: inline-flex;
+  font-weight: 700;
+  gap: 10px;
+  min-height: var(--control-height-sm);
+  position: relative;
+}
+
+.switch-row input {
+  height: 1px;
+  margin: 0;
+  opacity: 0;
+  position: absolute;
+  width: 1px;
+}
+
+.switch-control {
+  background: var(--color-divider-muted);
+  border: 1px solid var(--color-divider-lighter);
+  border-radius: var(--radius-pill);
+  flex: 0 0 auto;
+  height: 24px;
+  position: relative;
+  transition: background-color 160ms ease, border-color 160ms ease;
+  width: 44px;
+}
+
+.switch-control::after {
+  background: var(--color-surface);
+  border-radius: var(--radius-pill);
+  box-shadow: 0 1px 3px rgba(23, 32, 42, 0.24);
+  content: "";
+  height: 18px;
+  left: 2px;
+  position: absolute;
+  top: 2px;
+  transition: transform 160ms ease;
+  width: 18px;
+}
+
+.switch-row input:checked + .switch-control {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.switch-row input:checked + .switch-control::after {
+  transform: translateX(20px);
+}
+
+.switch-row input:focus-visible + .switch-control {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.switch-row input:disabled + .switch-control,
+.switch-row input:disabled ~ span {
+  opacity: 0.65;
+}
+
+.filtered-view-display-card {
+  background: var(--color-surface-subtle);
+  border: 1px solid var(--color-divider-strong);
+  border-radius: var(--radius-md);
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+}
+
+.filtered-view-display-card h3 {
+  color: var(--color-text);
+  font-size: 16px;
+  margin: 0;
+}
+
+.filtered-view-display-options {
+  display: grid;
+  gap: 12px 18px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.share-filtered-view-list {
+  border-top: 1px solid var(--color-divider);
+  display: grid;
+}
+
+.share-filtered-view-row {
+  align-items: center;
+  border-bottom: 1px solid var(--color-divider);
+  display: grid;
+  gap: 12px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  min-height: 56px;
+  padding: 10px 0;
+}
+
+.share-filtered-view-actions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
 .tag-form,
 .location-form,
 .truck-size-form {
@@ -2053,6 +2216,10 @@ textarea {
 
 .company-accordion-body {
   margin-top: 10px;
+}
+
+.archive-panel .company-accordion-body {
+  margin-top: 16px;
 }
 
 .hidden-contacts-accordion {
@@ -2867,6 +3034,30 @@ textarea {
   .button {
     text-align: center;
     width: 100%;
+  }
+
+  .share-panel .panel-heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .share-actions,
+  .share-section-heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .share-filtered-view-row {
+    align-items: stretch;
+    grid-template-columns: 1fr;
+  }
+
+  .share-filtered-view-actions {
+    justify-content: flex-start;
+  }
+
+  .filtered-view-display-options {
+    grid-template-columns: 1fr;
   }
 
   .settings-section .key-info-add-button {

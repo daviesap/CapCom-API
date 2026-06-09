@@ -425,6 +425,10 @@ function normaliseApiResponse(value) {
   }
 }
 
+function getShareSnapshotNameKey(name) {
+  return String(name || "").trim().toLowerCase();
+}
+
 function normaliseHexColour(colour) {
   const trimmedColour = String(colour || "").trim();
   if (!trimmedColour) return "";
@@ -586,6 +590,7 @@ export default function EventEditPage() {
   const [reorderingKeyInfoId, setReorderingKeyInfoId] = useState("");
   const [shareArchive, setShareArchive] = useState([]);
   const [shareArchiveLoading, setShareArchiveLoading] = useState(false);
+  const [isShareArchiveOpen, setIsShareArchiveOpen] = useState(false);
   const [filteredViewFormMode, setFilteredViewFormMode] = useState("");
   const [editingFilteredViewId, setEditingFilteredViewId] = useState("");
   const [filteredViewForm, setFilteredViewForm] = useState(emptyFilteredViewForm);
@@ -880,6 +885,20 @@ export default function EventEditPage() {
   );
   const shareProtectedHomeUrl = form.apiResponse?.protectedHomeUrl || "";
   const shareHtmlUrl = form.apiResponse?.["html URL"] || form.apiResponse?.htmlUrl || "";
+  const protectedSnapshotHtmlUrlByName = useMemo(() => {
+    const snapshots = Array.isArray(form.apiResponse?.snapshots)
+      ? form.apiResponse.snapshots
+      : [];
+
+    return new Map(
+      snapshots
+        .filter((snapshot) => snapshot?.protectedHtmlUrl)
+        .map((snapshot) => [
+          getShareSnapshotNameKey(snapshot.name),
+          snapshot.protectedHtmlUrl,
+        ])
+    );
+  }, [form.apiResponse]);
 
   const truckScheduleDetails = useMemo(() => {
     return scheduleDetails.filter((detail) => detail.truckId);
@@ -938,9 +957,16 @@ export default function EventEditPage() {
   const locationTree = useMemo(() => {
     return locations
       .filter((location) => !location.parentLocationId)
+      .sort((locationA, locationB) =>
+        String(locationA.name || "").localeCompare(String(locationB.name || ""))
+      )
       .map((location) => ({
         ...location,
-        children: locations.filter((subLocation) => subLocation.parentLocationId === location.id),
+        children: locations
+          .filter((subLocation) => subLocation.parentLocationId === location.id)
+          .sort((locationA, locationB) =>
+            String(locationA.name || "").localeCompare(String(locationB.name || ""))
+          ),
       }));
   }, [locations]);
 
@@ -1027,29 +1053,20 @@ export default function EventEditPage() {
       return [];
     }
 
-    const companyOrder = new Map(
-      (Array.isArray(form.contactCompanyOrder) ? form.contactCompanyOrder : []).map(
-        (companyId, companyIndex) => [companyId, companyIndex]
-      )
-    );
-
     return companies
       .filter((company) => eventCompanyIds.has(company.id))
-      .sort((companyA, companyB) => {
-        const companyAOrder = companyOrder.get(companyA.id);
-        const companyBOrder = companyOrder.get(companyB.id);
-
-        if (companyAOrder === companyBOrder) {
-          return String(companyA.companyName || "").localeCompare(
-            String(companyB.companyName || "")
-          );
-        }
-
-        if (companyAOrder === undefined) return 1;
-        if (companyBOrder === undefined) return -1;
-        return companyAOrder - companyBOrder;
-      });
+      .sort((companyA, companyB) =>
+        String(companyA.companyName || "").localeCompare(
+          String(companyB.companyName || "")
+        )
+      );
   }, [companies, form.contactCompanyOrder, usedCompanyIds]);
+
+  const filteredViewTagOptions = useMemo(() => {
+    return [...tags].sort((tagA, tagB) =>
+      String(tagA.name || "").localeCompare(String(tagB.name || ""))
+    );
+  }, [tags]);
 
   const usedCompanies = useMemo(() => {
     return companies.filter((company) => usedCompanyIds.has(company.id));
@@ -5301,12 +5318,14 @@ export default function EventEditPage() {
 
       {activeTab === "share" ? (
         <>
-          <section className="panel">
+          <section className="panel share-panel">
             <div className="panel-heading">
-              <p className="item-meta">
-                Last updated {shareLastUpdatedText || "not yet"}
-              </p>
-              <div className="settings-section-toolbar">
+              <div>
+                <p className="item-meta">
+                  Last updated {shareLastUpdatedText || "not yet"}
+                </p>
+              </div>
+              <div className="share-actions">
                 {canUpdateShareOutput ? (
                   <button
                     className="button secondary icon-text-button"
@@ -5335,7 +5354,7 @@ export default function EventEditPage() {
                     rel="noreferrer"
                   >
                     <CapcomIcon name="lock" size={16} weight="bold" />
-                    Open
+                    Open Homepage
                     <CapcomIcon name="externalLink" size={16} weight="bold" />
                   </a>
                 ) : null}
@@ -5347,48 +5366,40 @@ export default function EventEditPage() {
                     rel="noreferrer"
                   >
                     <CapcomIcon name="bookOpen" size={18} weight="bold" />
-                    Open
+                    Open Homepage
                     <CapcomIcon name="externalLink" size={16} weight="bold" />
                   </a>
                 ) : null}
               </div>
             </div>
-            <div className="form-row share-home-options">
-              <label className="checkbox-row">
-                <input
-                  checked={form.showMomContacts}
-                  disabled={isWriteDisabled || updatingShareOutput}
-                  type="checkbox"
-                  onChange={(event) => updateShowMomContacts(event.target.checked)}
-                />
-                <span>Show contacts on home page</span>
-              </label>
-            </div>
-            <div className="form-row share-home-options">
-              <label className="checkbox-row">
-                <input
-                  checked={form.showMomKeyInfo}
-                  disabled={isWriteDisabled || updatingShareOutput}
-                  type="checkbox"
-                  onChange={(event) => updateShowMomKeyInfo(event.target.checked)}
-                />
-                <span>Show key info on home page</span>
-              </label>
-            </div>
 
-            {canManageFilteredViews && !filteredViewFormMode ? (
-              <div className="settings-section-toolbar">
-                <button
-                  className="button secondary"
-                  type="button"
-                  disabled={isOffline}
-                  onClick={startAddingFilteredView}
-                >
-                  <CapcomIcon name="add" size={18} weight="bold" />
-                  New filtered view
-                </button>
+            <div className="share-section share-home-section">
+              <h3>Show on home page</h3>
+              <div className="share-home-options">
+                <label className="switch-row">
+                  <input
+                    checked={form.showMomContacts}
+                    disabled={isWriteDisabled || updatingShareOutput}
+                    role="switch"
+                    type="checkbox"
+                    onChange={(event) => updateShowMomContacts(event.target.checked)}
+                  />
+                  <span className="switch-control" aria-hidden="true" />
+                  <span>Contacts</span>
+                </label>
+                <label className="switch-row">
+                  <input
+                    checked={form.showMomKeyInfo}
+                    disabled={isWriteDisabled || updatingShareOutput}
+                    role="switch"
+                    type="checkbox"
+                    onChange={(event) => updateShowMomKeyInfo(event.target.checked)}
+                  />
+                  <span className="switch-control" aria-hidden="true" />
+                  <span>Key info</span>
+                </label>
               </div>
-            ) : null}
+            </div>
 
             {filteredViewFormMode ? (
               <Modal
@@ -5413,7 +5424,7 @@ export default function EventEditPage() {
                   <div className="form-row">
                     <span className="form-chip-label">Tags</span>
                     <div className="multi-chip-list" role="group" aria-label="Tags">
-                      {tags.map((tag) => {
+                      {filteredViewTagOptions.map((tag) => {
                         const isSelected = filteredViewForm.filterTagIds.includes(tag.id);
                         return (
                           <button
@@ -5429,9 +5440,32 @@ export default function EventEditPage() {
                         );
                       })}
                     </div>
-                    {tags.length === 0 ? <span className="item-meta">No tags available.</span> : null}
+                    {filteredViewTagOptions.length === 0 ? <span className="item-meta">No tags available.</span> : null}
                   </div>
                   <div className="form-row">
+                    <span className="form-chip-label">Companies</span>
+                    <div className="multi-chip-list" role="group" aria-label="Companies">
+                      {filteredViewCompanyOptions.map((company) => {
+                        const isSelected = filteredViewForm.filterSupplierIds.includes(company.id);
+                        return (
+                          <button
+                            className={isSelected ? "multi-chip selected" : "multi-chip"}
+                            type="button"
+                            key={company.id}
+                            disabled={isOffline}
+                            aria-pressed={isSelected}
+                            onClick={() => toggleFilteredViewMultiSelectField("filterSupplierIds", company.id)}
+                          >
+                            {company.companyName}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    {filteredViewCompanyOptions.length === 0 ? (
+                      <span className="item-meta">No companies available for this event.</span>
+                    ) : null}
+                  </div>
+                  <div className="form-row full">
                     <span className="form-chip-label">Locations</span>
                     <div className="location-chip-tree" role="group" aria-label="Locations">
                       {locationTree.map((location) => {
@@ -5479,29 +5513,6 @@ export default function EventEditPage() {
                     ) : null}
                   </div>
                   <div className="form-row">
-                    <span className="form-chip-label">Companies</span>
-                    <div className="multi-chip-list" role="group" aria-label="Companies">
-                      {filteredViewCompanyOptions.map((company) => {
-                        const isSelected = filteredViewForm.filterSupplierIds.includes(company.id);
-                        return (
-                          <button
-                            className={isSelected ? "multi-chip selected" : "multi-chip"}
-                            type="button"
-                            key={company.id}
-                            disabled={isOffline}
-                            aria-pressed={isSelected}
-                            onClick={() => toggleFilteredViewMultiSelectField("filterSupplierIds", company.id)}
-                          >
-                            {company.companyName}
-                          </button>
-                        );
-                      })}
-                    </div>
-                    {filteredViewCompanyOptions.length === 0 ? (
-                      <span className="item-meta">No companies available for this event.</span>
-                    ) : null}
-                  </div>
-                  <div className="form-row">
                     <label htmlFor="filteredViewGroupPresetId">Group preset</label>
                     <input
                       id="filteredViewGroupPresetId"
@@ -5531,61 +5542,56 @@ export default function EventEditPage() {
                       placeholder="Full schedule"
                     />
                   </div>
-                  <div className="form-row">
-                    <label htmlFor="filteredViewSortOrder">Sort order</label>
-                    <input
-                      id="filteredViewSortOrder"
-                      type="number"
-                      min="1"
-                      value={filteredViewForm.sortOrder}
-                      disabled={isOffline}
-                      onChange={(event) => updateFilteredViewFormField("sortOrder", event.target.value)}
-                      placeholder="1"
-                    />
-                  </div>
-                  <div className="form-row">
-                    <label className="checkbox-row">
-                      <input
-                        checked={filteredViewForm.filterBox}
-                        disabled={isOffline}
-                        type="checkbox"
-                        onChange={(event) => updateFilteredViewFormField("filterBox", event.target.checked)}
-                      />
-                      <span>Show filter box</span>
-                    </label>
-                  </div>
-                  <div className="form-row">
-                    <label className="checkbox-row">
-                      <input
-                        checked={filteredViewForm.showKeyInfo}
-                        disabled={isOffline}
-                        type="checkbox"
-                        onChange={(event) => updateFilteredViewFormField("showKeyInfo", event.target.checked)}
-                      />
-                      <span>Show key info</span>
-                    </label>
-                  </div>
-                  <div className="form-row">
-                    <label className="checkbox-row">
-                      <input
-                        checked={filteredViewForm.showLocations}
-                        disabled={isOffline}
-                        type="checkbox"
-                        onChange={(event) => updateFilteredViewFormField("showLocations", event.target.checked)}
-                      />
-                      <span>Show locations</span>
-                    </label>
-                  </div>
-                  <div className="form-row">
-                    <label className="checkbox-row">
-                      <input
-                        checked={filteredViewForm.showContacts}
-                        disabled={isOffline}
-                        type="checkbox"
-                        onChange={(event) => updateFilteredViewFormField("showContacts", event.target.checked)}
-                      />
-                      <span>Include contacts</span>
-                    </label>
+                  <div className="form-row full">
+                    <div className="filtered-view-display-card">
+                      <h3>Display options</h3>
+                      <div className="filtered-view-display-options">
+                        <label className="switch-row">
+                          <input
+                            checked={filteredViewForm.filterBox}
+                            disabled={isOffline}
+                            role="switch"
+                            type="checkbox"
+                            onChange={(event) => updateFilteredViewFormField("filterBox", event.target.checked)}
+                          />
+                          <span className="switch-control" aria-hidden="true" />
+                          <span>Filter box</span>
+                        </label>
+                        <label className="switch-row">
+                          <input
+                            checked={filteredViewForm.showKeyInfo}
+                            disabled={isOffline}
+                            role="switch"
+                            type="checkbox"
+                            onChange={(event) => updateFilteredViewFormField("showKeyInfo", event.target.checked)}
+                          />
+                          <span className="switch-control" aria-hidden="true" />
+                          <span>Key info</span>
+                        </label>
+                        <label className="switch-row">
+                          <input
+                            checked={filteredViewForm.showLocations}
+                            disabled={isOffline}
+                            role="switch"
+                            type="checkbox"
+                            onChange={(event) => updateFilteredViewFormField("showLocations", event.target.checked)}
+                          />
+                          <span className="switch-control" aria-hidden="true" />
+                          <span>Locations</span>
+                        </label>
+                        <label className="switch-row">
+                          <input
+                            checked={filteredViewForm.showContacts}
+                            disabled={isOffline}
+                            role="switch"
+                            type="checkbox"
+                            onChange={(event) => updateFilteredViewFormField("showContacts", event.target.checked)}
+                          />
+                          <span className="switch-control" aria-hidden="true" />
+                          <span>Contacts</span>
+                        </label>
+                      </div>
+                    </div>
                   </div>
                 </div>
                 <div className="actions">
@@ -5605,74 +5611,144 @@ export default function EventEditPage() {
               </Modal>
             ) : null}
 
-            {filteredViews.length === 0 ? (
-              <p className="item-meta">No filtered views yet.</p>
-            ) : (
-              <div className="tag-list">
-                {filteredViews.map((view) => (
-                    <article className="tag-list-row" key={view.id}>
-                      <div>
-                        <h3>{view.name || "Unnamed filtered view"}</h3>
-                      </div>
-                      {canManageFilteredViews ? (
-                        <div className="tag-list-actions">
-                          <button
-                            className="compact-button"
-                            type="button"
-                            disabled={isOffline}
-                            onClick={() => startEditingFilteredView(view)}
-                          >
-                            <CapcomIcon name="edit" size={16} />
-                            Edit
-                          </button>
-                          <button
-                            className="compact-button"
-                            type="button"
-                            disabled={deletingFilteredViewId === view.id || isWriteDisabled}
-                            onClick={() => removeFilteredView(view.id)}
-                          >
-                            <CapcomIcon name="delete" size={16} />
-                            {deletingFilteredViewId === view.id ? "Deleting..." : "Delete"}
-                          </button>
-                        </div>
-                      ) : null}
-                    </article>
-                  ))}
+            <div className="share-section">
+              <div className="share-section-heading">
+                <h3>Filtered views</h3>
+                {canManageFilteredViews && !filteredViewFormMode ? (
+                  <button
+                    className="button secondary icon-text-button"
+                    type="button"
+                    disabled={isOffline}
+                    onClick={startAddingFilteredView}
+                  >
+                    <CapcomIcon name="add" size={18} weight="bold" />
+                    New filtered view
+                  </button>
+                ) : null}
               </div>
-            )}
+
+              {filteredViews.length === 0 ? (
+                <p className="item-meta">No filtered views yet.</p>
+              ) : (
+                <div className="share-filtered-view-list">
+                  {filteredViews.map((view) => {
+                    const protectedSnapshotHtmlUrl = protectedSnapshotHtmlUrlByName.get(
+                      getShareSnapshotNameKey(view.name)
+                    );
+
+                    return (
+                      <article className="share-filtered-view-row" key={view.id}>
+                        <h3>{view.name || "Unnamed filtered view"}</h3>
+                        <div className="share-filtered-view-actions">
+                          {protectedSnapshotHtmlUrl ? (
+                            <a
+                              className="compact-button"
+                              href={protectedSnapshotHtmlUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                            >
+                              <CapcomIcon name="externalLink" size={16} />
+                              Open
+                            </a>
+                          ) : (
+                            <button
+                              className="compact-button"
+                              type="button"
+                              disabled
+                              title="No protected HTML URL found for this view"
+                            >
+                              <CapcomIcon name="externalLink" size={16} />
+                              Open
+                            </button>
+                          )}
+                          {canManageFilteredViews ? (
+                            <>
+                              <button
+                                className="compact-button"
+                                type="button"
+                                disabled={isOffline}
+                                onClick={() => startEditingFilteredView(view)}
+                              >
+                                <CapcomIcon name="edit" size={16} />
+                                Edit
+                              </button>
+                              <button
+                                className="compact-button"
+                                type="button"
+                                disabled={deletingFilteredViewId === view.id || isWriteDisabled}
+                                onClick={() => removeFilteredView(view.id)}
+                              >
+                                <CapcomIcon name="delete" size={16} />
+                                {deletingFilteredViewId === view.id ? "Deleting..." : "Delete"}
+                              </button>
+                            </>
+                          ) : null}
+                        </div>
+                      </article>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
           </section>
 
-          <section className="panel">
-            <div className="panel-heading">
-              <h2>Archive</h2>
+          <section className="panel archive-panel">
+            <div className="company-accordion-heading">
+              <button
+                className="company-accordion-trigger"
+                type="button"
+                aria-controls="shareArchiveBody"
+                aria-expanded={isShareArchiveOpen}
+                onClick={() => setIsShareArchiveOpen((current) => !current)}
+              >
+                <span className="accordion-indicator" aria-hidden="true">
+                  <CapcomIcon
+                    name={isShareArchiveOpen ? "caretDoubleDown" : "caretDoubleRight"}
+                    size={14}
+                    weight="bold"
+                  />
+                </span>
+                <span>
+                  <span className="company-accordion-title">Archive</span>
+                  <span className="item-meta company-accordion-meta">
+                    {shareArchiveLoading
+                      ? "Loading..."
+                      : `${shareArchive.length} entr${shareArchive.length === 1 ? "y" : "ies"}`}
+                  </span>
+                </span>
+              </button>
             </div>
 
-            {shareArchive.length === 0 ? (
-              <p className="item-meta">No archive entries yet.</p>
-            ) : (
-              <div className="table-wrap">
-                <table className="schedule-days-table">
-                  <thead>
-                    <tr>
-                      <th>Date</th>
-                      <th>Changes</th>
-                      <th aria-label="Change details"></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {shareArchive.map((archiveRow) => (
-                      <tr key={archiveRow.id}>
-                        <td>{formatArchiveDate(archiveRow.timestamp || archiveRow.createdAt)}</td>
-                        <td>{archiveRow.numberOfChanges ?? 0}</td>
-                        <td>
-                          <ArchiveChangeText text={archiveRow.text} />
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+            {isShareArchiveOpen ? (
+              <div className="company-accordion-body" id="shareArchiveBody">
+                {shareArchive.length === 0 ? (
+                  <p className="item-meta">No archive entries yet.</p>
+                ) : (
+                  <div className="table-wrap">
+                    <table className="schedule-days-table">
+                      <thead>
+                        <tr>
+                          <th>Date</th>
+                          <th>Changes</th>
+                          <th aria-label="Change details"></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {shareArchive.map((archiveRow) => (
+                          <tr key={archiveRow.id}>
+                            <td>{formatArchiveDate(archiveRow.timestamp || archiveRow.createdAt)}</td>
+                            <td>{archiveRow.numberOfChanges ?? 0}</td>
+                            <td>
+                              <ArchiveChangeText text={archiveRow.text} />
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
               </div>
-            )}
+            ) : null}
           </section>
         </>
       ) : null}
