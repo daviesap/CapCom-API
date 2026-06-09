@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "../auth/AuthProvider.jsx";
-import { USER_ROLES } from "../auth/roles.js";
+import { USER_ROLES, canManageAssignments } from "../auth/roles.js";
 import Modal from "../components/Modal.jsx";
 import { CapcomIcon } from "../icons/capcomIcons.jsx";
 import {
@@ -17,6 +17,12 @@ import {
   updateUserProfile,
 } from "../services/userService.js";
 import { createAuthUserProfile } from "../services/functionService.js";
+import { getEvents } from "../services/eventService.js";
+import {
+  getAssignmentsForUser,
+  removeEventAssignment,
+  setEventAssignment,
+} from "../services/eventAssignmentService.js";
 
 const emptyClientForm = {
   clientName: "",
@@ -31,7 +37,7 @@ const emptyUserForm = {
   uid: "",
   email: "",
   displayName: "",
-  role: USER_ROLES.CLIENT_USER,
+  role: USER_ROLES.USER,
   clientId: "",
   isActive: true,
 };
@@ -58,10 +64,10 @@ export default function AdminPage() {
     user,
     userProfile,
     isSuperAdmin,
-    isClientAdmin,
+    isAdmin,
     profileLoading,
   } = useAuth();
-  const canManageUsers = isSuperAdmin || isClientAdmin;
+  const canManageUsers = isSuperAdmin || isAdmin;
 
   const [activeAdminSection, setActiveAdminSection] = useState("users");
   const [clients, setClients] = useState([]);
@@ -81,6 +87,11 @@ export default function AdminPage() {
   const [userSaving, setUserSaving] = useState(false);
   const [userMessage, setUserMessage] = useState("");
   const [userError, setUserError] = useState("");
+  const [events, setEvents] = useState([]);
+  const [assignmentUser, setAssignmentUser] = useState(null);
+  const [assignmentEventIds, setAssignmentEventIds] = useState(new Set());
+  const [assignmentsLoading, setAssignmentsLoading] = useState(false);
+  const [assignmentsSaving, setAssignmentsSaving] = useState(false);
 
   const selectableClients = useMemo(() => {
     if (isSuperAdmin) return clients;
@@ -125,10 +136,24 @@ export default function AdminPage() {
     }
   };
 
+  const loadEventsForAssignments = async () => {
+    if (!canManageAssignments(userProfile)) {
+      setEvents([]);
+      return;
+    }
+    try {
+      setEvents(await getEvents(userProfile));
+    } catch (loadError) {
+      console.error(loadError);
+      setUserError("Could not load events for assignments.");
+    }
+  };
+
   useEffect(() => {
     if (profileLoading || !canManageUsers) return;
     loadClients();
     loadUsers();
+    loadEventsForAssignments();
   }, [profileLoading, canManageUsers, userProfile]);
 
   const updateClientField = (field, value) => {
@@ -229,7 +254,7 @@ export default function AdminPage() {
     setUserForm((current) => ({
       ...current,
       [field]: value,
-      ...(field === "role" && value === USER_ROLES.CLIENT_USER && isClientAdmin
+      ...(field === "role" && isAdmin
         ? { clientId: userProfile.clientId }
         : {}),
     }));
@@ -238,8 +263,8 @@ export default function AdminPage() {
   const resetUserForm = () => {
     setUserForm({
       ...emptyUserForm,
-      role: USER_ROLES.CLIENT_USER,
-      clientId: isClientAdmin ? userProfile?.clientId || "" : "",
+      role: USER_ROLES.USER,
+      clientId: isAdmin ? userProfile?.clientId || "" : "",
     });
     setEditingUserId("");
   };
@@ -262,7 +287,7 @@ export default function AdminPage() {
       uid: profile.id,
       email: profile.email || "",
       displayName: profile.displayName || "",
-      role: profile.role || USER_ROLES.CLIENT_USER,
+      role: profile.role || USER_ROLES.USER,
       clientId: profile.clientId || "",
       isActive: profile.isActive !== false,
     });
@@ -272,8 +297,8 @@ export default function AdminPage() {
   };
 
   const getUserFormData = () => {
-    const role = isClientAdmin ? USER_ROLES.CLIENT_USER : userForm.role;
-    const clientId = isClientAdmin ? userProfile.clientId : userForm.clientId;
+    const role = isAdmin && userForm.role === USER_ROLES.ADMIN ? USER_ROLES.USER : userForm.role;
+    const clientId = isAdmin ? userProfile.clientId : userForm.clientId;
 
     return {
       email: userForm.email.trim(),
@@ -374,10 +399,79 @@ export default function AdminPage() {
     }
   };
 
+  const openAssignmentForm = async (profile) => {
+    setAssignmentUser(profile);
+    setAssignmentsLoading(true);
+    setUserMessage("");
+    setUserError("");
+    try {
+      const assignments = await getAssignmentsForUser(profile.id, userProfile);
+      setAssignmentEventIds(new Set(assignments.map((assignment) => assignment.eventId)));
+    } catch (assignmentError) {
+      console.error(assignmentError);
+      setUserError("Could not load event assignments.");
+      setAssignmentUser(null);
+    } finally {
+      setAssignmentsLoading(false);
+    }
+  };
+
+  const closeAssignmentForm = () => {
+    if (assignmentsSaving) return;
+    setAssignmentUser(null);
+    setAssignmentEventIds(new Set());
+  };
+
+  const toggleAssignmentEvent = (eventId) => {
+    setAssignmentEventIds((current) => {
+      const next = new Set(current);
+      if (next.has(eventId)) {
+        next.delete(eventId);
+      } else {
+        next.add(eventId);
+      }
+      return next;
+    });
+  };
+
+  const saveAssignments = async () => {
+    if (!assignmentUser) return;
+    setAssignmentsSaving(true);
+    setUserMessage("");
+    setUserError("");
+    try {
+      const existingAssignments = await getAssignmentsForUser(assignmentUser.id, userProfile);
+      const nextEventIds = assignmentEventIds;
+      const targetEvents = events.filter((event) => nextEventIds.has(event.id));
+
+      await Promise.all([
+        ...targetEvents
+          .map((event) => setEventAssignment({
+            eventId: event.id,
+            clientId: event.clientId,
+            userId: assignmentUser.id,
+            accessRole: assignmentUser.role,
+            currentUserId: user?.uid,
+          })),
+        ...existingAssignments
+          .filter((assignment) => !nextEventIds.has(assignment.eventId))
+          .map((assignment) => removeEventAssignment(assignment.eventId, assignmentUser.id)),
+      ]);
+
+      setUserMessage("Event assignments updated.");
+      closeAssignmentForm();
+    } catch (assignmentError) {
+      console.error(assignmentError);
+      setUserError("Could not save event assignments.");
+    } finally {
+      setAssignmentsSaving(false);
+    }
+  };
+
   useEffect(() => {
     if (profileLoading || !canManageUsers) return;
     resetUserForm();
-  }, [profileLoading, canManageUsers, isClientAdmin, userProfile?.clientId]);
+  }, [profileLoading, canManageUsers, isAdmin, userProfile?.clientId]);
 
   useEffect(() => {
     if (!isSuperAdmin && activeAdminSection === "clients") {
@@ -647,11 +741,21 @@ export default function AdminPage() {
                         onChange={(event) => updateUserField("role", event.target.value)}
                         required
                       >
-                        <option value={USER_ROLES.CLIENT_ADMIN}>ClientAdmin</option>
-                        <option value={USER_ROLES.CLIENT_USER}>ClientUser</option>
+                        <option value={USER_ROLES.ADMIN}>Admin</option>
+                        <option value={USER_ROLES.USER}>User</option>
+                        <option value={USER_ROLES.VIEWER}>Viewer</option>
                       </select>
                     ) : (
-                      <input id="role" value={USER_ROLES.CLIENT_USER} disabled />
+                      <select
+                        id="role"
+                        value={userForm.role}
+                        disabled={userSaving}
+                        onChange={(event) => updateUserField("role", event.target.value)}
+                        required
+                      >
+                        <option value={USER_ROLES.USER}>User</option>
+                        <option value={USER_ROLES.VIEWER}>Viewer</option>
+                      </select>
                     )}
                   </div>
                   <div className="form-row">
@@ -756,6 +860,18 @@ export default function AdminPage() {
                         <CapcomIcon name="edit" size={18} weight="bold" />
                         <span className="button-label">Edit</span>
                       </button>
+                      {[USER_ROLES.USER, USER_ROLES.VIEWER].includes(profile.role) ? (
+                        <button
+                          className="button secondary client-edit-button"
+                          type="button"
+                          aria-label={`Assign events for ${profile.displayName || profile.email}`}
+                          disabled={userSaving || !canEditProfile}
+                          onClick={() => openAssignmentForm(profile)}
+                        >
+                          <CapcomIcon name="event" size={18} weight="bold" />
+                          <span className="button-label">Events</span>
+                        </button>
+                      ) : null}
                     </div>
                   </article>
                 );
@@ -763,6 +879,60 @@ export default function AdminPage() {
             </div>
           </section>
         </div>
+      ) : null}
+
+      {assignmentUser ? (
+        <Modal
+          title="Event Access"
+          subtitle={assignmentUser.displayName || assignmentUser.email || ""}
+          labelledBy="eventAssignmentTitle"
+          closeLabel="Close event access"
+          onClose={closeAssignmentForm}
+        >
+          {assignmentsLoading ? <p className="message">Loading event access...</p> : null}
+          {!assignmentsLoading && events.length === 0 ? (
+            <p className="message">No events available for this client.</p>
+          ) : null}
+          {!assignmentsLoading && events.length > 0 ? (
+            <div className="client-list">
+              {events
+                .filter((event) => isSuperAdmin || event.clientId === assignmentUser.clientId)
+                .map((event) => (
+                  <label className="client-list-row" key={event.id}>
+                    <div className="client-card-main">
+                      <div>
+                        <div className="client-title-line">
+                          <h3>{event.name}</h3>
+                        </div>
+                        <p className="item-meta">
+                          {event.clientName || getClientName(clients, event.clientId)}
+                        </p>
+                      </div>
+                      <input
+                        type="checkbox"
+                        checked={assignmentEventIds.has(event.id)}
+                        disabled={assignmentsSaving}
+                        onChange={() => toggleAssignmentEvent(event.id)}
+                      />
+                    </div>
+                  </label>
+                ))}
+            </div>
+          ) : null}
+          <div className="actions">
+            <button className="button" type="button" disabled={assignmentsSaving} onClick={saveAssignments}>
+              {assignmentsSaving ? "Saving..." : "Save Access"}
+            </button>
+            <button
+              className="button secondary"
+              type="button"
+              disabled={assignmentsSaving}
+              onClick={closeAssignmentForm}
+            >
+              Cancel
+            </button>
+          </div>
+        </Modal>
       ) : null}
     </section>
   );

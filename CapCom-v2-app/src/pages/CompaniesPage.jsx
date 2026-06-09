@@ -23,7 +23,7 @@ export default function CompaniesPage() {
     userProfile,
     profileLoading,
     isSuperAdmin,
-    isClientAdmin,
+    isAdmin,
   } = useAuth();
   const isOnline = useOnlineStatus();
   const isOffline = !isOnline;
@@ -38,7 +38,7 @@ export default function CompaniesPage() {
   const [deletingCompanyId, setDeletingCompanyId] = useState("");
   const [companyMessage, setCompanyMessage] = useState("");
   const [companyError, setCompanyError] = useState("");
-  const canManageCompanies = isSuperAdmin || isClientAdmin;
+  const canManageCompanies = isSuperAdmin || isAdmin;
   const selectedClient = useMemo(
     () => clients.find((client) => client.id === selectedClientId),
     [clients, selectedClientId]

@@ -20,20 +20,22 @@ Relationships are stored with simple IDs:
 Planned access model:
 
 - `users/{uid}` is keyed by the Firebase Authentication user UID.
-- `users.role` is one of `SuperAdmin`, `ClientAdmin`, or `ClientUser`.
+- `users.role` is one of `SuperAdmin`, `Admin`, `User`, or `Viewer`.
 - `users.clientId` is `null` for `SuperAdmin` users.
-- `users.clientId` points to `clients/{clientId}` for `ClientAdmin` and `ClientUser` users.
+- `users.clientId` points to `clients/{clientId}` for `Admin`, `User`, and `Viewer` users.
 - `clients/{clientId}` stores client account metadata.
 - `events.clientId` points to `clients/{clientId}`.
+- `eventAssignments/{eventId}_{userId}` grants assigned event access to `User` and `Viewer` profiles.
 - `SuperAdmin` users can read all events and choose the client when creating an event.
-- `ClientAdmin` and `ClientUser` users read only events for their own `clientId`.
-- `ClientAdmin` users create events under their own `clientId`; `ClientUser` users cannot create events.
+- `Admin` users can manage all events for their own `clientId`.
+- `User` users can read and edit only events assigned by an `Admin`.
+- `Viewer` users can only read events assigned by an `Admin`.
 - Admin user management creates Firebase Auth users and matching Firestore `users/{uid}` profiles together through Cloud Function `createAuthUserProfile`.
 - Editing existing users still updates the Firestore user profile only.
 - New Firebase Auth users receive a Firebase password reset email after creation.
 - Existing user profiles have a `Send Reset` action to resend the password reset email.
 - Cloud Function `createAuthUserProfile` creates a Firebase Auth user and matching Firestore profile from `email`, `displayName`, `role`, and `clientId`.
-- `createAuthUserProfile` allows `SuperAdmin` to create `ClientAdmin` or `ClientUser`, and allows `ClientAdmin` to create only `ClientUser` for their own client.
+- `createAuthUserProfile` allows `SuperAdmin` to create `Admin`, `User`, or `Viewer`, and allows `Admin` to create only `User` or `Viewer` for their own client.
 
 Example `clients/{clientId}` document:
 
@@ -71,11 +73,26 @@ Example `users/{uid}` document for a client user:
 {
   "email": "user@acme.com",
   "displayName": "Jane Smith",
-  "role": "ClientUser",
+  "role": "User",
   "clientId": "acmeClientId",
   "isActive": true,
   "createdAt": "serverTimestamp",
   "updatedAt": "serverTimestamp"
+}
+```
+
+Example `eventAssignments/{eventId}_{userId}` document:
+
+```json
+{
+  "eventId": "eventId",
+  "clientId": "acmeClientId",
+  "userId": "uid",
+  "accessRole": "User",
+  "createdAt": "serverTimestamp",
+  "createdBy": "adminUid",
+  "updatedAt": "serverTimestamp",
+  "updatedBy": "adminUid"
 }
 ```
 

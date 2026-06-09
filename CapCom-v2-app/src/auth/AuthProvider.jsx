@@ -7,8 +7,9 @@ import {
 import { auth } from "../firebase/auth";
 import { getUserProfile } from "../services/userService.js";
 import {
-  isClientAdmin,
-  isClientUser,
+  isAdmin,
+  isUser,
+  isViewer,
   isSuperAdmin,
 } from "./roles.js";
 
@@ -84,8 +85,9 @@ export function AuthProvider({ children }) {
       profileLoading,
       profileError,
       isSuperAdmin: isSuperAdmin(userProfile),
-      isClientAdmin: isClientAdmin(userProfile),
-      isClientUser: isClientUser(userProfile),
+      isAdmin: isAdmin(userProfile),
+      isUser: isUser(userProfile),
+      isViewer: isViewer(userProfile),
       refreshUserProfile,
       login: (email, password) => signInWithEmailAndPassword(auth, email, password),
       logout: () => signOut(auth),

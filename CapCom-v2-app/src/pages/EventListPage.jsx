@@ -67,8 +67,9 @@ export default function EventListPage() {
     userProfile,
     profileLoading,
     isSuperAdmin,
-    isClientAdmin,
-    isClientUser,
+    isAdmin,
+    isUser,
+    isViewer,
   } = useAuth();
   const isOnline = useOnlineStatus();
   const isOffline = !isOnline;
@@ -183,7 +184,7 @@ export default function EventListPage() {
       const selectedClient = clients.find((client) => client.id === form.clientId);
       const eventData = {
         ...form,
-        clientId: isClientAdmin ? userProfile.clientId : form.clientId,
+        clientId: isAdmin ? userProfile.clientId : form.clientId,
         clientName: selectedClient?.clientName || form.clientName,
       };
 
@@ -219,8 +220,8 @@ export default function EventListPage() {
             setError("");
             setForm({
               ...emptyForm,
-              clientId: isClientAdmin ? userProfile?.clientId || "" : "",
-              clientName: isClientAdmin ? clients[0]?.clientName || "" : "",
+              clientId: isAdmin ? userProfile?.clientId || "" : "",
+              clientName: isAdmin ? clients[0]?.clientName || "" : "",
             });
             setShowCreateOverlay(true);
           }}
@@ -234,8 +235,10 @@ export default function EventListPage() {
       {isOffline ? (
         <p className="message offline-message">Offline mode: previously loaded schedules are read-only.</p>
       ) : null}
-      {!profileLoading && isClientUser ? (
-        <p className="message">ClientUser accounts can view assigned client events but cannot create events.</p>
+      {!profileLoading && (isUser || isViewer) ? (
+        <p className="message">
+          {isViewer ? "Viewer" : "User"} accounts can only access events assigned by an Admin.
+        </p>
       ) : null}
       {loading ? <Loading /> : null}
       {!loading && events.length === 0 ? <EmptyState message="No events yet." /> : null}

@@ -13,7 +13,7 @@ import {
 import {
   USER_ROLES,
   hasActiveProfile,
-  isClientAdmin,
+  isAdmin,
   isSuperAdmin,
 } from "../auth/roles.js";
 import { db } from "../firebase/firestore";
@@ -86,9 +86,9 @@ export function canManageUserProfile(currentUserProfile, targetUserProfile) {
     return targetUserProfile.role !== USER_ROLES.SUPER_ADMIN;
   }
 
-  return isClientAdmin(currentUserProfile)
+  return isAdmin(currentUserProfile)
     && currentUserProfile.clientId
-    && targetUserProfile.role === USER_ROLES.CLIENT_USER
+    && [USER_ROLES.USER, USER_ROLES.VIEWER].includes(targetUserProfile.role)
     && targetUserProfile.clientId === currentUserProfile.clientId;
 }
 

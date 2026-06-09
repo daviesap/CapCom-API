@@ -26,20 +26,21 @@ service cloud.firestore {
         && currentUser().role == "SuperAdmin";
     }
 
-    function isClientAdmin() {
+    function isAdmin() {
       return hasActiveProfile()
-        && currentUser().role == "ClientAdmin"
+        && currentUser().role == "Admin"
         && currentUser().clientId is string;
     }
 
-    function isEventAdmin() {
+    function isUser() {
       return hasActiveProfile()
-        && currentUser().role == "EventAdmin";
+        && currentUser().role == "User"
+        && currentUser().clientId is string;
     }
 
-    function isClientUser() {
+    function isViewer() {
       return hasActiveProfile()
-        && currentUser().role == "ClientUser"
+        && currentUser().role == "Viewer"
         && currentUser().clientId is string;
     }
 
@@ -65,7 +66,7 @@ service cloud.firestore {
       return company.clientId is string
         && (
           isSuperAdmin()
-          || (isClientAdmin() && currentUser().clientId == company.clientId)
+          || (isAdmin() && currentUser().clientId == company.clientId)
         );
     }
 
@@ -96,7 +97,7 @@ service cloud.firestore {
 
     function canManageEventContactData(eventContact) {
       return eventContact.eventId is string
-        && canManageEvent(eventContact.eventId);
+        && canEditEventContent(eventContact.eventId);
     }
 
     function eventPath(eventId) {
@@ -107,11 +108,32 @@ service cloud.firestore {
       return get(eventPath(eventId)).data;
     }
 
-    function canReadEventData(event) {
+    function eventAssignmentPath(eventId, uid) {
+      return /databases/$(database)/documents/eventAssignments/$(eventId + "_" + uid);
+    }
+
+    function currentEventAssignment(eventId) {
+      return get(eventAssignmentPath(eventId, request.auth.uid)).data;
+    }
+
+    function hasAssignedEventAccess(eventId, event, accessRoles) {
+      return event.clientId is string
+        && (isUser() || isViewer())
+        && exists(eventAssignmentPath(eventId, request.auth.uid))
+        && currentEventAssignment(eventId).eventId == eventId
+        && currentEventAssignment(eventId).userId == request.auth.uid
+        && currentEventAssignment(eventId).clientId == event.clientId
+        && currentEventAssignment(eventId).clientId == currentUser().clientId
+        && currentEventAssignment(eventId).accessRole == currentUser().role
+        && currentEventAssignment(eventId).accessRole in accessRoles;
+    }
+
+    function canReadEventData(event, eventId) {
       return hasActiveProfile()
         && (
           isSuperAdmin()
-          || (event.clientId is string && currentUser().clientId == event.clientId)
+          || (event.clientId is string && isAdmin() && currentUser().clientId == event.clientId)
+          || hasAssignedEventAccess(eventId, event, ["User", "Viewer"])
         );
     }
 
@@ -119,7 +141,15 @@ service cloud.firestore {
       return hasActiveProfile()
         && (
           isSuperAdmin()
-          || (event.clientId is string && isClientAdmin() && currentUser().clientId == event.clientId)
+          || (event.clientId is string && isAdmin() && currentUser().clientId == event.clientId)
+        );
+    }
+
+    function canEditEventData(event, eventId) {
+      return hasActiveProfile()
+        && (
+          canManageEventData(event)
+          || hasAssignedEventAccess(eventId, event, ["User"])
         );
     }
 
@@ -128,13 +158,13 @@ service cloud.firestore {
         && event.clientId is string
         && (
           isSuperAdmin()
-          || (isClientAdmin() && currentUser().clientId == event.clientId)
+          || (isAdmin() && currentUser().clientId == event.clientId)
         );
     }
 
     function canReadEvent(eventId) {
       return exists(eventPath(eventId))
-        && canReadEventData(eventData(eventId));
+        && canReadEventData(eventData(eventId), eventId);
     }
 
     function canManageEvent(eventId) {
@@ -143,16 +173,15 @@ service cloud.firestore {
     }
 
     function canEditEventContent(eventId) {
-      return canReadEvent(eventId);
+      return exists(eventPath(eventId))
+        && canEditEventData(eventData(eventId), eventId);
     }
 
     function canManageFilteredViewData(filteredView) {
       return filteredView.eventId is string
-        && canReadEvent(filteredView.eventId)
         && (
           isSuperAdmin()
-          || isClientAdmin()
-          || isEventAdmin()
+          || canEditEventContent(filteredView.eventId)
         );
     }
 
@@ -171,7 +200,7 @@ service cloud.firestore {
 
     function canManageScheduleDayData(scheduleDay) {
       return scheduleDay.eventId is string
-        && canManageEvent(scheduleDay.eventId);
+        && canEditEventContent(scheduleDay.eventId);
     }
 
     function canEditScheduleDayData(scheduleDay) {
@@ -202,7 +231,7 @@ service cloud.firestore {
         && (
           request.auth.uid == uid
           || isSuperAdmin()
-          || (isClientAdmin() && userProfile.clientId == currentUser().clientId)
+          || (isAdmin() && userProfile.clientId == currentUser().clientId)
         );
     }
 
@@ -212,12 +241,12 @@ service cloud.firestore {
         && (
           (
             isSuperAdmin()
-            && userProfile.role in ["ClientAdmin", "ClientUser"]
+            && userProfile.role in ["Admin", "User", "Viewer"]
             && userProfile.clientId is string
           )
           || (
-            isClientAdmin()
-            && userProfile.role == "ClientUser"
+            isAdmin()
+            && userProfile.role in ["User", "Viewer"]
             && userProfile.clientId == currentUser().clientId
           )
         );
@@ -230,7 +259,7 @@ service cloud.firestore {
           (
             isSuperAdmin()
             && existingProfile.role != "SuperAdmin"
-            && nextProfile.role in ["ClientAdmin", "ClientUser"]
+            && nextProfile.role in ["Admin", "User", "Viewer"]
             && nextProfile.clientId is string
           )
           || (
@@ -241,13 +270,53 @@ service cloud.firestore {
             && nextProfile.debugMode is bool
           )
           || (
-            isClientAdmin()
-            && existingProfile.role == "ClientUser"
+            isAdmin()
+            && existingProfile.role in ["User", "Viewer"]
             && existingProfile.clientId == currentUser().clientId
-            && nextProfile.role == "ClientUser"
+            && nextProfile.role in ["User", "Viewer"]
             && nextProfile.clientId == currentUser().clientId
           )
         );
+    }
+
+    function isAssignableUserProfile(profile, assignment) {
+      return assignment.userId is string
+        && exists(userPath(assignment.userId))
+        && get(userPath(assignment.userId)).data.clientId == assignment.clientId
+        && get(userPath(assignment.userId)).data.role in ["User", "Viewer"]
+        && get(userPath(assignment.userId)).data.role == assignment.accessRole
+        && get(userPath(assignment.userId)).data.isActive == true;
+    }
+
+    function canReadEventAssignmentData(assignment) {
+      return hasActiveProfile()
+        && assignment.eventId is string
+        && assignment.clientId is string
+        && assignment.userId is string
+        && (
+          isSuperAdmin()
+          || (isAdmin() && assignment.clientId == currentUser().clientId)
+          || assignment.userId == request.auth.uid
+        );
+    }
+
+    function canManageEventAssignmentScope(assignment) {
+      return hasActiveProfile()
+        && assignment.eventId is string
+        && assignment.clientId is string
+        && assignment.userId is string
+        && exists(eventPath(assignment.eventId))
+        && eventData(assignment.eventId).clientId == assignment.clientId
+        && (
+          isSuperAdmin()
+          || (isAdmin() && assignment.clientId == currentUser().clientId)
+        );
+    }
+
+    function canManageEventAssignmentData(assignment) {
+      return canManageEventAssignmentScope(assignment)
+        && assignment.accessRole in ["User", "Viewer"]
+        && isAssignableUserProfile(currentUser(), assignment);
     }
 
     match /users/{uid} {
@@ -255,6 +324,18 @@ service cloud.firestore {
       allow create: if canCreateUserProfile(request.resource.data);
       allow update: if canUpdateUserProfile(resource.data, request.resource.data);
       allow delete: if false;
+    }
+
+    match /eventAssignments/{assignmentId} {
+      allow get, list: if canReadEventAssignmentData(resource.data);
+      allow create: if assignmentId == request.resource.data.eventId + "_" + request.resource.data.userId
+        && canManageEventAssignmentData(request.resource.data);
+      allow update: if assignmentId == resource.data.eventId + "_" + resource.data.userId
+        && assignmentId == request.resource.data.eventId + "_" + request.resource.data.userId
+        && canManageEventAssignmentData(resource.data)
+        && canManageEventAssignmentData(request.resource.data);
+      allow delete: if assignmentId == resource.data.eventId + "_" + resource.data.userId
+        && canManageEventAssignmentScope(resource.data);
     }
 
     match /clients/{clientId} {
@@ -288,10 +369,11 @@ service cloud.firestore {
     }
 
     match /events/{eventId} {
-      allow get, list: if canReadEventData(resource.data);
+      allow get, list: if canReadEventData(resource.data, eventId);
       allow create: if canCreateEventData(request.resource.data);
-      allow update: if canManageEventData(resource.data)
-        && canCreateEventData(request.resource.data);
+      allow update: if canEditEventData(resource.data, eventId)
+        && request.resource.data.clientId == resource.data.clientId
+        && canEditEventData(request.resource.data, eventId);
       allow delete: if canManageEventData(resource.data);
     }
 
@@ -315,60 +397,60 @@ service cloud.firestore {
       allow get, list: if resource.data.eventId is string
         && canReadEvent(resource.data.eventId);
       allow create: if request.resource.data.eventId is string
-        && canManageEvent(request.resource.data.eventId);
+        && canEditEventContent(request.resource.data.eventId);
       allow update: if resource.data.eventId is string
         && request.resource.data.eventId == resource.data.eventId
-        && canManageEvent(resource.data.eventId);
+        && canEditEventContent(resource.data.eventId);
       allow delete: if resource.data.eventId is string
-        && canManageEvent(resource.data.eventId);
+        && canEditEventContent(resource.data.eventId);
     }
 
     match /locations/{locationId} {
       allow get, list: if resource.data.eventId is string
         && canReadEvent(resource.data.eventId);
       allow create: if request.resource.data.eventId is string
-        && canManageEvent(request.resource.data.eventId);
+        && canEditEventContent(request.resource.data.eventId);
       allow update: if resource.data.eventId is string
         && request.resource.data.eventId == resource.data.eventId
-        && canManageEvent(resource.data.eventId);
+        && canEditEventContent(resource.data.eventId);
       allow delete: if resource.data.eventId is string
-        && canManageEvent(resource.data.eventId);
+        && canEditEventContent(resource.data.eventId);
     }
 
     match /truckSizes/{truckSizeId} {
       allow get, list: if resource.data.eventId is string
         && canReadEvent(resource.data.eventId);
       allow create: if request.resource.data.eventId is string
-        && canManageEvent(request.resource.data.eventId);
+        && canEditEventContent(request.resource.data.eventId);
       allow update: if resource.data.eventId is string
         && request.resource.data.eventId == resource.data.eventId
-        && canManageEvent(resource.data.eventId);
+        && canEditEventContent(resource.data.eventId);
       allow delete: if resource.data.eventId is string
-        && canManageEvent(resource.data.eventId);
+        && canEditEventContent(resource.data.eventId);
     }
 
     match /trucks/{truckId} {
       allow get, list: if resource.data.eventId is string
         && canReadEvent(resource.data.eventId);
       allow create: if request.resource.data.eventId is string
-        && canManageEvent(request.resource.data.eventId);
+        && canEditEventContent(request.resource.data.eventId);
       allow update: if resource.data.eventId is string
         && request.resource.data.eventId == resource.data.eventId
-        && canManageEvent(resource.data.eventId);
+        && canEditEventContent(resource.data.eventId);
       allow delete: if resource.data.eventId is string
-        && canManageEvent(resource.data.eventId);
+        && canEditEventContent(resource.data.eventId);
     }
 
     match /keyInfo/{keyInfoId} {
       allow get, list: if resource.data.eventId is string
         && canReadEvent(resource.data.eventId);
       allow create: if request.resource.data.eventId is string
-        && canManageEvent(request.resource.data.eventId);
+        && canEditEventContent(request.resource.data.eventId);
       allow update: if resource.data.eventId is string
         && request.resource.data.eventId == resource.data.eventId
-        && canManageEvent(resource.data.eventId);
+        && canEditEventContent(resource.data.eventId);
       allow delete: if resource.data.eventId is string
-        && canManageEvent(resource.data.eventId);
+        && canEditEventContent(resource.data.eventId);
     }
 
     match /filteredViews/{filteredViewId} {

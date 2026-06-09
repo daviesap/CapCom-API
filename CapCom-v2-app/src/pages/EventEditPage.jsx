@@ -14,7 +14,6 @@ import TruckingPanel from "../components/event-edit/TruckingPanel.jsx";
 import Loading from "../components/Loading.jsx";
 import { CapcomIcon } from "../icons/capcomIcons.jsx";
 import useOnlineStatus from "../hooks/useOnlineStatus.js";
-import { isEventAdmin } from "../auth/roles.js";
 import { getClients } from "../services/clientService.js";
 import {
   getCachedEventForUser,
@@ -481,7 +480,7 @@ function getRowTagStyle(tag) {
 
 export default function EventEditPage() {
   const { eventId } = useParams();
-  const { userProfile, profileLoading, isSuperAdmin, isClientAdmin } = useAuth();
+  const { userProfile, profileLoading, isSuperAdmin, isAdmin, isUser } = useAuth();
   const isOnline = useOnlineStatus();
   const isOffline = !isOnline;
   const [form, setForm] = useState(emptyEventForm);
@@ -605,9 +604,9 @@ export default function EventEditPage() {
   const draggedContactCompanyIdRef = useRef("");
   const draggedCompanyContactIdRef = useRef("");
   const draggedKeyInfoIdRef = useRef("");
-  const canManageCompanyContacts = isSuperAdmin || isClientAdmin;
-  const canManageFilteredViews = isSuperAdmin || isClientAdmin || isEventAdmin(userProfile);
-  const canUpdateShareOutput = isSuperAdmin || isClientAdmin;
+  const canManageCompanyContacts = isSuperAdmin || isAdmin;
+  const canManageFilteredViews = isSuperAdmin || isAdmin || isUser;
+  const canUpdateShareOutput = isSuperAdmin || isAdmin || isUser;
   const canUseDebugJson = Boolean(userProfile?.debugMode);
   const canManageContactCompanyOrder = canManageCompanyContacts;
   const editableClients = clients.filter((client) => (

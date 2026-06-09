@@ -10,8 +10,8 @@ const navItems = [
 ];
 
 export default function AppNav({ variant, collapsed = false }) {
-  const { isSuperAdmin, isClientAdmin } = useAuth();
-  const canAccessAdmin = isSuperAdmin || isClientAdmin;
+  const { isSuperAdmin, isAdmin } = useAuth();
+  const canAccessAdmin = isSuperAdmin || isAdmin;
   const visibleNavItems = navItems.filter((item) => !item.requiresAdmin || canAccessAdmin);
 
   return (

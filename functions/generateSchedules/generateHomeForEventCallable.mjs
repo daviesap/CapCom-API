@@ -6,7 +6,8 @@ import path from "path";
 
 const USER_ROLES = {
   SUPER_ADMIN: "SuperAdmin",
-  CLIENT_ADMIN: "ClientAdmin",
+  ADMIN: "Admin",
+  USER: "User",
 };
 
 const FIRESTORE_IN_QUERY_LIMIT = 30;
@@ -23,12 +24,16 @@ function isSuperAdmin(profile) {
   return profile?.role === USER_ROLES.SUPER_ADMIN;
 }
 
-function canManageEvent(profile, eventRecord) {
+function canManageEvent(profile, eventRecord, assignment = null) {
   if (!profile?.isActive || !eventRecord) return false;
   if (isSuperAdmin(profile)) return true;
-  return profile.role === USER_ROLES.CLIENT_ADMIN
-    && profile.clientId
-    && profile.clientId === eventRecord.clientId;
+  if (!profile.clientId || profile.clientId !== eventRecord.clientId) return false;
+  if (profile.role === USER_ROLES.ADMIN) return true;
+  return profile.role === USER_ROLES.USER
+    && assignment?.eventId === eventRecord.id
+    && assignment?.userId === profile.id
+    && assignment?.clientId === eventRecord.clientId
+    && assignment?.accessRole === USER_ROLES.USER;
 }
 
 function sortByString(fieldName) {
@@ -339,7 +344,9 @@ export async function generateHomeForEventCallable({
     ...callerProfileSnap.data(),
   };
   const generationData = await loadEventGenerationData(db, eventId);
-  if (!canManageEvent(callerProfile, generationData.eventRecord)) {
+  const assignmentSnap = await db.collection("eventAssignments").doc(`${eventId}_${request.auth.uid}`).get();
+  const assignment = assignmentSnap.exists ? assignmentSnap.data() : null;
+  if (!canManageEvent(callerProfile, generationData.eventRecord, assignment)) {
     throw new HttpsError("permission-denied", "You do not have permission to update this event.");
   }
 

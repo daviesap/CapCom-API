@@ -12,11 +12,14 @@ import {
 } from "firebase/firestore";
 import {
   canCreateEvents,
+  canEditEvent,
   canManageEvent,
   canReadEvent,
   hasActiveProfile,
-  isClientAdmin,
+  isAdmin,
   isSuperAdmin,
+  isUser,
+  isViewer,
 } from "../auth/roles.js";
 import { db } from "../firebase/firestore";
 import {
@@ -27,6 +30,7 @@ import {
   getCachedEvents,
   isBrowserOffline,
 } from "./localScheduleCache.js";
+import { getAssignmentsForCurrentUser } from "./eventAssignmentService.js";
 
 const eventsRef = collection(db, "events");
 
@@ -39,6 +43,7 @@ function sortEventsByStartDate(events) {
 }
 
 function getAllowedCachedEvents(userProfile) {
+  if (isUser(userProfile) || isViewer(userProfile)) return [];
   return getCachedEvents().filter((eventRecord) => canReadEvent(userProfile, eventRecord));
 }
 
@@ -61,14 +66,32 @@ function requireEventCreateAccess(userProfile, eventData) {
     throw new Error("SuperAdmin event creation requires a client.");
   }
 
-  if (isClientAdmin(userProfile) && !userProfile.clientId) {
-    throw new Error("ClientAdmin users must belong to a client before creating events.");
+  if (isAdmin(userProfile) && !userProfile.clientId) {
+    throw new Error("Admin users must belong to a client before creating events.");
   }
 }
 
 export async function getEvents(userProfile) {
   if (!hasActiveProfile(userProfile)) return [];
   if (isBrowserOffline()) return getAllowedCachedEvents(userProfile);
+
+  if (isUser(userProfile) || isViewer(userProfile)) {
+    const assignments = await getAssignmentsForCurrentUser(userProfile);
+    const assignedEvents = await Promise.all(
+      assignments.map(async (assignment) => {
+        const eventSnap = await getDoc(doc(db, "events", assignment.eventId));
+        if (!eventSnap.exists()) return null;
+        const event = {
+          id: eventSnap.id,
+          ...eventSnap.data(),
+        };
+        return canReadEvent(userProfile, event, assignment) ? event : null;
+      })
+    );
+    const events = sortEventsByStartDate(assignedEvents.filter(Boolean));
+    cacheEvents(events);
+    return events;
+  }
 
   const eventsQuery = isSuperAdmin(userProfile)
     ? query(eventsRef, orderBy("startDate", "asc"))
@@ -89,9 +112,15 @@ export async function getEvents(userProfile) {
 }
 
 export async function getEvent(eventId, userProfile) {
+  let assignment = null;
+  if (isUser(userProfile) || isViewer(userProfile)) {
+    assignment = (await getAssignmentsForCurrentUser(userProfile))
+      .find((candidate) => candidate.eventId === eventId) || null;
+  }
+
   if (isBrowserOffline()) {
     const cachedEvent = getCachedEvent(eventId);
-    return canReadEvent(userProfile, cachedEvent) ? cachedEvent : null;
+    return canReadEvent(userProfile, cachedEvent, assignment) ? cachedEvent : null;
   }
 
   try {
@@ -101,12 +130,12 @@ export async function getEvent(eventId, userProfile) {
       id: eventSnap.id,
       ...eventSnap.data(),
     };
-    if (!canReadEvent(userProfile, event)) return null;
+    if (!canReadEvent(userProfile, event, assignment)) return null;
     cacheEvent(event);
     return event;
   } catch (error) {
     const cachedEvent = getCachedEvent(eventId);
-    if (canReadEvent(userProfile, cachedEvent)) return cachedEvent;
+    if (canReadEvent(userProfile, cachedEvent, assignment)) return cachedEvent;
     throw error;
   }
 }
@@ -141,7 +170,10 @@ export async function updateEvent(eventId, eventData, userProfile) {
   assertOnline();
   try {
     const existingEvent = await getEvent(eventId, userProfile);
-    if (!canManageEvent(userProfile, existingEvent)) {
+    const assignment = (isUser(userProfile) || isViewer(userProfile))
+      ? (await getAssignmentsForCurrentUser(userProfile)).find((candidate) => candidate.eventId === eventId) || null
+      : null;
+    if (!canEditEvent(userProfile, existingEvent, assignment)) {
       throw new Error("You do not have permission to update this event.");
     }
 

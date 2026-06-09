@@ -1,24 +1,24 @@
 export const USER_ROLES = {
   SUPER_ADMIN: "SuperAdmin",
-  CLIENT_ADMIN: "ClientAdmin",
-  CLIENT_USER: "ClientUser",
-  EVENT_ADMIN: "EventAdmin",
+  ADMIN: "Admin",
+  USER: "User",
+  VIEWER: "Viewer",
 };
 
 export function isSuperAdmin(userProfile) {
   return userProfile?.role === USER_ROLES.SUPER_ADMIN;
 }
 
-export function isClientAdmin(userProfile) {
-  return userProfile?.role === USER_ROLES.CLIENT_ADMIN;
+export function isAdmin(userProfile) {
+  return userProfile?.role === USER_ROLES.ADMIN;
 }
 
-export function isClientUser(userProfile) {
-  return userProfile?.role === USER_ROLES.CLIENT_USER;
+export function isUser(userProfile) {
+  return userProfile?.role === USER_ROLES.USER;
 }
 
-export function isEventAdmin(userProfile) {
-  return userProfile?.role === USER_ROLES.EVENT_ADMIN;
+export function isViewer(userProfile) {
+  return userProfile?.role === USER_ROLES.VIEWER;
 }
 
 export function hasActiveProfile(userProfile) {
@@ -27,22 +27,49 @@ export function hasActiveProfile(userProfile) {
 
 export function canCreateEvents(userProfile) {
   return hasActiveProfile(userProfile) && (
-    isSuperAdmin(userProfile) || isClientAdmin(userProfile)
+    isSuperAdmin(userProfile) || isAdmin(userProfile)
   );
 }
 
-export function canReadEvent(userProfile, eventRecord) {
+export function canReadEvent(userProfile, eventRecord, assignment = null) {
   if (!hasActiveProfile(userProfile) || !eventRecord) return false;
   if (isSuperAdmin(userProfile)) return true;
   if (!userProfile.clientId) return false;
+  if (isAdmin(userProfile)) return eventRecord.clientId === userProfile.clientId;
 
-  return eventRecord.clientId === userProfile.clientId;
+  return eventRecord.clientId === userProfile.clientId
+    && assignment?.eventId === eventRecord.id
+    && assignment?.userId === userProfile.id
+    && assignment?.accessRole === userProfile.role
+    && [USER_ROLES.USER, USER_ROLES.VIEWER].includes(assignment?.accessRole);
+}
+
+export function canEditEvent(userProfile, eventRecord, assignment = null) {
+  if (!hasActiveProfile(userProfile) || !eventRecord) return false;
+  if (isSuperAdmin(userProfile)) return true;
+  if (!userProfile.clientId || eventRecord.clientId !== userProfile.clientId) return false;
+  if (isAdmin(userProfile)) return true;
+
+  return assignment?.eventId === eventRecord.id
+    && assignment?.userId === userProfile.id
+    && assignment?.accessRole === userProfile.role
+    && assignment?.accessRole === USER_ROLES.USER;
 }
 
 export function canManageEvent(userProfile, eventRecord) {
   if (!hasActiveProfile(userProfile) || !eventRecord) return false;
   if (isSuperAdmin(userProfile)) return true;
-  if (!isClientAdmin(userProfile) || !userProfile.clientId) return false;
+  if (!isAdmin(userProfile) || !userProfile.clientId) return false;
 
   return eventRecord.clientId === userProfile.clientId;
+}
+
+export function canManageUsers(userProfile) {
+  return hasActiveProfile(userProfile) && (
+    isSuperAdmin(userProfile) || isAdmin(userProfile)
+  );
+}
+
+export function canManageAssignments(userProfile) {
+  return canManageUsers(userProfile);
 }

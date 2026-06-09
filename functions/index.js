@@ -69,8 +69,9 @@ const ACTIONS = {
 
 const USER_ROLES = {
   SUPER_ADMIN: "SuperAdmin",
-  CLIENT_ADMIN: "ClientAdmin",
-  CLIENT_USER: "ClientUser",
+  ADMIN: "Admin",
+  USER: "User",
+  VIEWER: "Viewer",
 };
 
 function requireString(value, fieldName) {
@@ -83,8 +84,8 @@ function requireString(value, fieldName) {
 
 function normaliseNewUserPayload(data) {
   const role = requireString(data?.role, "role");
-  if (![USER_ROLES.CLIENT_ADMIN, USER_ROLES.CLIENT_USER].includes(role)) {
-    throw new HttpsError("invalid-argument", "Only ClientAdmin and ClientUser roles can be created here.");
+  if (![USER_ROLES.ADMIN, USER_ROLES.USER, USER_ROLES.VIEWER].includes(role)) {
+    throw new HttpsError("invalid-argument", "Only Admin, User, and Viewer roles can be created here.");
   }
 
   return {
@@ -109,12 +110,12 @@ async function getActiveCallerProfile(uid) {
 
 function canCreateRequestedRole(callerProfile, newUserData) {
   if (callerProfile.role === USER_ROLES.SUPER_ADMIN) {
-    return [USER_ROLES.CLIENT_ADMIN, USER_ROLES.CLIENT_USER].includes(newUserData.role);
+    return [USER_ROLES.ADMIN, USER_ROLES.USER, USER_ROLES.VIEWER].includes(newUserData.role);
   }
 
-  return callerProfile.role === USER_ROLES.CLIENT_ADMIN
+  return callerProfile.role === USER_ROLES.ADMIN
     && callerProfile.clientId === newUserData.clientId
-    && newUserData.role === USER_ROLES.CLIENT_USER;
+    && [USER_ROLES.USER, USER_ROLES.VIEWER].includes(newUserData.role);
 }
 
 async function requireActiveClient(clientId) {
