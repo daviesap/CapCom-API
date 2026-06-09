@@ -340,11 +340,15 @@ export default function TruckingPanel({
                           const hasTime = Boolean(detail.time);
                           const hasDestination = Boolean(getTruckDestinationValue(detail));
                           const dateSelectId = `truck-detail-date-${detail.id}`;
+                          const truckDetailDay = scheduleDays.find((day) => day.id === dayId);
+                          const truckDetailDateLabel = truckDetailDay
+                            ? formatDetailDate(truckDetailDay.date)
+                            : "No date";
                           const destinationLabel = getTruckDestinationLabel(detail);
 
                           return (
                             <div
-                              className="detail-row draggable-row"
+                              className="detail-row draggable-row truck-detail-row"
                               key={detail.id}
                               style={getTruckDetailRowStyle(
                                 getRowTagStyle(getTagById(detail.tagId))
@@ -384,6 +388,9 @@ export default function TruckingPanel({
                               draggedDetailIdRef.current = "";
                             }}
                           >
+                              <span className="mobile-truck-detail-date-line">
+                                {truckDetailDateLabel}
+                              </span>
                               <div
                                 className={[
                                   "location-select-wrap",
@@ -662,12 +669,17 @@ export default function TruckingPanel({
                         {draftTruckDetails.map((draft, draftIndex) => (
                           (() => {
                             const dateSelectId = `truck-draft-date-${truck.id}-${draftIndex}`;
+                            const draftDay = scheduleDays.find((day) => day.id === draft.scheduleDayId);
+                            const draftDateLabel = draftDay ? formatDetailDate(draftDay.date) : "Choose date";
                             return (
                           <div
-                            className="detail-row draft-row"
+                            className="detail-row draft-row truck-detail-row"
                             key={`truck-draft-${draftIndex}`}
                             style={getTruckDetailRowStyle()}
                           >
+                            <span className="mobile-truck-detail-date-line">
+                              {draftDateLabel}
+                            </span>
                             <div
                               className={[
                                 "location-select-wrap",

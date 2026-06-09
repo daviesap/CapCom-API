@@ -1,11 +1,17 @@
 /* global self, caches, fetch, URL */
 
-const CACHE_VERSION = "capcom-v2-app-shell-v4.1";
+const CACHE_VERSION = "capcom-v2-app-shell-v4.2";
 const APP_SHELL_URLS = [
   "/",
   "/events",
   "/manifest.webmanifest",
-  "/pwa-icon.svg"
+  "/favicon.ico",
+  "/favicon-32x32.png",
+  "/favicon-16x16.png",
+  "/apple-touch-icon.png",
+  "/icon-192x192.png",
+  "/icon-384x384.png",
+  "/icon-512x512.png"
 ];
 
 self.addEventListener("install", (event) => {
