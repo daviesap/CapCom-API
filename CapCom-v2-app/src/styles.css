@@ -755,6 +755,17 @@ textarea {
   white-space: nowrap;
 }
 
+@media (min-width: 768px) {
+  .trucking-card-heading {
+    align-items: flex-start;
+  }
+
+  .trucking-card-actions {
+    padding-top: 0;
+  }
+
+}
+
 .day-row-count {
   align-items: center;
   background: var(--color-surface-soft);
@@ -1064,6 +1075,92 @@ textarea {
 
 .mobile-detail-meta-line {
   display: none;
+}
+
+.mobile-time-picker {
+  display: grid;
+  gap: 12px;
+  max-width: 420px;
+}
+
+.mobile-time-picker-label {
+  font-weight: 700;
+  margin: 0;
+}
+
+.mobile-time-picker-controls {
+  align-items: end;
+  background: var(--color-surface-subtle);
+  border: 1px solid var(--color-divider-subtle);
+  border-radius: 14px;
+  display: grid;
+  gap: 8px;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  padding: 10px;
+}
+
+.mobile-time-picker-column {
+  display: grid;
+  gap: 8px;
+}
+
+.mobile-time-picker-column span {
+  color: var(--color-text-muted);
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.mobile-time-wheel {
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider-muted-alt);
+  border-radius: 12px;
+  display: grid;
+  gap: 1px;
+  max-height: 128px;
+  overflow-y: auto;
+  padding: 34px 6px;
+  scroll-snap-type: y mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.mobile-time-wheel-option {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  border-radius: 10px;
+  color: color-mix(in srgb, var(--color-text-muted) 58%, transparent);
+  font-size: 18px;
+  font-weight: 700;
+  min-height: 34px;
+  padding: 0;
+  scroll-snap-align: center;
+  text-align: center;
+}
+
+.mobile-time-wheel-option.active {
+  background: var(--color-surface-soft);
+  color: var(--color-text);
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.mobile-time-picker-separator {
+  color: var(--color-text-muted);
+  font-size: 24px;
+  font-weight: 800;
+  padding-bottom: 8px;
+}
+
+.desktop-time-input-row {
+  display: grid;
+  gap: 6px;
+}
+
+.desktop-time-input-row span {
+  color: var(--color-text-muted);
+  font-size: 13px;
+  font-weight: 700;
 }
 
 .draggable-row {
@@ -2361,7 +2458,7 @@ textarea {
 
 @media (max-width: 767px) {
   :root {
-    --mobile-header-height: 60px;
+    --mobile-header-height: 0px;
     --mobile-bottom-nav-height: 74px;
   }
 
@@ -2400,19 +2497,7 @@ textarea {
   }
 
   .mobile-header {
-    align-items: center;
-    background: color-mix(in srgb, var(--color-surface) 96%, transparent);
-    border-bottom: 1px solid var(--color-border);
-    display: flex;
-    flex: 0 0 auto;
-    gap: 12px;
-    height: calc(var(--mobile-header-height) + env(safe-area-inset-top));
-    inset-inline: 0;
-    justify-content: space-between;
-    padding: env(safe-area-inset-top) max(14px, env(safe-area-inset-right)) 0 max(14px, env(safe-area-inset-left));
-    position: fixed;
-    top: 0;
-    z-index: 30;
+    display: none;
   }
 
   .mobile-header .brand {
@@ -2862,6 +2947,42 @@ textarea {
     justify-content: flex-start;
   }
 
+  .desktop-time-input-row {
+    display: none;
+  }
+
+  .mobile-time-picker {
+    max-width: none;
+  }
+
+  .mobile-time-picker-controls {
+    border-radius: 22px;
+    gap: 10px;
+    padding: 16px;
+  }
+
+  .mobile-time-wheel {
+    border-radius: 22px;
+    gap: 2px;
+    max-height: 218px;
+    padding: 72px 8px;
+  }
+
+  .mobile-time-wheel-option {
+    border-radius: 16px;
+    font-size: 26px;
+    min-height: 48px;
+  }
+
+  .mobile-time-wheel-option.active {
+    font-size: 34px;
+  }
+
+  .mobile-time-picker-separator {
+    font-size: 32px;
+    padding-bottom: 12px;
+  }
+
   .detail-row {
     align-items: start;
     border-color: var(--color-divider-strong);
@@ -2935,6 +3056,19 @@ textarea {
   .detail-row-actions,
   .draft-actions {
     align-items: flex-start;
+  }
+
+  .filter-menu-clear {
+    border: 1px solid var(--color-divider-muted-alt);
+    border-radius: var(--radius-md);
+    height: var(--touch-target);
+    justify-content: center;
+    padding: 0;
+    width: var(--touch-target);
+  }
+
+  .filter-menu-clear .button-label {
+    display: none;
   }
 
   .draft-actions {

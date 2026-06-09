@@ -1,3 +1,5 @@
+import { CapcomIcon } from "../../icons/capcomIcons.jsx";
+
 export default function DetailFilters({
   usedTags,
   usedLocationFilters,
@@ -190,7 +192,8 @@ export default function DetailFilters({
         disabled={!hasActiveScheduleFilters}
         onClick={clearScheduleFilters}
       >
-        Clear
+        <CapcomIcon name="close" size={18} weight="bold" />
+        <span className="button-label">Clear</span>
       </button>
     </div>
   );

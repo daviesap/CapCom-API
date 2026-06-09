@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import Modal from "../Modal.jsx";
 import { CapcomIcon } from "../../icons/capcomIcons.jsx";
 
@@ -65,6 +66,17 @@ export default function TruckingPanel({
   savingDraftDayId,
   saveDraftTruckDetail,
 }) {
+  const [activeTruckDateSelectId, setActiveTruckDateSelectId] = useState("");
+  const [isMobileView, setIsMobileView] = useState(false);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 767px)");
+    const updateMobileView = () => setIsMobileView(mediaQuery.matches);
+    updateMobileView();
+    mediaQuery.addEventListener("change", updateMobileView);
+    return () => mediaQuery.removeEventListener("change", updateMobileView);
+  }, []);
+
   const handleDraftTruckDetailKeyDown = (event, truck, draft, draftIndex) => {
     if (event.key === "Escape") {
       event.preventDefault();
@@ -85,6 +97,11 @@ export default function TruckingPanel({
       saveDraftTruckDetail(truck, draftIndex, draft);
     }
   };
+
+  const formatTruckDetailDateOption = (day, selectId) =>
+    activeTruckDateSelectId === selectId
+      ? [formatDetailDate(day.date), day.summary].filter(Boolean).join(" - ")
+      : formatDetailDate(day.date);
 
   return (
     <section className="panel">
@@ -224,7 +241,7 @@ export default function TruckingPanel({
               return (
                 <article className="list-item" key={truck.id}>
                   <div className="day-card-content">
-                    <div className="day-heading">
+                    <div className="day-heading trucking-card-heading">
                       <div>
                         <p className="item-title day-title-line">
                           <span>{truck.truckNumber || "Truck"}</span>
@@ -243,49 +260,53 @@ export default function TruckingPanel({
                             </span>
                           ) : null}
                         </p>
-                        {truck.driverName || truck.driverContactNumber || truck.contents ? (
+                        {truck.driverName || truck.driverContactNumber ? (
                           <p className="item-meta">
-                            {[truck.driverName, truck.driverContactNumber, truck.contents]
+                            {[truck.driverName, truck.driverContactNumber]
                               .filter(Boolean)
                               .join(" · ")}
                           </p>
                         ) : null}
+                        {truck.contents ? <p className="item-meta">{truck.contents}</p> : null}
                       </div>
-                    </div>
-                    <div className="day-card-actions">
-                      <button
-                        className="compact-button primary-soft icon-text-button"
-                        type="button"
-                        disabled={isOffline || scheduleDays.length === 0}
-                        onClick={() => addDraftTruckDetail(truck.id)}
-                      >
-                        <CapcomIcon name="add" size={16} weight="bold" />
-                        Add row
-                      </button>
-                      <button
-                        className="compact-button icon-text-button"
-                        type="button"
-                        disabled={isOffline}
-                        onClick={() => startEditingTruck(truck)}
-                      >
-                        <CapcomIcon name="edit" size={16} />
-                        Edit truck
-                      </button>
-                      <button
-                        className="compact-button icon-text-button"
-                        type="button"
-                        disabled={deletingTruckId === truck.id || isOffline}
-                        onClick={() => removeTruck(truck.id)}
-                      >
-                        <CapcomIcon name="delete" size={16} />
-                        {deletingTruckId === truck.id ? "Deleting..." : "Delete truck"}
-                      </button>
+                      <div className="day-card-actions trucking-card-actions">
+                        <button
+                          className="compact-button primary-soft icon-text-button"
+                          type="button"
+                          disabled={isOffline || scheduleDays.length === 0}
+                          onClick={() => addDraftTruckDetail(truck.id)}
+                        >
+                          <CapcomIcon name="add" size={16} weight="bold" />
+                          Add row
+                        </button>
+                        <button
+                          className="compact-button icon-text-button"
+                          type="button"
+                          disabled={isOffline}
+                          onClick={() => startEditingTruck(truck)}
+                        >
+                          <CapcomIcon name="edit" size={16} />Edit</button>
+                        <button
+                          className="compact-button icon-text-button"
+                          type="button"
+                          disabled={
+                            deletingTruckId === truck.id ||
+                            isOffline ||
+                            truckDetails.length > 0 ||
+                            draftTruckDetails.length > 0
+                          }
+                          onClick={() => removeTruck(truck.id)}
+                        >
+                          <CapcomIcon name="delete" size={16} />
+                          {deletingTruckId === truck.id ? "Deleting..." : "Delete"}
+                        </button>
+                      </div>
                     </div>
 
                     {scheduleDays.length === 0 ? (
                       <p className="item-meta">Add schedule days before adding truck rows.</p>
                     ) : truckDetails.length === 0 && draftTruckDetails.length === 0 ? (
-                      <p className="item-meta">No entries yet</p>
+                      null
                     ) : (
                       <div className="detail-list">
                         {truckDetails.map((detail, detailIndex) => {
@@ -296,6 +317,7 @@ export default function TruckingPanel({
                           const hasDate = Boolean(dayId);
                           const hasTime = Boolean(detail.time);
                           const hasDestination = Boolean(getTruckDestinationValue(detail));
+                          const dateSelectId = `truck-detail-date-${detail.id}`;
 
                           return (
                             <div
@@ -350,14 +372,16 @@ export default function TruckingPanel({
                                   aria-label="Date for truck detail"
                                   value={dayId}
                                   disabled={savingDetailId === detail.id || isOffline}
+                                  onFocus={() => setActiveTruckDateSelectId(dateSelectId)}
+                                  onBlur={() => setActiveTruckDateSelectId("")}
                                   onChange={(event) =>
                                     assignTruckDetailDate(dayId, detail, event.target.value)
                                   }
                                 >
                                   <option value="">Choose date</option>
                                   {scheduleDays.map((day) => (
-                                    <option key={day.id} value={day.id}>
-                                      {formatDetailDate(day.date)}
+                                  <option key={day.id} value={day.id}>
+                                      {formatTruckDetailDateOption(day, dateSelectId)}
                                     </option>
                                   ))}
                                 </select>
@@ -539,30 +563,34 @@ export default function TruckingPanel({
                                       className="action-menu-list"
                                       onMouseDown={beginRowAction}
                                     >
-                                      <button
-                                        className="action-menu-item"
-                                        type="button"
-                                        disabled={!canMoveUp || reorderingDayId === truck.id || isOffline}
-                                        onClick={() => {
-                                          moveTruckDetail(truck.id, truckDetails, detail.id, -1);
-                                          endRowAction();
-                                        }}
-                                      >
-                                        <CapcomIcon name="moveToPreviousDay" size={16} />
-                                        Move up
-                                      </button>
-                                      <button
-                                        className="action-menu-item"
-                                        type="button"
-                                        disabled={!canMoveDown || reorderingDayId === truck.id || isOffline}
-                                        onClick={() => {
-                                          moveTruckDetail(truck.id, truckDetails, detail.id, 1);
-                                          endRowAction();
-                                        }}
-                                      >
-                                        <CapcomIcon name="moveToNextDay" size={16} />
-                                        Move down
-                                      </button>
+                                      {isMobileView ? (
+                                        <>
+                                          <button
+                                            className="action-menu-item"
+                                            type="button"
+                                            disabled={!canMoveUp || reorderingDayId === truck.id || isOffline}
+                                            onClick={() => {
+                                              moveTruckDetail(truck.id, truckDetails, detail.id, -1);
+                                              endRowAction();
+                                            }}
+                                          >
+                                            <CapcomIcon name="moveToPreviousDay" size={16} />
+                                            Move up
+                                          </button>
+                                          <button
+                                            className="action-menu-item"
+                                            type="button"
+                                            disabled={!canMoveDown || reorderingDayId === truck.id || isOffline}
+                                            onClick={() => {
+                                              moveTruckDetail(truck.id, truckDetails, detail.id, 1);
+                                              endRowAction();
+                                            }}
+                                          >
+                                            <CapcomIcon name="moveToNextDay" size={16} />
+                                            Move down
+                                          </button>
+                                        </>
+                                      ) : null}
                                       <button
                                         className="action-menu-item"
                                         type="button"
@@ -596,6 +624,9 @@ export default function TruckingPanel({
                           );
                         })}
                         {draftTruckDetails.map((draft, draftIndex) => (
+                          (() => {
+                            const dateSelectId = `truck-draft-date-${truck.id}-${draftIndex}`;
+                            return (
                           <div
                             className="detail-row draft-row"
                             key={`truck-draft-${draftIndex}`}
@@ -613,6 +644,8 @@ export default function TruckingPanel({
                                 value={draft.scheduleDayId}
                                 disabled={isOffline}
                                 autoFocus={draftIndex === draftTruckDetails.length - 1}
+                                onFocus={() => setActiveTruckDateSelectId(dateSelectId)}
+                                onBlur={() => setActiveTruckDateSelectId("")}
                                 onChange={(event) =>
                                   updateDraftTruckDetail(
                                     truck.id,
@@ -629,7 +662,7 @@ export default function TruckingPanel({
                                 <option value="">Choose date</option>
                                 {scheduleDays.map((day) => (
                                   <option key={day.id} value={day.id}>
-                                    {formatDetailDate(day.date)}
+                                    {formatTruckDetailDateOption(day, dateSelectId)}
                                   </option>
                                 ))}
                               </select>
@@ -730,6 +763,8 @@ export default function TruckingPanel({
                               </button>
                             </div>
                           </div>
+                            );
+                          })()
                         ))}
                       </div>
                     )}

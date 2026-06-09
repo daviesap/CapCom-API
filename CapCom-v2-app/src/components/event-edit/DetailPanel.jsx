@@ -64,6 +64,7 @@ export default function DetailPanel({
   moveDetailToDay,
   duplicateDetail,
   startEditingDetail,
+  startEditingDetailTime,
   closeActionMenu,
   deleteDetail,
   updateDraftDetail,
@@ -145,6 +146,7 @@ export default function DetailPanel({
     endRowAction,
     duplicateDetail,
     startEditingDetail,
+    startEditingDetailTime,
     closeActionMenu,
     deleteDetail,
   };

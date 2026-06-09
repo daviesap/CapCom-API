@@ -155,6 +155,13 @@ const emptyDetailEditForm = {
   notes: "",
 };
 
+const timePickerHours = Array.from({ length: 24 }, (_, hour) =>
+  String(hour).padStart(2, "0")
+);
+const timePickerMinutes = Array.from({ length: 60 }, (_, minute) =>
+  String(minute).padStart(2, "0")
+);
+
 const emptyKeyInfoForm = {
   title: "",
   description: "",
@@ -449,6 +456,7 @@ export default function EventEditPage() {
   const [editingEventContactId, setEditingEventContactId] = useState("");
   const [editingDetailCell, setEditingDetailCell] = useState(null);
   const [editingDetailModal, setEditingDetailModal] = useState(null);
+  const [editingDetailTimeModal, setEditingDetailTimeModal] = useState(null);
   const [detailEditForm, setDetailEditForm] = useState(emptyDetailEditForm);
   const [openActionMenuId, setOpenActionMenuId] = useState("");
   const [openNotesDetailId, setOpenNotesDetailId] = useState("");
@@ -3014,8 +3022,24 @@ export default function EventEditPage() {
     setError("");
   };
 
+  const startEditingDetailTime = (dayId, detail) => {
+    setEditingDetailTimeModal({ dayId, detailId: detail.id });
+    setDetailEditForm({
+      time: detail.time || "",
+      description: detail.description || "",
+      tagId: detail.tagId || "",
+      locationId: detail.locationId || "",
+      companyIds: Array.isArray(detail.companyIds) ? detail.companyIds : [],
+      notes: detail.notes || "",
+    });
+    setOpenActionMenuId("");
+    setMessage("");
+    setError("");
+  };
+
   const cancelEditingDetail = () => {
     setEditingDetailModal(null);
+    setEditingDetailTimeModal(null);
     setDetailEditForm(emptyDetailEditForm);
   };
 
@@ -3024,6 +3048,38 @@ export default function EventEditPage() {
       ...currentForm,
       [field]: value,
     }));
+  };
+
+  const updateDetailEditTimePart = (part, value) => {
+    setDetailEditForm((currentForm) => {
+      const [currentHour = "00", currentMinute = "00"] = (currentForm.time || "00:00").split(":");
+      const nextHour = part === "hour" ? value : currentHour.padStart(2, "0");
+      const nextMinute = part === "minute" ? value : currentMinute.padStart(2, "0");
+
+      return {
+        ...currentForm,
+        time: `${nextHour}:${nextMinute}`,
+      };
+    });
+  };
+
+  const handleDetailTimeWheelKeyDown = (part, event) => {
+    const handledKeys = ["ArrowUp", "ArrowDown", "Home", "End"];
+    if (!handledKeys.includes(event.key)) return;
+
+    event.preventDefault();
+    const values = part === "hour" ? timePickerHours : timePickerMinutes;
+    const [currentHour = "00", currentMinute = "00"] = (detailEditForm.time || "00:00").split(":");
+    const currentValue = part === "hour" ? currentHour.padStart(2, "0") : currentMinute.padStart(2, "0");
+    const currentIndex = Math.max(0, values.indexOf(currentValue));
+    let nextIndex = currentIndex;
+
+    if (event.key === "ArrowUp") nextIndex = Math.max(0, currentIndex - 1);
+    if (event.key === "ArrowDown") nextIndex = Math.min(values.length - 1, currentIndex + 1);
+    if (event.key === "Home") nextIndex = 0;
+    if (event.key === "End") nextIndex = values.length - 1;
+
+    updateDetailEditTimePart(part, values[nextIndex]);
   };
 
   const toggleDetailEditCompany = (companyId) => {
@@ -3096,6 +3152,59 @@ export default function EventEditPage() {
     } catch (saveError) {
       console.error(saveError);
       setError("Could not save schedule row.");
+      await loadScheduleDetails(scheduleDays);
+    } finally {
+      setSavingDetailId("");
+    }
+  };
+
+  const saveDetailTimeForm = async (submitEvent) => {
+    submitEvent.preventDefault();
+    if (!editingDetailTimeModal) return;
+    if (isOffline) {
+      setError("Editing is disabled while offline.");
+      return;
+    }
+
+    const currentDetail = detailsByDayId[editingDetailTimeModal.dayId]?.find(
+      (detail) => detail.id === editingDetailTimeModal.detailId
+    );
+    if (!currentDetail) {
+      setError("Could not find schedule detail.");
+      return;
+    }
+
+    setSavingDetailId(currentDetail.id);
+    setMessage("");
+    setError("");
+
+    try {
+      await updateScheduleDetail(currentDetail.id, {
+        eventId,
+        time: detailEditForm.time || "",
+      });
+      setDetailsByDayId((current) => ({
+        ...current,
+        [editingDetailTimeModal.dayId]: sortDetailsForDisplay(
+          (current[editingDetailTimeModal.dayId] || []).map((detail) =>
+            detail.id === currentDetail.id
+              ? { ...detail, time: detailEditForm.time || "" }
+              : detail
+          )
+        ),
+      }));
+      setSavedDetailsById((current) => ({
+        ...current,
+        [currentDetail.id]: {
+          ...(current[currentDetail.id] || {}),
+          time: detailEditForm.time || "",
+        },
+      }));
+      cancelEditingDetail();
+      setMessage("Time saved.");
+    } catch (saveError) {
+      console.error(saveError);
+      setError("Could not save time.");
       await loadScheduleDetails(scheduleDays);
     } finally {
       setSavingDetailId("");
@@ -3437,7 +3546,6 @@ export default function EventEditPage() {
     setDraftDetailsByDayId((current) => ({
       ...current,
       [dayId]: [
-        ...(current[dayId] || []),
         {
           time: "",
           description: "",
@@ -3446,6 +3554,7 @@ export default function EventEditPage() {
           locationId: defaults.locationId,
           companyIds: defaults.companyIds,
         },
+        ...(current[dayId] || []),
       ],
     }));
   };
@@ -4012,6 +4121,14 @@ export default function EventEditPage() {
         (detail) => detail.id === editingDetailModal.detailId
       )
     : null;
+  const editingDetailTimeDay = editingDetailTimeModal
+    ? scheduleDays.find((day) => day.id === editingDetailTimeModal.dayId)
+    : null;
+  const editingDetailTime = editingDetailTimeModal
+    ? detailsByDayId[editingDetailTimeModal.dayId]?.find(
+        (detail) => detail.id === editingDetailTimeModal.detailId
+      )
+    : null;
 
   return (
     <main className="page">
@@ -4230,6 +4347,7 @@ export default function EventEditPage() {
           moveDetailToDay={moveDetailToDay}
           duplicateDetail={duplicateDetail}
           startEditingDetail={startEditingDetail}
+          startEditingDetailTime={startEditingDetailTime}
           closeActionMenu={closeActionMenu}
           deleteDetail={deleteDetail}
           updateDraftDetail={updateDraftDetail}
@@ -4255,6 +4373,7 @@ export default function EventEditPage() {
                 <input
                   id="detailEditTime"
                   type="time"
+                  autoFocus
                   value={detailEditForm.time}
                   disabled={isOffline || savingDetailId === editingDetail.id}
                   onChange={(event) => updateDetailEditFormField("time", event.target.value)}
@@ -4349,12 +4468,101 @@ export default function EventEditPage() {
                 type="submit"
                 disabled={isOffline || savingDetailId === editingDetail.id}
               >
-                {savingDetailId === editingDetail.id ? "Saving..." : "Save row"}
+                {savingDetailId === editingDetail.id ? "Saving..." : "Save"}
               </button>
               <button
                 className="button secondary"
                 type="button"
                 disabled={savingDetailId === editingDetail.id}
+                onClick={cancelEditingDetail}
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </Modal>
+      ) : null}
+
+      {editingDetailTime ? (
+        <Modal
+          title="Edit time"
+          subtitle={editingDetailTimeDay ? formatDetailDate(editingDetailTimeDay.date) : ""}
+          labelledBy="editScheduleTimeTitle"
+          closeLabel="Close edit time form"
+          onClose={cancelEditingDetail}
+        >
+          <form className="admin-inline-form" onSubmit={saveDetailTimeForm}>
+            <div className="mobile-time-picker">
+              <p className="mobile-time-picker-label">Start time</p>
+              <label className="desktop-time-input-row" htmlFor="detailTimeKeyboardInput">
+                <span>Type time</span>
+                <input
+                  id="detailTimeKeyboardInput"
+                  type="time"
+                  value={detailEditForm.time}
+                  disabled={isOffline || savingDetailId === editingDetailTime.id}
+                  onChange={(event) => updateDetailEditFormField("time", event.target.value)}
+                />
+              </label>
+              <div className="mobile-time-picker-controls">
+                <div className="mobile-time-picker-column" aria-label="Hour">
+                  <span>Hour</span>
+                  <div className="mobile-time-wheel" role="listbox" aria-label="Hour">
+                    {timePickerHours.map((hour) => (
+                      <button
+                        className={
+                          ((detailEditForm.time || "00:00").split(":")[0] || "00") === hour
+                            ? "mobile-time-wheel-option active"
+                            : "mobile-time-wheel-option"
+                        }
+                        key={hour}
+                        type="button"
+                        disabled={isOffline || savingDetailId === editingDetailTime.id}
+                        onClick={() => updateDetailEditTimePart("hour", hour)}
+                        onKeyDown={(event) => handleDetailTimeWheelKeyDown("hour", event)}
+                      >
+                        {hour}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <span className="mobile-time-picker-separator">:</span>
+                <div className="mobile-time-picker-column" aria-label="Minute">
+                  <span>Minute</span>
+                  <div className="mobile-time-wheel" role="listbox" aria-label="Minute">
+                    {timePickerMinutes.map((minute) => (
+                      <button
+                        className={
+                          ((detailEditForm.time || "00:00").split(":")[1] || "00") === minute
+                            ? "mobile-time-wheel-option active"
+                            : "mobile-time-wheel-option"
+                        }
+                        key={minute}
+                        type="button"
+                        disabled={isOffline || savingDetailId === editingDetailTime.id}
+                        onClick={() => updateDetailEditTimePart("minute", minute)}
+                        onKeyDown={(event) => handleDetailTimeWheelKeyDown("minute", event)}
+                      >
+                        {minute}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="actions">
+              <button
+                className="button"
+                type="submit"
+                disabled={isOffline || savingDetailId === editingDetailTime.id}
+              >
+                {savingDetailId === editingDetailTime.id ? "Saving..." : "Save"}
+              </button>
+              <button
+                className="button secondary"
+                type="button"
+                disabled={savingDetailId === editingDetailTime.id}
                 onClick={cancelEditingDetail}
               >
                 Cancel

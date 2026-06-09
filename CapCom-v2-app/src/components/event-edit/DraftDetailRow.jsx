@@ -5,12 +5,13 @@ export default function DraftDetailRow({
   dayId,
   draft,
   draftIndex,
-  shouldFocusDescription,
+  shouldFocusTime,
   isOffline,
   detailDisplay,
   rowAssignments,
   draftActions,
 }) {
+  const timeInputRef = useRef(null);
   const descriptionInputRef = useRef(null);
   const {
     getDetailRowStyle,
@@ -35,9 +36,9 @@ export default function DraftDetailRow({
   } = draftActions;
 
   useEffect(() => {
-    if (!shouldFocusDescription || isOffline) return;
-    descriptionInputRef.current?.focus({ preventScroll: true });
-  }, [isOffline, shouldFocusDescription]);
+    if (!shouldFocusTime || isOffline) return;
+    timeInputRef.current?.focus({ preventScroll: true });
+  }, [isOffline, shouldFocusTime]);
 
   const handleDraftKeyDown = (event) => {
     if (event.key === "Escape") {
@@ -64,6 +65,7 @@ export default function DraftDetailRow({
       style={getDetailRowStyle()}
     >
       <input
+        ref={timeInputRef}
         className="plain-input"
         aria-label="New detail time"
         type="time"

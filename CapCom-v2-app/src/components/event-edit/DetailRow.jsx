@@ -88,6 +88,7 @@ export default function DetailRow({
     endRowAction,
     duplicateDetail,
     startEditingDetail,
+    startEditingDetailTime,
     closeActionMenu,
     deleteDetail,
   } = rowActions;
@@ -224,7 +225,11 @@ export default function DetailRow({
           className="detail-cell detail-time-display"
           type="button"
           disabled={isOffline}
-          onClick={() => startEditingDetailCell(day.id, detail.id, "time")}
+          onClick={() =>
+            isMobileView
+              ? startEditingDetailTime(day.id, detail)
+              : startEditingDetailCell(day.id, detail.id, "time")
+          }
         >
           {detail.time || "tbc"}
         </button>
