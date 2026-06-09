@@ -110,7 +110,10 @@ export default function DetailRow({
     .filter(Boolean)
     .join(" ");
   const hasTruckDestination = Boolean(getTruckDestinationValue(detail));
-  const tagLabel = getTagById(detail.tagId)?.name || "No tag";
+  const selectableTag = tags.some((tag) => tag.id === detail.tagId)
+    ? getTagById(detail.tagId)
+    : null;
+  const tagLabel = selectableTag?.name || "No tag";
   const locationLabel = getLocationById(detail.locationId)?.displayName || "No location";
   const companyLabel = getCompanyLabel(detail.companyIds || []);
   const truckDestinationValue = String(getTruckDestinationValue(detail) || "");
@@ -285,18 +288,18 @@ export default function DetailRow({
         <>
           <div
             className="tag-select-wrap detail-select-field"
-            style={getTagStyle(getTagById(detail.tagId))}
+            style={getTagStyle(selectableTag)}
           >
             <span
               className="tag-dot"
               style={{
                 backgroundColor:
-                  normaliseHexColour(getTagById(detail.tagId)?.colour) || "transparent",
+                  normaliseHexColour(selectableTag?.colour) || "transparent",
               }}
             />
             <select
               aria-label={`Tag for ${detail.description || "schedule detail"}`}
-              value={getTagById(detail.tagId) ? detail.tagId : ""}
+              value={selectableTag ? detail.tagId : ""}
               disabled={savingDetailId === detail.id || isOffline || Boolean(detail.truckId)}
               onChange={(event) => assignDetailTag(day.id, detail, event.target.value)}
             >

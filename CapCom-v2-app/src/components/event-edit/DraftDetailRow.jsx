@@ -57,6 +57,9 @@ export default function DraftDetailRow({
     Boolean(draft.description.trim()) &&
     savingDraftDayId !== dayId &&
     !isOffline;
+  const selectableTag = tags.some((tag) => tag.id === draft.tagId)
+    ? getTagById(draft.tagId)
+    : null;
 
   return (
     <div
@@ -90,18 +93,18 @@ export default function DraftDetailRow({
       {showTagColumn ? (
         <div
           className="tag-select-wrap detail-select-field"
-          style={getTagStyle(getTagById(draft.tagId))}
+          style={getTagStyle(selectableTag)}
         >
           <span
             className="tag-dot"
             style={{
               backgroundColor:
-                normaliseHexColour(getTagById(draft.tagId)?.colour) || "transparent",
+                normaliseHexColour(selectableTag?.colour) || "transparent",
             }}
           />
           <select
             aria-label="New detail tag"
-            value={getTagById(draft.tagId) ? draft.tagId : ""}
+            value={selectableTag ? draft.tagId : ""}
             disabled={isOffline}
             onChange={(event) => updateDraftDetail(dayId, draftIndex, "tagId", event.target.value)}
           >

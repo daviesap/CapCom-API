@@ -149,6 +149,8 @@ const emptyCompanyContactForm = {
 const emptyDetailEditForm = {
   time: "",
   description: "",
+  action: "",
+  destinationValue: "",
   tagId: "",
   locationId: "",
   companyIds: [],
@@ -782,6 +784,19 @@ export default function EventEditPage() {
   const usedTags = useMemo(() => {
     return tags.filter((tag) => usedTagIds.has(tag.id));
   }, [tags, usedTagIds]);
+
+  const isReservedTruckTag = (tag) =>
+    String(tag?.name || "").trim().toLowerCase() === "truck";
+
+  const isReservedTruckTagId = (tagId) => isReservedTruckTag(getTagById(tagId));
+
+  const getEditableDetailTagId = (tagId) =>
+    isReservedTruckTagId(tagId) ? "" : tagId || "";
+
+  const normalDetailTags = useMemo(
+    () => tags.filter((tag) => !isReservedTruckTag(tag)),
+    [tags]
+  );
 
   const detailCountByTagId = useMemo(() => {
     return scheduleDetails.reduce((counts, detail) => {
@@ -2200,9 +2215,7 @@ export default function EventEditPage() {
     setSelectedCompanyFilterIds([]);
   };
   const ensureTruckTag = async () => {
-    const existingTruckTag = tags.find(
-      (tag) => String(tag.name || "").trim().toLowerCase() === "truck"
-    );
+    const existingTruckTag = tags.find(isReservedTruckTag);
     if (existingTruckTag) return existingTruckTag;
 
     const truckTag = {
@@ -2232,7 +2245,9 @@ export default function EventEditPage() {
     setError("");
 
     try {
-      const nextTagId = detail.truckId ? (await ensureTruckTag()).id : tagId;
+      const nextTagId = detail.truckId
+        ? (await ensureTruckTag()).id
+        : getEditableDetailTagId(tagId);
       setDetailsByDayId((current) => ({
         ...current,
         [dayId]: (current[dayId] || []).map((nextDetail) =>
@@ -2285,7 +2300,9 @@ export default function EventEditPage() {
     }));
 
     try {
-      const tagId = detail.truckId ? (await ensureTruckTag()).id : detail.tagId || "";
+      const tagId = detail.truckId
+        ? (await ensureTruckTag()).id
+        : getEditableDetailTagId(detail.tagId);
       await updateScheduleDetail(detail.id, {
         eventId,
         time: detail.time || "",
@@ -2332,7 +2349,9 @@ export default function EventEditPage() {
     }));
 
     try {
-      const tagId = detail.truckId ? (await ensureTruckTag()).id : detail.tagId || "";
+      const tagId = detail.truckId
+        ? (await ensureTruckTag()).id
+        : getEditableDetailTagId(detail.tagId);
       await updateScheduleDetail(detail.id, {
         eventId,
         time: detail.time || "",
@@ -2439,8 +2458,7 @@ export default function EventEditPage() {
 
     try {
       const targetTag = tags.find((tag) => tag.id === tagId);
-      const isTruckTag =
-        String(targetTag?.name || "").trim().toLowerCase() === "truck";
+      const isTruckTag = isReservedTruckTag(targetTag);
       if (isTruckTag && truckScheduleDetails.length > 0) {
         setError("Truck can not be deleted whilst truck entries exist.");
         return;
@@ -2954,7 +2972,9 @@ export default function EventEditPage() {
     setError("");
 
     try {
-      const tagId = detail.truckId ? (await ensureTruckTag()).id : detail.tagId || "";
+      const tagId = detail.truckId
+        ? (await ensureTruckTag()).id
+        : getEditableDetailTagId(detail.tagId);
       await updateScheduleDetail(detail.id, {
         eventId,
         time: detail.time || "",
@@ -3008,11 +3028,16 @@ export default function EventEditPage() {
   };
 
   const startEditingDetail = (dayId, detail) => {
+    const tagId = detail.truckId
+      ? detail.tagId || ""
+      : getEditableDetailTagId(detail.tagId);
     setEditingDetailModal({ dayId, detailId: detail.id });
     setDetailEditForm({
       time: detail.time || "",
       description: detail.description || "",
-      tagId: detail.tagId || "",
+      action: detail.action || "",
+      destinationValue: getTruckDestinationValue(detail),
+      tagId,
       locationId: detail.locationId || "",
       companyIds: Array.isArray(detail.companyIds) ? detail.companyIds : [],
       notes: detail.notes || "",
@@ -3023,11 +3048,16 @@ export default function EventEditPage() {
   };
 
   const startEditingDetailTime = (dayId, detail) => {
+    const tagId = detail.truckId
+      ? detail.tagId || ""
+      : getEditableDetailTagId(detail.tagId);
     setEditingDetailTimeModal({ dayId, detailId: detail.id });
     setDetailEditForm({
       time: detail.time || "",
       description: detail.description || "",
-      tagId: detail.tagId || "",
+      action: detail.action || "",
+      destinationValue: getTruckDestinationValue(detail),
+      tagId,
       locationId: detail.locationId || "",
       companyIds: Array.isArray(detail.companyIds) ? detail.companyIds : [],
       notes: detail.notes || "",
@@ -3110,19 +3140,29 @@ export default function EventEditPage() {
     setError("");
 
     try {
+      const truckDestination = currentDetail.truckId
+        ? parseTruckDestinationValue(detailEditForm.destinationValue)
+        : null;
       const tagId = currentDetail.truckId
         ? (await ensureTruckTag()).id
-        : detailEditForm.tagId || "";
+        : getEditableDetailTagId(detailEditForm.tagId);
       const updates = {
         eventId,
         time: detailEditForm.time || "",
-        description: detailEditForm.description || "",
+        description: currentDetail.truckId
+          ? currentDetail.description || ""
+          : detailEditForm.description || "",
+        action: currentDetail.truckId ? detailEditForm.action || "" : currentDetail.action || "",
         notes: detailEditForm.notes || "",
         sortOrder: currentDetail.sortOrder,
         colour: normaliseHexColour(currentDetail.colour),
         tagId,
-        locationId: detailEditForm.locationId || "",
-        companyIds: detailEditForm.companyIds || [],
+        locationId: currentDetail.truckId
+          ? truckDestination.locationId
+          : detailEditForm.locationId || "",
+        companyIds: currentDetail.truckId
+          ? truckDestination.companyIds
+          : detailEditForm.companyIds || [],
       };
 
       await updateScheduleDetail(currentDetail.id, updates);
@@ -3410,14 +3450,20 @@ export default function EventEditPage() {
     closeActionMenu();
 
     try {
+      const tagId = detail.truckId
+        ? (await ensureTruckTag()).id
+        : getEditableDetailTagId(detail.tagId);
       await updateScheduleDetail(detail.id, {
         eventId,
         time: detail.time || "",
         description: detail.description || "",
         sortOrder: getNextSortOrder(targetDayId),
         scheduleDayId: targetDayId,
+        truckId: detail.truckId || "",
+        truckNumber: detail.truckNumber || "",
+        action: detail.action || "",
         colour: normaliseHexColour(detail.colour),
-        tagId: detail.tagId || "",
+        tagId,
         locationId: detail.locationId || "",
         companyIds: detail.companyIds || [],
       });
@@ -3444,7 +3490,9 @@ export default function EventEditPage() {
     closeActionMenu();
 
     try {
-      const tagId = detail.truckId ? (await ensureTruckTag()).id : detail.tagId || "";
+      const tagId = detail.truckId
+        ? (await ensureTruckTag()).id
+        : getEditableDetailTagId(detail.tagId);
       await createScheduleDetail({
         eventId,
         scheduleDayId: dayId,
@@ -3491,7 +3539,9 @@ export default function EventEditPage() {
   };
 
   const buildDraftDetailDefaultsFromFilters = () => {
-    const validTagFilterIds = selectedTagFilterIds.filter((tagId) => getTagById(tagId));
+    const validTagFilterIds = selectedTagFilterIds.filter(
+      (tagId) => getTagById(tagId) && !isReservedTruckTagId(tagId)
+    );
     const tagId = validTagFilterIds.length > 0
       ? validTagFilterIds[0]
       : "";
@@ -3560,10 +3610,11 @@ export default function EventEditPage() {
   };
 
   const updateDraftDetail = (dayId, draftIndex, field, value) => {
+    const nextValue = field === "tagId" ? getEditableDetailTagId(value) : value;
     setDraftDetailsByDayId((current) => ({
       ...current,
       [dayId]: (current[dayId] || []).map((draft, index) =>
-        index === draftIndex ? { ...draft, [field]: value } : draft
+        index === draftIndex ? { ...draft, [field]: nextValue } : draft
       ),
     }));
   };
@@ -3599,7 +3650,7 @@ export default function EventEditPage() {
         description: draft.description.trim(),
         notes: "",
         colour: normaliseHexColour(draft.colour),
-        tagId: draft.tagId || "",
+        tagId: getEditableDetailTagId(draft.tagId),
         locationId: draft.locationId || "",
         companyIds: draft.companyIds || [],
       });
@@ -4319,7 +4370,7 @@ export default function EventEditPage() {
           normaliseHexColour={normaliseHexColour}
           savingDetailId={savingDetailId}
           assignDetailTag={assignDetailTag}
-          tags={tags}
+          tags={normalDetailTags}
           showLocationColumn={showLocationColumn}
           getLocationById={getLocationById}
           assignDetailLocation={assignDetailLocation}
@@ -4379,17 +4430,71 @@ export default function EventEditPage() {
                   onChange={(event) => updateDetailEditFormField("time", event.target.value)}
                 />
               </div>
-              <div className="form-row full">
-                <label htmlFor="detailEditDescription">Description</label>
-                <input
-                  id="detailEditDescription"
-                  value={detailEditForm.description}
-                  disabled={isOffline || savingDetailId === editingDetail.id}
-                  onChange={(event) =>
-                    updateDetailEditFormField("description", event.target.value)
-                  }
-                />
-              </div>
+              {!editingDetail.truckId ? (
+                <div className="form-row full">
+                  <label htmlFor="detailEditDescription">Description</label>
+                  <input
+                    id="detailEditDescription"
+                    value={detailEditForm.description}
+                    disabled={isOffline || savingDetailId === editingDetail.id}
+                    onChange={(event) =>
+                      updateDetailEditFormField("description", event.target.value)
+                    }
+                  />
+                </div>
+              ) : null}
+              {editingDetail.truckId ? (
+                <>
+                  <div className="form-row">
+                    <label htmlFor="detailEditAction">Action</label>
+                    <select
+                      id="detailEditAction"
+                      value={detailEditForm.action}
+                      disabled={isOffline || savingDetailId === editingDetail.id}
+                      onChange={(event) =>
+                        updateDetailEditFormField("action", event.target.value)
+                      }
+                    >
+                      {truckDetailActions.map((action) => (
+                        <option key={action || "none"} value={action}>
+                          {action || "Action"}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="form-row">
+                    <label htmlFor="detailEditDestination">Destination</label>
+                    <select
+                      id="detailEditDestination"
+                      value={detailEditForm.destinationValue}
+                      disabled={isOffline || savingDetailId === editingDetail.id}
+                      onChange={(event) =>
+                        updateDetailEditFormField("destinationValue", event.target.value)
+                      }
+                    >
+                      <option value="">No destination</option>
+                      {companies.length > 0 ? (
+                        <optgroup label="Companies">
+                          {companies.map((company) => (
+                            <option key={company.id} value={`company:${company.id}`}>
+                              {company.companyName}
+                            </option>
+                          ))}
+                        </optgroup>
+                      ) : null}
+                      {locationOptions.length > 0 ? (
+                        <optgroup label="Locations">
+                          {locationOptions.map((location) => (
+                            <option key={location.id} value={`location:${location.id}`}>
+                              {location.displayName}
+                            </option>
+                          ))}
+                        </optgroup>
+                      ) : null}
+                    </select>
+                  </div>
+                </>
+              ) : null}
               {!editingDetail.truckId && showTagColumn ? (
                 <div className="form-row">
                   <label htmlFor="detailEditTag">Tag</label>
@@ -4400,7 +4505,7 @@ export default function EventEditPage() {
                     onChange={(event) => updateDetailEditFormField("tagId", event.target.value)}
                   >
                     <option value="">No tag</option>
-                    {tags.map((tag) => (
+                    {normalDetailTags.map((tag) => (
                       <option key={tag.id} value={tag.id}>
                         {tag.name}
                       </option>
@@ -4408,7 +4513,7 @@ export default function EventEditPage() {
                   </select>
                 </div>
               ) : null}
-              {showLocationColumn ? (
+              {!editingDetail.truckId && showLocationColumn ? (
                 <div className="form-row">
                   <label htmlFor="detailEditLocation">Location</label>
                   <select
@@ -4611,6 +4716,8 @@ export default function EventEditPage() {
         updateDetailField={updateDetailField}
         handleDetailCellKeyDown={handleDetailCellKeyDown}
         startEditingDetailCell={startEditingDetailCell}
+        startEditingDetailTime={startEditingDetailTime}
+        startEditingDetail={startEditingDetail}
         toggleTruckDetailAction={toggleTruckDetailAction}
         showTruckDestinationColumn={showTruckDestinationColumn}
         getTruckDestinationValue={getTruckDestinationValue}

@@ -2,6 +2,8 @@ import {
   AddressBook,
   AddressBookTabs,
   ArrowClockwise,
+  ArrowBendDownRight,
+  ArrowBendUpRight,
   CaretDoubleLeft,
   CaretDoubleRight,
   CaretDoubleDown,
@@ -27,6 +29,7 @@ import {
   NotePencil,
   PencilSimple,
   Plus,
+  QuestionMark,
   ShieldCheck,
   SignOut,
   Share,
@@ -41,6 +44,8 @@ import {
 
 export const capcomIcons = {
   add: Plus,
+  arrowBendDownRight: ArrowBendDownRight,
+  arrowBendUpRight: ArrowBendUpRight,
   caretDoubleLeft: CaretDoubleLeft,
   caretDoubleRight: CaretDoubleRight,
   caretDoubleDown: CaretDoubleDown,
@@ -67,6 +72,7 @@ export const capcomIcons = {
   share: Share,
   profile: User,
   overflow: DotsThree,
+  question: QuestionMark,
   settings: Gear,
   signOut: SignOut,
   summary: CalendarBlank,

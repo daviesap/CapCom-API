@@ -1216,6 +1216,12 @@ textarea {
   text-overflow: ellipsis;
 }
 
+.truck-action-cell {
+  align-items: center;
+  display: flex;
+  gap: 6px;
+}
+
 .detail-cell:hover:not(:disabled),
 .detail-cell:focus-visible {
   background: var(--color-surface-soft-alt3);
@@ -3028,6 +3034,14 @@ textarea {
   .detail-description-text {
     overflow: visible;
     text-overflow: clip;
+  }
+
+  .truck-action-cell {
+    justify-content: center;
+  }
+
+  .truck-action-cell svg + .truck-action-label-text {
+    display: none;
   }
 
   .mobile-detail-meta-line {

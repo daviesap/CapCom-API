@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Modal from "../Modal.jsx";
 import { CapcomIcon } from "../../icons/capcomIcons.jsx";
 
@@ -39,6 +39,8 @@ export default function TruckingPanel({
   updateDetailField,
   handleDetailCellKeyDown,
   startEditingDetailCell,
+  startEditingDetailTime,
+  startEditingDetail,
   toggleTruckDetailAction,
   showTruckDestinationColumn,
   getTruckDestinationValue,
@@ -67,16 +69,6 @@ export default function TruckingPanel({
   saveDraftTruckDetail,
 }) {
   const [activeTruckDateSelectId, setActiveTruckDateSelectId] = useState("");
-  const [isMobileView, setIsMobileView] = useState(false);
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia("(max-width: 767px)");
-    const updateMobileView = () => setIsMobileView(mediaQuery.matches);
-    updateMobileView();
-    mediaQuery.addEventListener("change", updateMobileView);
-    return () => mediaQuery.removeEventListener("change", updateMobileView);
-  }, []);
-
   const handleDraftTruckDetailKeyDown = (event, truck, draft, draftIndex) => {
     if (event.key === "Escape") {
       event.preventDefault();
@@ -102,6 +94,38 @@ export default function TruckingPanel({
     activeTruckDateSelectId === selectId
       ? [formatDetailDate(day.date), day.summary].filter(Boolean).join(" - ")
       : formatDetailDate(day.date);
+
+  const renderTruckActionLabel = (action) => {
+    const actionIconName =
+      action === "Deliver"
+        ? "arrowBendDownRight"
+        : action === "Load"
+          ? "arrowBendUpRight"
+          : "question";
+
+    const actionLabel = action || "Action";
+
+    return (
+      <>
+        <CapcomIcon name={actionIconName} size={18} weight="bold" />
+        <span className="truck-action-label-text">{actionLabel}</span>
+      </>
+    );
+  };
+
+  const getTruckDestinationLabel = (detail) => {
+    const destinationValue = String(getTruckDestinationValue(detail) || "");
+    if (destinationValue.startsWith("company:")) {
+      return companyById.get(destinationValue.replace("company:", ""))?.companyName || "No destination";
+    }
+    if (destinationValue.startsWith("location:")) {
+      return (
+        locationOptions.find((location) => location.id === destinationValue.replace("location:", ""))
+          ?.displayName || "No destination"
+      );
+    }
+    return "No destination";
+  };
 
   return (
     <section className="panel">
@@ -312,12 +336,11 @@ export default function TruckingPanel({
                         {truckDetails.map((detail, detailIndex) => {
                           const dayId = detail.scheduleDayId || "";
                           const isEditingTime = isEditingDetailCell(detail.id, "time");
-                          const canMoveUp = detailIndex > 0;
-                          const canMoveDown = detailIndex < truckDetails.length - 1;
                           const hasDate = Boolean(dayId);
                           const hasTime = Boolean(detail.time);
                           const hasDestination = Boolean(getTruckDestinationValue(detail));
                           const dateSelectId = `truck-detail-date-${detail.id}`;
+                          const destinationLabel = getTruckDestinationLabel(detail);
 
                           return (
                             <div
@@ -421,18 +444,25 @@ export default function TruckingPanel({
                                   ].filter(Boolean).join(" ")}
                                   type="button"
                                   disabled={isOffline}
-                                  onClick={() => startEditingDetailCell(dayId, detail.id, "time")}
+                                  onClick={() => {
+                                    if (window.matchMedia("(max-width: 767px)").matches) {
+                                      startEditingDetailTime(dayId, detail);
+                                      return;
+                                    }
+
+                                    startEditingDetailCell(dayId, detail.id, "time");
+                                  }}
                                 >
                                   {detail.time || "tbc"}
                                 </button>
                               )}
                               <button
-                                className="detail-cell"
+                                className="detail-cell truck-action-cell"
                                 type="button"
                                 disabled={savingDetailId === detail.id || isOffline}
                                 onClick={() => toggleTruckDetailAction(dayId, detail)}
                               >
-                                {detail.action || "Action?"}
+                                {renderTruckActionLabel(detail.action)}
                               </button>
                               {showTruckDestinationColumn ? (
                                 <div
@@ -472,6 +502,9 @@ export default function TruckingPanel({
                                   </select>
                                 </div>
                               ) : null}
+                              <span className="mobile-detail-meta-line">
+                                {destinationLabel}
+                              </span>
                               <div className="detail-row-actions">
                                 <div
                                   className="notes-popover"
@@ -563,34 +596,19 @@ export default function TruckingPanel({
                                       className="action-menu-list"
                                       onMouseDown={beginRowAction}
                                     >
-                                      {isMobileView ? (
-                                        <>
-                                          <button
-                                            className="action-menu-item"
-                                            type="button"
-                                            disabled={!canMoveUp || reorderingDayId === truck.id || isOffline}
-                                            onClick={() => {
-                                              moveTruckDetail(truck.id, truckDetails, detail.id, -1);
-                                              endRowAction();
-                                            }}
-                                          >
-                                            <CapcomIcon name="moveToPreviousDay" size={16} />
-                                            Move up
-                                          </button>
-                                          <button
-                                            className="action-menu-item"
-                                            type="button"
-                                            disabled={!canMoveDown || reorderingDayId === truck.id || isOffline}
-                                            onClick={() => {
-                                              moveTruckDetail(truck.id, truckDetails, detail.id, 1);
-                                              endRowAction();
-                                            }}
-                                          >
-                                            <CapcomIcon name="moveToNextDay" size={16} />
-                                            Move down
-                                          </button>
-                                        </>
-                                      ) : null}
+                                      <button
+                                        className="action-menu-item"
+                                        type="button"
+                                        disabled={savingDetailId === detail.id || isOffline}
+                                        onClick={() => {
+                                          closeActionMenu();
+                                          startEditingDetail(dayId, detail);
+                                          endRowAction();
+                                        }}
+                                      >
+                                        <CapcomIcon name="edit" size={16} />
+                                        Edit
+                                      </button>
                                       <button
                                         className="action-menu-item"
                                         type="button"
@@ -681,7 +699,7 @@ export default function TruckingPanel({
                               }
                             />
                               <button
-                                className="detail-cell"
+                                className="detail-cell truck-action-cell"
                                 type="button"
                                 disabled={isOffline}
                                 onClick={() =>
@@ -693,7 +711,7 @@ export default function TruckingPanel({
                                 )
                                   }
                                 >
-                                {draft.action || "Action?"}
+                                {renderTruckActionLabel(draft.action)}
                               </button>
                             {showTruckDestinationColumn ? (
                               <div
