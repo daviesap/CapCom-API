@@ -242,6 +242,63 @@ async function getScheduleDetailsForEvent(db, eventId, scheduleDayIds) {
   return sortScheduleDetails(details);
 }
 
+async function getCompanyContactsForCompanies(db, companyIds) {
+  const uniqueCompanyIds = [...new Set(companyIds.filter(Boolean))];
+  if (uniqueCompanyIds.length === 0) return [];
+
+  const contacts = [];
+  for (let index = 0; index < uniqueCompanyIds.length; index += FIRESTORE_IN_QUERY_LIMIT) {
+    const companyIdChunk = uniqueCompanyIds.slice(index, index + FIRESTORE_IN_QUERY_LIMIT);
+    const chunk = await getCollectionWhere(db, "companyContacts", "companyId", "in", companyIdChunk);
+    contacts.push(...chunk);
+  }
+
+  return contacts.sort((a, b) => {
+    const companyComparison = String(a.companyId || "").localeCompare(String(b.companyId || ""));
+    if (companyComparison !== 0) return companyComparison;
+
+    const sortA = typeof a.sortOrder === "number" ? a.sortOrder : Number.MAX_SAFE_INTEGER;
+    const sortB = typeof b.sortOrder === "number" ? b.sortOrder : Number.MAX_SAFE_INTEGER;
+    const orderComparison = sortA - sortB;
+    if (orderComparison !== 0) return orderComparison;
+
+    return String(a.email || "").localeCompare(String(b.email || ""));
+  });
+}
+
+function buildAllowedEmailsFromCompanyContacts({ companies = [], companyContacts = [] }) {
+  const companyIds = new Set(companies.map((company) => company.id).filter(Boolean));
+  const seenEmails = new Set();
+
+  return companyContacts.reduce((emails, contact) => {
+    if (!companyIds.has(contact?.companyId)) return emails;
+    if (typeof contact.email !== "string") return emails;
+
+    const email = contact.email.trim().toLowerCase();
+    if (!email || seenEmails.has(email)) return emails;
+
+    seenEmails.add(email);
+    emails.push(email);
+    return emails;
+  }, []);
+}
+
+async function syncAllowedEmailsForEvent({ db, eventId, eventRecord, companies, companyContacts }) {
+  if (eventId.includes("/")) {
+    throw new HttpsError("invalid-argument", "eventId cannot contain '/'.");
+  }
+
+  const allowedEmails = buildAllowedEmailsFromCompanyContacts({ companies, companyContacts });
+  await db.collection("allowedEmails").doc(eventId).set({
+    eventId,
+    eventName: eventRecord.name || "",
+    allowedEmails,
+    updatedAt: FieldValue.serverTimestamp(),
+  });
+
+  console.log(`Synced ${allowedEmails.length} allowed email(s) for event "${eventId}"`);
+}
+
 async function loadEventGenerationData(db, eventId) {
   const eventSnap = await db.collection("events").doc(eventId).get();
   if (!eventSnap.exists) {
@@ -277,6 +334,10 @@ async function loadEventGenerationData(db, eventId) {
     eventId,
     sortedScheduleDays.map((day) => day.id)
   );
+  const companyContacts = await getCompanyContactsForCompanies(
+    db,
+    companies.map((company) => company.id)
+  );
 
   return {
     eventRecord,
@@ -297,6 +358,7 @@ async function loadEventGenerationData(db, eventId) {
       || String(a.title || "").localeCompare(String(b.title || ""))
     ),
     companies,
+    companyContacts,
   };
 }
 
@@ -359,6 +421,14 @@ export async function generateHomeForEventCallable({
   if (!canManageEvent(callerProfile, generationData.eventRecord, assignment)) {
     throw new HttpsError("permission-denied", "You do not have permission to update this event.");
   }
+
+  await syncAllowedEmailsForEvent({
+    db,
+    eventId,
+    eventRecord: generationData.eventRecord,
+    companies: generationData.companies,
+    companyContacts: generationData.companyContacts,
+  });
 
   const previousApiResponse = parseJsonResponseValue(generationData.eventRecord["API Response"]);
 

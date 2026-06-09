@@ -193,6 +193,7 @@ export async function updateEvent(eventId, eventData, userProfile) {
       scheduleEndDate: eventData.scheduleEndDate,
       imageUrl: eventData.imageUrl || "",
       showMomContacts: eventData.showMomContacts === true,
+      showMomKeyInfo: eventData.showMomKeyInfo === true,
       updatedAt: serverTimestamp(),
     });
   } catch (error) {

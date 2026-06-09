@@ -297,6 +297,7 @@ export function buildGenerateHomePayload({
       logoUrl: eventRecord.imageUrl || eventRecord.logoUrl || "",
       header,
       showMomContacts: normaliseBoolean(eventRecord.showMomContacts, false),
+      showMomKeyInfo: normaliseBoolean(eventRecord.showMomKeyInfo, false),
       keyInfo: buildKeyInfo(keyInfo),
       keyPeople: buildKeyPeople({ eventRecord, companies, eventContacts }),
       locations: locations
