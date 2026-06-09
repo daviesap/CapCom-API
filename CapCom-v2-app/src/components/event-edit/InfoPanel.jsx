@@ -5,6 +5,15 @@ import { CapcomIcon } from "../../icons/capcomIcons.jsx";
 export default function InfoPanel({
   activeInfoTab,
   setActiveInfoTab,
+  keyInfoItems,
+  keyInfoLoading,
+  keyInfoForm,
+  keyInfoFormMode,
+  editingKeyInfoId,
+  savingKeyInfo,
+  deletingKeyInfoId,
+  reorderingKeyInfoId,
+  draggedKeyInfoIdRef,
   contactCompanies,
   companyContactsByCompanyId,
   editingCompanyContactCompanyId,
@@ -30,17 +39,19 @@ export default function InfoPanel({
   startEditingCompanyContact,
   updateCompanyContactFormField,
   saveCompanyContact,
-  eventContactForm,
-  startEditingEventContactRole,
-  updateEventContactRoleFormField,
-  saveEventContactRole,
-  resetEventContactRoleForm,
-  editingEventContactCompanyId,
   toggleEventContactHidden,
   savingEventContact,
   resetCompanyContactForm,
+  startAddingKeyInfo,
+  startEditingKeyInfo,
+  updateKeyInfoFormField,
+  saveKeyInfo,
+  removeKeyInfo,
+  reorderKeyInfo,
+  resetKeyInfoForm,
 }) {
   const [openHiddenContactSections, setOpenHiddenContactSections] = useState({});
+  const [keyInfoDropTargetId, setKeyInfoDropTargetId] = useState("");
 
   const isHiddenSectionOpen = (companyId) => Boolean(openHiddenContactSections[companyId]);
 
@@ -78,7 +89,7 @@ export default function InfoPanel({
       {activeInfoTab === "contacts" ? (
         <div className="settings-section">
           {contactCompanies.length === 0 ? (
-            <p className="item-meta">No companies are tagged in this event schedule yet.</p>
+            <p className="item-meta">No companies tagged in the schedule.</p>
           ) : (
             <div className="company-list">
               {contactCompanies.map((company) => {
@@ -87,8 +98,6 @@ export default function InfoPanel({
                 const hiddenContacts = companyContacts.filter((contact) => contact.isHidden);
                 const isEditingThisCompanyContact =
                   editingCompanyContactCompanyId === company.id;
-                const isEditingThisCompanyEventContactRole =
-                  editingEventContactCompanyId === company.id;
                 const isCompanyOpen = openContactCompanyIds.includes(company.id);
 
                 return (
@@ -156,8 +165,8 @@ export default function InfoPanel({
                               {company.companyName || "Unnamed company"}
                             </span>
                             <span className="item-meta company-accordion-meta">
-                              {visibleContacts.length}/{companyContacts.length} contact
-                              {companyContacts.length === 1 ? "" : "s"}
+                              {visibleContacts.length} contact
+                              {visibleContacts.length === 1 ? "" : "s"}
                             </span>
                             {hiddenContacts.length > 0 ? (
                               <span className="item-meta company-accordion-meta">
@@ -168,23 +177,20 @@ export default function InfoPanel({
                         </button>
                         {canManageCompanyContacts ? (
                           <button
-                            className="compact-button"
+                            className="compact-button company-contact-add-button"
                             type="button"
+                            aria-label={`Add contact to ${company.companyName || "company"}`}
                             disabled={isOffline || savingCompanyContact}
                             onClick={() => startAddingCompanyContact(company.id)}
                           >
                             <CapcomIcon name="add" size={16} weight="bold" />
-                            Add contact
+                            <span className="button-label">Add contact</span>
                           </button>
                         ) : null}
                       </div>
 
                       {isCompanyOpen ? (
                         <div className="company-accordion-body">
-                          {company.address ? (
-                            <p className="item-meta company-address">{company.address}</p>
-                          ) : null}
-
                           {companyContacts.length === 0 ? (
                             <p className="item-meta">No contacts yet.</p>
                           ) : (
@@ -265,15 +271,6 @@ export default function InfoPanel({
                                       </div>
                                       {canManageCompanyContacts ? (
                                         <div className="company-list-actions">
-                                          <button
-                                            className="compact-button"
-                                            type="button"
-                                            disabled={savingEventContact || isOffline}
-                                            onClick={() => startEditingEventContactRole(company.id, contact)}
-                                          >
-                                            <CapcomIcon name="edit" size={16} />
-                                            Event role
-                                          </button>
                                           <button
                                             className="compact-button"
                                             type="button"
@@ -405,15 +402,6 @@ export default function InfoPanel({
                                               className="compact-button"
                                               type="button"
                                               disabled={savingEventContact || isOffline}
-                                              onClick={() => startEditingEventContactRole(company.id, contact)}
-                                            >
-                                              <CapcomIcon name="edit" size={16} />
-                                              Event role
-                                            </button>
-                                            <button
-                                              className="compact-button"
-                                              type="button"
-                                              disabled={savingEventContact || isOffline}
                                               onClick={() => toggleEventContactHidden(contact.id)}
                                             >
                                               Unhide
@@ -523,50 +511,6 @@ export default function InfoPanel({
                             </form>
                             </Modal>
                           ) : null}
-
-                          {canManageCompanyContacts && isEditingThisCompanyEventContactRole ? (
-                            <Modal
-                              title="Edit event role"
-                              subtitle={company.companyName || "Company contact role"}
-                              labelledBy={`eventContactRoleFormTitle-${company.id}`}
-                              closeLabel="Close event role form"
-                              onClose={resetEventContactRoleForm}
-                            >
-                              <form className="company-contact-form" onSubmit={saveEventContactRole}>
-                                <div className="form-row">
-                                  <label htmlFor={`eventContactRole-${company.id}`}>Role for this event</label>
-                                  <input
-                                    id={`eventContactRole-${company.id}`}
-                                    value={eventContactForm.role}
-                                    disabled={savingEventContact || isOffline}
-                                    onChange={(event) =>
-                                      updateEventContactRoleFormField(
-                                        "role",
-                                        event.target.value
-                                      )
-                                    }
-                                  />
-                                </div>
-                                <div className="actions">
-                                  <button
-                                    className="button"
-                                    type="submit"
-                                    disabled={savingEventContact || isOffline}
-                                  >
-                                    {savingEventContact ? "Saving..." : "Save event role"}
-                                  </button>
-                                  <button
-                                    className="button secondary"
-                                    type="button"
-                                    disabled={savingEventContact || isOffline}
-                                    onClick={resetEventContactRoleForm}
-                                  >
-                                    Cancel
-                                  </button>
-                                </div>
-                              </form>
-                            </Modal>
-                          ) : null}
                         </div>
                       ) : null}
                     </div>
@@ -579,11 +523,158 @@ export default function InfoPanel({
       ) : null}
 
       {activeInfoTab === "keyInfo" ? (
-        <div className="placeholder-panel">
-          <div>
-            <h2>Key Info</h2>
-            <p className="item-meta">Placeholder content.</p>
+        <div className="settings-section">
+          <div className="panel-heading">
+            <span aria-hidden="true" />
+            <button
+              className="button key-info-add-button"
+              type="button"
+              aria-label="Add key info"
+              disabled={savingKeyInfo || isOffline}
+              onClick={startAddingKeyInfo}
+            >
+              <CapcomIcon name="add" size={18} weight="bold" />
+              <span className="button-label">Add key info</span>
+            </button>
           </div>
+
+          {keyInfoLoading ? (
+            <p className="item-meta">Loading key info...</p>
+          ) : null}
+
+          {!keyInfoLoading && keyInfoItems.length === 0 ? (
+            <p className="item-meta">No key info yet.</p>
+          ) : null}
+
+          {keyInfoItems.length > 0 ? (
+            <div className="key-info-list">
+              {keyInfoItems.map((item) => (
+                <article
+                  className={[
+                    "key-info-row",
+                    !isOffline ? "draggable-key-info-row" : "",
+                    keyInfoDropTargetId === item.id ? "drop-target" : "",
+                  ].filter(Boolean).join(" ")}
+                  key={item.id}
+                  draggable={!isOffline && !reorderingKeyInfoId}
+                  onDragStart={(event) => {
+                    if (isOffline) return;
+                    draggedKeyInfoIdRef.current = item.id;
+                    event.dataTransfer.effectAllowed = "move";
+                  }}
+                  onDragOver={(event) => {
+                    if (
+                      isOffline ||
+                      reorderingKeyInfoId ||
+                      !draggedKeyInfoIdRef.current ||
+                      draggedKeyInfoIdRef.current === item.id
+                    ) {
+                      return;
+                    }
+                    event.preventDefault();
+                    event.dataTransfer.dropEffect = "move";
+                    setKeyInfoDropTargetId(item.id);
+                  }}
+                  onDragLeave={() => {
+                    setKeyInfoDropTargetId((current) => current === item.id ? "" : current);
+                  }}
+                  onDrop={(event) => {
+                    event.preventDefault();
+                    const draggedKeyInfoId = draggedKeyInfoIdRef.current;
+                    draggedKeyInfoIdRef.current = "";
+                    setKeyInfoDropTargetId("");
+                    reorderKeyInfo(draggedKeyInfoId, item.id);
+                  }}
+                  onDragEnd={() => {
+                    draggedKeyInfoIdRef.current = "";
+                    setKeyInfoDropTargetId("");
+                  }}
+                >
+                  <div>
+                    <h3>{item.title}</h3>
+                    {item.description ? (
+                      <p className="item-meta key-info-description">{item.description}</p>
+                    ) : null}
+                  </div>
+                  <div className="company-list-actions">
+                    <button
+                      className="compact-button key-info-icon-button"
+                      type="button"
+                      aria-label={`Edit ${item.title}`}
+                      disabled={savingKeyInfo || isOffline}
+                      onClick={() => startEditingKeyInfo(item)}
+                    >
+                      <CapcomIcon name="edit" size={16} />
+                      <span className="button-label">Edit</span>
+                    </button>
+                    <button
+                      className="compact-button key-info-icon-button"
+                      type="button"
+                      aria-label={`Delete ${item.title}`}
+                      disabled={deletingKeyInfoId === item.id || isOffline}
+                      onClick={() => removeKeyInfo(item.id)}
+                    >
+                      <CapcomIcon name="delete" size={16} />
+                      <span className="button-label">
+                        {deletingKeyInfoId === item.id ? "Deleting..." : "Delete"}
+                      </span>
+                    </button>
+                  </div>
+                </article>
+              ))}
+            </div>
+          ) : null}
+
+          {keyInfoFormMode ? (
+            <Modal
+              title={editingKeyInfoId ? "" : "Add key info"}
+              subtitle=""
+              labelledBy="keyInfoFormTitle"
+              closeLabel="Close key info form"
+              onClose={resetKeyInfoForm}
+            >
+              <form className="company-contact-form" onSubmit={saveKeyInfo}>
+                <div className="form-grid">
+                  <div className="form-row full">
+                    <label htmlFor="keyInfoTitle">Title</label>
+                    <input
+                      id="keyInfoTitle"
+                      value={keyInfoForm.title}
+                      disabled={savingKeyInfo || isOffline}
+                      onChange={(event) => updateKeyInfoFormField("title", event.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="form-row full">
+                    <label htmlFor="keyInfoDescription">Description</label>
+                    <textarea
+                      id="keyInfoDescription"
+                      value={keyInfoForm.description}
+                      disabled={savingKeyInfo || isOffline}
+                      onChange={(event) => updateKeyInfoFormField("description", event.target.value)}
+                    />
+                  </div>
+                </div>
+                <div className="actions">
+                  <button
+                    className="button"
+                    type="submit"
+                    disabled={savingKeyInfo || isOffline}
+                  >
+                    {savingKeyInfo ? "Saving..." : editingKeyInfoId ? "Save key info" : "Create"}
+                  </button>
+                  <button
+                    className="button secondary"
+                    type="button"
+                    disabled={savingKeyInfo || isOffline}
+                    onClick={resetKeyInfoForm}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </Modal>
+          ) : null}
         </div>
       ) : null}
     </section>

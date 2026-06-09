@@ -21,6 +21,46 @@ const emptyForm = {
   scheduleEndDate: "",
 };
 
+function formatDateOrdinal(date) {
+  const day = date.getDate();
+  const suffix =
+    day % 10 === 1 && day !== 11 ? "st" :
+    day % 10 === 2 && day !== 12 ? "nd" :
+    day % 10 === 3 && day !== 13 ? "rd" :
+    "th";
+  return `${day}${suffix}`;
+}
+
+function formatFriendlyDate(dateString) {
+  if (!dateString) return "";
+  const date = new Date(`${dateString}T00:00:00`);
+  const month = new Intl.DateTimeFormat("en-GB", { month: "long" }).format(date);
+  return `${formatDateOrdinal(date)} ${month} ${date.getFullYear()}`;
+}
+
+function formatEventDateRange(startDateString, endDateString) {
+  if (!startDateString && !endDateString) return "";
+  if (!startDateString) return formatFriendlyDate(endDateString);
+  if (!endDateString || startDateString === endDateString) return formatFriendlyDate(startDateString);
+
+  const startDate = new Date(`${startDateString}T00:00:00`);
+  const endDate = new Date(`${endDateString}T00:00:00`);
+  const startMonth = new Intl.DateTimeFormat("en-GB", { month: "long" }).format(startDate);
+  const endMonth = new Intl.DateTimeFormat("en-GB", { month: "long" }).format(endDate);
+  const startYear = startDate.getFullYear();
+  const endYear = endDate.getFullYear();
+
+  if (startYear === endYear && startMonth === endMonth) {
+    return `${formatDateOrdinal(startDate)} to ${formatDateOrdinal(endDate)} ${endMonth} ${endYear}`;
+  }
+
+  if (startYear === endYear) {
+    return `${formatDateOrdinal(startDate)} ${startMonth} to ${formatDateOrdinal(endDate)} ${endMonth} ${endYear}`;
+  }
+
+  return `${formatDateOrdinal(startDate)} ${startMonth} ${startYear} to ${formatDateOrdinal(endDate)} ${endMonth} ${endYear}`;
+}
+
 export default function EventListPage() {
   const {
     userProfile,
@@ -166,6 +206,7 @@ export default function EventListPage() {
         <button
           className="button"
           type="button"
+          aria-label="Create event"
           disabled={isOffline || profileLoading || !userCanCreateEvents}
           onClick={() => {
             setError("");
@@ -178,7 +219,7 @@ export default function EventListPage() {
           }}
         >
           <CapcomIcon name="add" size={18} weight="bold" />
-          Create Event
+          <span className="button-label">Create Event</span>
         </button>
       </div>
 
@@ -206,9 +247,8 @@ export default function EventListPage() {
               <div>
               <p className="item-title">{event.name}</p>
               <p className="item-meta">
-                {event.clientName} | {event.startDate} to {event.endDate}
+                {event.clientName} | {formatEventDateRange(event.startDate, event.endDate)}
               </p>
-              <p className="item-meta">Client ID: {event.clientId || "Missing"}</p>
               {isSuperAdmin && !event.clientId ? (
                 <p className="inline-warning">Missing client assignment</p>
               ) : null}

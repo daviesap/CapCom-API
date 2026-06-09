@@ -385,15 +385,15 @@ export default function AdminPage() {
     }
   }, [activeAdminSection, isSuperAdmin]);
 
+  const editingUserProfile = editingUserId
+    ? userProfiles.find((profile) => profile.id === editingUserId)
+    : null;
+  const editingClient = editingClientId
+    ? clients.find((client) => client.id === editingClientId)
+    : null;
+
   return (
     <section className="page">
-      <div className="page-header">
-        <div>
-          <h1 className="page-title">Admin</h1>
-          <p className="page-subtitle">Access-controlled administration tools.</p>
-        </div>
-      </div>
-
       {!profileLoading && !canManageUsers ? (
         <div className="panel placeholder-panel">
           <CapcomIcon name="admin" size={32} weight="duotone" />
@@ -433,17 +433,17 @@ export default function AdminPage() {
             <div className="panel-heading">
               <div>
                 <h2>Clients</h2>
-                <p className="page-subtitle">Available when creating SuperAdmin events.</p>
               </div>
               {!isClientFormOpen ? (
                 <button
-                  className="button"
+                  className="button admin-add-client-button"
                   type="button"
+                  aria-label="Create new client"
                   disabled={clientSaving}
                   onClick={openNewClientForm}
                 >
                   <CapcomIcon name="add" size={18} weight="bold" />
-                  Create New Client
+                  <span className="button-label">Create New Client</span>
                 </button>
               ) : null}
             </div>
@@ -453,8 +453,8 @@ export default function AdminPage() {
 
             {isClientFormOpen ? (
               <Modal
-                title={editingClientId ? "Edit Client" : "Create New Client"}
-                subtitle="Clients can be deactivated, not deleted."
+                title={editingClientId ? "" : "Create New Client"}
+                subtitle=""
                 labelledBy="clientFormTitle"
                 closeLabel="Close client form"
                 onClose={closeClientForm}
@@ -510,17 +510,23 @@ export default function AdminPage() {
                       onChange={(event) => updateClientField("secondaryColour", event.target.value)}
                     />
                   </div>
-                  <label className="checkbox-row form-row full" htmlFor="isActive">
-                    <input
-                      id="isActive"
-                      type="checkbox"
-                      checked={clientForm.isActive}
-                      disabled={clientSaving}
-                      onChange={(event) => updateClientField("isActive", event.target.checked)}
-                    />
-                    <span>Client is active</span>
-                  </label>
                 </div>
+
+                {editingClient ? (
+                  <div className="actions admin-modal-secondary-actions">
+                    <button
+                      className={editingClient.isActive !== false ? "button secondary" : "button"}
+                      type="button"
+                      disabled={clientSaving}
+                      onClick={async () => {
+                        await toggleClientActive(editingClient);
+                        updateClientField("isActive", editingClient.isActive === false);
+                      }}
+                    >
+                      {editingClient.isActive !== false ? "Deactivate" : "Reactivate"}
+                    </button>
+                  </div>
+                ) : null}
 
                 <div className="actions">
                   <button className="button" type="submit" disabled={clientSaving}>
@@ -546,34 +552,27 @@ export default function AdminPage() {
             <div className="client-list">
               {clients.map((client) => (
                 <article className="client-list-row" key={client.id}>
-                  <div>
-                    <div className="client-title-line">
-                      <h3>{client.clientName}</h3>
-                      <span className={client.isActive !== false ? "status-pill active" : "status-pill inactive"}>
-                        {client.isActive !== false ? "Active" : "Inactive"}
-                      </span>
+                  <div className="client-card-main">
+                    <div>
+                      <div className="client-title-line">
+                        <h3>{client.clientName}</h3>
+                        <span className={client.isActive !== false ? "status-pill active" : "status-pill inactive"}>
+                          {client.isActive !== false ? "Active" : "Inactive"}
+                        </span>
+                      </div>
+                      <p className="item-meta">
+                        {client.clientSlug || "No slug"}
+                      </p>
                     </div>
-                    <p className="item-meta">
-                      {client.clientSlug || "No slug"} | {client.id}
-                    </p>
-                  </div>
-                  <div className="client-actions">
                     <button
-                      className="button secondary"
+                      className="button secondary client-edit-button"
                       type="button"
+                      aria-label={`Edit ${client.clientName}`}
                       disabled={clientSaving}
                       onClick={() => startEditingClient(client)}
                     >
-                      <CapcomIcon name="edit" size={16} />
-                      Edit
-                    </button>
-                    <button
-                      className={client.isActive !== false ? "button secondary" : "button"}
-                      type="button"
-                      disabled={clientSaving}
-                      onClick={() => toggleClientActive(client)}
-                    >
-                      {client.isActive !== false ? "Deactivate" : "Reactivate"}
+                      <CapcomIcon name="edit" size={18} weight="bold" />
+                      <span className="button-label">Edit</span>
                     </button>
                   </div>
                 </article>
@@ -589,19 +588,17 @@ export default function AdminPage() {
             <div className="panel-heading">
               <div>
                 <h2>Users</h2>
-                <p className="page-subtitle">
-                  New users are created in Firebase Auth and Firestore together.
-                </p>
               </div>
               {!isUserFormOpen ? (
                 <button
-                  className="button"
+                  className="button admin-add-user-button"
                   type="button"
+                  aria-label="Add new user"
                   disabled={userSaving}
                   onClick={openNewUserForm}
                 >
                   <CapcomIcon name="add" size={18} weight="bold" />
-                  Add New User
+                  <span className="button-label">Add New User</span>
                 </button>
               ) : null}
             </div>
@@ -611,29 +608,14 @@ export default function AdminPage() {
 
             {isUserFormOpen ? (
               <Modal
-                title={editingUserId ? "Edit User Profile" : "Add New User"}
-                subtitle={
-                  editingUserId
-                    ? "Edit the Firestore profile for this Firebase Auth user."
-                    : "Create a Firebase Auth user and matching Firestore profile."
-                }
+                title={editingUserId ? "" : "Add New User"}
+                subtitle=""
                 labelledBy="userFormTitle"
                 closeLabel="Close user form"
                 onClose={closeUserForm}
               >
               <form className="admin-inline-form" onSubmit={handleUserSubmit}>
                 <div className="form-grid">
-                  {editingUserId ? (
-                    <div className="form-row full">
-                      <label htmlFor="uid">Firebase Auth UID</label>
-                      <input
-                        id="uid"
-                        value={userForm.uid}
-                        disabled
-                        required
-                      />
-                    </div>
-                  ) : null}
                   <div className="form-row">
                     <label htmlFor="email">Email</label>
                     <input
@@ -697,23 +679,38 @@ export default function AdminPage() {
                       />
                     )}
                   </div>
-                  {editingUserId ? (
-                    <label className="checkbox-row form-row full" htmlFor="userIsActive">
-                      <input
-                        id="userIsActive"
-                        type="checkbox"
-                        checked={userForm.isActive}
-                        disabled={userSaving}
-                        onChange={(event) => updateUserField("isActive", event.target.checked)}
-                      />
-                      <span>User profile is active</span>
-                    </label>
-                  ) : null}
                 </div>
+
+                {editingUserProfile ? (
+                  <div className="actions admin-modal-secondary-actions">
+                    <button
+                      className="button secondary"
+                      type="button"
+                      disabled={userSaving || !editingUserProfile.email}
+                      onClick={() => sendPasswordReset(editingUserProfile)}
+                    >
+                      Send Password Reset
+                    </button>
+                    <button
+                      className={editingUserProfile.isActive !== false ? "button secondary" : "button"}
+                      type="button"
+                      disabled={userSaving}
+                      onClick={async () => {
+                        await toggleUserActive(editingUserProfile);
+                        updateUserField("isActive", editingUserProfile.isActive === false);
+                      }}
+                    >
+                      {editingUserProfile.isActive !== false ? "Deactivate" : "Reactivate"}
+                    </button>
+                  </div>
+                ) : null}
 
                 <div className="actions">
                   <button className="button" type="submit" disabled={userSaving}>
-                    {userSaving ? "Saving..." : editingUserId ? "Save User" : "Create Auth User"}
+                    {!userSaving ? (
+                      <CapcomIcon name="add" size={18} weight="bold" />
+                    ) : null}
+                    {userSaving ? "Saving..." : editingUserId ? "Save User" : "Create"}
                   </button>
                   <button
                     className="button secondary"
@@ -737,42 +734,27 @@ export default function AdminPage() {
                 const canEditProfile = canManageUserProfile(userProfile, profile);
                 return (
                   <article className="client-list-row" key={profile.id}>
-                    <div>
-                      <div className="client-title-line">
-                        <h3>{profile.displayName || profile.email}</h3>
-                        <span className={profile.isActive !== false ? "status-pill active" : "status-pill inactive"}>
-                          {profile.isActive !== false ? "Active" : "Inactive"}
-                        </span>
+                    <div className="client-card-main">
+                      <div>
+                        <div className="client-title-line">
+                          <h3>{profile.displayName || profile.email}</h3>
+                          <span className={profile.isActive !== false ? "status-pill active" : "status-pill inactive"}>
+                            {profile.isActive !== false ? "Active" : "Inactive"}
+                          </span>
+                        </div>
+                        <p className="item-meta">
+                          {profile.email} | {profile.role}
+                        </p>
                       </div>
-                      <p className="item-meta">
-                        {profile.email} | {profile.role} | {getClientName(clients, profile.clientId)}
-                      </p>
-                      <p className="item-meta">{profile.id}</p>
-                    </div>
-                    <div className="client-actions">
                       <button
-                        className="button secondary"
+                        className="button secondary client-edit-button"
                         type="button"
+                        aria-label={`Edit ${profile.displayName || profile.email}`}
                         disabled={userSaving || !canEditProfile}
                         onClick={() => startEditingUser(profile)}
                       >
-                        Edit
-                      </button>
-                      <button
-                        className="button secondary"
-                        type="button"
-                        disabled={userSaving || !canEditProfile || !profile.email}
-                        onClick={() => sendPasswordReset(profile)}
-                      >
-                        Send Reset
-                      </button>
-                      <button
-                        className={profile.isActive !== false ? "button secondary" : "button"}
-                        type="button"
-                        disabled={userSaving || !canEditProfile}
-                        onClick={() => toggleUserActive(profile)}
-                      >
-                        {profile.isActive !== false ? "Deactivate" : "Reactivate"}
+                        <CapcomIcon name="edit" size={18} weight="bold" />
+                        <span className="button-label">Edit</span>
                       </button>
                     </div>
                   </article>

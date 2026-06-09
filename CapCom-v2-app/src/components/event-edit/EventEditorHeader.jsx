@@ -1,5 +1,5 @@
 import Modal from "../Modal.jsx";
-import ScheduleCacheStatus from "../ScheduleCacheStatus.jsx";
+import { CapcomIcon } from "../../icons/capcomIcons.jsx";
 
 export default function EventEditorHeader({
   eventId,
@@ -35,17 +35,18 @@ export default function EventEditorHeader({
             <p className="event-edit-date-range">
               {dateRangeLabel || "No event dates"}
             </p>
-            <ScheduleCacheStatus eventId={eventId} />
           </div>
         </div>
         {!isEditing ? (
           <button
-            className="button secondary"
+            className="button secondary event-header-edit-button"
             type="button"
+            aria-label="Edit event"
             disabled={isOffline}
             onClick={onStartEditing}
           >
-            Edit
+            <CapcomIcon name="edit" size={18} weight="bold" />
+            <span className="button-label">Edit</span>
           </button>
         ) : null}
       </div>

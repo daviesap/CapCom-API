@@ -359,6 +359,18 @@ service cloud.firestore {
         && canManageEvent(resource.data.eventId);
     }
 
+    match /keyInfo/{keyInfoId} {
+      allow get, list: if resource.data.eventId is string
+        && canReadEvent(resource.data.eventId);
+      allow create: if request.resource.data.eventId is string
+        && canManageEvent(request.resource.data.eventId);
+      allow update: if resource.data.eventId is string
+        && request.resource.data.eventId == resource.data.eventId
+        && canManageEvent(resource.data.eventId);
+      allow delete: if resource.data.eventId is string
+        && canManageEvent(resource.data.eventId);
+    }
+
     match /filteredViews/{filteredViewId} {
       allow get, list: if canManageFilteredViewData(resource.data);
       allow create: if canManageFilteredViewData(request.resource.data);

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "../auth/AuthProvider.jsx";
 import Loading from "../components/Loading.jsx";
 import Modal from "../components/Modal.jsx";
+import { CapcomIcon } from "../icons/capcomIcons.jsx";
 import useOnlineStatus from "../hooks/useOnlineStatus.js";
 import { getClient, getClients } from "../services/clientService.js";
 import {
@@ -211,12 +212,6 @@ export default function CompaniesPage() {
 
   return (
     <main className="page">
-      <div className="page-header">
-        <div>
-          <h1 className="page-title">Companies</h1>
-        </div>
-      </div>
-
       {isOffline ? (
         <p className="message offline-message">Offline mode: company records are read-only.</p>
       ) : null}
@@ -225,9 +220,6 @@ export default function CompaniesPage() {
 
       <section className="panel">
         <div className="panel-heading">
-          <div>
-            <h2>{selectedClient?.clientName || "Companies"}</h2>
-          </div>
           <div className="company-toolbar">
             {isSuperAdmin ? (
               <div className="form-row company-client-select">
@@ -251,10 +243,12 @@ export default function CompaniesPage() {
               <button
                 className="button"
                 type="button"
+                aria-label="Add company"
                 disabled={isOffline || !selectedClientId}
                 onClick={startAddingCompany}
               >
-                Add company
+                <CapcomIcon name="add" size={18} weight="bold" />
+                <span className="button-label">Add company</span>
               </button>
             ) : null}
           </div>
@@ -266,29 +260,35 @@ export default function CompaniesPage() {
           <div className="company-list">
             {companies.map((company) => (
               <div className="company-list-row" key={company.id}>
-                <div>
+                <div className="company-list-main">
                   <h3>{company.companyName}</h3>
-                  <p className="item-meta company-address">
-                    {company.address || "No address"}
-                  </p>
+                  {company.address ? (
+                    <p className="item-meta company-address">{company.address}</p>
+                  ) : null}
                 </div>
                 {canManageCompanies ? (
                   <div className="company-list-actions">
                     <button
-                      className="compact-button"
+                      className="compact-button company-icon-button"
                       type="button"
+                      aria-label={`Edit ${company.companyName}`}
                       disabled={isOffline}
                       onClick={() => startEditingCompany(company)}
                     >
-                      Edit
+                      <CapcomIcon name="edit" size={18} weight="bold" />
                     </button>
                     <button
-                      className="compact-button"
+                      className="compact-button company-icon-button"
                       type="button"
+                      aria-label={
+                        deletingCompanyId === company.id
+                          ? `Deleting ${company.companyName}`
+                          : `Delete ${company.companyName}`
+                      }
                       disabled={deletingCompanyId === company.id || isOffline}
                       onClick={() => removeCompany(company.id)}
                     >
-                      {deletingCompanyId === company.id ? "Deleting..." : "Delete"}
+                      <CapcomIcon name="delete" size={18} weight="bold" />
                     </button>
                   </div>
                 ) : null}

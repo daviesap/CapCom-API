@@ -79,6 +79,13 @@ import {
   getFilteredViews,
   updateFilteredView,
 } from "../services/filteredViewService.js";
+import {
+  createKeyInfo,
+  deleteKeyInfo,
+  getKeyInfo,
+  updateKeyInfo,
+  updateKeyInfoOrder,
+} from "../services/keyInfoService.js";
 import { getShareArchive } from "../services/shareArchiveService.js";
 import { getCompanies } from "../services/companyService.js";
 import { generateHomeForEvent } from "../services/functionService.js";
@@ -139,8 +146,9 @@ const emptyCompanyContactForm = {
   role: "",
 };
 
-const emptyEventContactRoleForm = {
-  role: "",
+const emptyKeyInfoForm = {
+  title: "",
+  description: "",
 };
 
 const emptyFilteredViewForm = {
@@ -417,16 +425,12 @@ export default function EventEditPage() {
   const [truckForm, setTruckForm] = useState(emptyTruckForm);
   const [truckFormMode, setTruckFormMode] = useState("");
   const [companyContactForm, setCompanyContactForm] = useState(emptyCompanyContactForm);
-  const [eventContactRoleForm, setEventContactRoleForm] = useState(
-    emptyEventContactRoleForm
-  );
   const [editingTagId, setEditingTagId] = useState("");
   const [editingTruckSizeId, setEditingTruckSizeId] = useState("");
   const [editingTruckId, setEditingTruckId] = useState("");
   const [editingLocationId, setEditingLocationId] = useState("");
   const [editingCompanyContactId, setEditingCompanyContactId] = useState("");
   const [editingCompanyContactCompanyId, setEditingCompanyContactCompanyId] = useState("");
-  const [editingEventContactCompanyId, setEditingEventContactCompanyId] = useState("");
   const [editingEventContactId, setEditingEventContactId] = useState("");
   const [editingDetailCell, setEditingDetailCell] = useState(null);
   const [openActionMenuId, setOpenActionMenuId] = useState("");
@@ -467,6 +471,14 @@ export default function EventEditPage() {
   const [savingContactCompanyOrder, setSavingContactCompanyOrder] = useState(false);
   const [filteredViews, setFilteredViews] = useState([]);
   const [filteredViewsLoading, setFilteredViewsLoading] = useState(false);
+  const [keyInfoItems, setKeyInfoItems] = useState([]);
+  const [keyInfoLoading, setKeyInfoLoading] = useState(false);
+  const [keyInfoForm, setKeyInfoForm] = useState(emptyKeyInfoForm);
+  const [keyInfoFormMode, setKeyInfoFormMode] = useState("");
+  const [editingKeyInfoId, setEditingKeyInfoId] = useState("");
+  const [savingKeyInfo, setSavingKeyInfo] = useState(false);
+  const [deletingKeyInfoId, setDeletingKeyInfoId] = useState("");
+  const [reorderingKeyInfoId, setReorderingKeyInfoId] = useState("");
   const [shareArchive, setShareArchive] = useState([]);
   const [shareArchiveLoading, setShareArchiveLoading] = useState(false);
   const [filteredViewFormMode, setFilteredViewFormMode] = useState("");
@@ -491,6 +503,7 @@ export default function EventEditPage() {
   const draggedLocationIdRef = useRef("");
   const draggedContactCompanyIdRef = useRef("");
   const draggedCompanyContactIdRef = useRef("");
+  const draggedKeyInfoIdRef = useRef("");
   const canManageCompanyContacts = isSuperAdmin || isClientAdmin;
   const canManageFilteredViews = isSuperAdmin || isClientAdmin || isEventAdmin(userProfile);
   const canUpdateShareOutput = isSuperAdmin || isClientAdmin;
@@ -513,6 +526,7 @@ export default function EventEditPage() {
           setTruckSizesLoading(false);
           setTrucksLoading(false);
           setCompaniesLoading(false);
+          setKeyInfoLoading(false);
           setShareArchiveLoading(false);
           setError("");
           setWarning("");
@@ -551,6 +565,7 @@ export default function EventEditPage() {
         setSavedEventForm(loadedEventForm);
         setScheduleDays(days);
         setFilteredViews([]);
+        setKeyInfoItems([]);
         setShareArchive([]);
         setEventContactsByCompanyId({});
         setLoading(false);
@@ -621,6 +636,13 @@ export default function EventEditPage() {
             errorMessage: "Could not load filtered views. Other event data is still available.",
           }),
           loadOptionalEditorData({
+            label: "key info",
+            setLoadingState: setKeyInfoLoading,
+            loadData: () => getKeyInfo(eventId),
+            applyData: setKeyInfoItems,
+            errorMessage: "Could not load key info. Other event data is still available.",
+          }),
+          loadOptionalEditorData({
             label: "share archive",
             setLoadingState: setShareArchiveLoading,
             loadData: () => getShareArchive(eventId),
@@ -648,6 +670,7 @@ export default function EventEditPage() {
           setTruckSizesLoading(false);
           setTrucksLoading(false);
           setCompaniesLoading(false);
+          setKeyInfoLoading(false);
           setShareArchiveLoading(false);
         }
       }
@@ -1492,20 +1515,11 @@ export default function EventEditPage() {
     setCompanyContactForm((current) => ({ ...current, [field]: value }));
   };
 
-  const updateEventContactRoleFormField = (field, value) => {
-    setEventContactRoleForm((current) => ({ ...current, [field]: value }));
-  };
-
   const resetCompanyContactForm = () => {
     setEditingCompanyContactId("");
     setEditingCompanyContactCompanyId("");
-    setCompanyContactForm(emptyCompanyContactForm);
-  };
-
-  const resetEventContactRoleForm = () => {
     setEditingEventContactId("");
-    setEditingEventContactCompanyId("");
-    setEventContactRoleForm(emptyEventContactRoleForm);
+    setCompanyContactForm(emptyCompanyContactForm);
   };
 
   const setEventContactHiddenState = (contactId, isHidden) => {
@@ -1544,21 +1558,11 @@ export default function EventEditPage() {
     if (!canManageCompanyContacts || isOffline) return;
     setEditingCompanyContactId(contact.companyContactId || "");
     setEditingCompanyContactCompanyId(companyId);
+    setEditingEventContactId(contact.id || "");
     setCompanyContactForm({
       name: contact.name || "",
       email: contact.email || "",
       phone: contact.phone || "",
-      role: contact.role || "",
-    });
-    setMessage("");
-    setError("");
-  };
-
-  const startEditingEventContactRole = (companyId, contact) => {
-    if (!canManageCompanyContacts || isOffline) return;
-    setEditingEventContactCompanyId(companyId);
-    setEditingEventContactId(contact.id);
-    setEventContactRoleForm({
       role: contact.role || "",
     });
     setMessage("");
@@ -1599,6 +1603,9 @@ export default function EventEditPage() {
           phone,
           role,
         });
+        if (editingEventContactId) {
+          await updateEventContact(editingEventContactId, { role });
+        }
         setMessage("Company contact saved.");
       } else {
         eventContactSeedErrorCompanyIdsRef.current.delete(
@@ -1652,37 +1659,6 @@ export default function EventEditPage() {
     }
   };
 
-  const saveEventContactRole = async (submitEvent) => {
-    submitEvent.preventDefault();
-    if (isOffline) {
-      setError("Editing is disabled while offline.");
-      return;
-    }
-    if (!canManageCompanyContacts) {
-      setError("Your role cannot manage company contacts.");
-      return;
-    }
-    if (!editingEventContactId) return;
-
-    const role = eventContactRoleForm.role.trim();
-
-    setSavingEventContact(true);
-    setMessage("");
-    setError("");
-
-    try {
-      await updateEventContact(editingEventContactId, { role });
-      setMessage("Event contact role saved.");
-      resetEventContactRoleForm();
-      await reloadEventContacts();
-    } catch (contactError) {
-      console.error(contactError);
-      setError("Could not save event contact role.");
-    } finally {
-      setSavingEventContact(false);
-    }
-  };
-
   const toggleEventContactHidden = async (contactId) => {
     const targetContact = Object.values(eventContactsByCompanyId)
       .flat()
@@ -1712,6 +1688,119 @@ export default function EventEditPage() {
           ? "You do not have permission to update this event contact."
           : "Could not update event contact visibility."
       );
+    }
+  };
+
+  const resetKeyInfoForm = () => {
+    setKeyInfoFormMode("");
+    setEditingKeyInfoId("");
+    setKeyInfoForm(emptyKeyInfoForm);
+  };
+
+  const updateKeyInfoFormField = (field, value) => {
+    setKeyInfoForm((current) => ({
+      ...current,
+      [field]: value,
+    }));
+  };
+
+  const startAddingKeyInfo = () => {
+    if (isOffline) return;
+    resetKeyInfoForm();
+    setKeyInfoFormMode("create");
+    setError("");
+  };
+
+  const startEditingKeyInfo = (item) => {
+    if (isOffline) return;
+    setKeyInfoFormMode("edit");
+    setEditingKeyInfoId(item.id);
+    setKeyInfoForm({
+      title: item.title || "",
+      description: item.description || "",
+    });
+    setError("");
+  };
+
+  const saveKeyInfo = async (submitEvent) => {
+    submitEvent.preventDefault();
+    if (isOffline) {
+      setError("Editing is disabled while offline.");
+      return;
+    }
+
+    const title = keyInfoForm.title.trim();
+    const description = keyInfoForm.description.trim();
+    if (!title) {
+      setError("Key info title is required.");
+      return;
+    }
+
+    setSavingKeyInfo(true);
+    setError("");
+
+    try {
+      if (editingKeyInfoId) {
+        await updateKeyInfo(editingKeyInfoId, { title, description });
+      } else {
+        await createKeyInfo({ eventId, title, description });
+      }
+
+      resetKeyInfoForm();
+      setKeyInfoItems(await getKeyInfo(eventId));
+    } catch (keyInfoError) {
+      console.error(keyInfoError);
+      setError("Could not save key info.");
+    } finally {
+      setSavingKeyInfo(false);
+    }
+  };
+
+  const removeKeyInfo = async (keyInfoId) => {
+    if (isOffline) return;
+
+    setDeletingKeyInfoId(keyInfoId);
+    setError("");
+
+    try {
+      await deleteKeyInfo(keyInfoId);
+      if (editingKeyInfoId === keyInfoId) resetKeyInfoForm();
+      setKeyInfoItems(await getKeyInfo(eventId));
+    } catch (keyInfoError) {
+      console.error(keyInfoError);
+      setError("Could not delete key info.");
+    } finally {
+      setDeletingKeyInfoId("");
+    }
+  };
+
+  const reorderKeyInfo = async (draggedKeyInfoId, targetKeyInfoId) => {
+    if (!draggedKeyInfoId || !targetKeyInfoId || draggedKeyInfoId === targetKeyInfoId || isOffline) {
+      return;
+    }
+
+    const currentItems = keyInfoItems;
+    const draggedIndex = currentItems.findIndex((item) => item.id === draggedKeyInfoId);
+    const targetIndex = currentItems.findIndex((item) => item.id === targetKeyInfoId);
+    if (draggedIndex < 0 || targetIndex < 0) return;
+
+    const nextItems = [...currentItems];
+    const [draggedItem] = nextItems.splice(draggedIndex, 1);
+    nextItems.splice(targetIndex, 0, draggedItem);
+
+    setKeyInfoItems(nextItems.map((item, index) => ({ ...item, sortOrder: index })));
+    setReorderingKeyInfoId(draggedKeyInfoId);
+    setError("");
+
+    try {
+      await updateKeyInfoOrder(nextItems);
+      setKeyInfoItems(await getKeyInfo(eventId));
+    } catch (keyInfoError) {
+      console.error(keyInfoError);
+      setKeyInfoItems(currentItems);
+      setError("Could not reorder key info.");
+    } finally {
+      setReorderingKeyInfoId("");
     }
   };
 
@@ -3779,10 +3868,18 @@ export default function EventEditPage() {
         setActiveInfoTab={setActiveInfoTab}
         detailsLoading={detailsLoading}
         companiesLoading={companiesLoading}
+        keyInfoItems={keyInfoItems}
+        keyInfoLoading={keyInfoLoading}
+        keyInfoForm={keyInfoForm}
+        keyInfoFormMode={keyInfoFormMode}
+        editingKeyInfoId={editingKeyInfoId}
+        savingKeyInfo={savingKeyInfo}
+        deletingKeyInfoId={deletingKeyInfoId}
+        reorderingKeyInfoId={reorderingKeyInfoId}
+        draggedKeyInfoIdRef={draggedKeyInfoIdRef}
         contactCompanies={contactCompanies}
         companyContactsByCompanyId={eventContactsByCompanyId}
         editingCompanyContactCompanyId={editingCompanyContactCompanyId}
-        editingEventContactCompanyId={editingEventContactCompanyId}
         openContactCompanyIds={openContactCompanyIds}
         canManageContactCompanyOrder={canManageContactCompanyOrder}
         canManageCompanyContacts={canManageCompanyContacts}
@@ -3796,7 +3893,6 @@ export default function EventEditPage() {
         draggedCompanyContactIdRef={draggedCompanyContactIdRef}
         savingCompanyContact={savingCompanyContact}
         companyContactForm={companyContactForm}
-        eventContactForm={eventContactRoleForm}
         editingCompanyContactId={editingCompanyContactId}
         reorderContactCompany={reorderContactCompany}
         reorderCompanyContact={reorderCompanyContact}
@@ -3805,15 +3901,18 @@ export default function EventEditPage() {
         toggleContactCompanyOpen={toggleContactCompanyOpen}
         startAddingCompanyContact={startAddingCompanyContact}
         startEditingCompanyContact={startEditingCompanyContact}
-        startEditingEventContactRole={startEditingEventContactRole}
         updateCompanyContactFormField={updateCompanyContactFormField}
-        updateEventContactRoleFormField={updateEventContactRoleFormField}
         saveCompanyContact={saveCompanyContact}
-        saveEventContactRole={saveEventContactRole}
-        resetEventContactRoleForm={resetEventContactRoleForm}
         toggleEventContactHidden={toggleEventContactHidden}
         savingEventContact={savingEventContact}
         resetCompanyContactForm={resetCompanyContactForm}
+        startAddingKeyInfo={startAddingKeyInfo}
+        startEditingKeyInfo={startEditingKeyInfo}
+        updateKeyInfoFormField={updateKeyInfoFormField}
+        saveKeyInfo={saveKeyInfo}
+        removeKeyInfo={removeKeyInfo}
+        reorderKeyInfo={reorderKeyInfo}
+        resetKeyInfoForm={resetKeyInfoForm}
       />
       ) : null}
 

@@ -15,7 +15,6 @@ export default function Layout() {
           <img src="/flair-logo.png" alt="Flair" className="brand-logo" />
           <span className="brand-short" aria-hidden="true">CC</span>
         </Link>
-        <ConnectionStatus />
       </header>
 
       <aside className="desktop-sidebar" aria-label="Primary navigation">
