@@ -41,6 +41,11 @@ function normaliseSortOrder(value, fallback = 1) {
   return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
 }
 
+function normaliseNumber(value, fallback = 0) {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
+
 function getArrayValue(primary, fallback) {
   if (Array.isArray(primary)) return primary.filter(Boolean).map((value) => String(value));
   if (typeof primary === "string") {
@@ -51,6 +56,95 @@ function getArrayValue(primary, fallback) {
     return fallback.split(",").map((entry) => entry.trim()).filter(Boolean);
   }
   return [];
+}
+
+function readGdprValue(contact) {
+  if (typeof contact?.GDPR === "boolean") return contact.GDPR;
+  if (typeof contact?.gdpr === "boolean") return contact.gdpr;
+  if (typeof contact?.GDPR === "string") return contact.GDPR.trim().toLowerCase() === "true";
+  if (typeof contact?.gdpr === "string") return contact.gdpr.trim().toLowerCase() === "true";
+  return true;
+}
+
+export function buildKeyPeople({ eventRecord = {}, companies = [], eventContacts = [] }) {
+  const companyOrder = Array.isArray(eventRecord.contactCompanyOrder)
+    ? eventRecord.contactCompanyOrder.filter(Boolean).map((companyId) => String(companyId))
+    : [];
+  const orderByCompanyId = new Map(companyOrder.map((companyId, companyIndex) => [companyId, companyIndex]));
+  const companiesById = new Map(companies.map((company) => [company.id, company]));
+
+  const orderedCompanies = companies
+    .map((company) => ({
+      company,
+      order: orderByCompanyId.has(company.id)
+        ? orderByCompanyId.get(company.id)
+        : Number.MAX_SAFE_INTEGER,
+    }))
+    .sort((companyA, companyB) => {
+      if (companyA.order !== companyB.order) return companyA.order - companyB.order;
+      return String(companyA.company.companyName || "").localeCompare(
+        String(companyB.company.companyName || "")
+      );
+    });
+
+  const companySortOrderById = new Map(
+    orderedCompanies.map(({ company }, companyIndex) => [company.id, companyIndex])
+  );
+  const visibleContactsByCompanyId = new Map();
+
+  eventContacts
+    .filter((contact) => contact?.isHidden !== true)
+    .forEach((contact, contactIndex) => {
+      const companyId = String(contact.companyId || "");
+      if (!companyId || !companiesById.has(companyId)) return;
+      const name = normaliseString(contact.name);
+      if (!name) return;
+
+      const people = visibleContactsByCompanyId.get(companyId) || [];
+      const person = {
+        name,
+        role: normaliseString(contact.role),
+        sortOrder: normaliseNumber(contact.sortOrder, contactIndex),
+        GDPR: readGdprValue(contact),
+      };
+      const phone = normaliseString(contact.phone);
+      const email = normaliseString(contact.email);
+      if (phone) person.phone = phone;
+      if (email) person.email = email;
+      people.push(person);
+      visibleContactsByCompanyId.set(companyId, people);
+    });
+
+  return orderedCompanies
+    .map(({ company }) => {
+      const people = (visibleContactsByCompanyId.get(company.id) || [])
+        .sort((personA, personB) => {
+          if (personA.sortOrder !== personB.sortOrder) return personA.sortOrder - personB.sortOrder;
+          return String(personA.name || "").localeCompare(String(personB.name || ""));
+        });
+
+      if (people.length === 0) return null;
+      return {
+        company: company.companyName || "",
+        CompanySortOrder: companySortOrderById.get(company.id) ?? 0,
+        people,
+      };
+    })
+    .filter(Boolean);
+}
+
+export function buildKeyInfo(keyInfo = []) {
+  return (Array.isArray(keyInfo) ? keyInfo : [])
+    .map((item, itemIndex) => ({
+      title: normaliseString(item.title),
+      text: normaliseString(item.text ?? item.description),
+      sortOrder: normaliseNumber(item.sortOrder, itemIndex),
+    }))
+    .filter((item) => item.title || item.text)
+    .sort((itemA, itemB) => {
+      if (itemA.sortOrder !== itemB.sortOrder) return itemA.sortOrder - itemB.sortOrder;
+      return String(itemA.title || "").localeCompare(String(itemB.title || ""));
+    });
 }
 
 function buildScheduleDetailRows({ scheduleDays, scheduleDetails, tags, locations, companies }) {
@@ -140,6 +234,7 @@ function buildFilteredViewSnapshots(filteredViews) {
       filterBox: normaliseBoolean(view.filterBox, true),
       showKeyInfo: normaliseBoolean(view.showKeyInfo, true),
       showLocations: normaliseBoolean(view.showLocations, false),
+      showContacts: normaliseBoolean(view.showContacts ?? view.includeContacts, false),
       groupPresetId: normaliseString(view.groupPresetId),
       filterTagIds: getArrayValue(view.filterTagIds, view.tagIds),
       filterLocationIds: getArrayValue(view.filterLocationIds, view.locationIds),
@@ -162,6 +257,8 @@ export function buildGenerateHomePayload({
   trucks,
   filteredViews,
   companies,
+  eventContacts = [],
+  keyInfo = [],
   callerUid,
   callerEmail,
   previousData,
@@ -182,6 +279,8 @@ export function buildGenerateHomePayload({
       name: eventRecord.name || "",
       logoUrl: eventRecord.imageUrl || eventRecord.logoUrl || "",
       header,
+      keyInfo: buildKeyInfo(keyInfo),
+      keyPeople: buildKeyPeople({ eventRecord, companies, eventContacts }),
       locations: locations
         .filter((location) => !location.parentLocationId)
         .map((location) => ({ name: location.name || "" }))

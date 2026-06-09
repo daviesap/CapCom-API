@@ -46,6 +46,12 @@ function isTruthyFlag(value) {
   return false;
 }
 
+export function getSnapshotEventKeyPeople({ snapshot = {}, keyPeople = [] } = {}) {
+  return isTruthyFlag(snapshot.showContacts) && Array.isArray(keyPeople)
+    ? keyPeople
+    : [];
+}
+
 function getEventField(jsonInput, key, fallback = "") {
   return jsonInput?.event?.[key] ?? jsonInput?.[key] ?? fallback;
 }
@@ -295,6 +301,13 @@ export async function generateHomeHandler({
 
       const prepared = {
         ...jsonInput,
+        event: {
+          ...(jsonInput.event || {}),
+          keyPeople: getSnapshotEventKeyPeople({
+            snapshot: snap,
+            keyPeople: jsonInput.event?.keyPeople,
+          }),
+        },
         groups: finalGroups,
         styles: merge({}, profilePdf.styles, jsonInput.styles || {}),
         document: merge(

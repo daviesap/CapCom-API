@@ -2118,12 +2118,6 @@ textarea {
   padding-top: 12px;
 }
 
-.company-contact-reorder-controls {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 12px;
-}
-
 .company-contact-row {
   align-items: flex-start;
   background: var(--color-surface-subtle);
@@ -2146,14 +2140,6 @@ textarea {
 
 .company-contact-hidden-label {
   color: var(--color-text-muted);
-}
-
-.draggable-contact-row {
-  cursor: grab;
-}
-
-.draggable-contact-row:active {
-  cursor: grabbing;
 }
 
 .company-contact-methods {

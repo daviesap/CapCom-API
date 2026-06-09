@@ -267,6 +267,15 @@ function hasKeyInfoContent(jsonData = {}) {
   return !!keyInfo;
 }
 
+function hasKeyPeopleContent(jsonData = {}) {
+  const keyPeople = jsonData?.event?.keyPeople;
+  return Array.isArray(keyPeople)
+    && keyPeople.some((company) =>
+      Array.isArray(company?.people)
+      && company.people.some((person) => person?.name && String(person.name).trim())
+    );
+}
+
 function shouldRenderLocationsForSnapshot(jsonData = {}) {
   const snapshots = Array.isArray(jsonData?.snapshots) ? jsonData.snapshots : null;
   if (!snapshots || snapshots.length === 0) {
@@ -625,7 +634,7 @@ export const generatePdfBuffer = async (jsonInput) => {
   };
 
   const renderKeyInfo = shouldRenderKeyInfoForSnapshot(jsonData);
-  const renderContacts = shouldRenderContactsForSnapshot(jsonData) && hasKeyInfoContent(jsonData);
+  const renderContacts = shouldRenderContactsForSnapshot(jsonData) && hasKeyPeopleContent(jsonData);
   const renderLocations = shouldRenderLocationsForSnapshot(jsonData);
 
   // ---- Key People box (optional) ----

@@ -1,0 +1,395 @@
+{
+  "api_key": "Sausages2025!!",
+  "event": {
+    "eventId": "dBkrgx5.Sre1Lq2XKHmwtQ",
+    "profileId": "dNGu6kdCvy",
+    "name": "WPP Stream Cannes",
+    "logoUrl": "https://storage.googleapis.com/glide-prod.appspot.com/uploads-v2/TaFzcd8ZtVuPLpD1WeQl/pub/6el53iVUFiPbMHyNma3j.jpg",
+    "header": [
+      "WPP Stream Cannes",
+      "La Petite Maison, Cannes",
+      "17th June to 27th June 2026"
+    ],
+    "keyInfo": [
+      {
+        "title": "PLease remember your PPE",
+        "text": "Hard hat required"
+      }
+    ],
+    "showMomKeyInfo": true,
+    "keyPeople": [
+      {
+        "company": "be-good (Agency)",
+        "CompanySortOrder": -13.703125,
+        "people": [
+          {
+            "name": "Mike Cutting",
+            "role": "Technical Director",
+            "phone": "+44 7712 885721",
+            "email": "mike@be-good.co.uk",
+            "sortOrder": -2,
+            "GDPR": false
+          },
+          {
+            "name": "Liz Morris",
+            "role": "Content Producer",
+            "phone": "+44 7909 832901",
+            "email": "liz@be-good.co.uk",
+            "sortOrder": -35,
+            "GDPR": false
+          },
+          {
+            "name": "Sarah Baldock",
+            "role": "Event Director",
+            "phone": "+44 7811 280668",
+            "email": "sarah@be-good.co.uk",
+            "sortOrder": -1,
+            "GDPR": false
+          },
+          {
+            "name": "Cheryl Leno",
+            "role": "Operations Director ",
+            "phone": "+44 7711 068058",
+            "email": "Cheryl@be-good.co.uk",
+            "sortOrder": 0,
+            "GDPR": false
+          },
+          {
+            "name": "Kelly Graves",
+            "role": "Project Manager",
+            "phone": "00447719332291",
+            "email": "kelly@be-good.co.uk",
+            "sortOrder": 3,
+            "GDPR": true
+          },
+          {
+            "name": "Rob Dewey",
+            "role": "Graphics Op",
+            "sortOrder": -64.5,
+            "GDPR": false
+          },
+          {
+            "name": "Rose Butler",
+            "role": "Logs Manager",
+            "sortOrder": -65.5,
+            "GDPR": false
+          },
+          {
+            "name": "Ella Jarman",
+            "role": "Productio Assistant",
+            "sortOrder": -66.5,
+            "GDPR": false
+          },
+          {
+            "name": "Beth Turner",
+            "role": "Project Manager",
+            "phone": "+44 7947 150703",
+            "email": "beth.turner@be-good.co.uk",
+            "sortOrder": -67.5,
+            "GDPR": false
+          }
+        ]
+      },
+      {
+        "company": "Equip (AV)",
+        "CompanySortOrder": 0,
+        "people": []
+      },
+      {
+        "company": "Bosshard Imprimerie (Printer)",
+        "CompanySortOrder": -2,
+        "people": [
+          {
+            "name": "Albert Ginioux",
+            "role": "Manager",
+            "phone": "04 92 28 20 80 ",
+            "email": "albert@bosshard.fr",
+            "sortOrder": -32,
+            "GDPR": false
+          }
+        ]
+      },
+      {
+        "company": "Team Yachting (Ground Agent)",
+        "CompanySortOrder": -3,
+        "people": [
+          {
+            "name": "Martine Meyer",
+            "phone": "+33 (0)6 07 80 18 23",
+            "email": "martine.meyer@phenix-consulting.com",
+            "sortOrder": -33,
+            "GDPR": false
+          }
+        ]
+      },
+      {
+        "company": "Seaside Café (Crew Catering)",
+        "CompanySortOrder": -8.5,
+        "people": []
+      },
+      {
+        "company": "WPP (Client)",
+        "CompanySortOrder": -13.953125,
+        "people": [
+          {
+            "name": "Ella Weston",
+            "role": "SVP of Marketing at WPP",
+            "phone": "+44 07345 439 186",
+            "email": "Ella.Weston@wpp.com",
+            "sortOrder": -23,
+            "GDPR": false
+          },
+          {
+            "name": "Rob Reilly",
+            "role": "Global Chief Creative Officer",
+            "email": "Rob.Reilly@wpp.com",
+            "sortOrder": -23,
+            "GDPR": false
+          },
+          {
+            "name": "José Arteaga",
+            "role": "Stage Team",
+            "email": "Jose.Arteaga@wpp.com",
+            "sortOrder": -22,
+            "GDPR": false
+          },
+          {
+            "name": "Michael Frohlich",
+            "role": "Chief Marketing & Corporate Affairs Officer",
+            "phone": "+44 (0)7774 617 792",
+            "email": "Michael.Frohlich@wpp.com",
+            "sortOrder": -14,
+            "GDPR": false
+          },
+          {
+            "name": "Cindy Rose",
+            "role": "CEO",
+            "sortOrder": -13,
+            "GDPR": false
+          },
+          {
+            "name": "Kemi Green",
+            "role": "Global Director, Marketing ",
+            "phone": "+1 347-971-6498",
+            "email": "Kemi.Green@wpp.com",
+            "sortOrder": -12,
+            "GDPR": false
+          },
+          {
+            "name": "Alice Hennessey",
+            "role": "Director of Partnerships",
+            "phone": "+44 (0)7341 887 026",
+            "email": "Alice.Hennessy@wpp.com",
+            "sortOrder": -11,
+            "GDPR": false
+          },
+          {
+            "name": "Ifrah Osman",
+            "role": "Senior Executive, Experience Marketing",
+            "phone": "+44 7785471413",
+            "email": "ifrah.osman@wpp.com",
+            "sortOrder": -10,
+            "GDPR": false
+          },
+          {
+            "name": "Charly Hewins",
+            "role": "Event Manager",
+            "sortOrder": -9,
+            "GDPR": false
+          },
+          {
+            "name": "James Anderson",
+            "role": "Group Director, Risk & Resilience",
+            "phone": "+44 (0)7500597677",
+            "email": "James.Anderson@wpp.com",
+            "sortOrder": -8,
+            "GDPR": false
+          }
+        ]
+      },
+      {
+        "company": "Charlie Reynold (Photogrpahy)",
+        "CompanySortOrder": -12,
+        "people": [
+          {
+            "name": "Charlie Reynolds",
+            "role": "Photographer",
+            "email": "hello@charliereynolds.photos",
+            "sortOrder": -15,
+            "GDPR": false
+          }
+        ]
+      },
+      {
+        "company": "Eyes & Ears (Videogrpahy)",
+        "CompanySortOrder": -12.375,
+        "people": []
+      },
+      {
+        "company": "Matrix (Security)",
+        "CompanySortOrder": -12.75,
+        "people": [
+          {
+            "name": "Willy Prophete",
+            "role": "CP to Cindy Rose (French speaking)",
+            "phone": "0033 7867 29672",
+            "email": "w.cpo@yahoo.com",
+            "sortOrder": -18,
+            "GDPR": false
+          },
+          {
+            "name": "Brian Adcock",
+            "role": "Lead (Offiste)",
+            "phone": "07813 132055",
+            "email": "brianadcock@matrixgb.uk.com",
+            "sortOrder": -17,
+            "GDPR": false
+          },
+          {
+            "name": "Les Barrow",
+            "role": "Security",
+            "phone": "07843 383560",
+            "email": "lesbarrow@hotmail.co.uk",
+            "sortOrder": -16,
+            "GDPR": false
+          }
+        ]
+      },
+      {
+        "company": "Gig - Alex & Ronnie",
+        "CompanySortOrder": -12.953125,
+        "people": []
+      },
+      {
+        "company": "PartyRent",
+        "CompanySortOrder": -13.453125,
+        "people": [
+          {
+            "name": "Laurence Hoffmann",
+            "role": "Sales",
+            "phone": "+33 4 83 58 13 90",
+            "email": "laurence.hoffmann@rent.group",
+            "sortOrder": -63.5,
+            "GDPR": false
+          }
+        ]
+      }
+    ],
+    "showMomContacts": true
+  },
+  "debug": false,
+  "UserId": "lRJEd3oWRIiwL77P4W4kFA",
+  "userEmail": "andrew@flair.london",
+  "glideAppName": "Be Good CapCom",
+  "groupMeta": {
+    "scheduleDetail": [
+      {
+        "date": "2026-06-21",
+        "data": {
+          "title": "Sunday, 21 June 2026",
+          "above": "Crew Arrivals"
+        }
+      },
+      {
+        "date": "2026-06-22",
+        "data": {
+          "title": "Monday, 22 June 2026",
+          "above": "CREW ARRIVALS & CONTENT CREATION",
+          "below": "Content Review & Rehearsal. Badge writing. Merch Prep"
+        }
+      },
+      {
+        "date": "2026-06-23",
+        "data": {
+          "title": "Tuesday, 23 June 2026",
+          "above": "SHOW DAY"
+        }
+      },
+      {
+        "date": "2026-06-24",
+        "data": {
+          "title": "Wednesday, 24 June 2026",
+          "above": "CREW DEPARTURES"
+        }
+      },
+      {
+        "date": "2026-06-25",
+        "data": {
+          "title": "Thursday, 25 June 2026"
+        }
+      }
+    ],
+    "trucks": []
+  },
+  "snapshots": [
+    {
+      "name": "Full Schedule",
+      "filterBox": false,
+      "showKeyInfo": true,
+      "showContacts": true,
+      "startEachGroupOnNewPage": true,
+      "groupPresetId": "BG-1",
+      "filterTagIds": [],
+      "filterSupplierIds": [],
+      "filterLocationIds": "",
+      "group": "Full schedule",
+      "sortOrder": 1
+    }
+  ],
+  "data": {
+    "scheduleDetail": [
+      {
+        "date": "2026-06-21",
+        "dateFriendly": "Sunday, 21 June 2026",
+        "time": "09:00 - 20:00",
+        "tags": [
+          "Trucking"
+        ],
+        "tagIds": [
+          "Vkim7s0IQ12ltT.UH6M9bQ"
+        ],
+        "supplier": [],
+        "sortField": "20260621/09:00/"
+      },
+      {
+        "date": "2026-06-22",
+        "dateFriendly": "Monday, 22 June 2026",
+        "time": "09:00 - 10:00",
+        "description": "Show crew meeting - location tbc",
+        "tags": [],
+        "tagIds": [],
+        "supplier": [],
+        "sortField": "20260622/09:00/Show crew meeting - location tbc"
+      },
+      {
+        "date": "2026-06-22",
+        "dateFriendly": "Monday, 22 June 2026",
+        "time": " - ",
+        "description": "Get display rack from beach to Stream for merch display ",
+        "tags": [],
+        "tagIds": [],
+        "supplier": [],
+        "sortField": "20260622//Get display rack from beach to Stream for merch display "
+      },
+      {
+        "date": "2026-06-22",
+        "dateFriendly": "Monday, 22 June 2026",
+        "time": " - ",
+        "tags": [],
+        "tagIds": [],
+        "supplier": [],
+        "sortField": "20260622//"
+      },
+      {
+        "date": "2026-06-22",
+        "dateFriendly": "Monday, 22 June 2026",
+        "time": " - ",
+        "description": "Content Creation",
+        "tags": [],
+        "tagIds": [],
+        "supplier": [],
+        "sortField": "20260622//Content Creation"
+      }
+    ]
+  }
+}

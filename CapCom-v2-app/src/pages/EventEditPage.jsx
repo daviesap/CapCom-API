@@ -186,6 +186,7 @@ const emptyFilteredViewForm = {
   filterBox: true,
   showKeyInfo: true,
   showLocations: false,
+  showContacts: false,
   groupPresetId: "",
   filterTagIds: [],
   filterLocationIds: [],
@@ -2098,6 +2099,7 @@ export default function EventEditPage() {
       filterBox: readBooleanValue(sourceView?.filterBox, true),
       showKeyInfo: readBooleanValue(sourceView?.showKeyInfo, true),
       showLocations: readBooleanValue(sourceView?.showLocations, false),
+      showContacts: readBooleanValue(sourceView?.showContacts ?? sourceView?.includeContacts, false),
       groupPresetId: normaliseString(sourceView?.groupPresetId),
       filterTagIds: getArrayValue(sourceView?.filterTagIds, sourceView?.tagIds),
       filterLocationIds: getArrayValue(sourceView?.filterLocationIds, sourceView?.locationIds),
@@ -2210,6 +2212,7 @@ export default function EventEditPage() {
       filterBox: readBooleanValue(view.filterBox, true),
       showKeyInfo: readBooleanValue(view.showKeyInfo, true),
       showLocations: readBooleanValue(view.showLocations, false),
+      showContacts: readBooleanValue(view.showContacts ?? view.includeContacts, false),
       groupPresetId: view.groupPresetId || "",
       filterTagIds: nextTagIds,
       filterLocationIds: mergedLocationIds,
@@ -5483,6 +5486,17 @@ export default function EventEditPage() {
                         onChange={(event) => updateFilteredViewFormField("showLocations", event.target.checked)}
                       />
                       <span>Show locations</span>
+                    </label>
+                  </div>
+                  <div className="form-row">
+                    <label className="checkbox-row">
+                      <input
+                        checked={filteredViewForm.showContacts}
+                        disabled={isOffline}
+                        type="checkbox"
+                        onChange={(event) => updateFilteredViewFormField("showContacts", event.target.checked)}
+                      />
+                      <span>Include contacts</span>
                     </label>
                   </div>
                 </div>

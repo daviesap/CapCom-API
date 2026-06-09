@@ -13,6 +13,7 @@ const payload = buildGenerateHomePayload({
     imageUrl: "https://example.com/logo.png",
     startDate: "2026-06-22",
     endDate: "2026-06-26",
+    contactCompanyOrder: ["company-2", "company-1"],
   },
   scheduleDays: [
     {
@@ -56,16 +57,110 @@ const payload = buildGenerateHomePayload({
       filterLocationIds: ["location-parent"],
       filterSubLocationIds: ["location-child"],
       filterSupplierIds: ["company-1"],
+      showContacts: true,
       group: "Full schedule",
       sortOrder: 1,
     },
+    {
+      name: "No contacts",
+      groupPresetId: "preset-1",
+      showContacts: false,
+      group: "Full schedule",
+      sortOrder: 2,
+    },
   ],
-  companies: [{ id: "company-1", companyName: "Example Supplier" }],
+  companies: [
+    { id: "company-1", companyName: "Example Supplier" },
+    { id: "company-2", companyName: "Agency Partner" },
+  ],
+  eventContacts: [
+    {
+      id: "contact-1",
+      companyId: "company-1",
+      name: "Visible Contact",
+      role: "Producer",
+      phone: "+44 7000 000001",
+      email: "visible@example.com",
+      sortOrder: -2,
+      isHidden: false,
+    },
+    {
+      id: "contact-2",
+      companyId: "company-1",
+      name: "Hidden Contact",
+      role: "Hidden",
+      sortOrder: -3,
+      isHidden: true,
+    },
+    {
+      id: "contact-3",
+      companyId: "company-2",
+      name: "GDPR Contact",
+      role: "Director",
+      sortOrder: 1,
+      gdpr: false,
+      isHidden: false,
+    },
+  ],
+  keyInfo: [
+    {
+      id: "key-info-2",
+      title: "Crew catering location",
+      description: "\"The Cave\" at Grand Wailea.",
+      sortOrder: 2,
+    },
+    {
+      id: "key-info-1",
+      title: "Venue websites",
+      description: "Grand Wailea - [https://www.grandwailea.com](https://www.grandwailea.com)",
+      sortOrder: 1,
+    },
+  ],
 });
 
 assert.equal(payload.api_key, "test-key");
 assert.equal(payload.event.eventId, "event-1");
 assert.equal(payload.event.profileId, "profile-1");
+assert.deepEqual(payload.event.keyInfo, [
+  {
+    title: "Venue websites",
+    text: "Grand Wailea - [https://www.grandwailea.com](https://www.grandwailea.com)",
+    sortOrder: 1,
+  },
+  {
+    title: "Crew catering location",
+    text: "\"The Cave\" at Grand Wailea.",
+    sortOrder: 2,
+  },
+]);
+assert.deepEqual(payload.event.keyPeople, [
+  {
+    company: "Agency Partner",
+    CompanySortOrder: 0,
+    people: [
+      {
+        name: "GDPR Contact",
+        role: "Director",
+        sortOrder: 1,
+        GDPR: false,
+      },
+    ],
+  },
+  {
+    company: "Example Supplier",
+    CompanySortOrder: 1,
+    people: [
+      {
+        name: "Visible Contact",
+        role: "Producer",
+        sortOrder: -2,
+        GDPR: true,
+        phone: "+44 7000 000001",
+        email: "visible@example.com",
+      },
+    ],
+  },
+]);
 assert.equal(payload.data.scheduleDetail.length, 1);
 assert.equal(payload.data.scheduleDetail[0].time, "09:00 - ");
 assert.deepEqual(payload.data.scheduleDetail[0].tagIds, ["tag-1"]);
@@ -73,8 +168,10 @@ assert.deepEqual(payload.data.scheduleDetail[0].locationIds, ["location-parent"]
 assert.deepEqual(payload.data.scheduleDetail[0].subLocationIds, ["location-child"]);
 assert.equal(payload.groupMeta.scheduleDetail[0].data.above, "Live Day 1");
 assert.equal(payload.groupMeta.trucks[0].truckId, "truck-1");
-assert.equal(payload.snapshots.length, 1);
+assert.equal(payload.snapshots.length, 2);
 assert.equal(payload.snapshots[0].name, "Full schedule");
 assert.deepEqual(payload.snapshots[0].filterSupplierIds, ["company-1"]);
+assert.equal(payload.snapshots[0].showContacts, true);
+assert.equal(payload.snapshots[1].showContacts, false);
 
 console.log("generateHome payload builder tests passed");

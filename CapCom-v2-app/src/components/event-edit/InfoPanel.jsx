@@ -18,22 +18,11 @@ export default function InfoPanel({
   companyContactsByCompanyId,
   editingCompanyContactCompanyId,
   openContactCompanyIds,
-  canManageContactCompanyOrder,
   canManageCompanyContacts,
   isOffline,
-  savingContactCompanyOrder,
-  contactCompanyDropTargetId,
-  draggedContactCompanyIdRef,
-  companyContactDropTargetId,
-  reorderingCompanyContactId,
-  draggedCompanyContactIdRef,
   savingCompanyContact,
   companyContactForm,
   editingCompanyContactId,
-  reorderContactCompany,
-  reorderCompanyContact,
-  setContactCompanyDropTargetId,
-  setCompanyContactDropTargetId,
   toggleContactCompanyOpen,
   startAddingCompanyContact,
   startEditingCompanyContact,
@@ -52,28 +41,8 @@ export default function InfoPanel({
 }) {
   const [openHiddenContactSections, setOpenHiddenContactSections] = useState({});
   const [keyInfoDropTargetId, setKeyInfoDropTargetId] = useState("");
-  const [reorderingContactsCompanyId, setReorderingContactsCompanyId] = useState("");
 
   const isHiddenSectionOpen = (companyId) => Boolean(openHiddenContactSections[companyId]);
-
-  const stopReorderingContacts = () => {
-    setReorderingContactsCompanyId("");
-    draggedCompanyContactIdRef.current = "";
-    setCompanyContactDropTargetId("");
-  };
-
-  const toggleReorderingContacts = (companyId) => {
-    setReorderingContactsCompanyId((current) => {
-      if (current === companyId) {
-        draggedCompanyContactIdRef.current = "";
-        setCompanyContactDropTargetId("");
-        return "";
-      }
-      draggedCompanyContactIdRef.current = "";
-      setCompanyContactDropTargetId("");
-      return companyId;
-    });
-  };
 
   const setHiddenSectionOpen = (companyId, open) => {
     setOpenHiddenContactSections((current) => {
@@ -119,62 +88,11 @@ export default function InfoPanel({
                 const isEditingThisCompanyContact =
                   editingCompanyContactCompanyId === company.id;
                 const isCompanyOpen = openContactCompanyIds.includes(company.id);
-                const isReorderingThisCompanyContacts =
-                  reorderingContactsCompanyId === company.id;
 
                 return (
                   <div
-                    className={[
-                      "company-list-row",
-                      canManageContactCompanyOrder && !isOffline ? "draggable-company-row" : "",
-                      contactCompanyDropTargetId === company.id ? "drop-target" : "",
-                    ].filter(Boolean).join(" ")}
+                    className="company-list-row"
                     key={company.id}
-                    draggable={
-                      canManageContactCompanyOrder &&
-                      !isOffline &&
-                      !savingContactCompanyOrder &&
-                      !isEditingThisCompanyContact
-                    }
-                    onDragStart={(event) => {
-                      if (event.target.closest(".company-contact-row")) return;
-                      if (
-                        !canManageContactCompanyOrder ||
-                        isOffline ||
-                        isEditingThisCompanyContact
-                      ) return;
-                      draggedContactCompanyIdRef.current = company.id;
-                      event.dataTransfer.effectAllowed = "move";
-                    }}
-                    onDragOver={(event) => {
-                      if (
-                        !canManageContactCompanyOrder ||
-                        isOffline ||
-                        savingContactCompanyOrder ||
-                        !draggedContactCompanyIdRef.current ||
-                        draggedContactCompanyIdRef.current === company.id
-                      ) {
-                        return;
-                      }
-                      event.preventDefault();
-                      event.dataTransfer.dropEffect = "move";
-                      setContactCompanyDropTargetId(company.id);
-                    }}
-                    onDragLeave={() => {
-                      setContactCompanyDropTargetId((current) =>
-                        current === company.id ? "" : current
-                      );
-                    }}
-                    onDrop={(event) => {
-                      event.preventDefault();
-                      const draggedCompanyId = draggedContactCompanyIdRef.current;
-                      draggedContactCompanyIdRef.current = "";
-                      reorderContactCompany(draggedCompanyId, company.id);
-                    }}
-                    onDragEnd={() => {
-                      draggedContactCompanyIdRef.current = "";
-                      setContactCompanyDropTargetId("");
-                    }}
                   >
                     <div>
                       <div className="company-accordion-heading">
@@ -182,10 +100,7 @@ export default function InfoPanel({
                           className="company-accordion-trigger"
                           type="button"
                           aria-expanded={isCompanyOpen}
-                          onClick={() => {
-                            stopReorderingContacts();
-                            toggleContactCompanyOpen(company.id);
-                          }}
+                          onClick={() => toggleContactCompanyOpen(company.id)}
                         >
                           <span className="accordion-indicator" aria-hidden="true">
                             <CapcomIcon
@@ -215,10 +130,7 @@ export default function InfoPanel({
                             type="button"
                             aria-label={`Add contact to ${company.companyName || "company"}`}
                             disabled={isOffline || savingCompanyContact}
-                            onClick={() => {
-                              stopReorderingContacts();
-                              startAddingCompanyContact(company.id);
-                            }}
+                            onClick={() => startAddingCompanyContact(company.id)}
                           >
                             <CapcomIcon name="add" size={16} weight="bold" />
                             <span className="button-label">Add contact</span>
@@ -232,92 +144,14 @@ export default function InfoPanel({
                             <p className="item-meta">No contacts yet.</p>
                           ) : (
                             <>
-                              {canManageCompanyContacts && !isOffline ? (
-                                <div className="company-contact-reorder-controls">
-                                  <button
-                                    className="compact-button"
-                                    type="button"
-                                    aria-pressed={isReorderingThisCompanyContacts}
-                                    disabled={
-                                      savingCompanyContact ||
-                                      savingEventContact ||
-                                      reorderingCompanyContactId === company.id
-                                    }
-                                    onClick={() => toggleReorderingContacts(company.id)}
-                                  >
-                                    {isReorderingThisCompanyContacts
-                                      ? "I have finished reordering"
-                                      : "Reorder"}
-                                  </button>
-                                </div>
-                              ) : null}
                               <div className="company-contact-list">
                                 {visibleContacts.length === 0 ? (
                                   <p className="item-meta">No visible contacts.</p>
                                 ) : (
                                   visibleContacts.map((contact) => (
                                     <div
-                                      className={[
-                                        "company-contact-row",
-                                        isReorderingThisCompanyContacts &&
-                                        canManageCompanyContacts &&
-                                        !isOffline
-                                          ? "draggable-contact-row"
-                                          : "",
-                                        companyContactDropTargetId === contact.id
-                                          ? "drop-target"
-                                          : "",
-                                      ].filter(Boolean).join(" ")}
+                                      className="company-contact-row"
                                       key={contact.id}
-                                      draggable={
-                                        canManageCompanyContacts &&
-                                        !isOffline &&
-                                        isReorderingThisCompanyContacts &&
-                                        reorderingCompanyContactId !== company.id
-                                      }
-                                      onDragStart={(event) => {
-                                        if (
-                                          !canManageCompanyContacts ||
-                                          isOffline ||
-                                          !isReorderingThisCompanyContacts
-                                        ) return;
-                                        event.stopPropagation();
-                                        draggedCompanyContactIdRef.current = contact.id;
-                                        event.dataTransfer.effectAllowed = "move";
-                                      }}
-                                      onDragOver={(event) => {
-                                        if (
-                                          !canManageCompanyContacts ||
-                                          isOffline ||
-                                          !isReorderingThisCompanyContacts ||
-                                          reorderingCompanyContactId ||
-                                          !draggedCompanyContactIdRef.current ||
-                                          draggedCompanyContactIdRef.current === contact.id
-                                        ) {
-                                          return;
-                                        }
-                                        event.preventDefault();
-                                        event.stopPropagation();
-                                        event.dataTransfer.dropEffect = "move";
-                                        setCompanyContactDropTargetId(contact.id);
-                                      }}
-                                      onDragLeave={() => {
-                                        setCompanyContactDropTargetId((current) =>
-                                          current === contact.id ? "" : current
-                                        );
-                                      }}
-                                      onDrop={(event) => {
-                                        event.preventDefault();
-                                        event.stopPropagation();
-                                        const draggedContactId = draggedCompanyContactIdRef.current;
-                                        draggedCompanyContactIdRef.current = "";
-                                        reorderCompanyContact(company.id, draggedContactId, contact.id);
-                                      }}
-                                      onDragEnd={(event) => {
-                                        event.stopPropagation();
-                                        draggedCompanyContactIdRef.current = "";
-                                        setCompanyContactDropTargetId("");
-                                      }}
                                     >
                                       <div>
                                         <p className="item-title">{contact.name}</p>
@@ -339,10 +173,7 @@ export default function InfoPanel({
                                             className="compact-button"
                                             type="button"
                                             disabled={savingEventContact || isOffline}
-                                            onClick={() => {
-                                              stopReorderingContacts();
-                                              toggleEventContactHidden(contact.id);
-                                            }}
+                                            onClick={() => toggleEventContactHidden(contact.id)}
                                           >
                                             Hide
                                           </button>
@@ -354,10 +185,7 @@ export default function InfoPanel({
                                               isOffline ||
                                               savingCompanyContact
                                             }
-                                            onClick={() => {
-                                              stopReorderingContacts();
-                                              startEditingCompanyContact(company.id, contact);
-                                            }}
+                                            onClick={() => startEditingCompanyContact(company.id, contact)}
                                           >
                                             <CapcomIcon name="edit" size={16} />
                                             Edit
@@ -397,68 +225,8 @@ export default function InfoPanel({
                                   <div className="company-contact-list hidden-contact-list">
                                     {hiddenContacts.map((contact) => (
                                       <div
-                                        className={[
-                                          "company-contact-row",
-                                          "is-hidden",
-                                          isReorderingThisCompanyContacts &&
-                                          canManageCompanyContacts &&
-                                          !isOffline
-                                            ? "draggable-contact-row"
-                                            : "",
-                                          companyContactDropTargetId === contact.id
-                                            ? "drop-target"
-                                            : "",
-                                        ].filter(Boolean).join(" ")}
+                                        className="company-contact-row is-hidden"
                                         key={contact.id}
-                                        draggable={
-                                          canManageCompanyContacts &&
-                                          !isOffline &&
-                                          isReorderingThisCompanyContacts &&
-                                          reorderingCompanyContactId !== company.id
-                                        }
-                                        onDragStart={(event) => {
-                                          if (
-                                            !canManageCompanyContacts ||
-                                            isOffline ||
-                                            !isReorderingThisCompanyContacts
-                                          ) return;
-                                          event.stopPropagation();
-                                          draggedCompanyContactIdRef.current = contact.id;
-                                          event.dataTransfer.effectAllowed = "move";
-                                        }}
-                                        onDragOver={(event) => {
-                                          if (
-                                            !canManageCompanyContacts ||
-                                            isOffline ||
-                                            !isReorderingThisCompanyContacts ||
-                                            reorderingCompanyContactId ||
-                                            !draggedCompanyContactIdRef.current ||
-                                            draggedCompanyContactIdRef.current === contact.id
-                                          ) {
-                                            return;
-                                          }
-                                          event.preventDefault();
-                                          event.stopPropagation();
-                                          event.dataTransfer.dropEffect = "move";
-                                          setCompanyContactDropTargetId(contact.id);
-                                        }}
-                                        onDragLeave={() => {
-                                          setCompanyContactDropTargetId((current) =>
-                                            current === contact.id ? "" : current
-                                          );
-                                        }}
-                                        onDrop={(event) => {
-                                          event.preventDefault();
-                                          event.stopPropagation();
-                                          const draggedContactId = draggedCompanyContactIdRef.current;
-                                          draggedCompanyContactIdRef.current = "";
-                                          reorderCompanyContact(company.id, draggedContactId, contact.id);
-                                        }}
-                                        onDragEnd={(event) => {
-                                          event.stopPropagation();
-                                          draggedCompanyContactIdRef.current = "";
-                                          setCompanyContactDropTargetId("");
-                                        }}
                                       >
                                         <div>
                                           <p className="item-title">{contact.name}</p>
@@ -480,10 +248,7 @@ export default function InfoPanel({
                                               className="compact-button"
                                               type="button"
                                               disabled={savingEventContact || isOffline}
-                                              onClick={() => {
-                                                stopReorderingContacts();
-                                                toggleEventContactHidden(contact.id);
-                                              }}
+                                              onClick={() => toggleEventContactHidden(contact.id)}
                                             >
                                               Unhide
                                             </button>
@@ -495,10 +260,7 @@ export default function InfoPanel({
                                                 isOffline ||
                                                 savingCompanyContact
                                               }
-                                              onClick={() => {
-                                                stopReorderingContacts();
-                                                startEditingCompanyContact(company.id, contact);
-                                              }}
+                                              onClick={() => startEditingCompanyContact(company.id, contact)}
                                             >
                                               <CapcomIcon name="edit" size={16} />
                                               Edit

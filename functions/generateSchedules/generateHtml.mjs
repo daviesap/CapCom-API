@@ -229,6 +229,15 @@ function hasKeyInfoContent(jsonInput = {}) {
   return !!keyInfo;
 }
 
+function hasKeyPeopleContent(jsonInput = {}) {
+  const keyPeople = jsonInput?.event?.keyPeople;
+  return Array.isArray(keyPeople)
+    && keyPeople.some((company) =>
+      Array.isArray(company?.people)
+      && company.people.some((person) => person?.name && String(person.name).trim())
+    );
+}
+
 function shouldRenderLocationsForSnapshot(jsonInput = {}) {
   const snapshots = Array.isArray(jsonInput?.snapshots) ? jsonInput.snapshots : null;
   if (!snapshots || snapshots.length === 0) {
@@ -325,7 +334,7 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
   `;
 
   const renderKeyInfo = shouldRenderKeyInfoForSnapshot(jsonInput);
-  const renderContacts = shouldRenderContactsForSnapshot(jsonInput) && hasKeyInfoContent(jsonInput);
+  const renderContacts = shouldRenderContactsForSnapshot(jsonInput) && hasKeyPeopleContent(jsonInput);
   const renderLocations = shouldRenderLocationsForSnapshot(jsonInput);
 
   // Optional Key People accordion (grouped by company)

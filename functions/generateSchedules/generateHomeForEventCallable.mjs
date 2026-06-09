@@ -255,6 +255,8 @@ async function loadEventGenerationData(db, eventId) {
     locations,
     trucks,
     filteredViews,
+    eventContacts,
+    keyInfo,
     companies,
   ] = await Promise.all([
     getCollectionWhere(db, "scheduleDays", "eventId", "==", eventId),
@@ -262,6 +264,8 @@ async function loadEventGenerationData(db, eventId) {
     getCollectionWhere(db, "locations", "eventId", "==", eventId),
     getCollectionWhere(db, "trucks", "eventId", "==", eventId),
     getCollectionWhere(db, "filteredViews", "eventId", "==", eventId),
+    getCollectionWhere(db, "eventContacts", "eventId", "==", eventId),
+    getCollectionWhere(db, "keyInfo", "eventId", "==", eventId),
     eventRecord.clientId
       ? getCollectionWhere(db, "companies", "clientId", "==", eventRecord.clientId)
       : Promise.resolve([]),
@@ -285,6 +289,12 @@ async function loadEventGenerationData(db, eventId) {
       normaliseSortOrder(a.sortOrder, Number.MAX_SAFE_INTEGER)
       - normaliseSortOrder(b.sortOrder, Number.MAX_SAFE_INTEGER)
       || String(a.name || "").localeCompare(String(b.name || ""))
+    ),
+    eventContacts,
+    keyInfo: [...keyInfo].sort((a, b) =>
+      normaliseSortOrder(a.sortOrder, Number.MAX_SAFE_INTEGER)
+      - normaliseSortOrder(b.sortOrder, Number.MAX_SAFE_INTEGER)
+      || String(a.title || "").localeCompare(String(b.title || ""))
     ),
     companies,
   };
