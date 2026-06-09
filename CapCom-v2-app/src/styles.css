@@ -1871,10 +1871,32 @@ textarea {
   padding: 14px;
 }
 
+.filtered-view-filter-card {
+  border: 1px solid var(--color-divider-strong);
+  border-radius: var(--radius-md);
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+}
+
+.filtered-view-card-heading {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.filtered-view-card-heading h3,
 .filtered-view-display-card h3 {
   color: var(--color-text);
   font-size: 16px;
   margin: 0;
+}
+
+.filtered-view-filter-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .filtered-view-display-options {
@@ -3057,6 +3079,15 @@ textarea {
   }
 
   .filtered-view-display-options {
+    grid-template-columns: 1fr;
+  }
+
+  .filtered-view-card-heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .filtered-view-filter-grid {
     grid-template-columns: 1fr;
   }
 

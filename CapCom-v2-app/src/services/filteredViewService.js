@@ -67,10 +67,10 @@ function getSortOrderValue(filteredView) {
 }
 
 function buildFilteredViewPayload(values) {
-  const tagIds = getFilteredViewFieldArray(values.tagIds ?? values.filterTagIds);
-  const locationIds = getFilteredViewFieldArray(values.locationIds ?? values.filterLocationIds);
-  const subLocationIds = getFilteredViewFieldArray(values.subLocationIds ?? values.filterSubLocationIds);
-  const supplierIds = getFilteredViewFieldArray(values.supplierIds ?? values.companyIds ?? values.filterSupplierIds);
+  const filterTagIds = getFilteredViewFieldArray(values.filterTagIds);
+  const filterLocationIds = getFilteredViewFieldArray(values.filterLocationIds);
+  const filterSubLocationIds = getFilteredViewFieldArray(values.filterSubLocationIds);
+  const filterSupplierIds = getFilteredViewFieldArray(values.filterSupplierIds);
   const groupName = normaliseString(values.group || values.name);
 
   return {
@@ -81,19 +81,13 @@ function buildFilteredViewPayload(values) {
     showLocations: normaliseBoolean(values.showLocations, false),
     showContacts: normaliseBoolean(values.showContacts ?? values.includeContacts, false),
     groupPresetId: normaliseString(values.groupPresetId),
-    filterTagIds: tagIds,
-    filterLocationIds: locationIds,
-    filterSubLocationIds: subLocationIds,
-    filterSupplierIds: supplierIds,
+    filterTagIds,
+    filterLocationIds,
+    filterSubLocationIds,
+    filterSupplierIds,
     filterGroup: normaliseString(values.filterGroup),
     group: groupName,
     sortOrder: normaliseSortOrder(values.sortOrder, 1),
-
-    // Legacy fields kept for backwards compatibility with existing consumers.
-    tagIds,
-    locationIds,
-    subLocationIds,
-    companyIds: supplierIds,
   };
 }
 
@@ -129,10 +123,6 @@ export async function getFilteredViews(eventId) {
 export async function createFilteredView({
   eventId,
   name,
-  tagIds,
-  locationIds,
-  subLocationIds,
-  companyIds,
   filterBox,
   showKeyInfo,
   showLocations,
@@ -154,10 +144,6 @@ export async function createFilteredView({
     const payload = buildFilteredViewPayload({
       eventId,
       name,
-      tagIds,
-      locationIds,
-      subLocationIds,
-      companyIds,
       filterBox,
       showKeyInfo,
       showLocations,
@@ -179,10 +165,6 @@ export async function createFilteredView({
     logWriteError("create filtered view", error, {
       eventId,
       name,
-      tagIds,
-      locationIds,
-      subLocationIds,
-      companyIds,
     });
     throw error;
   }
@@ -193,10 +175,6 @@ export async function updateFilteredView(
   {
     eventId,
     name,
-    tagIds,
-    locationIds,
-    subLocationIds,
-    companyIds,
     filterBox,
     showKeyInfo,
     showLocations,
@@ -222,10 +200,6 @@ export async function updateFilteredView(
     const payload = buildFilteredViewPayload({
       eventId,
       name,
-      tagIds,
-      locationIds,
-      subLocationIds,
-      companyIds,
       filterBox,
       showKeyInfo,
       showLocations,
