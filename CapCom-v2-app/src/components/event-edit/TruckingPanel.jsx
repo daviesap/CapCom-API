@@ -128,7 +128,7 @@ export default function TruckingPanel({
   return (
     <section className="panel">
       <div className="settings-section">
-        {!truckFormMode ? (
+        {!truckFormMode && !isOffline ? (
           <div className="panel-heading">
             <div />
             <button
@@ -291,6 +291,7 @@ export default function TruckingPanel({
                         ) : null}
                         {truck.contents ? <p className="item-meta">{truck.contents}</p> : null}
                       </div>
+                      {!isOffline ? (
                       <div className="day-card-actions trucking-card-actions">
                         <button
                           className="compact-button primary-soft icon-text-button"
@@ -323,6 +324,7 @@ export default function TruckingPanel({
                           {deletingTruckId === truck.id ? "Deleting..." : "Delete"}
                         </button>
                       </div>
+                      ) : null}
                     </div>
 
                     {scheduleDays.length === 0 ? (
@@ -433,6 +435,16 @@ export default function TruckingPanel({
                                     )
                                   }
                                 />
+                              ) : isOffline ? (
+                                <span
+                                  className={[
+                                    "detail-cell",
+                                    "detail-time-display",
+                                    hasTime ? "" : "missing-time",
+                                  ].filter(Boolean).join(" ")}
+                                >
+                                  {detail.time || "tbc"}
+                                </span>
                               ) : (
                                 <button
                                   className={[
@@ -454,6 +466,11 @@ export default function TruckingPanel({
                                   {detail.time || "tbc"}
                                 </button>
                               )}
+                              {isOffline ? (
+                                <span className="detail-cell truck-action-cell">
+                                  {renderTruckActionLabel(detail.action)}
+                                </span>
+                              ) : (
                               <button
                                 className="detail-cell truck-action-cell"
                                 type="button"
@@ -462,6 +479,7 @@ export default function TruckingPanel({
                               >
                                 {renderTruckActionLabel(detail.action)}
                               </button>
+                              )}
                               {showTruckDestinationColumn ? (
                                 <div
                                   className={[
@@ -503,6 +521,7 @@ export default function TruckingPanel({
                               <span className="mobile-detail-meta-line">
                                 {destinationLabel}
                               </span>
+                              {!isOffline ? (
                               <div className="detail-row-actions">
                                 <div
                                   className="notes-popover"
@@ -636,6 +655,7 @@ export default function TruckingPanel({
                                   ) : null}
                                 </div>
                               </div>
+                              ) : null}
                             </div>
                           );
                         })}

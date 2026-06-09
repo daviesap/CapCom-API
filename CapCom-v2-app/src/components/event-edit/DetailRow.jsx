@@ -223,6 +223,10 @@ export default function DetailRow({
             )
           }
         />
+      ) : isOffline ? (
+        <span className="detail-cell detail-time-display">
+          {detail.time || "tbc"}
+        </span>
       ) : (
         <button
           className="detail-cell detail-time-display"
@@ -238,6 +242,11 @@ export default function DetailRow({
         </button>
       )}
       {isTruckRow ? (
+        isOffline ? (
+          <span className="detail-cell detail-description-cell">
+            <span className="detail-description-text">{truckSummary}</span>
+          </span>
+        ) : (
         <button
           className="detail-cell detail-description-cell"
           type="button"
@@ -245,6 +254,7 @@ export default function DetailRow({
         >
           <span className="detail-description-text">{truckSummary}</span>
         </button>
+        )
       ) : isEditingDescription ? (
         <input
           ref={detailCellInputRef}
@@ -270,6 +280,13 @@ export default function DetailRow({
             )
           }
         />
+      ) : isOffline ? (
+        <span
+          className="detail-cell detail-description-cell"
+          data-tooltip={detail.description || ""}
+        >
+          <span className="detail-description-text">{detail.description || ""}</span>
+        </span>
       ) : (
         <button
           className="detail-cell detail-description-cell"

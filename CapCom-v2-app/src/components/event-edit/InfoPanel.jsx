@@ -175,7 +175,7 @@ export default function InfoPanel({
                             ) : null}
                           </span>
                         </button>
-                        {canManageCompanyContacts ? (
+                        {canManageCompanyContacts && !isOffline ? (
                           <button
                             className="compact-button company-contact-add-button"
                             type="button"
@@ -269,7 +269,7 @@ export default function InfoPanel({
                                           ) : null}
                                         </div>
                                       </div>
-                                      {canManageCompanyContacts ? (
+                                      {canManageCompanyContacts && !isOffline ? (
                                         <div className="company-list-actions">
                                           <button
                                             className="compact-button"
@@ -396,7 +396,7 @@ export default function InfoPanel({
                                             ) : null}
                                           </div>
                                         </div>
-                                        {canManageCompanyContacts ? (
+                                        {canManageCompanyContacts && !isOffline ? (
                                           <div className="company-list-actions">
                                             <button
                                               className="compact-button"
@@ -526,6 +526,7 @@ export default function InfoPanel({
         <div className="settings-section">
           <div className="panel-heading">
             <span aria-hidden="true" />
+            {!isOffline ? (
             <button
               className="button key-info-add-button"
               type="button"
@@ -536,6 +537,7 @@ export default function InfoPanel({
               <CapcomIcon name="add" size={18} weight="bold" />
               <span className="button-label">Add key info</span>
             </button>
+            ) : null}
           </div>
 
           {keyInfoLoading ? (
@@ -596,6 +598,7 @@ export default function InfoPanel({
                       <p className="item-meta key-info-description">{item.description}</p>
                     ) : null}
                   </div>
+                  {!isOffline ? (
                   <div className="company-list-actions">
                     <button
                       className="compact-button key-info-icon-button"
@@ -620,6 +623,7 @@ export default function InfoPanel({
                       </span>
                     </button>
                   </div>
+                  ) : null}
                 </article>
               ))}
             </div>

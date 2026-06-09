@@ -8,6 +8,7 @@ export default function EventEditorHeader({
   dateRangeLabel,
   isEditing,
   isOffline,
+  canEditEvent,
   isSuperAdmin,
   editableClients,
   savingEvent,
@@ -40,7 +41,7 @@ export default function EventEditorHeader({
             </p>
           </div>
         </div>
-        {!isEditing ? (
+        {!isEditing && canEditEvent ? (
           <button
             className="button secondary event-header-edit-button"
             type="button"

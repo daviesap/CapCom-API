@@ -10,9 +10,10 @@ const navItems = [
 ];
 
 export default function AppNav({ variant, collapsed = false }) {
-  const { isSuperAdmin, isAdmin } = useAuth();
+  const { isSuperAdmin, isAdmin, user, userProfile } = useAuth();
   const canAccessAdmin = isSuperAdmin || isAdmin;
   const visibleNavItems = navItems.filter((item) => !item.requiresAdmin || canAccessAdmin);
+  const loggedInName = userProfile?.displayName || user?.displayName || userProfile?.email || user?.email || "";
 
   return (
     <div
@@ -30,6 +31,9 @@ export default function AppNav({ variant, collapsed = false }) {
           <span>{item.label}</span>
         </NavLink>
       ))}
+      {variant === "desktop" && loggedInName ? (
+        <p className="sidebar-login-meta">Logged in as {loggedInName}</p>
+      ) : null}
     </div>
   );
 }

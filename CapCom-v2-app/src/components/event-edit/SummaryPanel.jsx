@@ -56,6 +56,7 @@ export default function SummaryPanel({
                           {day.endOfDayTarget || ""}
                         </span>
 
+                        {!isOffline ? (
                         <div className="row-actions">
                           <button
                             className="compact-button"
@@ -67,6 +68,7 @@ export default function SummaryPanel({
                             <span className="button-label">Edit</span>
                           </button>
                         </div>
+                        ) : null}
                       </div>
                     </td>
                   </tr>
@@ -74,6 +76,7 @@ export default function SummaryPanel({
               })}
             </tbody>
           </table>
+          {!isOffline ? (
           <button
             className="button secondary update-date-range-button"
             type="button"
@@ -82,6 +85,7 @@ export default function SummaryPanel({
           >
             Update date range
           </button>
+          ) : null}
         </div>
       )}
       {isEditingScheduleDateRange ? (

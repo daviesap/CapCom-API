@@ -68,8 +68,6 @@ export default function EventListPage() {
     profileLoading,
     isSuperAdmin,
     isAdmin,
-    isUser,
-    isViewer,
   } = useAuth();
   const isOnline = useOnlineStatus();
   const isOffline = !isOnline;
@@ -211,37 +209,44 @@ export default function EventListPage() {
         <div>
           <h1 className="page-title">Events</h1>
         </div>
-        <button
-          className="button"
-          type="button"
-          aria-label="Create event"
-          disabled={isOffline || profileLoading || !userCanCreateEvents}
-          onClick={() => {
-            setError("");
-            setForm({
-              ...emptyForm,
-              clientId: isAdmin ? userProfile?.clientId || "" : "",
-              clientName: isAdmin ? clients[0]?.clientName || "" : "",
-            });
-            setShowCreateOverlay(true);
-          }}
-        >
-          <CapcomIcon name="add" size={18} weight="bold" />
-          <span className="button-label">Create Event</span>
-        </button>
+        {userCanCreateEvents ? (
+          <button
+            className="button"
+            type="button"
+            aria-label="Create event"
+            disabled={isOffline || profileLoading}
+            onClick={() => {
+              setError("");
+              setForm({
+                ...emptyForm,
+                clientId: isAdmin ? userProfile?.clientId || "" : "",
+                clientName: isAdmin ? clients[0]?.clientName || "" : "",
+              });
+              setShowCreateOverlay(true);
+            }}
+          >
+            <CapcomIcon name="add" size={18} weight="bold" />
+            <span className="button-label">Create Event</span>
+          </button>
+        ) : null}
       </div>
 
       {error && !showCreateOverlay ? <p className="error">{error}</p> : null}
       {isOffline ? (
         <p className="message offline-message">Offline mode: previously loaded schedules are read-only.</p>
       ) : null}
-      {!profileLoading && (isUser || isViewer) ? (
-        <p className="message">
-          {isViewer ? "Viewer" : "User"} accounts can only access events assigned by an Admin.
-        </p>
-      ) : null}
       {loading ? <Loading /> : null}
-      {!loading && events.length === 0 ? <EmptyState message="No events yet." /> : null}
+      {!loading && events.length === 0 ? (
+        <EmptyState
+          message={(
+            <>
+              No events
+              <br />
+              Please contact the admin who can give you access to events
+            </>
+          )}
+        />
+      ) : null}
 
       <section className="list">
         {events.map((event) => (

@@ -480,9 +480,11 @@ function getRowTagStyle(tag) {
 
 export default function EventEditPage() {
   const { eventId } = useParams();
-  const { userProfile, profileLoading, isSuperAdmin, isAdmin, isUser } = useAuth();
+  const { userProfile, profileLoading, isSuperAdmin, isAdmin, isUser, isViewer } = useAuth();
   const isOnline = useOnlineStatus();
   const isOffline = !isOnline;
+  const isEventReadOnly = isViewer;
+  const isWriteDisabled = isOffline || isEventReadOnly;
   const [form, setForm] = useState(emptyEventForm);
   const [savedEventForm, setSavedEventForm] = useState(emptyEventForm);
   const [isEditingEventDetails, setIsEditingEventDetails] = useState(false);
@@ -532,6 +534,7 @@ export default function EventEditPage() {
   const [editingDetailCell, setEditingDetailCell] = useState(null);
   const [editingDetailModal, setEditingDetailModal] = useState(null);
   const [editingDetailTimeModal, setEditingDetailTimeModal] = useState(null);
+  const [addingDetailDayId, setAddingDetailDayId] = useState("");
   const [detailEditForm, setDetailEditForm] = useState(emptyDetailEditForm);
   const [openActionMenuId, setOpenActionMenuId] = useState("");
   const [openNotesDetailId, setOpenNotesDetailId] = useState("");
@@ -604,9 +607,9 @@ export default function EventEditPage() {
   const draggedContactCompanyIdRef = useRef("");
   const draggedCompanyContactIdRef = useRef("");
   const draggedKeyInfoIdRef = useRef("");
-  const canManageCompanyContacts = isSuperAdmin || isAdmin;
-  const canManageFilteredViews = isSuperAdmin || isAdmin || isUser;
-  const canUpdateShareOutput = isSuperAdmin || isAdmin || isUser;
+  const canManageCompanyContacts = !isEventReadOnly && (isSuperAdmin || isAdmin);
+  const canManageFilteredViews = !isEventReadOnly && (isSuperAdmin || isAdmin || isUser);
+  const canUpdateShareOutput = !isEventReadOnly && (isSuperAdmin || isAdmin || isUser);
   const canUseDebugJson = Boolean(userProfile?.debugMode);
   const canManageContactCompanyOrder = canManageCompanyContacts;
   const editableClients = clients.filter((client) => (
@@ -1201,7 +1204,7 @@ export default function EventEditPage() {
   }, [contactCompanyIds]);
 
   useEffect(() => {
-    if (isOffline || contactCompanyIds.length === 0 || eventContactsLoading) return;
+    if (isWriteDisabled || contactCompanyIds.length === 0 || eventContactsLoading) return;
 
     const companyIdsToSeed = contactCompanyIds.filter((companyId) => {
       const seeded = seededEventContactCompanyIdsRef.current.has(companyId);
@@ -1277,7 +1280,7 @@ export default function EventEditPage() {
     };
   }, [
     contactCompanyIds,
-    isOffline,
+    isWriteDisabled,
     companyContactsByCompanyId,
     eventContactsByCompanyId,
     eventContactsLoading,
@@ -1614,7 +1617,7 @@ export default function EventEditPage() {
   };
 
   const saveDay = async (day, values = day) => {
-    if (isOffline) {
+    if (isWriteDisabled) {
       setError("Editing is disabled while offline.");
       return;
     }
@@ -1763,7 +1766,7 @@ export default function EventEditPage() {
   };
 
   const startAddingCompanyContact = (companyId) => {
-    if (!canManageCompanyContacts || isOffline) return;
+    if (!canManageCompanyContacts || isWriteDisabled) return;
     setEditingCompanyContactId("");
     setEditingCompanyContactCompanyId(companyId);
     setCompanyContactForm(emptyCompanyContactForm);
@@ -1772,7 +1775,7 @@ export default function EventEditPage() {
   };
 
   const startEditingCompanyContact = (companyId, contact) => {
-    if (!canManageCompanyContacts || isOffline) return;
+    if (!canManageCompanyContacts || isWriteDisabled) return;
     setEditingCompanyContactId(contact.companyContactId || "");
     setEditingCompanyContactCompanyId(companyId);
     setEditingEventContactId(contact.id || "");
@@ -1788,7 +1791,7 @@ export default function EventEditPage() {
 
   const saveCompanyContact = async (submitEvent) => {
     submitEvent.preventDefault();
-    if (isOffline) {
+    if (isWriteDisabled) {
       setError("Editing is disabled while offline.");
       return;
     }
@@ -1881,7 +1884,7 @@ export default function EventEditPage() {
       .flat()
       .find((contact) => contact.id === contactId);
 
-    if (!targetContact || isOffline || !canManageCompanyContacts) return;
+    if (!targetContact || isWriteDisabled || !canManageCompanyContacts) return;
 
     setMessage("");
     setError("");
@@ -1922,14 +1925,14 @@ export default function EventEditPage() {
   };
 
   const startAddingKeyInfo = () => {
-    if (isOffline) return;
+    if (isWriteDisabled) return;
     resetKeyInfoForm();
     setKeyInfoFormMode("create");
     setError("");
   };
 
   const startEditingKeyInfo = (item) => {
-    if (isOffline) return;
+    if (isWriteDisabled) return;
     setKeyInfoFormMode("edit");
     setEditingKeyInfoId(item.id);
     setKeyInfoForm({
@@ -1941,7 +1944,7 @@ export default function EventEditPage() {
 
   const saveKeyInfo = async (submitEvent) => {
     submitEvent.preventDefault();
-    if (isOffline) {
+    if (isWriteDisabled) {
       setError("Editing is disabled while offline.");
       return;
     }
@@ -1974,7 +1977,7 @@ export default function EventEditPage() {
   };
 
   const removeKeyInfo = async (keyInfoId) => {
-    if (isOffline) return;
+    if (isWriteDisabled) return;
 
     setDeletingKeyInfoId(keyInfoId);
     setError("");
@@ -1992,7 +1995,7 @@ export default function EventEditPage() {
   };
 
   const reorderKeyInfo = async (draggedKeyInfoId, targetKeyInfoId) => {
-    if (!draggedKeyInfoId || !targetKeyInfoId || draggedKeyInfoId === targetKeyInfoId || isOffline) {
+    if (!draggedKeyInfoId || !targetKeyInfoId || draggedKeyInfoId === targetKeyInfoId || isWriteDisabled) {
       return;
     }
 
@@ -2091,7 +2094,7 @@ export default function EventEditPage() {
   };
 
   const updateShareOutput = async () => {
-    if (isOffline) {
+    if (isWriteDisabled) {
       setError("Updating is disabled while offline.");
       return;
     }
@@ -2206,7 +2209,7 @@ export default function EventEditPage() {
 
   const saveFilteredView = async (submitEvent) => {
     submitEvent.preventDefault();
-    if (isOffline) {
+    if (isWriteDisabled) {
       setError("Editing is disabled while offline.");
       return;
     }
@@ -2250,7 +2253,7 @@ export default function EventEditPage() {
   };
 
   const removeFilteredView = async (filteredViewId) => {
-    if (isOffline) {
+    if (isWriteDisabled) {
       setError("Editing is disabled while offline.");
       return;
     }
@@ -2283,7 +2286,7 @@ export default function EventEditPage() {
   };
 
   const reorderCompanyContact = async (companyId, sourceContactId, targetContactId) => {
-    if (!canManageCompanyContacts || isOffline || reorderingCompanyContactId) return;
+    if (!canManageCompanyContacts || isWriteDisabled || reorderingCompanyContactId) return;
     if (!companyId || !sourceContactId || !targetContactId || sourceContactId === targetContactId) {
       return;
     }
@@ -2322,7 +2325,7 @@ export default function EventEditPage() {
   };
 
   const reorderContactCompany = async (sourceCompanyId, targetCompanyId) => {
-    if (!canManageContactCompanyOrder || isOffline || savingContactCompanyOrder) return;
+    if (!canManageContactCompanyOrder || isWriteDisabled || savingContactCompanyOrder) return;
     if (!sourceCompanyId || !targetCompanyId || sourceCompanyId === targetCompanyId) return;
 
     const companyIds = contactCompanies.map((company) => company.id);
@@ -2421,7 +2424,7 @@ export default function EventEditPage() {
   };
 
   const assignDetailTag = async (dayId, detail, tagId) => {
-    if (isOffline) {
+    if (isWriteDisabled) {
       setError("Editing is disabled while offline.");
       return;
     }
@@ -2470,7 +2473,7 @@ export default function EventEditPage() {
   };
 
   const assignDetailLocation = async (dayId, detail, locationId) => {
-    if (isOffline) {
+    if (isWriteDisabled) {
       setError("Editing is disabled while offline.");
       return;
     }
@@ -2519,7 +2522,7 @@ export default function EventEditPage() {
   };
 
   const assignDetailCompanies = async (dayId, detail, companyIds) => {
-    if (isOffline) {
+    if (isWriteDisabled) {
       setError("Editing is disabled while offline.");
       return;
     }
@@ -2598,7 +2601,7 @@ export default function EventEditPage() {
 
   const saveTag = async (submitEvent) => {
     submitEvent.preventDefault();
-    if (isOffline) {
+    if (isWriteDisabled) {
       setError("Editing is disabled while offline.");
       return;
     }
@@ -2632,7 +2635,7 @@ export default function EventEditPage() {
   };
 
   const removeTag = async (tagId) => {
-    if (isOffline) {
+    if (isWriteDisabled) {
       setError("Editing is disabled while offline.");
       return;
     }
@@ -2690,7 +2693,7 @@ export default function EventEditPage() {
 
   const saveTruckSize = async (submitEvent) => {
     submitEvent.preventDefault();
-    if (isOffline) {
+    if (isWriteDisabled) {
       setError("Editing is disabled while offline.");
       return;
     }
@@ -2725,7 +2728,7 @@ export default function EventEditPage() {
   };
 
   const removeTruckSize = async (truckSizeId) => {
-    if (isOffline) {
+    if (isWriteDisabled) {
       setError("Editing is disabled while offline.");
       return;
     }
@@ -2800,7 +2803,7 @@ export default function EventEditPage() {
 
   const saveTruck = async (submitEvent) => {
     submitEvent.preventDefault();
-    if (isOffline) {
+    if (isWriteDisabled) {
       setError("Editing is disabled while offline.");
       return;
     }
@@ -2839,7 +2842,7 @@ export default function EventEditPage() {
   };
 
   const removeTruck = async (truckId) => {
-    if (isOffline) {
+    if (isWriteDisabled) {
       setError("Editing is disabled while offline.");
       return;
     }
@@ -2890,7 +2893,7 @@ export default function EventEditPage() {
   };
 
   const startAddingSubLocation = (location) => {
-    if (isOffline || location.parentLocationId) return;
+    if (isWriteDisabled || location.parentLocationId) return;
     setLocationFormMode("add");
     setEditingLocationId("");
     setLocationForm({
@@ -2903,7 +2906,7 @@ export default function EventEditPage() {
 
   const saveLocation = async (submitEvent) => {
     submitEvent.preventDefault();
-    if (isOffline) {
+    if (isWriteDisabled) {
       setError("Editing is disabled while offline.");
       return;
     }
@@ -2948,7 +2951,7 @@ export default function EventEditPage() {
   };
 
   const moveLocation = async (locationId, parentLocationId) => {
-    if (isOffline) {
+    if (isWriteDisabled) {
       setError("Editing is disabled while offline.");
       return;
     }
@@ -3018,7 +3021,7 @@ export default function EventEditPage() {
   };
 
   const removeLocation = async (locationId) => {
-    if (isOffline) {
+    if (isWriteDisabled) {
       setError("Editing is disabled while offline.");
       return;
     }
@@ -3064,7 +3067,7 @@ export default function EventEditPage() {
   };
 
   const openNotesEditor = (detail) => {
-    if (isOffline) return;
+    if (isWriteDisabled) return;
     setOpenActionMenuId("");
     setOpenNotesDetailId((current) => {
       if (current === detail.id) return "";
@@ -3081,7 +3084,7 @@ export default function EventEditPage() {
   };
 
   const saveDetailNotes = async (detail, nextNotes = notesDraft) => {
-    if (isOffline) {
+    if (isWriteDisabled) {
       setError("Editing is disabled while offline.");
       return;
     }
@@ -3116,7 +3119,7 @@ export default function EventEditPage() {
     editingDetailCell?.detailId === detailId && editingDetailCell?.field === field;
 
   const startEditingDetailCell = (dayId, detailId, field) => {
-    if (isOffline) return;
+    if (isWriteDisabled) return;
     setEditingDetailCell({ dayId, detailId, field });
     setOpenActionMenuId("");
     setMessage("");
@@ -3138,7 +3141,7 @@ export default function EventEditPage() {
   };
 
   const saveDetailCell = async (dayId, detail, nextCell = null) => {
-    if (isOffline) {
+    if (isWriteDisabled) {
       setError("Editing is disabled while offline.");
       return;
     }
@@ -3254,6 +3257,7 @@ export default function EventEditPage() {
   const cancelEditingDetail = () => {
     setEditingDetailModal(null);
     setEditingDetailTimeModal(null);
+    setAddingDetailDayId("");
     setDetailEditForm(emptyDetailEditForm);
   };
 
@@ -3306,7 +3310,7 @@ export default function EventEditPage() {
   const saveDetailEditForm = async (submitEvent) => {
     submitEvent.preventDefault();
     if (!editingDetailModal) return;
-    if (isOffline) {
+    if (isWriteDisabled) {
       setError("Editing is disabled while offline.");
       return;
     }
@@ -3385,7 +3389,7 @@ export default function EventEditPage() {
   const saveDetailTimeForm = async (submitEvent) => {
     submitEvent.preventDefault();
     if (!editingDetailTimeModal) return;
-    if (isOffline) {
+    if (isWriteDisabled) {
       setError("Editing is disabled while offline.");
       return;
     }
@@ -3482,7 +3486,7 @@ export default function EventEditPage() {
   };
 
   const deleteDetail = async (dayId, detailId) => {
-    if (isOffline) {
+    if (isWriteDisabled) {
       setError("Editing is disabled while offline.");
       return;
     }
@@ -3505,7 +3509,7 @@ export default function EventEditPage() {
   };
 
   const persistDetailOrder = async (dayId, nextDetails) => {
-    if (isOffline) {
+    if (isWriteDisabled) {
       setError("Editing is disabled while offline.");
       return;
     }
@@ -3598,7 +3602,7 @@ export default function EventEditPage() {
   };
 
   const moveDetailToDay = async (sourceDayId, targetDayId, detail) => {
-    if (isOffline) {
+    if (isWriteDisabled) {
       setError("Editing is disabled while offline.");
       return;
     }
@@ -3642,7 +3646,7 @@ export default function EventEditPage() {
   };
 
   const duplicateDetail = async (dayId, detail) => {
-    if (isOffline) {
+    if (isWriteDisabled) {
       setError("Editing is disabled while offline.");
       return;
     }
@@ -3732,8 +3736,21 @@ export default function EventEditPage() {
   };
 
   const addDraftDetail = (dayId) => {
-    if (isOffline) return;
+    if (isWriteDisabled) return;
     const defaults = buildDraftDetailDefaultsFromFilters();
+
+    if (window.matchMedia("(max-width: 700px)").matches) {
+      setAddingDetailDayId(dayId);
+      setDetailEditForm({
+        ...emptyDetailEditForm,
+        tagId: defaults.tagId,
+        locationId: defaults.locationId,
+        companyIds: defaults.companyIds,
+      });
+      setMessage("");
+      setError("");
+      return;
+    }
 
     setDraftDetailsByDayId((current) => ({
       ...current,
@@ -3769,7 +3786,7 @@ export default function EventEditPage() {
   };
 
   const saveDraftDetail = async (dayId, draftIndex, draft) => {
-    if (isOffline) {
+    if (isWriteDisabled) {
       setError("Editing is disabled while offline.");
       return;
     }
@@ -3790,7 +3807,7 @@ export default function EventEditPage() {
         scheduleDayId: dayId,
         time: draft.time,
         description: draft.description.trim(),
-        notes: "",
+        notes: draft.notes || "",
         sortOrder: getNextSortOrder(dayId),
         colour: normaliseHexColour(draft.colour),
         tagId: getEditableDetailTagId(draft.tagId),
@@ -3800,6 +3817,51 @@ export default function EventEditPage() {
       const detailRef = await createScheduleDetail(detailData);
       removeDraftDetail(dayId, draftIndex);
       addCreatedDetailToDay(dayId, detailRef, detailData);
+    } catch (saveError) {
+      console.error(saveError);
+      setError("Could not add schedule detail.");
+    } finally {
+      setSavingDraftDayId("");
+    }
+  };
+
+  const saveMobileAddDetailForm = async (submitEvent) => {
+    submitEvent.preventDefault();
+    if (!addingDetailDayId) return;
+    if (isWriteDisabled) {
+      setError("Editing is disabled while offline.");
+      return;
+    }
+    if (!detailEditForm.description?.trim()) {
+      setError("Description is required.");
+      return;
+    }
+    if (!scheduleDayById.get(addingDetailDayId)?.date) {
+      setError("Date is required.");
+      return;
+    }
+
+    setSavingDraftDayId(addingDetailDayId);
+    setMessage("");
+    setError("");
+
+    try {
+      const detailData = {
+        eventId,
+        scheduleDayId: addingDetailDayId,
+        time: detailEditForm.time || "",
+        description: detailEditForm.description.trim(),
+        notes: detailEditForm.notes || "",
+        sortOrder: getNextSortOrder(addingDetailDayId),
+        colour: "",
+        tagId: getEditableDetailTagId(detailEditForm.tagId),
+        locationId: detailEditForm.locationId || "",
+        companyIds: detailEditForm.companyIds || [],
+      };
+      const detailRef = await createScheduleDetail(detailData);
+      addCreatedDetailToDay(addingDetailDayId, detailRef, detailData);
+      cancelEditingDetail();
+      setMessage("Schedule row added.");
     } catch (saveError) {
       console.error(saveError);
       setError("Could not add schedule detail.");
@@ -3843,7 +3905,7 @@ export default function EventEditPage() {
   };
 
   const addDraftTruckDetail = (truckId) => {
-    if (isOffline) return;
+    if (isWriteDisabled) return;
     const hasSingleDestination =
       showTruckDestinationColumn &&
       (locationOptions.length + companies.length === 1);
@@ -3897,7 +3959,7 @@ export default function EventEditPage() {
   };
 
   const saveDraftTruckDetail = async (truck, draftIndex, draft) => {
-    if (isOffline) {
+    if (isWriteDisabled) {
       setError("Editing is disabled while offline.");
       return;
     }
@@ -3937,7 +3999,7 @@ export default function EventEditPage() {
   };
 
   const assignTruckDetailDate = async (sourceDayId, detail, targetDayId) => {
-    if (isOffline) {
+    if (isWriteDisabled) {
       setError("Editing is disabled while offline.");
       return;
     }
@@ -3976,7 +4038,7 @@ export default function EventEditPage() {
   };
 
   const persistTruckDetailOrder = async (truckId, nextDetails) => {
-    if (isOffline) {
+    if (isWriteDisabled) {
       setError("Editing is disabled while offline.");
       return;
     }
@@ -4023,7 +4085,7 @@ export default function EventEditPage() {
   };
 
   const toggleTruckDetailAction = async (dayId, detail) => {
-    if (isOffline) {
+    if (isWriteDisabled) {
       setError("Editing is disabled while offline.");
       return;
     }
@@ -4064,7 +4126,7 @@ export default function EventEditPage() {
   };
 
   const assignTruckDetailDestination = async (dayId, detail, value) => {
-    if (isOffline) {
+    if (isWriteDisabled) {
       setError("Editing is disabled while offline.");
       return;
     }
@@ -4129,7 +4191,7 @@ export default function EventEditPage() {
   };
 
   const duplicateTruckDetail = async (truck, detail) => {
-    if (isOffline) {
+    if (isWriteDisabled) {
       setError("Editing is disabled while offline.");
       return;
     }
@@ -4168,7 +4230,7 @@ export default function EventEditPage() {
 
   const handleEventSave = async (submitEvent) => {
     submitEvent.preventDefault();
-    if (isOffline) {
+    if (isWriteDisabled) {
       setError("Editing is disabled while offline.");
       return;
     }
@@ -4248,7 +4310,7 @@ export default function EventEditPage() {
 
   const saveScheduleDateRange = async (submitEvent) => {
     submitEvent.preventDefault();
-    if (isOffline) {
+    if (isWriteDisabled) {
       setError("Editing is disabled while offline.");
       return;
     }
@@ -4306,6 +4368,9 @@ export default function EventEditPage() {
         (detail) => detail.id === editingDetailModal.detailId
       )
     : null;
+  const addingDetailDay = addingDetailDayId
+    ? scheduleDays.find((day) => day.id === addingDetailDayId)
+    : null;
   const editingDetailTimeDay = editingDetailTimeModal
     ? scheduleDays.find((day) => day.id === editingDetailTimeModal.dayId)
     : null;
@@ -4324,6 +4389,7 @@ export default function EventEditPage() {
         dateRangeLabel={eventDateRangeLabel}
         isEditing={isEditingEventDetails}
         isOffline={isOffline}
+        canEditEvent={!isEventReadOnly}
         isSuperAdmin={isSuperAdmin}
         editableClients={editableClients}
         savingEvent={savingEvent}
@@ -4343,7 +4409,7 @@ export default function EventEditPage() {
       <EventEditorStatusMessages
         error={error}
         warning={warning}
-        isOffline={isOffline}
+        isOffline={isWriteDisabled}
         isSuperAdmin={isSuperAdmin}
         clientId={form.clientId}
         activeTab={activeTab}
@@ -4386,7 +4452,7 @@ export default function EventEditPage() {
         openContactCompanyIds={openContactCompanyIds}
         canManageContactCompanyOrder={canManageContactCompanyOrder}
         canManageCompanyContacts={canManageCompanyContacts}
-        isOffline={isOffline}
+        isOffline={isWriteDisabled}
         savingContactCompanyOrder={savingContactCompanyOrder}
         contactCompanyDropTargetId={contactCompanyDropTargetId}
         draggedContactCompanyIdRef={draggedContactCompanyIdRef}
@@ -4425,7 +4491,7 @@ export default function EventEditPage() {
         editingDayId={editingDayId}
         editingDayMode={editingDayMode}
         editingDayDraft={editingDayDraft}
-        isOffline={isOffline}
+        isOffline={isWriteDisabled}
         isEditingScheduleDateRange={isEditingScheduleDateRange}
         scheduleDateRangeDraft={scheduleDateRangeDraft}
         savingScheduleDateRange={savingScheduleDateRange}
@@ -4479,7 +4545,7 @@ export default function EventEditPage() {
           selectedCompanyFilterIds={selectedCompanyFilterIds}
           draftDetailsByDayId={draftDetailsByDayId}
           formatDetailDate={formatDetailDate}
-          isOffline={isOffline}
+          isOffline={isWriteDisabled}
           addDraftDetail={addDraftDetail}
           startEditingDay={startEditingDay}
           isEditingDetailCell={isEditingDetailCell}
@@ -4543,6 +4609,135 @@ export default function EventEditPage() {
       </section>
       ) : null}
 
+      {addingDetailDayId ? (
+        <Modal
+          title="Add row"
+          subtitle={addingDetailDay ? formatDetailDate(addingDetailDay.date) : ""}
+          labelledBy="addScheduleRowTitle"
+          onClose={cancelEditingDetail}
+        >
+          <form className="admin-inline-form" onSubmit={saveMobileAddDetailForm}>
+            <div className="form-grid">
+              <div className="form-row">
+                <label htmlFor="detailAddTime">Time</label>
+                <input
+                  id="detailAddTime"
+                  type="time"
+                  autoFocus
+                  value={detailEditForm.time}
+                  disabled={isWriteDisabled || savingDraftDayId === addingDetailDayId}
+                  onChange={(event) => updateDetailEditFormField("time", event.target.value)}
+                />
+              </div>
+              <div className="form-row full">
+                <label htmlFor="detailAddDescription">Description</label>
+                <input
+                  id="detailAddDescription"
+                  value={detailEditForm.description}
+                  disabled={isWriteDisabled || savingDraftDayId === addingDetailDayId}
+                  onChange={(event) =>
+                    updateDetailEditFormField("description", event.target.value)
+                  }
+                  required
+                />
+              </div>
+              {showTagColumn ? (
+                <div className="form-row">
+                  <label htmlFor="detailAddTag">Tag</label>
+                  <select
+                    id="detailAddTag"
+                    value={detailEditForm.tagId}
+                    disabled={isWriteDisabled || savingDraftDayId === addingDetailDayId}
+                    onChange={(event) => updateDetailEditFormField("tagId", event.target.value)}
+                  >
+                    <option value="">No tag</option>
+                    {normalDetailTags.map((tag) => (
+                      <option key={tag.id} value={tag.id}>
+                        {tag.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              ) : null}
+              {showLocationColumn ? (
+                <div className="form-row">
+                  <label htmlFor="detailAddLocation">Location</label>
+                  <select
+                    id="detailAddLocation"
+                    value={detailEditForm.locationId}
+                    disabled={isWriteDisabled || savingDraftDayId === addingDetailDayId}
+                    onChange={(event) =>
+                      updateDetailEditFormField("locationId", event.target.value)
+                    }
+                  >
+                    <option value="">No location</option>
+                    {locationOptions.map((location) => (
+                      <option key={location.id} value={location.id}>
+                        {location.displayName}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              ) : null}
+              {showCompanyColumn ? (
+                <div className="form-row full">
+                  <span className="form-label">Companies</span>
+                  <div className="checkbox-stack">
+                    {companies.length === 0 ? (
+                      <span className="item-meta">No companies available.</span>
+                    ) : (
+                      companies.map((company) => (
+                        <label className="checkbox-row" key={company.id}>
+                          <input
+                            type="checkbox"
+                            checked={(detailEditForm.companyIds || []).includes(company.id)}
+                            disabled={isWriteDisabled || savingDraftDayId === addingDetailDayId}
+                            onChange={() => toggleDetailEditCompany(company.id)}
+                          />
+                          <span>{company.companyName}</span>
+                        </label>
+                      ))
+                    )}
+                  </div>
+                </div>
+              ) : null}
+              <div className="form-row full">
+                <label htmlFor="detailAddNotes">Notes</label>
+                <textarea
+                  id="detailAddNotes"
+                  value={detailEditForm.notes}
+                  disabled={isWriteDisabled || savingDraftDayId === addingDetailDayId}
+                  rows={4}
+                  onChange={(event) => updateDetailEditFormField("notes", event.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="actions">
+              <button
+                className="button"
+                type="submit"
+                disabled={
+                  isWriteDisabled ||
+                  savingDraftDayId === addingDetailDayId ||
+                  !detailEditForm.description.trim()
+                }
+              >
+                {savingDraftDayId === addingDetailDayId ? "Adding..." : "Add row"}
+              </button>
+              <button
+                className="button secondary"
+                type="button"
+                disabled={savingDraftDayId === addingDetailDayId}
+                onClick={cancelEditingDetail}
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </Modal>
+      ) : null}
+
       {editingDetail ? (
         <Modal
           title="Edit row"
@@ -4560,7 +4755,7 @@ export default function EventEditPage() {
                   type="time"
                   autoFocus
                   value={detailEditForm.time}
-                  disabled={isOffline || savingDetailId === editingDetail.id}
+                  disabled={isWriteDisabled || savingDetailId === editingDetail.id}
                   onChange={(event) => updateDetailEditFormField("time", event.target.value)}
                 />
               </div>
@@ -4570,7 +4765,7 @@ export default function EventEditPage() {
                   <input
                     id="detailEditDescription"
                     value={detailEditForm.description}
-                    disabled={isOffline || savingDetailId === editingDetail.id}
+                    disabled={isWriteDisabled || savingDetailId === editingDetail.id}
                     onChange={(event) =>
                       updateDetailEditFormField("description", event.target.value)
                     }
@@ -4584,7 +4779,7 @@ export default function EventEditPage() {
                     <select
                       id="detailEditAction"
                       value={detailEditForm.action}
-                      disabled={isOffline || savingDetailId === editingDetail.id}
+                      disabled={isWriteDisabled || savingDetailId === editingDetail.id}
                       onChange={(event) =>
                         updateDetailEditFormField("action", event.target.value)
                       }
@@ -4601,7 +4796,7 @@ export default function EventEditPage() {
                     <select
                       id="detailEditDestination"
                       value={detailEditForm.destinationValue}
-                      disabled={isOffline || savingDetailId === editingDetail.id}
+                      disabled={isWriteDisabled || savingDetailId === editingDetail.id}
                       onChange={(event) =>
                         updateDetailEditFormField("destinationValue", event.target.value)
                       }
@@ -4635,7 +4830,7 @@ export default function EventEditPage() {
                   <select
                     id="detailEditTag"
                     value={detailEditForm.tagId}
-                    disabled={isOffline || savingDetailId === editingDetail.id}
+                    disabled={isWriteDisabled || savingDetailId === editingDetail.id}
                     onChange={(event) => updateDetailEditFormField("tagId", event.target.value)}
                   >
                     <option value="">No tag</option>
@@ -4653,7 +4848,7 @@ export default function EventEditPage() {
                   <select
                     id="detailEditLocation"
                     value={detailEditForm.locationId}
-                    disabled={isOffline || savingDetailId === editingDetail.id}
+                    disabled={isWriteDisabled || savingDetailId === editingDetail.id}
                     onChange={(event) =>
                       updateDetailEditFormField("locationId", event.target.value)
                     }
@@ -4679,7 +4874,7 @@ export default function EventEditPage() {
                           <input
                             type="checkbox"
                             checked={(detailEditForm.companyIds || []).includes(company.id)}
-                            disabled={isOffline || savingDetailId === editingDetail.id}
+                            disabled={isWriteDisabled || savingDetailId === editingDetail.id}
                             onChange={() => toggleDetailEditCompany(company.id)}
                           />
                           <span>{company.companyName}</span>
@@ -4694,7 +4889,7 @@ export default function EventEditPage() {
                 <textarea
                   id="detailEditNotes"
                   value={detailEditForm.notes}
-                  disabled={isOffline || savingDetailId === editingDetail.id}
+                  disabled={isWriteDisabled || savingDetailId === editingDetail.id}
                   rows={4}
                   onChange={(event) => updateDetailEditFormField("notes", event.target.value)}
                 />
@@ -4705,7 +4900,7 @@ export default function EventEditPage() {
               <button
                 className="button"
                 type="submit"
-                disabled={isOffline || savingDetailId === editingDetail.id}
+                disabled={isWriteDisabled || savingDetailId === editingDetail.id}
               >
                 {savingDetailId === editingDetail.id ? "Saving..." : "Save"}
               </button>
@@ -4739,7 +4934,7 @@ export default function EventEditPage() {
                   id="detailTimeKeyboardInput"
                   type="time"
                   value={detailEditForm.time}
-                  disabled={isOffline || savingDetailId === editingDetailTime.id}
+                  disabled={isWriteDisabled || savingDetailId === editingDetailTime.id}
                   onChange={(event) => updateDetailEditFormField("time", event.target.value)}
                 />
               </label>
@@ -4756,7 +4951,7 @@ export default function EventEditPage() {
                         }
                         key={hour}
                         type="button"
-                        disabled={isOffline || savingDetailId === editingDetailTime.id}
+                        disabled={isWriteDisabled || savingDetailId === editingDetailTime.id}
                         onClick={() => updateDetailEditTimePart("hour", hour)}
                         onKeyDown={(event) => handleDetailTimeWheelKeyDown("hour", event)}
                       >
@@ -4778,7 +4973,7 @@ export default function EventEditPage() {
                         }
                         key={minute}
                         type="button"
-                        disabled={isOffline || savingDetailId === editingDetailTime.id}
+                        disabled={isWriteDisabled || savingDetailId === editingDetailTime.id}
                         onClick={() => updateDetailEditTimePart("minute", minute)}
                         onKeyDown={(event) => handleDetailTimeWheelKeyDown("minute", event)}
                       >
@@ -4794,7 +4989,7 @@ export default function EventEditPage() {
               <button
                 className="button"
                 type="submit"
-                disabled={isOffline || savingDetailId === editingDetailTime.id}
+                disabled={isWriteDisabled || savingDetailId === editingDetailTime.id}
               >
                 {savingDetailId === editingDetailTime.id ? "Saving..." : "Save"}
               </button>
@@ -4814,7 +5009,7 @@ export default function EventEditPage() {
       {activeTab === "trucks" ? (
       <TruckingPanel
         truckFormMode={truckFormMode}
-        isOffline={isOffline}
+        isOffline={isWriteDisabled}
         startAddingTruck={startAddingTruck}
         saveTruck={saveTruck}
         truckForm={truckForm}
@@ -4894,7 +5089,7 @@ export default function EventEditPage() {
                     className="button secondary icon-text-button"
                     type="button"
                     disabled={
-                      isOffline ||
+                      isWriteDisabled ||
                       updatingShareOutput ||
                       filteredViewsLoading ||
                       detailsLoading ||
@@ -5138,13 +5333,13 @@ export default function EventEditPage() {
                   </div>
                 </div>
                 <div className="actions">
-                  <button className="button" type="submit" disabled={savingFilteredView || isOffline}>
+                  <button className="button" type="submit" disabled={savingFilteredView || isWriteDisabled}>
                     {savingFilteredView ? "Saving..." : editingFilteredViewId ? "Save filtered view" : "Create filtered view"}
                   </button>
                   <button
                     className="button secondary"
                     type="button"
-                    disabled={savingFilteredView || isOffline}
+                    disabled={savingFilteredView || isWriteDisabled}
                     onClick={resetFilteredViewForm}
                   >
                     Cancel
@@ -5177,7 +5372,7 @@ export default function EventEditPage() {
                           <button
                             className="compact-button"
                             type="button"
-                            disabled={deletingFilteredViewId === view.id || isOffline}
+                            disabled={deletingFilteredViewId === view.id || isWriteDisabled}
                             onClick={() => removeFilteredView(view.id)}
                           >
                             <CapcomIcon name="delete" size={16} />
@@ -5230,7 +5425,7 @@ export default function EventEditPage() {
       <SettingsPanel
         activeSettingsTab={activeSettingsTab}
         setActiveSettingsTab={setActiveSettingsTab}
-        isOffline={isOffline}
+        isOffline={isWriteDisabled}
         tagFormMode={tagFormMode}
         tagForm={tagForm}
         tags={tags}
@@ -5316,7 +5511,7 @@ export default function EventEditPage() {
             <button
               className="button"
               type="button"
-              disabled={savingDayId === editingDayId || isOffline}
+              disabled={savingDayId === editingDayId || isWriteDisabled}
               onClick={() => {
                 const day = scheduleDays.find((nextDay) => nextDay.id === editingDayId);
                 if (day) saveDay(day, editingDayDraft);
@@ -5327,7 +5522,7 @@ export default function EventEditPage() {
             <button
               className="button secondary"
               type="button"
-              disabled={savingDayId === editingDayId || isOffline}
+              disabled={savingDayId === editingDayId || isWriteDisabled}
               onClick={cancelEditingDay}
             >
               Cancel

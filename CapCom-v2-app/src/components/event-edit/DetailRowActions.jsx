@@ -23,6 +23,8 @@ export default function DetailRowActions({
   closeActionMenu,
   deleteDetail,
 }) {
+  if (isOffline) return null;
+
   const canMoveToPreviousDay =
     Boolean(previousDay) && savingDetailId !== detail.id && !isOffline;
   const canMoveToNextDay =

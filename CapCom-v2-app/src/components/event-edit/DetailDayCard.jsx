@@ -49,6 +49,7 @@ export default function DetailDayCard({
               ) : null}
             </p>
           </div>
+          {!isOffline ? (
           <div className="day-card-actions">
             <button
               className="compact-button primary-soft icon-text-button"
@@ -69,6 +70,7 @@ export default function DetailDayCard({
               Edit day
             </button>
           </div>
+          ) : null}
         </div>
 
         {!hasRowsOrDrafts ? (

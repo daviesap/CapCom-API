@@ -286,6 +286,13 @@ summary:focus-visible {
   padding: 6px;
 }
 
+.sidebar-login-meta {
+  color: var(--color-text-muted);
+  font-size: 12px;
+  line-height: 1.35;
+  margin: 2px 12px 0;
+}
+
 .sidebar-footer {
   border-top: 1px solid var(--color-border);
   margin-top: auto;
@@ -2709,6 +2716,7 @@ textarea {
 
   .sidebar-collapsed .brand-full,
   .sidebar-collapsed .nav-item span,
+  .sidebar-collapsed .sidebar-login-meta,
   .sidebar-collapsed .app-footer .footer-text {
     display: none;
   }

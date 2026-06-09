@@ -101,6 +101,7 @@ export default function SettingsPanel({
           setLocationDropTargetId("");
         }}
       >
+        {!isOffline ? (
         <button
           className="location-name-button"
           type="button"
@@ -117,6 +118,15 @@ export default function SettingsPanel({
             {location.parentLocationId ? "Sub-location" : "Main location"}
           </span>
         </button>
+        ) : (
+          <div>
+            <span className="item-title">{location.name}</span>
+            <span className="item-meta">
+              {location.parentLocationId ? "Sub-location" : "Main location"}
+            </span>
+          </div>
+        )}
+        {!isOffline ? (
         <div className="location-list-actions">
           <button
             className="compact-button"
@@ -137,6 +147,7 @@ export default function SettingsPanel({
             {deletingLocationId === location.id ? "Deleting..." : "Delete"}
           </button>
         </div>
+        ) : null}
       </div>
       {location.children.length > 0 ? (
         <div className="location-tree-children">
@@ -179,7 +190,7 @@ export default function SettingsPanel({
 
       {activeSettingsTab === "tags" ? (
         <div className="settings-section">
-          {!tagFormMode ? (
+          {!tagFormMode && !isOffline ? (
             <div className="settings-section-toolbar">
               <button
                 className="button"
@@ -267,6 +278,7 @@ export default function SettingsPanel({
                     {tag.name}
                   </span>
                   <span className="item-meta">{normaliseHexColour(tag.colour)}</span>
+                  {!isOffline ? (
                   <div className="tag-list-actions">
                     <button
                       className="compact-button"
@@ -287,6 +299,7 @@ export default function SettingsPanel({
                       {deletingTagId === tag.id ? "Deleting..." : "Delete"}
                     </button>
                   </div>
+                  ) : null}
                 </div>
               ))}
             </div>
@@ -296,7 +309,7 @@ export default function SettingsPanel({
 
       {activeSettingsTab === "locations" ? (
         <div className="settings-section">
-          {!locationFormMode ? (
+          {!locationFormMode && !isOffline ? (
             <div className="settings-section-toolbar">
               <button
                 className="button"
@@ -410,7 +423,7 @@ export default function SettingsPanel({
 
       {activeSettingsTab === "truckSizes" ? (
         <div className="settings-section">
-          {!truckSizeFormMode ? (
+          {!truckSizeFormMode && !isOffline ? (
             <div className="settings-section-toolbar">
               <button
                 className="button"
@@ -467,6 +480,7 @@ export default function SettingsPanel({
               {truckSizes.map((truckSize) => (
                 <div className="tag-list-row" key={truckSize.id}>
                   <span>{truckSize.size}</span>
+                  {!isOffline ? (
                   <div className="tag-list-actions">
                     <button
                       className="compact-button"
@@ -487,6 +501,7 @@ export default function SettingsPanel({
                       {deletingTruckSizeId === truckSize.id ? "Deleting..." : "Delete"}
                     </button>
                   </div>
+                  ) : null}
                 </div>
               ))}
             </div>
