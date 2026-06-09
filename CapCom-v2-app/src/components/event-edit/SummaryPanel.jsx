@@ -6,13 +6,20 @@ export default function SummaryPanel({
   editingDayId,
   editingDayMode,
   editingDayDraft,
+  isEditingScheduleDateRange,
   isOffline,
+  scheduleDateRangeDraft,
+  savingScheduleDateRange,
   savingDayId,
   formatFriendlyDate,
   onUpdateEditingDayField,
   onSaveDay,
   onCancelEditingDay,
   onStartEditingDay,
+  onStartEditingScheduleDateRange,
+  onUpdateScheduleDateRangeField,
+  onSaveScheduleDateRange,
+  onCancelEditingScheduleDateRange,
 }) {
   const editingDay = scheduleDays.find((day) => day.id === editingDayId);
   const editingDayLabel = editingDay ? formatFriendlyDate(editingDay.date) : "";
@@ -38,14 +45,14 @@ export default function SummaryPanel({
                 return (
                   <tr key={day.id}>
                     <td className="date-cell" data-label="Date">{friendlyDate}</td>
-                    <td data-label="Summary">
+                    <td className="summary-cell" data-label="Summary">
                       <span className="display-text">
                         {day.summary || ""}
                       </span>
                     </td>
-                    <td data-label="End of day target">
+                    <td className="target-summary-cell" data-label="">
                       <div className="target-cell">
-                        <span className="display-text">
+                        <span className="display-text eod-text">
                           {day.endOfDayTarget || ""}
                         </span>
 
@@ -57,7 +64,7 @@ export default function SummaryPanel({
                             onClick={() => onStartEditingDay(day, "inline")}
                           >
                             <CapcomIcon name="edit" size={16} />
-                            Edit
+                            <span className="button-label">Edit</span>
                           </button>
                         </div>
                       </div>
@@ -67,8 +74,71 @@ export default function SummaryPanel({
               })}
             </tbody>
           </table>
+          <button
+            className="button secondary update-date-range-button"
+            type="button"
+            disabled={isOffline}
+            onClick={onStartEditingScheduleDateRange}
+          >
+            Update date range
+          </button>
         </div>
       )}
+      {isEditingScheduleDateRange ? (
+        <Modal
+          title="Update date range"
+          labelledBy="scheduleDateRangeFormTitle"
+          closeLabel="Close update date range form"
+          onClose={onCancelEditingScheduleDateRange}
+        >
+          <form className="admin-inline-form" onSubmit={onSaveScheduleDateRange}>
+            <div className="form-grid">
+              <div className="form-row full">
+                <label htmlFor="scheduleStartDate">Schedule start date</label>
+                <input
+                  id="scheduleStartDate"
+                  type="date"
+                  value={scheduleDateRangeDraft.scheduleStartDate}
+                  disabled={isOffline || savingScheduleDateRange}
+                  onChange={(event) =>
+                    onUpdateScheduleDateRangeField("scheduleStartDate", event.target.value)
+                  }
+                />
+              </div>
+              <div className="form-row full">
+                <label htmlFor="scheduleEndDate">Schedule end date</label>
+                <input
+                  id="scheduleEndDate"
+                  type="date"
+                  value={scheduleDateRangeDraft.scheduleEndDate}
+                  disabled={isOffline || savingScheduleDateRange}
+                  onChange={(event) =>
+                    onUpdateScheduleDateRangeField("scheduleEndDate", event.target.value)
+                  }
+                />
+              </div>
+            </div>
+
+            <div className="actions">
+              <button
+                className="button"
+                type="submit"
+                disabled={isOffline || savingScheduleDateRange}
+              >
+                {savingScheduleDateRange ? "Saving..." : "Save date range"}
+              </button>
+              <button
+                className="button secondary"
+                type="button"
+                disabled={savingScheduleDateRange}
+                onClick={onCancelEditingScheduleDateRange}
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </Modal>
+      ) : null}
       {editingDay && editingDayMode === "inline" ? (
         <Modal
           title="Edit day"

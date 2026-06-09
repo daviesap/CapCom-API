@@ -87,6 +87,40 @@
   --shadow-popover: 0 14px 34px rgba(23, 32, 42, 0.16);
 }
 
+@media (max-width: 700px) {
+  .schedule-days-table tbody tr {
+    position: relative;
+  }
+
+  .schedule-days-table .target-summary-cell::before {
+    content: none;
+    display: none;
+  }
+
+  .schedule-days-table .target-summary-cell .target-cell {
+    position: static;
+  }
+
+  .schedule-days-table .target-summary-cell .row-actions {
+    margin: 0;
+    position: absolute;
+    right: 16px;
+    top: 16px;
+  }
+}
+
+@media (max-width: 700px) {
+  .target-summary-cell::before {
+    display: none;
+  }
+
+  .target-summary-cell .eod-text {
+    color: var(--color-accent);
+    font-style: italic;
+    font-weight: 400;
+  }
+}
+
 * {
   box-sizing: border-box;
 }
@@ -770,6 +804,11 @@ textarea {
 
 .table-wrap {
   overflow-x: auto;
+}
+
+.update-date-range-button {
+  margin-top: 16px;
+  width: 100%;
 }
 
 .schedule-days-table {
@@ -2547,8 +2586,12 @@ textarea {
   }
 
   .event-header-edit-button {
+    align-self: center;
     border-radius: var(--radius-md);
+    flex: 0 0 var(--touch-target);
+    height: var(--touch-target);
     min-height: var(--touch-target);
+    min-width: var(--touch-target);
     padding: 0;
     width: var(--touch-target);
   }
@@ -2590,6 +2633,11 @@ textarea {
   .button {
     text-align: center;
     width: 100%;
+  }
+
+  .settings-section .key-info-add-button {
+    margin-left: auto;
+    width: var(--touch-target);
   }
 
   .company-toolbar > .button {
@@ -2713,6 +2761,62 @@ textarea {
 
   .date-cell {
     white-space: normal;
+  }
+
+  .schedule-days-table .summary-cell::before {
+    display: none;
+  }
+
+  .schedule-days-table .summary-cell {
+    padding-bottom: 2px;
+    padding-top: 2px;
+  }
+
+  .schedule-days-table .summary-cell:has(.display-text:empty) {
+    display: none;
+  }
+
+  .schedule-days-table .target-summary-cell {
+    padding-top: 2px;
+  }
+
+  .schedule-days-table .target-summary-cell:has(.eod-text:empty) {
+    min-height: 0;
+    padding: 0;
+  }
+
+  .schedule-days-table .target-summary-cell:has(.eod-text:empty) .target-cell {
+    min-height: 0;
+  }
+
+  .schedule-days-table .target-summary-cell:has(.eod-text:empty) .eod-text {
+    display: none;
+  }
+
+  .schedule-days-table .display-text {
+    padding-inline: 0;
+  }
+
+  .target-summary-cell .target-cell {
+    align-items: center;
+    display: grid;
+    gap: 10px;
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .target-summary-cell .row-actions {
+    align-self: end;
+  }
+
+  .target-summary-cell .compact-button {
+    border-radius: var(--radius-md);
+    min-height: var(--touch-target);
+    padding: 0;
+    width: var(--touch-target);
+  }
+
+  .target-summary-cell .compact-button .button-label {
+    display: none;
   }
 
   @keyframes overlay-backdrop-fade-in {

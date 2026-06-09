@@ -107,7 +107,7 @@ export default function EventEditorHeader({
               />
             </div>
             <div className="form-row">
-              <label htmlFor="editStartDate">Start date</label>
+              <label htmlFor="editStartDate">First live day</label>
               <input
                 id="editStartDate"
                 type="date"
@@ -118,7 +118,7 @@ export default function EventEditorHeader({
               />
             </div>
             <div className="form-row">
-              <label htmlFor="editEndDate">End date</label>
+              <label htmlFor="editEndDate">Last live day</label>
               <input
                 id="editEndDate"
                 type="date"

@@ -405,6 +405,12 @@ export default function EventEditPage() {
     endOfDayTarget: "",
   });
   const [editingDayMode, setEditingDayMode] = useState("");
+  const [isEditingScheduleDateRange, setIsEditingScheduleDateRange] = useState(false);
+  const [scheduleDateRangeDraft, setScheduleDateRangeDraft] = useState({
+    scheduleStartDate: "",
+    scheduleEndDate: "",
+  });
+  const [savingScheduleDateRange, setSavingScheduleDateRange] = useState(false);
   const [detailsByDayId, setDetailsByDayId] = useState({});
   const [draftDetailsByDayId, setDraftDetailsByDayId] = useState({});
   const [draftTruckDetailsByTruckId, setDraftTruckDetailsByTruckId] = useState({});
@@ -3807,6 +3813,79 @@ export default function EventEditPage() {
     }
   };
 
+  const startEditingScheduleDateRange = () => {
+    setScheduleDateRangeDraft({
+      scheduleStartDate: form.scheduleStartDate || form.startDate || "",
+      scheduleEndDate: form.scheduleEndDate || form.endDate || "",
+    });
+    setMessage("");
+    setError("");
+    setIsEditingScheduleDateRange(true);
+  };
+
+  const updateScheduleDateRangeField = (field, value) => {
+    setScheduleDateRangeDraft((currentDraft) => ({
+      ...currentDraft,
+      [field]: value,
+    }));
+  };
+
+  const cancelEditingScheduleDateRange = () => {
+    setIsEditingScheduleDateRange(false);
+    setScheduleDateRangeDraft({
+      scheduleStartDate: "",
+      scheduleEndDate: "",
+    });
+  };
+
+  const saveScheduleDateRange = async (submitEvent) => {
+    submitEvent.preventDefault();
+    if (isOffline) {
+      setError("Editing is disabled while offline.");
+      return;
+    }
+
+    if (!scheduleDateRangeDraft.scheduleStartDate || !scheduleDateRangeDraft.scheduleEndDate) {
+      setError("Schedule start and end dates are required.");
+      return;
+    }
+
+    if (scheduleDateRangeDraft.scheduleStartDate > scheduleDateRangeDraft.scheduleEndDate) {
+      setError("Schedule start date must be before or equal to schedule end date.");
+      return;
+    }
+
+    setSavingScheduleDateRange(true);
+    setMessage("");
+    setError("");
+
+    try {
+      const nextEventForm = {
+        ...form,
+        scheduleStartDate: scheduleDateRangeDraft.scheduleStartDate,
+        scheduleEndDate: scheduleDateRangeDraft.scheduleEndDate,
+      };
+
+      await updateEvent(eventId, nextEventForm, userProfile);
+      const days = await syncScheduleDaysToRange(
+        eventId,
+        nextEventForm.scheduleStartDate,
+        nextEventForm.scheduleEndDate
+      );
+
+      setForm(nextEventForm);
+      setSavedEventForm(nextEventForm);
+      applyScheduleDays(days);
+      setIsEditingScheduleDateRange(false);
+      setMessage("Schedule date range updated.");
+    } catch (saveError) {
+      console.error(saveError);
+      setError("Could not update schedule date range.");
+    } finally {
+      setSavingScheduleDateRange(false);
+    }
+  };
+
       if (loading) return <Loading />;
 
   const eventHeaderImageUrl = eventImagePreviewUrl || form.imageUrl;
@@ -3923,12 +4002,19 @@ export default function EventEditPage() {
         editingDayMode={editingDayMode}
         editingDayDraft={editingDayDraft}
         isOffline={isOffline}
+        isEditingScheduleDateRange={isEditingScheduleDateRange}
+        scheduleDateRangeDraft={scheduleDateRangeDraft}
+        savingScheduleDateRange={savingScheduleDateRange}
         savingDayId={savingDayId}
         formatFriendlyDate={formatFriendlyDate}
         onUpdateEditingDayField={updateEditingDayField}
         onSaveDay={saveDay}
         onCancelEditingDay={cancelEditingDay}
         onStartEditingDay={startEditingDay}
+        onStartEditingScheduleDateRange={startEditingScheduleDateRange}
+        onUpdateScheduleDateRangeField={updateScheduleDateRangeField}
+        onSaveScheduleDateRange={saveScheduleDateRange}
+        onCancelEditingScheduleDateRange={cancelEditingScheduleDateRange}
       />
       ) : null}
 
