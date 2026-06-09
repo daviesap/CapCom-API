@@ -11,6 +11,7 @@ import {
   getCompanies,
   updateCompany,
 } from "../services/companyService.js";
+import { getCachedCompanies } from "../services/localScheduleCache.js";
 
 const emptyCompanyForm = {
   companyName: "",
@@ -80,6 +81,11 @@ export default function CompaniesPage() {
     if (!clientId) {
       setCompanies([]);
       return;
+    }
+
+    const cachedCompanies = getCachedCompanies(clientId);
+    if (cachedCompanies.length > 0) {
+      setCompanies(cachedCompanies);
     }
 
     setCompanyError("");

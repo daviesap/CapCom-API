@@ -34,7 +34,6 @@ import {
 import {
   createScheduleDetail,
   deleteScheduleDetail,
-  getScheduleDetails,
   getScheduleDetailsForEvent,
   updateScheduleDetail,
   updateScheduleDetailOrder,
@@ -100,6 +99,7 @@ import {
   getCachedTags,
   getCachedTrucks,
   getCachedTruckSizes,
+  cacheScheduleDetails,
 } from "../services/localScheduleCache.js";
 
 const emptyEventForm = {
@@ -1451,6 +1451,90 @@ export default function EventEditPage() {
         )
       )
     );
+  };
+
+  const getSavedDetailSnapshot = (detail, fallbackIndex = 0) => ({
+    time: detail.time || "",
+    description: detail.description || "",
+    sortOrder: typeof detail.sortOrder === "number" ? detail.sortOrder : fallbackIndex,
+    colour: normaliseHexColour(detail.colour),
+    tagId: detail.tagId || "",
+    locationId: detail.locationId || "",
+    companyIds: detail.companyIds || [],
+    notes: detail.notes || "",
+  });
+
+  const setDayDetails = (dayId, nextDetails) => {
+    const sortedDetails = sortDetailsForDisplay(nextDetails);
+    setDetailsByDayId((current) => ({
+      ...current,
+      [dayId]: sortedDetails,
+    }));
+    setSavedDetailsById((current) => ({
+      ...current,
+      ...Object.fromEntries(
+        sortedDetails.map((detail, detailIndex) => [
+          detail.id,
+          getSavedDetailSnapshot(detail, detailIndex),
+        ])
+      ),
+    }));
+    cacheScheduleDetails(dayId, sortedDetails);
+  };
+
+  const removeDetailFromDay = (dayId, detailId) => {
+    setDayDetails(
+      dayId,
+      (detailsByDayId[dayId] || []).filter((detail) => detail.id !== detailId)
+    );
+    setSavedDetailsById((current) => {
+      const remainingDetails = { ...current };
+      delete remainingDetails[detailId];
+      return remainingDetails;
+    });
+  };
+
+  const addCreatedDetailToDay = (dayId, detailRef, detailData) => {
+    const createdDetail = {
+      id: detailRef.id,
+      eventId,
+      scheduleDayId: dayId,
+      truckId: "",
+      truckNumber: "",
+      action: "",
+      notes: "",
+      colour: "",
+      tagId: "",
+      locationId: "",
+      companyIds: [],
+      ...detailData,
+    };
+    setDayDetails(dayId, [...(detailsByDayId[dayId] || []), createdDetail]);
+    return createdDetail;
+  };
+
+  const moveDetailLocally = (sourceDayId, targetDayId, detail, updates) => {
+    if (sourceDayId === targetDayId) {
+      setDayDetails(
+        targetDayId,
+        (detailsByDayId[targetDayId] || []).map((currentDetail) =>
+          currentDetail.id === detail.id ? { ...currentDetail, ...updates } : currentDetail
+        )
+      );
+      return;
+    }
+
+    setDayDetails(
+      sourceDayId,
+      (detailsByDayId[sourceDayId] || []).filter((currentDetail) => currentDetail.id !== detail.id)
+    );
+    setDayDetails(targetDayId, [
+      ...(detailsByDayId[targetDayId] || []),
+      {
+        ...detail,
+        ...updates,
+      },
+    ]);
   };
 
   const updateDayField = (dayId, field, value) => {
@@ -3355,15 +3439,7 @@ export default function EventEditPage() {
 
     try {
       await deleteScheduleDetail(detailId);
-      setDetailsByDayId((current) => ({
-        ...current,
-        [dayId]: (current[dayId] || []).filter((detail) => detail.id !== detailId),
-      }));
-      setSavedDetailsById((current) => {
-        const remainingDetails = { ...current };
-        delete remainingDetails[detailId];
-        return remainingDetails;
-      });
+      removeDetailFromDay(dayId, detailId);
       setEditingDetailCell((current) => (current?.detailId === detailId ? null : current));
       setOpenActionMenuId("");
     } catch (deleteError) {
@@ -3384,33 +3460,16 @@ export default function EventEditPage() {
       ...detail,
       sortOrder: detailIndex,
     }));
+    const changedDetails = orderedDetails.filter((detail, detailIndex) =>
+      detail.sortOrder !== nextDetails[detailIndex]?.sortOrder
+    );
 
-    setDetailsByDayId((current) => ({
-      ...current,
-      [dayId]: orderedDetails,
-    }));
-    setSavedDetailsById((current) => ({
-      ...current,
-      ...Object.fromEntries(
-        orderedDetails.map((detail) => [
-          detail.id,
-          {
-            time: detail.time || "",
-            description: detail.description || "",
-            sortOrder: detail.sortOrder,
-            colour: normaliseHexColour(detail.colour),
-            tagId: detail.tagId || "",
-            locationId: detail.locationId || "",
-            companyIds: detail.companyIds || [],
-          },
-        ])
-      ),
-    }));
+    setDayDetails(dayId, orderedDetails);
     setReorderingDayId(dayId);
     setError("");
 
     try {
-      await updateScheduleDetailOrder(orderedDetails);
+      await updateScheduleDetailOrder(changedDetails);
     } catch (reorderError) {
       console.error(reorderError);
       setError("Could not reorder schedule details.");
@@ -3514,7 +3573,11 @@ export default function EventEditPage() {
         locationId: detail.locationId || "",
         companyIds: detail.companyIds || [],
       });
-      await loadScheduleDetails(scheduleDays);
+      moveDetailLocally(sourceDayId, targetDayId, detail, {
+        scheduleDayId: targetDayId,
+        sortOrder: getNextSortOrder(targetDayId),
+        tagId,
+      });
       setEditingDetailCell((current) => (current?.detailId === detail.id ? null : current));
     } catch (moveError) {
       console.error(moveError);
@@ -3540,7 +3603,7 @@ export default function EventEditPage() {
       const tagId = detail.truckId
         ? (await ensureTruckTag()).id
         : getEditableDetailTagId(detail.tagId);
-      await createScheduleDetail({
+      const detailData = {
         eventId,
         scheduleDayId: dayId,
         truckId: detail.truckId || "",
@@ -3553,30 +3616,9 @@ export default function EventEditPage() {
         tagId,
         locationId: detail.locationId || "",
         companyIds: detail.companyIds || [],
-      });
-      const details = await getScheduleDetails(dayId);
-      setDetailsByDayId((current) => ({
-        ...current,
-        [dayId]: details,
-      }));
-      setSavedDetailsById((current) => ({
-        ...current,
-        ...Object.fromEntries(
-          details.map((nextDetail, detailIndex) => [
-            nextDetail.id,
-            {
-              time: nextDetail.time || "",
-              description: nextDetail.description || "",
-              sortOrder:
-                typeof nextDetail.sortOrder === "number" ? nextDetail.sortOrder : detailIndex,
-              colour: normaliseHexColour(nextDetail.colour),
-              tagId: nextDetail.tagId || "",
-              locationId: nextDetail.locationId || "",
-              companyIds: nextDetail.companyIds || [],
-            },
-          ])
-        ),
-      }));
+      };
+      const detailRef = await createScheduleDetail(detailData);
+      addCreatedDetailToDay(dayId, detailRef, detailData);
     } catch (duplicateError) {
       console.error(duplicateError);
       setError("Could not duplicate schedule detail.");
@@ -3690,41 +3732,21 @@ export default function EventEditPage() {
     setError("");
 
     try {
-      await createScheduleDetail({
+      const detailData = {
         eventId,
         scheduleDayId: dayId,
         time: draft.time,
         description: draft.description.trim(),
         notes: "",
+        sortOrder: getNextSortOrder(dayId),
         colour: normaliseHexColour(draft.colour),
         tagId: getEditableDetailTagId(draft.tagId),
         locationId: draft.locationId || "",
         companyIds: draft.companyIds || [],
-      });
+      };
+      const detailRef = await createScheduleDetail(detailData);
       removeDraftDetail(dayId, draftIndex);
-
-      const details = await getScheduleDetails(dayId);
-      setDetailsByDayId((current) => ({
-        ...current,
-        [dayId]: details,
-      }));
-      setSavedDetailsById((current) => ({
-        ...current,
-        ...Object.fromEntries(
-          details.map((detail, detailIndex) => [
-            detail.id,
-            {
-              time: detail.time || "",
-              description: detail.description || "",
-              sortOrder: typeof detail.sortOrder === "number" ? detail.sortOrder : detailIndex,
-              colour: normaliseHexColour(detail.colour),
-              tagId: detail.tagId || "",
-              locationId: detail.locationId || "",
-              companyIds: detail.companyIds || [],
-            },
-          ])
-        ),
-      }));
+      addCreatedDetailToDay(dayId, detailRef, detailData);
     } catch (saveError) {
       console.error(saveError);
       setError("Could not add schedule detail.");
@@ -3835,7 +3857,7 @@ export default function EventEditPage() {
 
     try {
       const truckTag = await ensureTruckTag();
-      await createScheduleDetail({
+      const detailData = {
         eventId,
         scheduleDayId: draft.scheduleDayId,
         truckId: truck.id,
@@ -3849,9 +3871,10 @@ export default function EventEditPage() {
         tagId: truckTag.id,
         locationId: draft.locationId || "",
         companyIds: draft.companyIds || [],
-      });
+      };
+      const detailRef = await createScheduleDetail(detailData);
       removeDraftTruckDetail(truck.id, draftIndex);
-      await loadScheduleDetails(scheduleDays);
+      addCreatedDetailToDay(draft.scheduleDayId, detailRef, detailData);
     } catch (saveError) {
       console.error(saveError);
       setError("Could not add truck detail.");
@@ -3872,7 +3895,7 @@ export default function EventEditPage() {
 
     try {
       const truckTag = await ensureTruckTag();
-      await updateScheduleDetail(detail.id, {
+      const updates = {
         eventId,
         scheduleDayId: targetDayId,
         truckId: detail.truckId || "",
@@ -3880,13 +3903,16 @@ export default function EventEditPage() {
         action: detail.action || "",
         time: detail.time || "",
         description: detail.description || "",
-        sortOrder: detail.sortOrder,
+        sortOrder: getNextSortOrder(targetDayId),
         colour: normaliseHexColour(detail.colour),
         tagId: truckTag.id,
         locationId: detail.locationId || "",
         companyIds: detail.companyIds || [],
+      };
+      await updateScheduleDetail(detail.id, {
+        ...updates,
       });
-      await loadScheduleDetails(scheduleDays);
+      moveDetailLocally(sourceDayId, targetDayId, detail, updates);
     } catch (dateError) {
       console.error(dateError);
       setError("Could not update truck detail date.");
@@ -3905,21 +3931,28 @@ export default function EventEditPage() {
       ...detail,
       sortOrder: detailIndex,
     }));
+    const changedDetails = orderedDetails.filter((detail, detailIndex) =>
+      detail.sortOrder !== nextDetails[detailIndex]?.sortOrder
+    );
 
     setDetailsByDayId((current) => {
       const orderedById = new Map(orderedDetails.map((detail) => [detail.id, detail]));
-      return Object.fromEntries(
+      const nextDetailsByDayId = Object.fromEntries(
         Object.entries(current).map(([dayId, details]) => [
           dayId,
           details.map((detail) => orderedById.get(detail.id) || detail),
         ])
       );
+      Object.entries(nextDetailsByDayId).forEach(([dayId, details]) => {
+        cacheScheduleDetails(dayId, sortDetailsForDisplay(details));
+      });
+      return nextDetailsByDayId;
     });
     setReorderingDayId(truckId);
     setError("");
 
     try {
-      await updateScheduleDetailOrder(orderedDetails);
+      await updateScheduleDetailOrder(changedDetails);
     } catch (reorderError) {
       console.error(reorderError);
       setError("Could not reorder truck details.");
@@ -4055,7 +4088,7 @@ export default function EventEditPage() {
 
     try {
       const truckTag = await ensureTruckTag();
-      await createScheduleDetail({
+      const detailData = {
         eventId,
         scheduleDayId: detail.scheduleDayId,
         truckId: truck.id,
@@ -4069,8 +4102,9 @@ export default function EventEditPage() {
         tagId: truckTag.id,
         locationId: detail.locationId || "",
         companyIds: detail.companyIds || [],
-      });
-      await loadScheduleDetails(scheduleDays);
+      };
+      const detailRef = await createScheduleDetail(detailData);
+      addCreatedDetailToDay(detail.scheduleDayId, detailRef, detailData);
     } catch (duplicateError) {
       console.error(duplicateError);
       setError("Could not duplicate truck detail.");

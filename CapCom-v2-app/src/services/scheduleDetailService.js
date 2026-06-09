@@ -158,11 +158,10 @@ export async function createScheduleDetail({
   companyIds,
 }) {
   assertOnline();
-  const dayDetails = await getScheduleDetails(scheduleDayId);
   const nextSortOrder =
     typeof sortOrder === "number"
       ? sortOrder
-      : dayDetails.reduce(
+      : (await getScheduleDetails(scheduleDayId)).reduce(
           (maxSortOrder, detail, index) =>
             Math.max(maxSortOrder, getSortOrder(detail, index)),
           -1
@@ -292,11 +291,13 @@ export async function deleteScheduleDetail(detailId) {
 
 export async function updateScheduleDetailOrder(details) {
   assertOnline();
+  if (details.length === 0) return null;
+
   const batch = writeBatch(db);
 
   details.forEach((detail, index) => {
     batch.update(doc(db, "scheduleDetails", detail.id), {
-      sortOrder: index,
+      sortOrder: typeof detail.sortOrder === "number" ? detail.sortOrder : index,
       updatedAt: serverTimestamp(),
     });
   });
