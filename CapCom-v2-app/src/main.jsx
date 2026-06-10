@@ -13,6 +13,8 @@ const shouldUseServiceWorker = import.meta.env.PROD;
 
 if (shouldUseServiceWorker && "serviceWorker" in navigator) {
   window.addEventListener("load", () => {
+    // Temporary retirement bridge: keep registration long enough for installed
+    // PWAs to receive /sw.js, clear old app-shell caches, and unregister.
     navigator.serviceWorker.register("/sw.js").catch((error) => {
       console.warn("Service worker registration failed.", error);
     });

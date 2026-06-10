@@ -291,6 +291,62 @@ Keep changes incremental.
 
 ---
 
+# Local Dev Servers And Emulators
+
+Long-running dev servers and Firebase emulators can be awkward for coding agents to start and stop because of sandbox process restrictions.
+
+To keep the process smooth, prefer asking Andrew to start the required local service in a separate terminal window, then use the already-running local URL for verification.
+
+Use copy-paste commands like these:
+
+## CapCom v2 web app
+
+```bash
+cd /Users/apndavies/Coding/CapCom-API/CapCom-v2-app
+npm run dev -- --host 127.0.0.1 --port 5173
+```
+
+Expected local URL:
+
+```text
+http://127.0.0.1:5173/
+```
+
+## Firebase Functions emulator
+
+```bash
+cd /Users/apndavies/Coding/CapCom-API
+npm run emulate:functions
+```
+
+Expected local endpoints:
+
+```text
+Firebase Emulator UI: http://127.0.0.1:4000/
+Functions emulator:  http://127.0.0.1:5001/
+```
+
+## Firebase emulators with Storage if needed
+
+Use this when Storage emulator behaviour also needs checking:
+
+```bash
+cd /Users/apndavies/Coding/CapCom-API
+firebase emulators:start --project flair-pdf-generator --only functions,storage
+```
+
+Expected local endpoints:
+
+```text
+Firebase Emulator UI: http://127.0.0.1:4000/
+Functions emulator:  http://127.0.0.1:5001/
+Storage emulator:    http://127.0.0.1:9199/
+```
+
+If a local server is already running, use it rather than starting another one. If a port is busy or a server needs restarting, ask Andrew to stop/restart it in his terminal instead of trying to force-kill processes from the sandbox.
+
+---
+
 # Testing Requirements
 
 After making changes:

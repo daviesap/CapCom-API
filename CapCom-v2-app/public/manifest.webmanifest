@@ -1,10 +1,10 @@
 {
   "name": "CapCom v2",
   "short_name": "CapCom",
-  "description": "Offline-ready schedule management for events.",
+  "description": "Operational event management for teams.",
   "start_url": "/events",
   "scope": "/",
-  "display": "standalone",
+  "display": "browser",
   "background_color": "#f4f6f8",
   "theme_color": "#1f6feb",
   "orientation": "portrait-primary",

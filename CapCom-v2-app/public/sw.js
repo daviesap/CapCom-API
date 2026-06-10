@@ -1,73 +1,33 @@
-/* global self, caches, fetch, URL */
+/* global self, caches, fetch */
 
-const CACHE_VERSION = "capcom-v2-app-shell-v4.2";
-const APP_SHELL_URLS = [
-  "/",
-  "/events",
-  "/manifest.webmanifest",
-  "/favicon.ico",
-  "/favicon-32x32.png",
-  "/favicon-16x16.png",
-  "/apple-touch-icon.png",
-  "/icon-192x192.png",
-  "/icon-384x384.png",
-  "/icon-512x512.png"
-];
+const APP_SHELL_CACHE_PREFIX = "capcom-v2-app-shell-";
+
+async function clearAppShellCaches() {
+  const cacheNames = await caches.keys();
+  await Promise.all(
+    cacheNames
+      .filter((cacheName) => cacheName.startsWith(APP_SHELL_CACHE_PREFIX))
+      .map((cacheName) => caches.delete(cacheName))
+  );
+}
 
 self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(CACHE_VERSION).then((cache) => cache.addAll(APP_SHELL_URLS))
-  );
+  event.waitUntil(clearAppShellCaches());
   self.skipWaiting();
 });
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((cacheNames) =>
-      Promise.all(
-        cacheNames
-          .filter((cacheName) => cacheName !== CACHE_VERSION)
-          .map((cacheName) => caches.delete(cacheName))
-      )
-    )
+    (async () => {
+      await clearAppShellCaches();
+      await self.clients.claim();
+      await self.registration.unregister();
+    })()
   );
-  self.clients.claim();
 });
 
 self.addEventListener("fetch", (event) => {
-  const { request } = event;
-  const requestUrl = new URL(request.url);
-
-  if (request.method !== "GET" || requestUrl.origin !== self.location.origin) {
-    return;
+  if (event.request.method === "GET" && event.request.mode === "navigate") {
+    event.respondWith(fetch(event.request));
   }
-
-  if (request.mode === "navigate") {
-    event.respondWith(
-      fetch(request)
-        .then((response) => {
-          const responseClone = response.clone();
-          caches.open(CACHE_VERSION).then((cache) => cache.put("/events", responseClone));
-          return response;
-        })
-        .catch(() => caches.match("/events").then((cached) => cached || caches.match("/")))
-    );
-    return;
-  }
-
-  event.respondWith(
-    caches.match(request).then((cachedResponse) => {
-      const networkResponse = fetch(request)
-        .then((response) => {
-          if (response && response.status === 200) {
-            const responseClone = response.clone();
-            caches.open(CACHE_VERSION).then((cache) => cache.put(request, responseClone));
-          }
-          return response;
-        })
-        .catch(() => cachedResponse);
-
-      return cachedResponse || networkResponse;
-    })
-  );
 });
