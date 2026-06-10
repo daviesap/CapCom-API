@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useOutletContext, useParams } from "react-router-dom";
 import { useAuth } from "../auth/AuthProvider.jsx";
 import EventEditorHeader from "../components/event-edit/EventEditorHeader.jsx";
 import EventEditorStatusMessages from "../components/event-edit/EventEditorStatusMessages.jsx";
@@ -14,7 +14,6 @@ import TruckingPanel from "../components/event-edit/TruckingPanel.jsx";
 import Loading from "../components/Loading.jsx";
 import { CapcomIcon } from "../icons/capcomIcons.jsx";
 import useOnlineStatus from "../hooks/useOnlineStatus.js";
-import { getClients } from "../services/clientService.js";
 import {
   getCachedEventForUser,
   getEvent,
@@ -100,6 +99,8 @@ import {
   getCachedTruckSizes,
   cacheScheduleDetails,
 } from "../services/localScheduleCache.js";
+
+const noopSetTopbarConfig = () => {};
 
 const emptyEventForm = {
   name: "",
@@ -485,6 +486,8 @@ function getRowTagStyle(tag) {
 
 export default function EventEditPage() {
   const { eventId } = useParams();
+  const outletContext = useOutletContext();
+  const setTopbarConfig = outletContext?.setTopbarConfig || noopSetTopbarConfig;
   const { userProfile, profileLoading, isSuperAdmin, isAdmin, isUser, isViewer } = useAuth();
   const isOnline = useOnlineStatus();
   const isOffline = !isOnline;
@@ -495,7 +498,6 @@ export default function EventEditPage() {
   const [isEditingEventDetails, setIsEditingEventDetails] = useState(false);
   const [eventImageFile, setEventImageFile] = useState(null);
   const [eventImagePreviewUrl, setEventImagePreviewUrl] = useState("");
-  const [clients, setClients] = useState([]);
   const [scheduleDays, setScheduleDays] = useState([]);
   const [editingDayId, setEditingDayId] = useState("");
   const [editingDayDraft, setEditingDayDraft] = useState({
@@ -619,9 +621,6 @@ export default function EventEditPage() {
   const canUpdateShareOutput = !isEventReadOnly && (isSuperAdmin || isAdmin || isUser);
   const canUseDebugJson = Boolean(userProfile?.debugMode);
   const canManageContactCompanyOrder = canManageCompanyContacts;
-  const editableClients = clients.filter((client) => (
-    client.isActive !== false || client.id === form.clientId
-  ));
 
   useEffect(() => {
     if (profileLoading) return undefined;
@@ -699,13 +698,9 @@ export default function EventEditPage() {
           return;
         }
 
-        const [days, clientRecords] = await Promise.all([
-          getScheduleDays(eventId),
-          isSuperAdmin ? getClients() : Promise.resolve([]),
-        ]);
+        const days = await getScheduleDays(eventId);
         if (cancelled) return;
 
-        setClients(clientRecords);
         const loadedEventForm = buildEventForm(event);
         setForm(loadedEventForm);
         setSavedEventForm(loadedEventForm);
@@ -828,7 +823,7 @@ export default function EventEditPage() {
     return () => {
       cancelled = true;
     };
-  }, [eventId, profileLoading, userProfile, isSuperAdmin]);
+  }, [eventId, profileLoading, userProfile]);
 
   useEffect(() => {
     if (!openActionMenuId) return undefined;
@@ -1348,15 +1343,6 @@ export default function EventEditPage() {
 
   const updateField = (field, value) => {
     setForm((current) => ({ ...current, [field]: value }));
-  };
-
-  const updateClient = (clientId) => {
-    const selectedClient = clients.find((client) => client.id === clientId);
-    setForm((current) => ({
-      ...current,
-      clientId,
-      clientName: selectedClient?.clientName || current.clientName,
-    }));
   };
 
   const handleEventImageChange = (event) => {
@@ -4366,13 +4352,11 @@ export default function EventEditPage() {
         return;
       }
 
-      const selectedClient = clients.find((client) => client.id === form.clientId);
       const imageUrl = eventImageFile
         ? await uploadEventImage(eventId, eventImageFile)
         : form.imageUrl;
       const nextEventForm = {
         ...form,
-        clientName: selectedClient?.clientName || form.clientName,
         imageUrl,
       };
       await updateEvent(
@@ -4473,10 +4457,68 @@ export default function EventEditPage() {
     }
   };
 
-      if (loading) return <Loading />;
-
   const eventHeaderImageUrl = eventImagePreviewUrl || form.imageUrl;
   const eventDateRangeLabel = formatEventDateRange(form.startDate, form.endDate);
+  const eventTopbarDate = eventDateRangeLabel || "No event dates";
+
+  useEffect(() => {
+    if (loading) {
+      setTopbarConfig(null);
+      return;
+    }
+
+    setTopbarConfig({
+      variant: "event",
+      content: (
+        <div className="event-topbar-content">
+          <div className="event-topbar-copy">
+            <h1 className="event-topbar-title">{form.name || eventId}</h1>
+            {form.venue ? (
+              <>
+                <span className="event-topbar-separator">-</span>
+                <p className="event-topbar-venue">{form.venue}</p>
+              </>
+            ) : null}
+            <span className="event-topbar-separator">-</span>
+            <p className="event-topbar-meta">{eventTopbarDate}</p>
+          </div>
+          {!isEditingEventDetails && !isEventReadOnly ? (
+            <button
+              className="button event-topbar-edit-button"
+              type="button"
+              aria-label="Edit event"
+              disabled={isOffline}
+              onClick={() => {
+                setIsEditingEventDetails(true);
+                setMessage("");
+                setError("");
+              }}
+            >
+              <CapcomIcon name="edit" size={18} weight="bold" />
+              <span className="button-label">Edit</span>
+            </button>
+          ) : null}
+        </div>
+      ),
+    });
+  }, [
+    eventId,
+    eventTopbarDate,
+    form.venue,
+    form.name,
+    isEditingEventDetails,
+    isEventReadOnly,
+    isOffline,
+    loading,
+    setTopbarConfig,
+  ]);
+
+  useEffect(() => () => {
+    setTopbarConfig(null);
+  }, [setTopbarConfig]);
+
+  if (loading) return <Loading />;
+
   const editingDetailDay = editingDetailModal
     ? scheduleDays.find((day) => day.id === editingDetailModal.dayId)
     : null;
@@ -4510,8 +4552,6 @@ export default function EventEditPage() {
         isEditing={isEditingEventDetails}
         isOffline={isOffline}
         canEditEvent={!isEventReadOnly}
-        isSuperAdmin={isSuperAdmin}
-        editableClients={editableClients}
         savingEvent={savingEvent}
         onStartEditing={() => {
           setIsEditingEventDetails(true);
@@ -4521,9 +4561,9 @@ export default function EventEditPage() {
         onSubmit={handleEventSave}
         onCancel={cancelEditingEventDetails}
         onUpdateField={updateField}
-        onUpdateClient={updateClient}
         onImageChange={handleEventImageChange}
         onRemoveImage={removeEventImage}
+        showSummary={false}
       />
 
       <EventEditorStatusMessages

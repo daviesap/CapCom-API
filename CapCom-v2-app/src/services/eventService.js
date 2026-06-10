@@ -42,14 +42,17 @@ function sortEventsByStartDate(events) {
   return [...events].sort((a, b) => (a.startDate || "").localeCompare(b.startDate || ""));
 }
 
-function getAllowedCachedEvents(userProfile) {
+function getAllowedCachedEvents(userProfile, activeClientId = "") {
   if (isUser(userProfile) || isViewer(userProfile)) return [];
-  return getCachedEvents().filter((eventRecord) => canReadEvent(userProfile, eventRecord));
+  return getCachedEvents().filter((eventRecord) => (
+    canReadEvent(userProfile, eventRecord)
+      && (!isSuperAdmin(userProfile) || !activeClientId || eventRecord.clientId === activeClientId)
+  ));
 }
 
-export function getCachedEventsForUser(userProfile) {
+export function getCachedEventsForUser(userProfile, activeClientId = "") {
   if (!hasActiveProfile(userProfile)) return [];
-  return getAllowedCachedEvents(userProfile);
+  return getAllowedCachedEvents(userProfile, activeClientId);
 }
 
 export function getCachedEventForUser(eventId, userProfile) {
@@ -71,9 +74,9 @@ function requireEventCreateAccess(userProfile, eventData) {
   }
 }
 
-export async function getEvents(userProfile) {
+export async function getEvents(userProfile, activeClientId = "") {
   if (!hasActiveProfile(userProfile)) return [];
-  if (isBrowserOffline()) return getAllowedCachedEvents(userProfile);
+  if (isBrowserOffline()) return getAllowedCachedEvents(userProfile, activeClientId);
 
   if (isUser(userProfile) || isViewer(userProfile)) {
     const assignments = await getAssignmentsForCurrentUser(userProfile);
@@ -94,7 +97,9 @@ export async function getEvents(userProfile) {
   }
 
   const eventsQuery = isSuperAdmin(userProfile)
-    ? query(eventsRef, orderBy("startDate", "asc"))
+    ? activeClientId
+      ? query(eventsRef, where("clientId", "==", activeClientId))
+      : query(eventsRef, orderBy("startDate", "asc"))
     : query(eventsRef, where("clientId", "==", userProfile?.clientId || "__missing_client__"));
   try {
     const snapshot = await getDocs(eventsQuery);
@@ -105,7 +110,7 @@ export async function getEvents(userProfile) {
     cacheEvents(events);
     return events;
   } catch (error) {
-    const cachedEvents = getAllowedCachedEvents(userProfile);
+    const cachedEvents = getAllowedCachedEvents(userProfile, activeClientId);
     if (cachedEvents.length > 0) return cachedEvents;
     throw error;
   }

@@ -12,6 +12,11 @@ export default function ProfilePage() {
     logout,
     isSuperAdmin,
     refreshUserProfile,
+    clients,
+    activeClientId,
+    activeClient,
+    activeClientLoading,
+    setActiveClientId,
   } = useAuth();
 
   const [debugMode, setDebugMode] = useState(false);
@@ -77,6 +82,33 @@ export default function ProfilePage() {
               {userProfile?.role || "Unavailable"}
             </dd>
           </div>
+          {isSuperAdmin ? (
+            <div>
+              <dt>Event client</dt>
+              <dd>
+                <label className="form-row full profile-client-select" htmlFor="profileActiveClientId">
+                  <select
+                    id="profileActiveClientId"
+                    value={activeClientId}
+                    disabled={activeClientLoading || clients.length === 0}
+                    onChange={(event) => setActiveClientId(event.target.value)}
+                  >
+                    <option value="">
+                      {activeClientLoading ? "Loading clients..." : "Choose a client"}
+                    </option>
+                    {clients.map((client) => (
+                      <option key={client.id} value={client.id}>
+                        {client.clientName}{client.isActive === false ? " (inactive)" : ""}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                {activeClient ? (
+                  <span className="item-meta">Viewing {activeClient.clientName}</span>
+                ) : null}
+              </dd>
+            </div>
+          ) : null}
           {isSuperAdmin ? (
             <div>
               <dt>Debug mode</dt>

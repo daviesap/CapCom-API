@@ -1,10 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../auth/AuthProvider.jsx";
 import Loading from "../components/Loading.jsx";
 import Modal from "../components/Modal.jsx";
 import { CapcomIcon } from "../icons/capcomIcons.jsx";
 import useOnlineStatus from "../hooks/useOnlineStatus.js";
-import { getClient, getClients } from "../services/clientService.js";
 import {
   createCompany,
   deleteCompany,
@@ -20,64 +19,26 @@ const emptyCompanyForm = {
 
 export default function CompaniesPage() {
   const {
-    userProfile,
     profileLoading,
     isSuperAdmin,
     isAdmin,
+    activeClientId,
+    activeClient,
+    activeClientLoading,
   } = useAuth();
   const isOnline = useOnlineStatus();
   const isOffline = !isOnline;
-  const [clients, setClients] = useState([]);
-  const [selectedClientId, setSelectedClientId] = useState("");
   const [companies, setCompanies] = useState([]);
   const [companyForm, setCompanyForm] = useState(emptyCompanyForm);
   const [isCompanyFormOpen, setIsCompanyFormOpen] = useState(false);
   const [editingCompanyId, setEditingCompanyId] = useState("");
-  const [clientsLoading, setClientsLoading] = useState(false);
   const [savingCompany, setSavingCompany] = useState(false);
   const [deletingCompanyId, setDeletingCompanyId] = useState("");
   const [companyMessage, setCompanyMessage] = useState("");
   const [companyError, setCompanyError] = useState("");
   const canManageCompanies = isSuperAdmin || isAdmin;
-  const selectedClient = useMemo(
-    () => clients.find((client) => client.id === selectedClientId),
-    [clients, selectedClientId]
-  );
 
-  useEffect(() => {
-    if (profileLoading) return;
-
-    const loadClients = async () => {
-      setClientsLoading(true);
-      try {
-        if (isSuperAdmin) {
-          const clientRecords = await getClients();
-          setClients(clientRecords);
-          setSelectedClientId((current) => current || clientRecords[0]?.id || "");
-          return;
-        }
-
-        if (userProfile?.clientId) {
-          const client = await getClient(userProfile.clientId);
-          setClients(client ? [client] : []);
-          setSelectedClientId(userProfile.clientId);
-          return;
-        }
-
-        setClients([]);
-        setSelectedClientId("");
-      } catch (loadError) {
-        console.error(loadError);
-        setCompanyError("Could not load clients.");
-      } finally {
-        setClientsLoading(false);
-      }
-    };
-
-    loadClients();
-  }, [profileLoading, isSuperAdmin, userProfile]);
-
-  const loadCompanies = async (clientId = selectedClientId) => {
+  const loadCompanies = async (clientId = activeClientId) => {
     if (!clientId) {
       setCompanies([]);
       return;
@@ -98,10 +59,10 @@ export default function CompaniesPage() {
   };
 
   useEffect(() => {
-    if (profileLoading) return;
+    if (profileLoading || activeClientLoading) return;
     resetCompanyForm();
-    loadCompanies(selectedClientId);
-  }, [profileLoading, selectedClientId]);
+    loadCompanies(activeClientId);
+  }, [profileLoading, activeClientLoading, activeClientId]);
 
   const updateCompanyFormField = (field, value) => {
     setCompanyForm((current) => ({ ...current, [field]: value }));
@@ -144,8 +105,8 @@ export default function CompaniesPage() {
       setCompanyError("Your role cannot manage companies.");
       return;
     }
-    if (!selectedClientId) {
-      setCompanyError("Choose a client before adding companies.");
+    if (!activeClientId) {
+      setCompanyError("Choose a client on the Profile page before adding companies.");
       return;
     }
 
@@ -161,14 +122,14 @@ export default function CompaniesPage() {
 
       if (editingCompanyId) {
         await updateCompany(editingCompanyId, {
-          clientId: selectedClientId,
+          clientId: activeClientId,
           companyName,
           address,
         });
         setCompanyMessage("Company saved.");
       } else {
         await createCompany({
-          clientId: selectedClientId,
+          clientId: activeClientId,
           companyName,
           address,
         });
@@ -176,7 +137,7 @@ export default function CompaniesPage() {
       }
 
       resetCompanyForm();
-      await loadCompanies(selectedClientId);
+      await loadCompanies(activeClientId);
     } catch (companyError) {
       console.error(companyError);
       setCompanyError("Could not save company.");
@@ -202,7 +163,7 @@ export default function CompaniesPage() {
     try {
       await deleteCompany(companyId);
       if (editingCompanyId === companyId) resetCompanyForm();
-      await loadCompanies(selectedClientId);
+      await loadCompanies(activeClientId);
       setCompanyMessage("Company deleted.");
     } catch (companyError) {
       console.error(companyError);
@@ -224,93 +185,71 @@ export default function CompaniesPage() {
       {companyError ? <p className="error">{companyError}</p> : null}
       {companyMessage ? <p className="message">{companyMessage}</p> : null}
 
-      <section className="panel">
-        <div className="panel-heading">
-          <div className="company-toolbar">
-            {isSuperAdmin ? (
-              <div className="form-row company-client-select">
-                <label htmlFor="companyClientId">Client</label>
-                <select
-                  id="companyClientId"
-                  value={selectedClientId}
-                  disabled={clientsLoading}
-                  onChange={(event) => setSelectedClientId(event.target.value)}
-                >
-                  <option value="">Choose a client</option>
-                  {clients.map((client) => (
-                    <option key={client.id} value={client.id}>
-                      {client.clientName}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            ) : null}
-            {canManageCompanies ? (
-              <button
-                className="button"
-                type="button"
-                aria-label="Add company"
-                disabled={isOffline || !selectedClientId}
-                onClick={startAddingCompany}
-              >
-                <CapcomIcon name="add" size={18} weight="bold" />
-                <span className="button-label">Add company</span>
-              </button>
-            ) : null}
-          </div>
-        </div>
-
-        {companies.length === 0 ? (
-          <p className="item-meta">No companies yet.</p>
-        ) : (
-          <div className="company-list">
-            {companies.map((company) => (
-              <div className="company-list-row" key={company.id}>
-                <div className="company-list-main">
-                  <h3>{company.companyName}</h3>
-                  {company.address ? (
-                    <p className="item-meta company-address">{company.address}</p>
-                  ) : null}
-                </div>
-                {canManageCompanies ? (
-                  <div className="company-list-actions">
-                    <button
-                      className="compact-button company-icon-button"
-                      type="button"
-                      aria-label={`Edit ${company.companyName}`}
-                      disabled={isOffline}
-                      onClick={() => startEditingCompany(company)}
-                    >
-                      <CapcomIcon name="edit" size={18} weight="bold" />
-                    </button>
-                    <button
-                      className="compact-button company-icon-button"
-                      type="button"
-                      aria-label={
-                        deletingCompanyId === company.id
-                          ? `Deleting ${company.companyName}`
-                          : `Delete ${company.companyName}`
-                      }
-                      disabled={deletingCompanyId === company.id || isOffline}
-                      onClick={() => removeCompany(company.id)}
-                    >
-                      <CapcomIcon name="delete" size={18} weight="bold" />
-                    </button>
-                  </div>
-                ) : null}
-              </div>
-            ))}
-          </div>
-        )}
-
-        {canManageCompanies && isCompanyFormOpen ? (
-          <Modal
-            title={editingCompanyId ? "Edit company" : "Add company"}
-            subtitle={selectedClient?.clientName || "Company record"}
-            labelledBy="companyFormTitle"
-            closeLabel="Close company form"
-            onClose={resetCompanyForm}
+      <div className="company-toolbar">
+        {canManageCompanies ? (
+          <button
+            className="button"
+            type="button"
+            aria-label="Add company"
+            disabled={isOffline || activeClientLoading || !activeClientId}
+            onClick={startAddingCompany}
           >
+            <CapcomIcon name="add" size={18} weight="bold" />
+            <span className="button-label">Add company</span>
+          </button>
+        ) : null}
+      </div>
+
+      {companies.length === 0 ? (
+        <p className="item-meta">No companies yet.</p>
+      ) : (
+        <div className="company-list">
+          {companies.map((company) => (
+            canManageCompanies ? (
+              <button
+                className="list-item company-card-button"
+                key={company.id}
+                type="button"
+                aria-label={`Edit ${company.companyName}`}
+                disabled={isOffline}
+                onClick={() => startEditingCompany(company)}
+              >
+                <span className="company-card-main">
+                  <span className="company-card-copy">
+                    <span className="item-title">{company.companyName}</span>
+                    {company.address ? (
+                      <span className="item-meta company-address">{company.address}</span>
+                    ) : null}
+                  </span>
+                </span>
+                <span className="company-card-chevron" aria-hidden="true">
+                  <CapcomIcon name="caretRight" size={22} weight="bold" />
+                </span>
+              </button>
+            ) : (
+              <article className="list-item company-card-static" key={company.id}>
+                <div className="company-card-main">
+                  <div className="company-card-copy">
+                    <p className="item-title">{company.companyName}</p>
+                    {company.address ? (
+                      <p className="item-meta company-address">{company.address}</p>
+                    ) : null}
+                  </div>
+                </div>
+              </article>
+            )
+          ))}
+        </div>
+      )}
+
+      {canManageCompanies && isCompanyFormOpen ? (
+        <Modal
+          title={editingCompanyId ? "Edit company" : "Add company"}
+          subtitle={activeClient?.clientName || "Company record"}
+          labelledBy="companyFormTitle"
+          closeLabel="Close company form"
+          onClose={resetCompanyForm}
+        >
           {companyError ? <p className="error">{companyError}</p> : null}
           {companyMessage ? <p className="message">{companyMessage}</p> : null}
           <form className="company-form" onSubmit={saveCompany}>
@@ -320,7 +259,7 @@ export default function CompaniesPage() {
                 <input
                   id="companyName"
                   value={companyForm.companyName}
-                  disabled={savingCompany || isOffline || !selectedClientId}
+                  disabled={savingCompany || isOffline || !activeClientId}
                   onChange={(event) =>
                     updateCompanyFormField("companyName", event.target.value)
                   }
@@ -333,7 +272,7 @@ export default function CompaniesPage() {
                 <textarea
                   id="companyAddress"
                   value={companyForm.address}
-                  disabled={savingCompany || isOffline || !selectedClientId}
+                  disabled={savingCompany || isOffline || !activeClientId}
                   onChange={(event) => updateCompanyFormField("address", event.target.value)}
                   placeholder="Company address"
                   rows="4"
@@ -344,7 +283,7 @@ export default function CompaniesPage() {
               <button
                 className="button"
                 type="submit"
-                disabled={savingCompany || isOffline || !selectedClientId}
+                disabled={savingCompany || deletingCompanyId === editingCompanyId || isOffline || !activeClientId}
               >
                 {savingCompany
                   ? "Saving..."
@@ -352,19 +291,31 @@ export default function CompaniesPage() {
                     ? "Save company"
                     : "Create company"}
               </button>
+              {editingCompanyId ? (
+                <button
+                  className="button danger"
+                  type="button"
+                  disabled={savingCompany || deletingCompanyId === editingCompanyId || isOffline}
+                  onClick={() => removeCompany(editingCompanyId)}
+                >
+                  <CapcomIcon name="delete" size={18} weight="bold" />
+                  <span className="button-label">
+                    {deletingCompanyId === editingCompanyId ? "Deleting..." : "Delete company"}
+                  </span>
+                </button>
+              ) : null}
               <button
                 className="button secondary"
                 type="button"
-                disabled={savingCompany || isOffline}
+                disabled={savingCompany || deletingCompanyId === editingCompanyId || isOffline}
                 onClick={resetCompanyForm}
               >
                 Cancel
               </button>
             </div>
           </form>
-          </Modal>
-        ) : null}
-      </section>
+        </Modal>
+      ) : null}
     </main>
   );
 }

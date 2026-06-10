@@ -7,7 +7,6 @@ import Loading from "../components/Loading.jsx";
 import Modal from "../components/Modal.jsx";
 import { CapcomIcon } from "../icons/capcomIcons.jsx";
 import useOnlineStatus from "../hooks/useOnlineStatus.js";
-import { getClient, getClients } from "../services/clientService.js";
 import { createEvent, getCachedEventsForUser, getEvents } from "../services/eventService.js";
 import { syncScheduleDaysToRange } from "../services/scheduleDayService.js";
 
@@ -62,28 +61,45 @@ function formatEventDateRange(startDateString, endDateString) {
   return `${formatDateOrdinal(startDate)} ${startMonth} ${startYear} to ${formatDateOrdinal(endDate)} ${endMonth} ${endYear}`;
 }
 
+function formatEventMetaLine(event) {
+  return [event.venue, formatEventDateRange(event.startDate, event.endDate)].filter(Boolean).join(" | ");
+}
+
 export default function EventListPage() {
   const {
     userProfile,
     profileLoading,
     isSuperAdmin,
     isAdmin,
+    activeClientId,
+    activeClient,
+    activeClientLoading,
   } = useAuth();
   const isOnline = useOnlineStatus();
   const isOffline = !isOnline;
   const [events, setEvents] = useState([]);
-  const [clients, setClients] = useState([]);
   const [form, setForm] = useState(emptyForm);
   const [showCreateOverlay, setShowCreateOverlay] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [clientsLoading, setClientsLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const userCanCreateEvents = canCreateEvents(userProfile);
-  const activeClients = clients.filter((client) => client.isActive !== false);
 
   const loadEvents = async () => {
-    const cachedEvents = getCachedEventsForUser(userProfile);
+    if (isSuperAdmin && activeClientLoading) {
+      setLoading(true);
+      return;
+    }
+
+    if (isSuperAdmin && !activeClientId) {
+      setEvents([]);
+      setLoading(false);
+      setError("");
+      return;
+    }
+
+    const eventClientId = isSuperAdmin ? activeClientId : "";
+    const cachedEvents = getCachedEventsForUser(userProfile, eventClientId);
     if (cachedEvents.length > 0) {
       setEvents(cachedEvents);
       setLoading(false);
@@ -92,7 +108,7 @@ export default function EventListPage() {
     }
     setError("");
     try {
-      setEvents(await getEvents(userProfile));
+      setEvents(await getEvents(userProfile, eventClientId));
     } catch (loadError) {
       console.error(loadError);
       setError("Could not load events.");
@@ -104,48 +120,10 @@ export default function EventListPage() {
   useEffect(() => {
     if (profileLoading) return;
     loadEvents();
-  }, [profileLoading, userProfile]);
-
-  useEffect(() => {
-    if (profileLoading) return;
-
-    const loadClients = async () => {
-      setClientsLoading(true);
-      try {
-        if (isSuperAdmin) {
-          setClients(await getClients());
-          return;
-        }
-
-        if (userProfile?.clientId) {
-          const client = await getClient(userProfile.clientId);
-          setClients(client ? [client] : []);
-          return;
-        }
-
-        setClients([]);
-      } catch (loadError) {
-        console.error(loadError);
-        setError("Could not load clients.");
-      } finally {
-        setClientsLoading(false);
-      }
-    };
-
-    loadClients();
-  }, [profileLoading, isSuperAdmin, userProfile]);
+  }, [profileLoading, userProfile, isSuperAdmin, activeClientId, activeClientLoading]);
 
   const updateField = (field, value) => {
     setForm((current) => ({ ...current, [field]: value }));
-  };
-
-  const updateClient = (clientId) => {
-    const selectedClient = clients.find((client) => client.id === clientId);
-    setForm((current) => ({
-      ...current,
-      clientId,
-      clientName: selectedClient?.clientName || "",
-    }));
   };
 
   const closeCreateOverlay = () => {
@@ -174,16 +152,18 @@ export default function EventListPage() {
         return;
       }
 
-      if (isSuperAdmin && !form.clientId) {
-        setError("Choose a client before creating the event.");
+      const eventClientId = isAdmin ? userProfile.clientId : activeClientId;
+      const eventClientName = activeClient?.clientName || form.clientName;
+
+      if (!eventClientId) {
+        setError("Choose a client on the Profile page before creating the event.");
         return;
       }
 
-      const selectedClient = clients.find((client) => client.id === form.clientId);
       const eventData = {
         ...form,
-        clientId: isAdmin ? userProfile.clientId : form.clientId,
-        clientName: selectedClient?.clientName || form.clientName,
+        clientId: eventClientId,
+        clientName: eventClientName,
       };
 
       const newEvent = await createEvent(eventData, userProfile);
@@ -214,13 +194,13 @@ export default function EventListPage() {
             className="button"
             type="button"
             aria-label="Create event"
-            disabled={isOffline || profileLoading}
+            disabled={isOffline || profileLoading || activeClientLoading || (isSuperAdmin && !activeClientId)}
             onClick={() => {
               setError("");
               setForm({
                 ...emptyForm,
-                clientId: isAdmin ? userProfile?.clientId || "" : "",
-                clientName: isAdmin ? clients[0]?.clientName || "" : "",
+                clientId: activeClientId || userProfile?.clientId || "",
+                clientName: activeClient?.clientName || userProfile?.clientName || "",
               });
               setShowCreateOverlay(true);
             }}
@@ -249,29 +229,33 @@ export default function EventListPage() {
       ) : null}
 
       <section className="list">
-        {events.map((event) => (
-          <Link className="list-item event-card-link" key={event.id} to={`/events/${event.id}/edit`}>
-            <div className="event-card-main">
-              {event.imageUrl ? (
-                <img
-                  className="event-card-image"
-                  src={event.imageUrl}
-                  alt=""
-                />
-              ) : null}
-              <div>
-              <p className="item-title">{event.name}</p>
-              {event.venue ? <p className="event-card-venue">{event.venue}</p> : null}
-              <p className="item-meta">
-                {event.clientName} | {formatEventDateRange(event.startDate, event.endDate)}
-              </p>
-              {isSuperAdmin && !event.clientId ? (
-                <p className="inline-warning">Missing client assignment</p>
-              ) : null}
+        {events.map((event) => {
+          const eventMetaLine = formatEventMetaLine(event);
+
+          return (
+            <Link className="list-item event-card-link" key={event.id} to={`/events/${event.id}/edit`}>
+              <div className="event-card-main">
+                {event.imageUrl ? (
+                  <img
+                    className="event-card-image"
+                    src={event.imageUrl}
+                    alt=""
+                  />
+                ) : null}
+                <div className="event-card-copy">
+                  <p className="item-title">{event.name}</p>
+                  {eventMetaLine ? <p className="event-card-meta">{eventMetaLine}</p> : null}
+                  {isSuperAdmin && !event.clientId ? (
+                    <p className="inline-warning">Missing client assignment</p>
+                  ) : null}
+                </div>
               </div>
-            </div>
-          </Link>
-        ))}
+              <span className="event-card-chevron" aria-hidden="true">
+                <CapcomIcon name="caretRight" size={22} weight="bold" />
+              </span>
+            </Link>
+          );
+        })}
       </section>
 
       {showCreateOverlay ? (
@@ -303,35 +287,6 @@ export default function EventListPage() {
                     onChange={(event) => updateField("venue", event.target.value)}
                   />
                 </div>
-                {isSuperAdmin ? (
-                  <div className="form-row">
-                    <label htmlFor="clientId">Client</label>
-                    <select
-                      id="clientId"
-                      value={form.clientId}
-                      disabled={clientsLoading}
-                      onChange={(event) => updateClient(event.target.value)}
-                      required
-                    >
-                      <option value="">Choose a client</option>
-                      {activeClients.map((client) => (
-                        <option key={client.id} value={client.id}>
-                          {client.clientName}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                ) : (
-                  <div className="form-row">
-                    <label htmlFor="clientName">Client</label>
-                    <input
-                      id="clientName"
-                      value={form.clientName || userProfile?.clientId || ""}
-                      disabled
-                      required
-                    />
-                  </div>
-                )}
                 <div className="form-row">
                   <label htmlFor="startDate">Start date</label>
                   <input
@@ -377,7 +332,7 @@ export default function EventListPage() {
                 <button
                   className="button"
                   type="submit"
-                  disabled={saving || isOffline || clientsLoading || !userCanCreateEvents}
+                  disabled={saving || isOffline || !userCanCreateEvents}
                 >
                   {saving ? "Creating..." : "Create Event"}
                 </button>

@@ -9,51 +9,51 @@ export default function EventEditorHeader({
   isEditing,
   isOffline,
   canEditEvent,
-  isSuperAdmin,
-  editableClients,
   savingEvent,
   onStartEditing,
   onSubmit,
   onCancel,
   onUpdateField,
-  onUpdateClient,
   onImageChange,
   onRemoveImage,
+  showSummary = true,
 }) {
   return (
-    <section className="event-edit-header">
-      <div className="event-edit-header-summary">
-        <div className="event-edit-header-main">
-          {imageUrl ? (
-            <img
-              className="event-header-image"
-              src={imageUrl}
-              alt=""
-            />
-          ) : null}
-          <div>
-            <h1 className="event-edit-title">{form.name || eventId}</h1>
-            {form.venue ? (
-              <p className="event-edit-venue">{form.venue}</p>
+    <section className={showSummary ? "event-edit-header" : "event-edit-header event-edit-header-modal-only"}>
+      {showSummary ? (
+        <div className="event-edit-header-summary">
+          <div className="event-edit-header-main">
+            {imageUrl ? (
+              <img
+                className="event-header-image"
+                src={imageUrl}
+                alt=""
+              />
             ) : null}
-            <p className="event-edit-date-range">
-              {dateRangeLabel || "No event dates"}
-            </p>
+            <div>
+              <h1 className="event-edit-title">{form.name || eventId}</h1>
+              {form.venue ? (
+                <p className="event-edit-venue">{form.venue}</p>
+              ) : null}
+              <p className="event-edit-date-range">
+                {dateRangeLabel || "No event dates"}
+              </p>
+            </div>
           </div>
+          {!isEditing && canEditEvent ? (
+            <button
+              className="button secondary event-header-edit-button"
+              type="button"
+              aria-label="Edit event"
+              disabled={isOffline}
+              onClick={onStartEditing}
+            >
+              <CapcomIcon name="edit" size={18} weight="bold" />
+              <span className="button-label">Edit</span>
+            </button>
+          ) : null}
         </div>
-        {!isEditing && canEditEvent ? (
-          <button
-            className="button secondary event-header-edit-button"
-            type="button"
-            aria-label="Edit event"
-            disabled={isOffline}
-            onClick={onStartEditing}
-          >
-            <CapcomIcon name="edit" size={18} weight="bold" />
-            <span className="button-label">Edit</span>
-          </button>
-        ) : null}
-      </div>
+      ) : null}
 
       {isEditing ? (
         <Modal
@@ -76,30 +76,13 @@ export default function EventEditorHeader({
               />
             </div>
             <div className="form-row">
-              <label htmlFor={isSuperAdmin ? "editClientId" : "editClientName"}>Client</label>
-              {isSuperAdmin ? (
-                <select
-                  id="editClientId"
-                  value={form.clientId}
-                  disabled={isOffline}
-                  onChange={(event) => onUpdateClient(event.target.value)}
-                  required
-                >
-                  <option value="">Choose a client</option>
-                  {editableClients.map((client) => (
-                    <option key={client.id} value={client.id}>
-                      {client.clientName}{client.isActive === false ? " (inactive)" : ""}
-                    </option>
-                  ))}
-                </select>
-              ) : (
-                <input
-                  id="editClientName"
-                  value={form.clientName}
-                  disabled
-                  required
-                />
-              )}
+              <label htmlFor="editClientName">Client</label>
+              <input
+                id="editClientName"
+                value={form.clientName}
+                disabled
+                required
+              />
             </div>
             <div className="form-row">
               <label htmlFor="editProfileId">Profile ID</label>
