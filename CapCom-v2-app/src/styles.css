@@ -600,6 +600,10 @@ summary:focus-visible {
   scrollbar-width: thin;
 }
 
+.event-edit-tabs {
+  margin-bottom: var(--space-4);
+}
+
 .tab {
   align-items: center;
   background: transparent;

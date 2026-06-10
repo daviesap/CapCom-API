@@ -37,6 +37,7 @@ export default function CompaniesPage() {
   const [companyMessage, setCompanyMessage] = useState("");
   const [companyError, setCompanyError] = useState("");
   const canManageCompanies = isSuperAdmin || isAdmin;
+  const isDeletingCurrentCompany = Boolean(editingCompanyId && deletingCompanyId === editingCompanyId);
 
   const loadCompanies = async (clientId = activeClientId) => {
     if (!clientId) {
@@ -283,31 +284,31 @@ export default function CompaniesPage() {
               <button
                 className="button"
                 type="submit"
-                disabled={savingCompany || deletingCompanyId === editingCompanyId || isOffline || !activeClientId}
+                disabled={savingCompany || isDeletingCurrentCompany || isOffline || !activeClientId}
               >
                 {savingCompany
                   ? "Saving..."
                   : editingCompanyId
-                    ? "Save company"
+                    ? "Save"
                     : "Create company"}
               </button>
               {editingCompanyId ? (
                 <button
                   className="button danger"
                   type="button"
-                  disabled={savingCompany || deletingCompanyId === editingCompanyId || isOffline}
+                  disabled={savingCompany || isDeletingCurrentCompany || isOffline}
                   onClick={() => removeCompany(editingCompanyId)}
                 >
                   <CapcomIcon name="delete" size={18} weight="bold" />
                   <span className="button-label">
-                    {deletingCompanyId === editingCompanyId ? "Deleting..." : "Delete company"}
+                    {isDeletingCurrentCompany ? "Deleting..." : "Delete"}
                   </span>
                 </button>
               ) : null}
               <button
                 className="button secondary"
                 type="button"
-                disabled={savingCompany || deletingCompanyId === editingCompanyId || isOffline}
+                disabled={savingCompany || isDeletingCurrentCompany || isOffline}
                 onClick={resetCompanyForm}
               >
                 Cancel
