@@ -7,9 +7,12 @@
   "firestore": {
     "rules": "firestore.rules"
   },
-  "storage": {
-    "rules": "storage.rules"
-  },
+  "storage": [
+    {
+      "bucket": "flair-pdf-generator.firebasestorage.app",
+      "rules": "storage.rules"
+    }
+  ],
   "hosting": [
     {
       "site": "flair-pdf-generator",
