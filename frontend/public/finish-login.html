@@ -98,8 +98,8 @@
       const emailForm = document.getElementById("email-form");
       const submitButton = document.getElementById("submit-button");
 
-      eventName.textContent = brandingContext.eventName ? `Welcome to ${brandingContext.eventName}` : "Completing sign in";
-      clientName.textContent = brandingContext.clientName ? `Hosted by ${brandingContext.clientName}` : "Event access";
+      eventName.textContent = brandingContext.eventName ? `${brandingContext.eventName}` : "Completing sign in";
+      clientName.textContent = brandingContext.clientName ? `${brandingContext.clientName}` : "Event access";
       document.title = brandingContext.eventName ? `${brandingContext.eventName} | Sign in` : "Completing sign in";
       window.localStorage.setItem("loginBrandingContext", JSON.stringify(brandingContext));
 
