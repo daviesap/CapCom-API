@@ -587,6 +587,13 @@ export async function generateHome({
       protectedPdfUrl
     };
   });
+  const snapshotUrlsById = {};
+  const snapshotExcelUrlsById = {};
+  for (const snapshot of snapshotsOut) {
+    if (!snapshot.snapshotId) continue;
+    snapshotUrlsById[snapshot.snapshotId] = snapshot;
+    snapshotExcelUrlsById[snapshot.snapshotId] = snapshot.excelUrl || "";
+  }
 
   return {
     status: 200,
@@ -596,6 +603,8 @@ export async function generateHome({
       htmlUrl: homeUrl,
       protectedHomeUrl,
       snapshots: snapshotsOut,
+      snapshotUrlsById,
+      snapshotExcelUrlsById,
       timestamp,
       executionTimeSeconds,
       runId
