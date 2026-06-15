@@ -3,7 +3,7 @@
  * -------------------------------------------
  * Build and publish the Home / MOM HTML page for an event.
  * Responsibilities:
- *  - Accept prepared JSON (snapshots with realHtmlUrl/realPdfUrl) and render an index page grouping snapshots.
+ *  - Accept prepared JSON (snapshots with realHtmlUrl/realPdfUrl/realExcelUrl) and render an index page grouping snapshots.
  *  - Write the resulting HTML to the provided Storage bucket or to the local emulator filesystem.
  * Requirements:
  *  - `makePublicUrl` function to map storage paths to public URLs (passed by caller)
@@ -113,12 +113,13 @@ export async function generateHome({
         const realUrl = (typeof s.realHtmlUrl === "string" && s.realHtmlUrl.trim()) ? s.realHtmlUrl.trim() : "";
         const tempUrl = (typeof s.urlTemp === "string" && s.urlTemp.trim()) ? s.urlTemp.trim() : "";
         const targetUrl = realUrl || tempUrl;
+        const excelUrl = (typeof s.realExcelUrl === "string" && s.realExcelUrl.trim()) ? s.realExcelUrl.trim() : "";
 
         const hrefAttr = targetUrl
           ? ` href="${escapeHtml(targetUrl)}" target="_blank" rel="noopener"`
           : ` role="button" aria-disabled="true"`;
 
-        return `
+        const scheduleButton = `
           <a class="snap-btn"${hrefAttr}>
             <div class="left">
               <div class="snap-label">${label}</div>
@@ -128,6 +129,20 @@ export async function generateHome({
             </svg>
           </a>
         `;
+        const excelButton = excelUrl
+          ? `
+          <a class="snap-btn snap-btn-secondary" href="${escapeHtml(excelUrl)}" target="_blank" rel="noopener">
+            <div class="left">
+              <div class="snap-label">${label} Excel</div>
+            </div>
+            <svg class="chevron" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="20" height="20" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v12m0 0l4-4m-4 4l-4-4M5 21h14" />
+            </svg>
+          </a>
+        `
+          : "";
+
+        return `${scheduleButton}${excelButton}`;
       }).join("\n");
 
       return `
@@ -467,6 +482,7 @@ export async function generateHome({
     background: #eef2ff;
   }
   .snap-btn[aria-disabled="true"] { opacity: 0.6; cursor: not-allowed; pointer-events: none; }
+  .snap-btn-secondary { background:#fff; }
   .snap-label { font-weight:600; }
   .chevron { flex-shrink:0; color: var(--accent); }
 
@@ -543,6 +559,10 @@ export async function generateHome({
       ? s.realPdfUrl.trim()
       : "";
 
+    const excelUrl = (typeof s.realExcelUrl === "string" && s.realExcelUrl.trim())
+      ? s.realExcelUrl.trim()
+      : "";
+
     const protectedHtmlUrl = (typeof s.realProtectedHtmlUrl === "string" && s.realProtectedHtmlUrl.trim())
       ? s.realProtectedHtmlUrl.trim()
       : "";
@@ -556,6 +576,7 @@ export async function generateHome({
       htmlUrl,
       protectedHtmlUrl,
       pdfUrl,
+      excelUrl,
       protectedPdfUrl
     };
   });

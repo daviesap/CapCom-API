@@ -324,6 +324,7 @@ export async function generateHomeHandler({
         header: [...(jsonInput?.event?.header ?? []), snap.filename].filter(Boolean),
         profileId: effectiveProfileId,
         startEachGroupOnNewPage: isTruthyFlag(snap.startEachGroupOnNewPage),
+        createExcel: isTruthyFlag(snap.createExcel),
       };
 
       prepared.document = prepared.document || {};
@@ -350,7 +351,7 @@ export async function generateHomeHandler({
         }
       }
 
-      const { pdfUrl, protectedPdfUrl, htmlUrl, protectedHtmlUrl } = await generateSnapshotOutputsv2({
+      const { pdfUrl, protectedPdfUrl, htmlUrl, protectedHtmlUrl, excelUrl } = await generateSnapshotOutputsv2({
         jsonInput: prepared,
         safeAppName,
         safeEventName,
@@ -370,10 +371,12 @@ export async function generateHomeHandler({
 
       console.log(`   • Done HTML: ${htmlUrl}`);
       console.log(`   • Done  PDF: ${pdfUrl}`);
+      if (excelUrl) console.log(`   • Done Excel: ${excelUrl}`);
       console.log(`✅ Done snapshot ${idx + 1}/${snapshots.length}: ${label}`);
 
       snap.realHtmlUrl = htmlUrl;
       snap.realPdfUrl = pdfUrl;
+      snap.realExcelUrl = excelUrl || "";
       snap.realProtectedHtmlUrl = protectedHtmlUrl;
       snap.realProtectedPdfUrl = protectedPdfUrl;
     }

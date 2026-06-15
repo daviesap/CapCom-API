@@ -1,9 +1,10 @@
 /*
  * functions/generateSchedules/generateSnapshots.mjs
  * --------------------------------------------------
- * Generate per-snapshot outputs (PDF + HTML) from a prepared JSON object.
+ * Generate per-snapshot outputs (PDF + HTML + optional Excel) from a prepared JSON object.
  * Responsibilities:
  *  - Generate a PDF via `generatepdf.mjs` and an HTML via `generateHtml.mjs`.
+ *  - Generate a public Excel workbook when `jsonInput.createExcel` is true.
  *  - Persist outputs either to the local emulator filesystem or to the configured GCS bucket.
  *  - Use `makePublicUrl` (provided by the caller) to produce public URLs to the stored files.
  * Requirements:
@@ -92,6 +93,7 @@ export async function generateSnapshotOutputsv2({
   const safeBase = sanitiseUrl(displayBase);       // e.g. "AAC-Power-schedule"
   const pdfName = `${safeBase}-${pdfDate}.pdf`;   // versioned
   const htmlName = `${safeBase}.html`;             // stable
+  const excelName = `${safeBase}.xlsx`;            // stable
 
   // 3) Save PDF
   if (runningEmulated) {
@@ -141,8 +143,30 @@ export async function generateSnapshotOutputsv2({
   const protectedHtmlUrl = makePublicUrl(joinProtectedCloudPath(htmlName), bucket, protectedBranding);
   const protectedHtmlPath = joinProtectedCloudPath(htmlName);
 
-  // 5) Return
+  // 5) Optional public Excel export
+  let excelUrl = "";
+  if (prepared.createExcel === true || String(prepared.createExcel).trim().toLowerCase() === "true") {
+    const { generateExcelBuffer } = await import("./generateExcel.mjs");
+    const { bytes: excelBytes } = await generateExcelBuffer(prepared);
+
+    if (runningEmulated) {
+      fs.mkdirSync(joinLocalPath(), { recursive: true });
+      fs.writeFileSync(joinLocalPath(excelName), excelBytes);
+    } else {
+      const excelFile = bucket.file(joinCloudPath(excelName));
+      await excelFile.save(excelBytes, {
+        metadata: {
+          contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          cacheControl: "public, max-age=0, must-revalidate",
+        },
+      });
+    }
+
+    excelUrl = makePublicUrl(joinCloudPath(excelName), bucket);
+  }
+
+  // 6) Return
   const executionTimeSeconds = (Date.now() - startTime) / 1000;
 
-  return { pdfUrl, protectedPdfUrl, htmlUrl, protectedHtmlUrl, pdfName, htmlName, executionTimeSeconds };
+  return { pdfUrl, protectedPdfUrl, htmlUrl, protectedHtmlUrl, excelUrl, pdfName, htmlName, excelName, executionTimeSeconds };
 }
