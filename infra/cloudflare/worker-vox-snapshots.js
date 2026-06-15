@@ -49,7 +49,11 @@ function defaultCacheHeaders(objectPath, incoming, isFreshBypass, isProtected = 
 
 function buildUpstreamPath(hostname, rawPath) {
   // rawPath like: "Maui/Event/Fullschedule.html" (vox) or "CapcomDemo/Fullschedule.html" (snapshots)
-  const clean = rawPath.replace(/^\/+/, "").replace(/\/+$/, "");
+  const clean = rawPath
+    .replace(/^\/+/, "")
+    .replace(/\/+$/, "")
+    .split(",")[0]
+    .trim();
 
   if (!clean) return null;
 
@@ -186,7 +190,7 @@ async function handleRequest(request) {
       return new Response("Method Not Allowed", { status: 405, headers: { "Allow": "GET, HEAD" } });
     }
 
-    const objectPath = url.pathname.replace(/^\/+/, "");
+    const objectPath = url.pathname.replace(/^\/+/, "").split(",")[0].trim();
     const token = url.searchParams.get("token") || "";
     const debug = url.searchParams.get("debug") === "1";
     const fresh = url.searchParams.get("fresh") === "1";

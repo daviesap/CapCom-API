@@ -35,6 +35,22 @@ function escapeHtml(text = "") {
   });
 }
 
+function normaliseUrlValue(value) {
+  if (typeof value !== "string") return "";
+  const trimmed = value.trim();
+  if (!trimmed) return "";
+
+  if (trimmed.includes(",")) {
+    const absoluteUrl = trimmed
+      .split(",")
+      .map((part) => part.trim())
+      .find((part) => /^https?:\/\//i.test(part));
+    if (absoluteUrl) return absoluteUrl;
+  }
+
+  return trimmed;
+}
+
 /**
  * Group snapshots by the `group` key and order groups by `sortOrder` (ascending).
  * - Group key default: "Other".
@@ -110,10 +126,10 @@ export async function generateHome({
         const labelRaw = (s.name ?? s.displayName ?? s.title ?? s.filename ?? "Snapshot").toString();
         const label = escapeHtml(labelRaw);
 
-        const realUrl = (typeof s.realHtmlUrl === "string" && s.realHtmlUrl.trim()) ? s.realHtmlUrl.trim() : "";
-        const tempUrl = (typeof s.urlTemp === "string" && s.urlTemp.trim()) ? s.urlTemp.trim() : "";
+        const realUrl = normaliseUrlValue(s.realHtmlUrl);
+        const tempUrl = normaliseUrlValue(s.urlTemp);
         const targetUrl = realUrl || tempUrl;
-        const excelUrl = (typeof s.realExcelUrl === "string" && s.realExcelUrl.trim()) ? s.realExcelUrl.trim() : "";
+        const excelUrl = normaliseUrlValue(s.realExcelUrl);
 
         const hrefAttr = targetUrl
           ? ` href="${escapeHtml(targetUrl)}" target="_blank" rel="noopener"`
@@ -551,27 +567,18 @@ export async function generateHome({
   const executionTimeSeconds = (Date.now() - startTime) / 1000;
 
   const snapshotsOut = snapshots.map(s => {
-    const htmlUrl = (typeof s.realHtmlUrl === "string" && s.realHtmlUrl.trim())
-      ? s.realHtmlUrl.trim()
-      : ((typeof s.urlTemp === "string" && s.urlTemp.trim()) ? s.urlTemp.trim() : "");
+    const htmlUrl = normaliseUrlValue(s.realHtmlUrl) || normaliseUrlValue(s.urlTemp);
 
-    const pdfUrl = (typeof s.realPdfUrl === "string" && s.realPdfUrl.trim())
-      ? s.realPdfUrl.trim()
-      : "";
+    const pdfUrl = normaliseUrlValue(s.realPdfUrl);
 
-    const excelUrl = (typeof s.realExcelUrl === "string" && s.realExcelUrl.trim())
-      ? s.realExcelUrl.trim()
-      : "";
+    const excelUrl = normaliseUrlValue(s.realExcelUrl);
 
-    const protectedHtmlUrl = (typeof s.realProtectedHtmlUrl === "string" && s.realProtectedHtmlUrl.trim())
-      ? s.realProtectedHtmlUrl.trim()
-      : "";
+    const protectedHtmlUrl = normaliseUrlValue(s.realProtectedHtmlUrl);
 
-    const protectedPdfUrl = (typeof s.realProtectedPdfUrl === "string" && s.realProtectedPdfUrl.trim())
-      ? s.realProtectedPdfUrl.trim()
-      : "";
+    const protectedPdfUrl = normaliseUrlValue(s.realProtectedPdfUrl);
 
     return {
+      snapshotId: String(s.snapshotId || ""),
       name: String(s.name || "Snapshot name missing"),
       htmlUrl,
       protectedHtmlUrl,

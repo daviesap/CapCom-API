@@ -246,6 +246,7 @@ function buildFilteredViewSnapshots(filteredViews) {
   return filteredViews.map((view) => {
     const name = normaliseString(view.name);
     return {
+      snapshotId: normaliseString(view.snapshotId || view.id),
       name,
       filterBox: normaliseBoolean(view.filterBox, true),
       showKeyInfo: normaliseBoolean(view.showKeyInfo, true),

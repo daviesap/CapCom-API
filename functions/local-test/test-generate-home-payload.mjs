@@ -54,6 +54,7 @@ const payload = buildGenerateHomePayload({
   ],
   filteredViews: [
     {
+      id: "filtered-view-1",
       name: "Full schedule",
       groupPresetId: "preset-1",
       filterTagIds: ["tag-1"],
@@ -65,6 +66,7 @@ const payload = buildGenerateHomePayload({
       sortOrder: 1,
     },
     {
+      id: "filtered-view-2",
       name: "No contacts",
       groupPresetId: "preset-1",
       showContacts: false,
@@ -180,9 +182,11 @@ assert.deepEqual(payload.data.scheduleDetail[0].subLocationIds, ["location-child
 assert.equal(payload.groupMeta.scheduleDetail[0].data.above, "Live Day 1");
 assert.equal(payload.groupMeta.trucks[0].truckId, "truck-1");
 assert.equal(payload.snapshots.length, 2);
+assert.equal(payload.snapshots[0].snapshotId, "filtered-view-1");
 assert.equal(payload.snapshots[0].name, "Full schedule");
 assert.deepEqual(payload.snapshots[0].filterSupplierIds, ["company-1"]);
 assert.equal(payload.snapshots[0].showContacts, true);
+assert.equal(payload.snapshots[1].snapshotId, "filtered-view-2");
 assert.equal(payload.snapshots[1].showContacts, false);
 
 console.log("generateHome payload builder tests passed");
