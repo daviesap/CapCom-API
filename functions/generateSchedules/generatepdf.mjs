@@ -51,7 +51,7 @@
  * Notes
  * -----
  * - `toWinAnsi` strips unsupported glyphs so pdf-lib width calculations remain safe.
- * - Column widths are respected; text is hard-wrapped according to font metrics.
+ * - Column widths are treated as relative weights; text is hard-wrapped according to font metrics.
  * - The module does **no** filtering/grouping/sorting; upstream code must prepare `groups`,
  *   `columns`, and `styles` appropriately for v2.
  */
@@ -89,6 +89,29 @@ const CELL_PADDING = 5;
 const DEFAULT_LINE_SPACING = 2;
 
 // ---------- helpers ----------
+function resolvePdfColumnLayout(columns, { pageWidth, leftMargin, rightMargin, columnGap = 0 }) {
+  if (!Array.isArray(columns) || columns.length === 0) {
+    return { widths: [], gap: 0 };
+  }
+
+  const weights = columns.map((column) => {
+    const width = Number(column?.width);
+    return Number.isFinite(width) && width > 0 ? width : DEFAULT_COLUMN_WIDTH;
+  });
+  const totalWeight = weights.reduce((sum, width) => sum + width, 0) || 1;
+  const availableWidth = Math.max(1, pageWidth - leftMargin - rightMargin);
+  const resolvedGap = Number.isFinite(Number(columnGap)) && Number(columnGap) > 0
+    ? Number(columnGap)
+    : 0;
+  const totalGapWidth = resolvedGap * Math.max(0, columns.length - 1);
+  const usableColumnWidth = Math.max(1, availableWidth - totalGapWidth);
+
+  return {
+    widths: weights.map((width) => (width / totalWeight) * usableColumnWidth),
+    gap: resolvedGap,
+  };
+}
+
 function rgbHex(input) {
   if (!input || typeof input !== 'string') return rgb(0,0,0);
   let v = input.trim();
@@ -595,6 +618,12 @@ export const generatePdfBuffer = async (jsonInput) => {
 
   //const footer  = jsonData.document.footer;
   const columns = jsonData.columns || [];
+  const { widths: columnWidths, gap: columnGap } = resolvePdfColumnLayout(columns, {
+    pageWidth,
+    leftMargin,
+    rightMargin,
+    columnGap: jsonData.document?.columnGap,
+  });
 
   const pages = [];
   let currentPage = pdfDoc.addPage([pageWidth, pageHeight]);
@@ -925,11 +954,12 @@ export const generatePdfBuffer = async (jsonInput) => {
         }
         if (repeatLabels && hasLabels) {
           let rx = leftMargin;
-          for (const col of columns) {
+          for (let c = 0; c < columns.length; c++) {
+            const col = columns[c];
             if (col.showLabel) {
               currentPage.drawText(toWinAnsi(sanitiseText(col.label)), { x: rx, y, size: labelInfo.fontSize, font: labelInfo.font, color: labelInfo.color });
             }
-            rx += col.width || DEFAULT_COLUMN_WIDTH;
+            rx += columnWidths[c] + columnGap;
           }
           y -= labelInfo.lineHeight;
         }
@@ -951,9 +981,10 @@ export const generatePdfBuffer = async (jsonInput) => {
     if (hasLabels) {
       let x = leftMargin;
       checkBreakForGroup(labelInfo.lineHeight, { showContinued: true, repeatLabels: true });
-      for (const col of columns) {
+      for (let c = 0; c < columns.length; c++) {
+        const col = columns[c];
         if (col.showLabel) currentPage.drawText(toWinAnsi(sanitiseText(col.label)), { x, y, size: labelInfo.fontSize, font: labelInfo.font, color: labelInfo.color });
-        x += col.width || DEFAULT_COLUMN_WIDTH;
+        x += columnWidths[c] + columnGap;
       }
       y -= labelInfo.lineHeight;
     }
@@ -975,7 +1006,7 @@ export const generatePdfBuffer = async (jsonInput) => {
 
         txt = sanitiseText(txt);
         txt = toWinAnsi(txt);
-        const maxW = (col.width || DEFAULT_COLUMN_WIDTH) - CELL_PADDING;
+        const maxW = Math.max(1, columnWidths[colIdx] - CELL_PADDING);
         let effectiveMaxW = maxW;
         if (colIdx === 0) {
           const gutterProbe = regularFont.widthOfTextAtSize('| ', rFS);
@@ -1016,7 +1047,7 @@ export const generatePdfBuffer = async (jsonInput) => {
           }
           ly -= rLH;
         }
-        xStart += columns[c].width || DEFAULT_COLUMN_WIDTH;
+        xStart += columnWidths[c] + columnGap;
       }
 
       if (rowStyle.underline?.enabled === true) {
