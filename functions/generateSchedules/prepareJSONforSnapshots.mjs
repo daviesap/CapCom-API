@@ -88,6 +88,23 @@ export async function prepareJSONGroups(
 
 /* ---------------- helpers (lean) ---------------- */
 
+function formatFriendlyDateTitle(rawKey) {
+  if (typeof rawKey !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(rawKey)) {
+    return String(rawKey ?? "");
+  }
+
+  const d = new Date(`${rawKey}T00:00:00Z`);
+  if (Number.isNaN(d.getTime())) return rawKey;
+
+  return new Intl.DateTimeFormat("en-GB", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(d);
+}
+
 function indexGroupMeta(payload) {
   const meta = Object.create(null);
 
@@ -174,7 +191,7 @@ function groupRows(rows, groupBy) {
 }
 
 function makeGroupTitle(rawKey, groupBy, entries) {
-  if (groupBy === "date") return rawKey; // already yyyy-mm-dd
+  if (groupBy === "date") return formatFriendlyDateTitle(rawKey);
   if (groupBy === "tagId") {
     const name = entries?.find(e => Array.isArray(e.tags) && e.tags.length)?.tags?.[0];
     return name || rawKey;
