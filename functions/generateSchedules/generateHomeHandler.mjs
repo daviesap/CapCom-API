@@ -309,6 +309,7 @@ export async function generateHomeHandler({
           }),
         },
         groups: finalGroups,
+        groupBy: processedJSON.groupBy,
         styles: merge({}, profilePdf.styles, jsonInput.styles || {}),
         document: merge(
           {},

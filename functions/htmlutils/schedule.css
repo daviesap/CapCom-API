@@ -249,9 +249,112 @@ h1 { font-size: 20px; margin: 0 0 8px 0; color: var(--header); }
 }
 
 /* ---------- Groups ---------- */
-.group { margin: 18px 0 22px; }
+.group { margin: 18px 0 22px; scroll-margin-top: 96px; }
 .group-title { font-weight: 700; margin: 12px 0 8px; padding-bottom: 4px; color: var(--accent); letter-spacing: .02em; text-transform: uppercase; font-size: 12px; }
 .group-metadata { font-size: 14px; font-weight: 600; color: var(--muted); margin-bottom: 6px; }
+
+/* ---------- Date Jump Navigation ---------- */
+.date-jump-nav {
+  position: sticky;
+  top: var(--date-jump-sticky-top, 16px);
+  z-index: 100;
+  margin: 16px auto 18px;
+  max-width: 960px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--card);
+  box-shadow: 0 6px 20px var(--shadow);
+  overflow: hidden;
+}
+
+.date-jump-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  cursor: pointer;
+  list-style: none;
+  padding: 12px 16px;
+  color: var(--accent);
+  background: #eef2ff;
+}
+
+.date-jump-summary::-webkit-details-marker { display: none; }
+
+.date-jump-nav-collapsed .date-jump-summary {
+  color: var(--muted);
+  background: var(--card);
+}
+
+.date-jump-summary-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  background: rgba(37, 99, 235, 0.12);
+  color: var(--accent);
+}
+
+.date-jump-summary-icon svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
+.date-jump-summary-label {
+  flex: 1 1 auto;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: left;
+}
+
+.date-jump-summary-chevron {
+  flex: 0 0 auto;
+  transition: transform .18s ease;
+}
+
+.date-jump-nav[open] .date-jump-summary-chevron {
+  transform: rotate(90deg);
+}
+
+.date-jump-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 16px 14px;
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+}
+
+.date-jump-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card);
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.2;
+  text-decoration: none;
+}
+
+.date-jump-link:hover,
+.date-jump-link:focus-visible {
+  border-color: rgba(37, 99, 235, 0.32);
+  background: #eef2ff;
+}
+
+@media (max-width: 640px) {
+  .date-jump-nav {
+    top: var(--date-jump-sticky-top, 12px);
+    width: calc(100% - 32px);
+  }
+}
 
 /* ---------- Table ---------- */
 .table-scroll { width: 100%; }

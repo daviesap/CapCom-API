@@ -71,6 +71,26 @@ const escapeHtml = (s) =>
 const slugify = (s) =>
   String(s).trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
+const isIsoDate = (value) =>
+  typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value);
+
+const getGroupDateIso = (group) => {
+  const canonical = group?.rawKeyCanonical;
+  if (isIsoDate(canonical)) return canonical;
+  const rawKey = group?.rawKey;
+  if (isIsoDate(rawKey)) return rawKey;
+  return "";
+};
+
+const compactText = (value) =>
+  String(value ?? "").replace(/\s+/g, " ").trim();
+
+const getDateJumpLabel = (group, fallbackDate) => {
+  const dateLabel = compactText(group?.title ?? group?.rawKey ?? fallbackDate);
+  const summary = compactText(group?.metadata);
+  return summary ? `${dateLabel} - ${summary}` : dateLabel;
+};
+
 const collectMatchTokens = (value) => {
   if (typeof value !== "string") return [];
   const trimmed = value.trim();
@@ -575,12 +595,27 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
   const groupsArr = Array.isArray(jsonInput.groups) ? jsonInput.groups : [];
   let totalRowCount = 0;
   const renderFilterControls = shouldRenderFiltersForSnapshot(jsonInput);
+  const isDateGrouped = jsonInput?.groupBy === "date";
+  const dateJumpItems = [];
 
   // Build groups → tables
   const groupsHtml = groupsArr.map(g => {
     const entries = Array.isArray(g.entries) ? g.entries : [];
     totalRowCount += entries.length;
     const groupHeading = escapeHtml(g.title ?? g.rawKey ?? "");
+    const groupDateIso = isDateGrouped ? getGroupDateIso(g) : "";
+    const groupId = groupDateIso ? `day-${groupDateIso}` : "";
+    const groupAttrs = [
+      groupId ? ` id="${groupId}"` : "",
+      groupDateIso ? ` data-date-group="${groupDateIso}"` : "",
+    ].join("");
+    if (groupDateIso) {
+      dateJumpItems.push({
+        date: groupDateIso,
+        id: groupId,
+        label: getDateJumpLabel(g, groupDateIso),
+      });
+    }
     const headerHtml = showHeader
       ? `<tr>${columnHeaders.map((h, i) => {
         const w = htmlWidths[i];
@@ -631,7 +666,7 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
     }).join("");
 
     return `
-      <section class="group">
+      <section class="group"${groupAttrs}>
         <div class="group-title">${groupHeading}</div>
         ${g.metadata ? `<div class="group-metadata">${escapeHtml(g.metadata)}</div>` : ""}
         <div class="table-scroll" style="--schedule-table-min-width:${Math.max(totalPdfWidth, 640)}px">
@@ -643,6 +678,92 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
       </section>
     `;
   }).join("");
+
+  const dateJumpConfig = dateJumpItems.length ? (() => {
+    const links = dateJumpItems.map(item =>
+      `<a class="date-jump-link" href="#${escapeHtml(item.id)}" data-date="${escapeHtml(item.date)}">${escapeHtml(item.label)}</a>`
+    ).join("\n");
+
+    const navMarkup = `
+<details class="date-jump-nav date-jump-nav-collapsed" data-date-jump-nav>
+  <summary class="date-jump-summary">
+    <span class="date-jump-summary-icon" aria-hidden="true">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" focusable="false">
+        <path d="M7 2.75a.75.75 0 0 1 .75.75v1h8.5v-1a.75.75 0 0 1 1.5 0v1h1A2.25 2.25 0 0 1 21 6.75v11.5a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 18.25V6.75A2.25 2.25 0 0 1 5.25 4.5h1v-1A.75.75 0 0 1 7 2.75Zm12.5 7H4.5v8.5c0 .414.336.75.75.75h13.5a.75.75 0 0 0 .75-.75v-8.5ZM5.25 6a.75.75 0 0 0-.75.75v1.5h15V6.75a.75.75 0 0 0-.75-.75H5.25Z" fill="currentColor" />
+      </svg>
+    </span>
+    <span class="date-jump-summary-label" data-date-jump-summary-label>Jump to date</span>
+    <svg class="date-jump-summary-chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false">
+      <path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </summary>
+  <nav class="date-jump-links" aria-label="Jump to date">
+${links}
+  </nav>
+</details>`.trim();
+
+    const scriptBlock = `
+<script>
+(function(){
+  function initDateJumpNav(){
+    const nav = document.querySelector('[data-date-jump-nav]');
+    if (!nav) return;
+    const links = Array.from(nav.querySelectorAll('a[data-date]'));
+    const labelEl = nav.querySelector('[data-date-jump-summary-label]');
+    const filtersContainer = document.querySelector('[data-filters-container]');
+    function updateStickyOffset() {
+      if (!filtersContainer || filtersContainer.hidden || filtersContainer.style.display === 'none') {
+        nav.style.setProperty('--date-jump-sticky-top', '16px');
+        return;
+      }
+      const filtersTop = Number.parseFloat(window.getComputedStyle(filtersContainer).top) || 16;
+      const filtersHeight = filtersContainer.offsetHeight || 0;
+      nav.style.setProperty('--date-jump-sticky-top', Math.ceil(filtersTop + filtersHeight + 8) + 'px');
+    }
+    function updateToggleState() {
+      const isOpen = nav.hasAttribute('open');
+      if (labelEl) {
+        labelEl.textContent = 'Jump to date';
+      }
+      nav.classList.toggle('date-jump-nav-collapsed', !isOpen);
+      updateStickyOffset();
+    }
+    if (!links.length) {
+      nav.hidden = true;
+      return;
+    }
+    const now = new Date();
+    const today = [
+      now.getFullYear(),
+      String(now.getMonth() + 1).padStart(2, '0'),
+      String(now.getDate()).padStart(2, '0')
+    ].join('-');
+    let visibleCount = 0;
+    links.forEach(link => {
+      const dateValue = link.getAttribute('data-date') || '';
+      const isVisible = dateValue >= today;
+      link.hidden = !isVisible;
+      if (isVisible) visibleCount += 1;
+    });
+    nav.hidden = visibleCount === 0;
+    nav.addEventListener('toggle', updateToggleState);
+    updateToggleState();
+    if (filtersContainer) {
+      filtersContainer.addEventListener('toggle', updateStickyOffset);
+    }
+    window.addEventListener('resize', updateStickyOffset);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initDateJumpNav);
+  } else {
+    initDateJumpNav();
+  }
+})();
+</script>`.trim();
+
+    return { navMarkup, scriptBlock };
+  })() : null;
 
   const filterControlsConfig = renderFilterControls ? (() => {
     if (!totalRowCount) return null;
@@ -778,6 +899,9 @@ ${controlsBlock}
   const filterControlsHtml = filterControlsConfig
     ? [filterControlsConfig.panelMarkup, filterControlsConfig.scriptBlock].filter(Boolean).join("\n")
     : "";
+  const dateJumpHtml = dateJumpConfig
+    ? [dateJumpConfig.navMarkup, dateJumpConfig.scriptBlock].filter(Boolean).join("\n")
+    : "";
 
   // CSS + template (local assets)
   const cssPath = path.resolve(process.cwd(), "htmlutils/schedule.css");
@@ -894,6 +1018,7 @@ ${controlsBlock}
     keyInfoBlock,
     locationsBlock,
     filterControlsHtml,
+    dateJumpHtml,
     groupsHtml,
   ].filter(Boolean).join("\n");
 
