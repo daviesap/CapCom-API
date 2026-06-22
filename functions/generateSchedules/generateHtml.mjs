@@ -222,13 +222,6 @@ function shouldRenderContactsForSnapshot(jsonInput = {}) {
   return matched?.showContacts === true;
 }
 
-function hasKeyInfoContent(jsonInput = {}) {
-  const keyInfo = jsonInput?.event?.keyInfo;
-  if (Array.isArray(keyInfo)) return keyInfo.length > 0;
-  if (typeof keyInfo === "string") return keyInfo.trim().length > 0;
-  return !!keyInfo;
-}
-
 function hasKeyPeopleContent(jsonInput = {}) {
   const keyPeople = jsonInput?.event?.keyPeople;
   return Array.isArray(keyPeople)
@@ -686,14 +679,14 @@ export async function generateHtmlString(jsonInput, { pdfUrl } = {}) {
       .join("\n");
 
     const panelMarkup = `
-<details class="filters-accordion" data-filters-container open>
+<details class="filters-accordion" data-filters-container>
   <summary class="filters-summary">
     <span class="filters-summary-icon" aria-hidden="true">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" focusable="false">
         <path d="M3 5.25A.75.75 0 0 1 3.75 4.5h16.5a.75.75 0 0 1 .53 1.28l-6.78 6.77v5.82a.75.75 0 0 1-1.12.66l-3-1.8a.75.75 0 0 1-.38-.66v-4.02L3.22 5.78A.75.75 0 0 1 3 5.25Z" fill="currentColor" />
       </svg>
     </span>
-    <span class="filters-summary-label" data-filters-summary-label>Hide filters</span>
+    <span class="filters-summary-label" data-filters-summary-label>Show filters</span>
     <svg class="filters-summary-chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false">
       <path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
