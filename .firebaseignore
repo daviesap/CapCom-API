@@ -1,0 +1,10 @@
+.git
+.gitignore
+node_modules
+firebase-debug.log
+firebase-debug.*.log
+
+functions/node_modules
+functions/local-emulator
+functions/local-test
+functions/.DS_Store
